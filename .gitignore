@@ -1,0 +1,21 @@
+# Secrets and local state
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+Thumbs.db
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+# Runtime data and complete clones are distributed by a hashed manifest
+/data/
+/clones/
+/.local/
+# Test references, prompts and judge logs stay with P6 until final release
+/evaluation/private_test/
+# Later explicit course packaging must be reviewed before sharing
+/submission/
