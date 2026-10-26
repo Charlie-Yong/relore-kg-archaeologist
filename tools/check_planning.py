@@ -18,6 +18,11 @@ def main():
     args = parser.parse_args()
     errors = []
     contract = (ROOT / '01_统一执行契约.md').read_text(encoding='utf-8').rstrip() + '\n'
+    versions = re.search(r'规划\s*(v[\d.]+)｜契约\s*([\d.]+)', contract)
+    if versions is None:
+        raise SystemExit('Missing planning/contract versions')
+    planning_version, contract_version = versions.groups()
+    report_path = None if args.report is None else (args.report if args.report.is_absolute() else ROOT / args.report)
     digest = hashlib.sha256(contract.encode('utf-8')).hexdigest()
     paths = sorted(ROOT.glob('P[1-6]_*.md'))
     if len(paths) != 6:
@@ -36,6 +41,15 @@ def main():
             errors.append(f'{path.name}: wrong contract hash')
         if f'你已被分配为{role}' not in text or '<!-- BEGIN ROLE TASKS -->' not in text:
             errors.append(f'{path.name}: missing standalone assignment/tasks')
+        if f'规划{planning_version}｜契约{contract_version}' not in text:
+            errors.append(f'{path.name}: stale version header')
+        if text.count('<!-- BEGIN AUTO START -->') != 1 or text.count('<!-- END AUTO START -->') != 1:
+            errors.append(f'{path.name}: missing automatic-start section')
+        else:
+            boot = text.split('<!-- BEGIN AUTO START -->', 1)[1].split('<!-- END AUTO START -->', 1)[0]
+            for term in [f'自动开工：{role}第一轮', f'STATUS_{role}.md', f'feat/{role.lower()}', '本轮首个可运行产物', '最小接管', '恢复']:
+                if term not in boot:
+                    errors.append(f'{path.name}: automatic-start section missing {term}')
         tasks = text.split('<!-- BEGIN ROLE TASKS -->', 1)[-1]
         if len(tasks) < 2000:
             errors.append(f'{path.name}: role tasks unexpectedly short')
@@ -44,6 +58,9 @@ def main():
     for term in required:
         if term not in contract:
             errors.append(f'Contract missing expected requirement: {term}')
+    for term in ['C3.1', 'C3.2', '人工接管', '无须额外启动提示', '所属AI当轮登记', '已批准预算', '离线电脑']:
+        if term not in contract:
+            errors.append(f'Contract missing autonomy requirement: {term}')
     link_count = 0
     documents = sorted(ROOT.rglob('*.md'))
     for path in documents:
@@ -59,28 +76,32 @@ def main():
                 continue
             target = path.parent / unquote(parsed.path)
             link_count += 1
-            if not target.exists():
+            if not target.exists() and (report_path is None or target.resolve() != report_path.resolve()):
                 errors.append(f'{path.relative_to(ROOT)}: missing link {href}')
         for forbidden in ['pandas-kg-archaeologist', 'pandas-dev/pandas', 'DataFrame.append', 'Series.append', 'PR 5774', '`ReleasedIn`', '四页骨架', '四页联调']:
             if forbidden in text:
                 errors.append(f'{path.relative_to(ROOT)}: stale or inconsistent term {forbidden}')
         if re.search(r'/Users/|[A-Z]:\\Users\\', text):
             errors.append(f'{path.relative_to(ROOT)}: personal absolute path')
+        if 'deliveries' not in path.relative_to(ROOT).parts:
+            for term in ['由成员转交P1', '由成员转P1', '由成员转给P1', '在后续实施阶段先实现', '后续先实现']:
+                if term in text:
+                    errors.append(f'{path.relative_to(ROOT)}: unnecessary human relay or deferred start: {term}')
     for n in range(1, 7):
         p = ROOT / f'coordination/STATUS_P{n}.md'
         if not p.exists() or '状态：todo' not in p.read_text(encoding='utf-8'):
             errors.append(f'P{n}: initial implementation status must be todo')
     report = {
         'checked_date': '2026-10-26',
-        'planning_version': 'v1.0', 'contract_version': '1.0.0',
+        'planning_version': planning_version, 'contract_version': contract_version,
         'contract_sha256': digest,
         'markdown_files': len(documents), 'local_links_checked': link_count,
         'workorders': role_checks, 'errors': errors,
         'passed': not errors, 'runtime_system_tested': False,
         'note': 'Checks planning documents only; no model, ingestion, graph or course experiment was executed.'
     }
-    if args.report:
-        destination = args.report if args.report.is_absolute() else ROOT / args.report
+    if report_path:
+        destination = report_path
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(report, ensure_ascii=False, indent=2))
