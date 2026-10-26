@@ -1,0 +1,54 @@
+{
+  "checked_date": "2026-10-26",
+  "checked_at": "2026-10-26T21:09:51+08:00",
+  "planning_version": "v1.1.1",
+  "contract_version": "1.1.1",
+  "contract_sha256": "4e7762347380bba97281f5846d5c0d92cdd7392e48e227b69ec176d9ba0d9791",
+  "markdown_files": 29,
+  "local_links_checked": 36,
+  "workorders": [
+    {
+      "role": "P1",
+      "file": "P1_数据与集成_给成员AI.md",
+      "sha256": "dbf31f883a1d6405733bf37ae91e1f8405ad332d87e0b5f9e38f2c81ee32ff6e"
+    },
+    {
+      "role": "P2",
+      "file": "P2_图谱与查询_给成员AI.md",
+      "sha256": "1d73068e00e56923dff171a46b6fb5fb64da8f0548265c7f9ac629b1c201fb46"
+    },
+    {
+      "role": "P3",
+      "file": "P3_代码与演化_给成员AI.md",
+      "sha256": "d242fb3f5ecb5f027d2b9f32ce9b496490da598c6a83277a3008abaf86eaecb6"
+    },
+    {
+      "role": "P4",
+      "file": "P4_模型与知识抽取_给成员AI.md",
+      "sha256": "a91f2c1535acb84c7cdd9915d3486cb982e522d631789c7865b49b0fcf19b0df"
+    },
+    {
+      "role": "P5",
+      "file": "P5_原型与汇报_给成员AI.md",
+      "sha256": "81dd6e5c0c13cf304c749c1008bf1d2d96dcb41efbca258b1752729ce52261b1"
+    },
+    {
+      "role": "P6",
+      "file": "P6_模型参考与实验_给成员AI.md",
+      "sha256": "7a766667d427399b8aa4029ce80bdf15a0b20fc4573d33746ffef06bfad14a0f"
+    }
+  ],
+  "errors": [],
+  "role_states": {
+    "P1": "todo",
+    "P2": "todo",
+    "P3": "todo",
+    "P4": "todo",
+    "P5": "todo",
+    "P6": "todo"
+  },
+  "initial_snapshot": false,
+  "passed": true,
+  "runtime_system_tested": false,
+  "note": "Checks planning documents only; no model, ingestion, graph or course experiment was executed."
+}

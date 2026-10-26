@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Check document links, standalone work orders and honest initial module states."""
+"""Check planning documents and legal module states without running the system."""
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
+from datetime import datetime, timedelta, timezone
 import argparse
 import hashlib
 import json
@@ -10,11 +11,14 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 BEGIN = '<!-- BEGIN COMMON CONTRACT -->'
 END = '<!-- END COMMON CONTRACT -->'
+VALID_STATES = {'todo', 'in_progress', 'blocked', 'ready_for_integration', 'verified_real', 'done'}
+EXCLUDED_ROOTS = {'.git', '.venv', 'venv', 'node_modules', 'data', 'clones', '.local', 'submission'}
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--report', type=Path, help='Optional JSON check report')
+    parser.add_argument('--initial-snapshot', action='store_true', help='Also require all modules to remain todo for an initial planning snapshot')
     args = parser.parse_args()
     errors = []
     contract = (ROOT / '01_统一执行契约.md').read_text(encoding='utf-8').rstrip() + '\n'
@@ -62,10 +66,12 @@ def main():
         if term not in contract:
             errors.append(f'Contract missing autonomy requirement: {term}')
     link_count = 0
-    documents = sorted(ROOT.rglob('*.md'))
+    documents = [
+        path for path in sorted(ROOT.rglob('*.md'))
+        if path.relative_to(ROOT).parts[0] not in EXCLUDED_ROOTS
+        and path.relative_to(ROOT).parts[:2] != ('evaluation', 'private_test')
+    ]
     for path in documents:
-        if '.git' in path.parts:
-            continue
         text = path.read_text(encoding='utf-8')
         # Code examples can contain placeholder paths and are not navigation links.
         prose = re.sub(r'(?ms)^(```|~~~).*?^\1\s*$', '', text)
@@ -87,16 +93,32 @@ def main():
             for term in ['由成员转交P1', '由成员转P1', '由成员转给P1', '在后续实施阶段先实现', '后续先实现']:
                 if term in text:
                     errors.append(f'{path.relative_to(ROOT)}: unnecessary human relay or deferred start: {term}')
+    role_states = {}
     for n in range(1, 7):
         p = ROOT / f'coordination/STATUS_P{n}.md'
-        if not p.exists() or '状态：todo' not in p.read_text(encoding='utf-8'):
-            errors.append(f'P{n}: initial implementation status must be todo')
+        if not p.exists():
+            errors.append(f'P{n}: missing status file')
+            continue
+        fields = re.findall(r'^状态[：:][ \t]*(.*)$', p.read_text(encoding='utf-8'), flags=re.M)
+        if len(fields) != 1:
+            errors.append(f'P{n}: expected exactly one status field')
+            continue
+        match = re.fullmatch(r'([a-z_]+)[。.]?', fields[0].strip())
+        state = match.group(1) if match else None
+        if state not in VALID_STATES:
+            errors.append(f'P{n}: invalid module status')
+            continue
+        role_states[f'P{n}'] = state
+        if args.initial_snapshot and state != 'todo':
+            errors.append(f'P{n}: initial snapshot requires todo')
+    checked_at = datetime.now(timezone(timedelta(hours=8))).isoformat(timespec='seconds')
     report = {
-        'checked_date': '2026-10-26',
+        'checked_date': checked_at[:10], 'checked_at': checked_at,
         'planning_version': planning_version, 'contract_version': contract_version,
         'contract_sha256': digest,
         'markdown_files': len(documents), 'local_links_checked': link_count,
         'workorders': role_checks, 'errors': errors,
+        'role_states': role_states, 'initial_snapshot': args.initial_snapshot,
         'passed': not errors, 'runtime_system_tested': False,
         'note': 'Checks planning documents only; no model, ingestion, graph or course experiment was executed.'
     }

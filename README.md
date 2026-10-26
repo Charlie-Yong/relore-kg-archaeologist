@@ -4,7 +4,7 @@
 
 本仓库已按用户授权公开，规划可直接阅读；提交和管理仍按实际授权。密钥、私有测试参考和个人材料不在公开仓库中保存。
 
-**当前交付：规划 v1.1 / 契约 1.1.0。** 仓库内是总方案、接口约定、六人工作单和状态模板；系统实现、真实数据、模型调用、图库和正式实验均待后续执行。
+**当前交付：规划 v1.1.1 / 契约 1.1.1。** 仓库内是总方案、接口约定、六人工作单和状态模板；系统实现、真实数据、模型调用、图库和正式实验均待后续执行。
 
 ## 成员如何开工
 
@@ -32,7 +32,8 @@ P4使用macOS，其余Windows；P2使用现有DeepSeek可执行开发工具，�
 - [relore与Flask可行性记录](02_relore与Flask可行性记录.md)
 - [范围与契约变更记录](03_范围与契约变更记录.md)
 - [成员与仓库登记](coordination/成员与仓库登记.md)
-- [当前修订与检查记录](deliveries/planning/2026-10-26-v1.1/README.md)
+- [当前修订与检查记录](deliveries/planning/2026-10-26-v1.1.1/README.md)
+- [v1.1自动开工修订](deliveries/planning/2026-10-26-v1.1/README.md)
 - [v1.0初始交付记录](deliveries/planning/2026-10-26/README.md)
 
 期中：**2026年11月11日，每组5分钟**。内部完整候选：**12月20日**。实际期末提交日期以老师通知为准。
@@ -41,11 +42,14 @@ P4使用macOS，其余Windows；P2使用现有DeepSeek可执行开发工具，�
 
 ## 检查规划资料
 
-以下两个脚本只维护文档，不代表系统运行通过：
+PR和main提交自动运行Planning checks，成员无需手动触发、打卡或填表。检查只用公开文档和合成回归，不调用付费模型。对应角色AI查看结果并修复，真实系统由接收方AI另行复跑验收。
+
+以下命令也可由AI本地运行，文档绿灯不代表系统运行通过：
 
 ~~~text
 python tools/sync_workorders.py
 python tools/check_planning.py
+python -m unittest discover -s tools -p "test_*.py"
 ~~~
 
-Windows可使用py -3运行，macOS可使用python3。工具仅用Python标准库。六份工作单的公共段必须与统一契约一致，状态文件中的后续实现不得提前标完成。
+Windows可使用py -3运行，macOS可使用python3。工具仅用Python标准库。检查接受六种合法进度状态，日期使用实际执行时的北京时间；--initial-snapshot仅用于额外核验初始全todo快照。六份工作单的公共段必须与统一契约一致，状态文件中的后续实现不得提前标完成。
