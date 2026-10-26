@@ -18,7 +18,7 @@
 自动开工段是快捷入口，角色边界、数据接口与验收以随后的完整契约和专属任务为准。它在活跃AI会话中执行，不承担跨电脑后台唤醒。
 <!-- END AUTO START -->
 
-公共契约 SHA-256：7fe8cad5be7102b0afb2222546fff579c3fe29f586669dfa73a90c77e703e96d
+公共契约 SHA-256：532b10e2d8d4ab327bea0d80507517d20b1158f0e807776b146c36cadba2b32a
 
 <!-- BEGIN COMMON CONTRACT -->
 # 统一执行契约与项目上下文
@@ -39,7 +39,7 @@
 
 具体 CPU/内存不对其余五人作未核实假设；Mac 试点机已读到 M2 Pro/16GB，但未跑本系统资源测试。已有 API 不需重复询问；实际 model_id、参数、额度、连通、权限与开发工具能力仍要实测。开发软件名称不是实验模型名称，订阅登录也不等于项目 API 配置。
 
-作业仓库：https://github.com/Charlie-Yong/relore-kg-archaeologist ，私有，主分支 main。研究对象是 https://github.com/pallets/flask ，上游依赖是 https://github.com/huggingface/relore ，三者分开登记。新工作不依赖旧项目聊天、电脑绝对路径或旧规划。
+作业仓库：https://github.com/Charlie-Yong/relore-kg-archaeologist ，公开，主分支 main。公开规划可直接读取，提交和管理仍使用实际授权。研究对象是 https://github.com/pallets/flask ，上游依赖是 https://github.com/huggingface/relore ，三者分开登记。新工作不依赖旧项目聊天、电脑绝对路径或旧规划。
 
 ## C2. 范围、版本与时间
 
