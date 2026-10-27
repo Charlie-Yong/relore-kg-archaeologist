@@ -1,41 +1,41 @@
 {
   "checked_date": "2026-10-27",
-  "checked_at": "2026-10-27T17:14:34+08:00",
+  "checked_at": "2026-10-27T22:36:48+08:00",
   "planning_version": "v1.3.2",
   "contract_version": "1.3.2",
-  "contract_sha256": "f1208fcbf008a30129117f23721472fe22f299543cfcf4ef2a1319190986781d",
-  "markdown_files": 36,
-  "local_links_checked": 83,
+  "contract_sha256": "9a462191367e66ec28ea072dab37d18fb0e737666f8e5054e802cddb64157896",
+  "markdown_files": 37,
+  "local_links_checked": 114,
   "workorders": [
     {
       "role": "P1",
       "file": "P1_数据与集成_给成员AI.md",
-      "sha256": "fdd93eac1083dfbb7675b54eac11a7c9dde4876c01a42dd0a180bcb7e1b59cbc"
+      "sha256": "a3d0138ef629346341199a732882f28af95dc0bd8c289ccd3b5338a186b8a7d2"
     },
     {
       "role": "P2",
       "file": "P2_图谱与查询_给成员AI.md",
-      "sha256": "f1884df741bd0f8a2107a97fc403051331e9dd16ea4fe74c8af71ffff00ecf98"
+      "sha256": "6a35ad59eb49f14891083077983fdb895eeaa4f7327b6df514f6bc5738fbcf73"
     },
     {
       "role": "P3",
       "file": "P3_代码与演化_给成员AI.md",
-      "sha256": "078707aa261dc0404c68799433c826771794760d553bd355e42a634afc5c93f0"
+      "sha256": "67cc156b057ff4e82bd4dee002a39d434370ab6c6772c4814036c985665a70ee"
     },
     {
       "role": "P4",
       "file": "P4_模型与知识抽取_给成员AI.md",
-      "sha256": "d19bd5b3519404141ac4aec8542724a04d1ab4c1eaf5d318ca8acb54cfc40017"
+      "sha256": "dbd36abaa42bbd31860d09fca347d5c126fa1f0fc316bafeb0d1e531b6d5ac2a"
     },
     {
       "role": "P5",
       "file": "P5_原型与汇报_给成员AI.md",
-      "sha256": "6772c9a63fd3492c18417c35ffd6e01d4371154377de9257a177279c2cd765a6"
+      "sha256": "41a2944a75e2b32a302f14567086d5a09a418ac21e6cb50451926e82c5197c77"
     },
     {
       "role": "P6",
       "file": "P6_模型参考与实验_给成员AI.md",
-      "sha256": "a830df1b0fd3cfeadf0f70f2fd84af7ecf9c52bf8a7e63b9ff88fcbbda05eea4"
+      "sha256": "cf2e4930d60ef3ed59d9729b9eee1b8e91ccc220d6ac7ab0500a83e264c913ab"
     }
   ],
   "errors": [],
