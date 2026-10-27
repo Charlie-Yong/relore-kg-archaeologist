@@ -1,6 +1,6 @@
 # P5｜原型与汇报｜给成员 AI 的完整工作单
 
-规划v1.3.2｜契约1.3.2｜2026-10-27。
+规划v1.4.0｜契约1.4.0｜2026-10-27。
 
 给成员：首次将本文件或仓库内本文件路径交给自己的AI即可。AI负责找仓库、读状态和交接，不需要另写启动提示，也不需反复复制STATUS或聊天记录。
 
@@ -18,14 +18,14 @@
 自动开工段是快捷入口，角色边界、数据接口与验收以随后的完整契约和专属任务为准。它在活跃AI会话中执行，不承担跨电脑后台唤醒。
 <!-- END AUTO START -->
 
-公共契约 SHA-256：9a462191367e66ec28ea072dab37d18fb0e737666f8e5054e802cddb64157896
+公共契约 SHA-256：f872a8ab09c5305e315140eac188c116c4c540dc0e089443080b22b80de6d2cf
 
 <!-- BEGIN COMMON CONTRACT -->
 # 统一执行契约与项目上下文
 
-规划 v1.3.2｜契约 1.3.2｜2026-10-27｜Asia/Shanghai。
+规划 v1.4.0｜契约 1.4.0｜2026-10-27｜Asia/Shanghai。
 
-本文件规定实施任务；当前仓库已交付的是规划资料，系统实现、模型调用和真实实验必须由各角色AI实际执行后记录。六份成员工作单完整内嵌本文件正文；用户将本人工作单交给AI实施时，AI直接采用已指定角色并自动开工，无须额外启动提示。用户明确要求仅审查或修改规划时遵守该范围，阅读资料本身不触发越界实施。
+本文件规定实施任务；仓库已包含规划、P4移植的固定relore源码及项目历史采集器基础接口，其余系统实现、模型调用和正式实验按各角色实际交付验收。六份成员工作单完整内嵌本文件正文；用户将本人工作单交给AI实施时，AI直接采用已指定角色并自动开工，无须额外启动提示。用户明确要求仅审查或修改规划时遵守该范围，阅读资料本身不触发越界实施。
 
 2026-10-26初始规划后的独立本地小样已真实使用relore、PostgreSQL、Neo4j和DeepSeek走通技术链路，但发现项目归属、理由漏抽和显式链接漏采，知识质量未通过。该小样使用pilot_small_v1及非正式接口，不等于本仓库六角色完成、course_small_v1验收或正式实验；可复用代码须由所属角色按本契约接入并重新验收。已知错误先作为开发回归修复，再扩大采样和接通自由提问，最后冻结正式实验。
 
@@ -41,7 +41,7 @@
 
 具体 CPU/内存不对其余五人作未核实假设；Mac 试点机为 M2 Pro/16GB，已完成独立小样链路，尚未完成默认规模资源测试与Windows验证。已有 API 不需重复询问；正式环境的实际 model_id、参数、额度、连通、权限与开发工具能力仍要实测。开发软件名称不是实验模型名称，订阅登录也不等于项目 API 配置。
 
-作业仓库：https://github.com/Charlie-Yong/relore-kg-archaeologist ，公开，主分支 main。公开规划可直接读取，提交和管理仍使用实际授权。主要实验仓库是 https://github.com/pallets/flask ，成品接收符合C2范围的其他仓库链接；上游依赖是 https://github.com/huggingface/relore ，三者分开登记。新工作不依赖旧项目聊天、电脑绝对路径或旧规划。
+作业仓库：https://github.com/Charlie-Yong/relore-kg-archaeologist ，公开，主分支 main。公开规划可直接读取，提交和管理仍使用实际授权。主要实验仓库是 https://github.com/pallets/flask ，成品接收符合C2范围的其他仓库链接；项目历史采集器基于 https://github.com/huggingface/relore 二次开发，固定源码已纳入vendor/relore，保留原来源及许可证。新工作不依赖旧项目聊天、电脑绝对路径或旧规划。
 
 ## C2. 范围、版本与时间
 
@@ -52,7 +52,7 @@
 - 以任务替换控制增量：减少逐案例深历史追查和辅助可视化，保留简单时间线表；静态import/版本比较只复用已采到的代码，不为其增加采集配额或复杂图面板。单次查询缺少适用数据时返回unsupported，不以五类query均成功作为完成条件。课程架构理解仍须有最低实证：在已采的有限模块中，至少实际回答一题文件依赖或职责问题，引用对应SHA的源码并说明覆盖边界；不把只列修改文件当作架构解释。
 - 图谱先保留 Project、Release、Issue、PullRequest、Commit、File、Decision；评论及评审是可定位的 SourceDocument，不为规模复制所有人物、错误、测试节点。
 - 调用图、自动改名推断、专家排名、跨仓库联合图、实时更新、全量历史回填、第二语言、复杂Agent规划循环及双版本依赖图差分不占核心交付。不新增复杂消息队列或多Agent运行平台；使用现有Python包和一个可恢复的本地worker。
-- relore 作为固定版本依赖，新增 historykg 包与独立表/导出；不 fork 改其核心排序。初始源码核对基准为 06a1c99c4653e9db899a18e96d8ff0ee6b419815；P1 首轮实测后锁定客户端和服务端一致的版本/SHA，写变更记录。
+- 项目历史采集器作为项目内模块，由P4负责开源源码移植、适配及基础数据接口维护。vendor/relore纳入0.3.19 / 06a1c99c4653e9db899a18e96d8ff0ee6b419815的完整固定源码，内部包名relore保持；historykg提供本项目封装。初次移植未修改原包运行源码和排序；确需修改时由P4记录来源、修改说明和受影响回归，影响检索方法时按C8冻结/重跑。统一安装使用仓库内版本，部署双方保持一致。
 
 ### C2.1 成品自动运行契约
 
@@ -98,7 +98,7 @@ BuildJob_v1最少字段：contract_version、job_id、repo、profile_version、d
 | P1 数据与集成 | URL接入、自动范围选择、唯一作业编排/恢复、公共契约/ID/IO/CLI、采集冻结、集成统稿 | 全员 |
 | P2 图谱与查询 | 自动幂等导入、项目隔离、同源检索与Neo4j、查询及证据映射 | P1、P5、P6 |
 | P3 代码与演化 | 按通用规则自动定位Release/tag/Commit/文件及证据，有限版本事实 | P1、P2、P4、P6 |
-| P4 模型与知识抽取 | DeepSeek自动批处理、Decision/理由及证据校验、未解析项、统一回答器 | P1、P2、P6 |
+| P4 开源移植、基础数据接口与模型抽取 | 项目历史采集器源码移植/适配/维护，基础采集、存储及检索接口；DeepSeek批处理、Decision/理由证据及统一回答器 | P1、P2、P6 |
 | P5 原型与汇报 | URL/作业进度/覆盖/问答主页面、期中期末PPT/讲稿/录屏 | 全员 |
 | P6 模型参考与实验 | 自动流程与第二小库检查、独立参考/私有测试、公平对照和统计 | 全员 |
 
@@ -145,12 +145,13 @@ P1/P2/演示机负责实际数据库，优先可复现的 Docker Compose；其�
 
 安装说明覆盖 Windows PowerShell 与 macOS：Windows 使用 py -3.11 和 .venv\Scripts\python.exe，Mac 使用 python3.11 和 .venv/bin/python；脚本用 pathlib、相对路径和显式 UTF-8，不依赖 Bash。relore 的 RELORE_CLONE_ROOT 设置为实际可写目录，不能照抄服务端 /var/lib 路径。
 
-以下目录与命令是后续待实现，不是本规划仓库现成功能：
+已实现基础入口为historykg/collector.py和vendor/relore，由P4维护；安装、SQLite/PostgreSQL配置、调用及接口见[采集器说明](docs/collector.md)。其余下列目录和正式流水线命令按角色继续实施：
 
 ~~~text
 historykg/contracts.py / ids.py / io.py / cli.py    # P1；P2复核接口
 historykg/ingest/                                   # P1
 historykg/pipeline.py                               # P1唯一成品作业编排
+historykg/collector.py / vendor/relore/              # P4已实现：开源移植与基础数据接口
 historykg/code/                                     # P3
 historykg/llm/ / extract/                           # P4
 historykg/graph/ / query/                           # P2
@@ -170,6 +171,12 @@ evaluation/private_test/                            # P6私有；不入共享开
 ~~~
 
 P1实现python -m historykg.cli的build / resume / build-status及doctor / fixture / ingest / code / extract / validate / load / query / export子命令并转调所属模块。build只需repo_url，使用已配置默认profile；分阶段子命令供AI开发排错和复现，普通用户不逐步执行。P2 query保留search / trace / timeline / dependencies / compare五种kind，其中timeline只列已有版本关系，dependencies/compare在未采到适用数据时返回unsupported；不为凑成功样例扩采。P6的evaluate入口由P6实现并接入CLI。P1发布--help、配置样例和错误码，不要求成员猜命令。
+
+### C4.1 已实现的基础数据接口
+
+P4维护historykg.collector，提供initialize_database、doctor、collect_repo、index_threads、replay_capture和search_history，返回interface_version=collector_v1的字典；参数、字段及错误语义以[接口说明](docs/collector.md)为准。CLI为python -m historykg.collector doctor / ingest / search，直接调用仓库内代码及本项目数据库，不连接原项目默认服务。P1调用采集/回放接口并映射到C5正式来源，P2调用检索接口后接入C8共同来源池，不重写一套相同底层抓取或检索。
+
+collector_smoke_v1默认最多一个PR和一个Issue、候选各最多100条、60次GitHub请求，支持公开Python仓库及匿名只读访问；分页和重试计入上限，缺失保留partial/blocked/error等真实状态。它是独立开发小样，capture及relore原始来源标识不等于C5统一数据包，接口状态不替代BuildJob或QueryResult。course_small_v1、正式模型/图谱/问答及实验条件保持。本轮交付与验证计入P4的开源移植、适配和基础数据接口贡献。
 
 ## C5. 冻结来源、ID 与证据
 
@@ -312,7 +319,7 @@ relore 是采集/检索底座，页面须体现结构化 Decision、理由、代
 
 ### 2. 首轮：把 URL 与作业状态入口显示正确
 
-1. 读取公共契约 1.3.2、规划 v1.3.2、已有目录与 P5 状态，检查 Windows 执行条件。
+1. 读取公共契约 1.4.0、规划 v1.4.0、已有目录与 P5 状态，检查 Windows 执行条件。
 2. 复用 C2.1 的 BuildRequest_v1/BuildJob_v1；`BuildRequest_v1(repo_url, profile=course_small_v1)` 及字段、签名和错误语义以公共契约为唯一权威，不在页面另造类型。
 3. 只调用 P1 `historykg/pipeline.py` 的 `start_build`、`get_build`、`resume_build`，CLI 对应 `build`、`resume`、`build-status`；不在 Streamlit 回调中重建 collect/extract/index_graph 编排。
 4. 用明确标为开发示例的公共 fixture 实跑 URL 提交、构建状态、刷新恢复、覆盖/缺口及 QueryResult 的 ok/empty/unsupported/error 与空 claims。

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "historykg-archaeologist"
+version = "1.4.0"
+description = "Project history collector and knowledge-graph course project"
+requires-python = ">=3.11"
+dependencies = ["relore==0.3.19", "httpx[socks]>=0.27"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.5"]
+
+[project.scripts]
+historykg-collector = "historykg.collector:main"
+
+[tool.setuptools.packages.find]
+include = ["historykg*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

@@ -1,0 +1,3 @@
+# Install the bundled source, never a second relore from a package index.
+-e ./vendor/relore[postgres,python]
+-e .[dev]

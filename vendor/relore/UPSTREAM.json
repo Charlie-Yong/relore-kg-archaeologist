@@ -1,0 +1,16 @@
+{
+  "project": "huggingface/relore",
+  "source_url": "https://github.com/huggingface/relore",
+  "commit": "06a1c99c4653e9db899a18e96d8ff0ee6b419815",
+  "version": "0.3.19",
+  "license": "Apache-2.0",
+  "imported_on": "2026-10-27",
+  "maintainer_role": "P4",
+  "local_changes": [
+    {
+      "path": "UPSTREAM_AGENTS.md",
+      "change": "AGENTS.md renamed to archival reference; its instructions do not govern this project."
+    }
+  ],
+  "runtime_source_changes": []
+}

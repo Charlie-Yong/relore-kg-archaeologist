@@ -1,0 +1,54 @@
+name: image
+
+# Publishes ghcr.io/huggingface/relore:sha-<commit> on every push to main, and
+# :latest alongside it.
+#
+# The tag is the commit, and the deploy pins it. Section 15's deployment is not
+# meant to move because someone merged: a values file naming `sha-abc1234` is a
+# release you can point at, and `latest` exists for a first install and for
+# people trying it, not for production.
+on:
+  push:
+    branches: [main]
+    # No point rebuilding for a docs-only change; the image holds relore/ and the
+    # packaging metadata and nothing else (see .dockerignore).
+    paths:
+      - "relore/**"
+      - "pyproject.toml"
+      - "Dockerfile"
+      - ".github/workflows/image.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: image-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=sha,prefix=sha-,format=short
+            type=raw,value=latest
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

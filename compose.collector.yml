@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16.4
+    environment:
+      POSTGRES_USER: collector
+      POSTGRES_PASSWORD: ${COLLECTOR_POSTGRES_PASSWORD:-collector_dev}
+      POSTGRES_DB: historykg_collector
+    ports:
+      - "127.0.0.1:16432:5432"
+    volumes:
+      - collector_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U collector -d historykg_collector"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+volumes:
+  collector_pgdata:

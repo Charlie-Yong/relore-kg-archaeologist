@@ -1,0 +1,60 @@
+{
+  "interface_version": "collector_v1",
+  "repo": "pallets/flask",
+  "profile": "collector_smoke_v1",
+  "platform": "Darwin",
+  "python": "3.11.15",
+  "relore_version": "0.3.19",
+  "relore_commit": "06a1c99c4653e9db899a18e96d8ff0ee6b419815",
+  "retrieved_at": "2026-10-27T15:12:40+00:00",
+  "github_requests": 8,
+  "authenticated": false,
+  "capture_sha256": "100df90199d34b0f78f6c575142871e5b185120c962e993aa5308fe50dcd8722",
+  "selected": [
+    {
+      "kind": "pr",
+      "number": 6168
+    },
+    {
+      "kind": "issue",
+      "number": 6175
+    }
+  ],
+  "backends": {
+    "sqlite": {
+      "status": "passed",
+      "counts": {
+        "threads": 2,
+        "documents": 4
+      },
+      "repeat_documents_written": 0,
+      "query": "drop support for",
+      "hits": 1,
+      "evidence": [
+        {
+          "number": 6168,
+          "url": "https://github.com/pallets/flask/pull/6168",
+          "snippet_sha256": "31d81833a3a3fdc2f0a3be289202884b4b6ee9b8429e6ca06e9b054a3f5332c4"
+        }
+      ]
+    },
+    "postgresql": {
+      "status": "passed",
+      "counts": {
+        "threads": 2,
+        "documents": 4
+      },
+      "repeat_documents_written": 0,
+      "query": "drop support for",
+      "hits": 1,
+      "evidence": [
+        {
+          "number": 6168,
+          "url": "https://github.com/pallets/flask/pull/6168",
+          "snippet_sha256": "31d81833a3a3fdc2f0a3be289202884b4b6ee9b8429e6ca06e9b054a3f5332c4"
+        }
+      ]
+    }
+  },
+  "model_requests": 0
+}

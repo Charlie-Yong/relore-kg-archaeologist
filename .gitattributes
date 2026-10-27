@@ -2,3 +2,5 @@
 *.py text eol=lf
 *.json text eol=lf
 .gitignore text eol=lf
+# Preserve the fixed upstream article byte-for-byte, including its original trailing spaces.
+vendor/relore/docs/blog-post.md whitespace=-blank-at-eol

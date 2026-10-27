@@ -1,0 +1,19 @@
+{
+  "role": "P4",
+  "os": "macOS",
+  "can_read": true,
+  "can_write": true,
+  "can_run": true,
+  "can_network": true,
+  "python": "3.11.15",
+  "git": true,
+  "shell": "zsh / exec",
+  "git_push": true,
+  "github_pr": null,
+  "github_merge": null,
+  "github_token_read": null,
+  "graph_access": null,
+  "model_access": null,
+  "checked_at": "2026-10-27T23:20:18+08:00",
+  "note": "基础采集器使用匿名GitHub访问、SQLite及专用PostgreSQL库验证；本轮未调用模型API。"
+}
