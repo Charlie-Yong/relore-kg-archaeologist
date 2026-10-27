@@ -1,0 +1,78 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "relore"
+# Read from relore/__init__.py: the client and the daemon refuse to talk across a version
+# difference (relore/wire.py), so two places to write it is one place to get it wrong.
+dynamic = ["version"]
+description = "GitHub project memory: index a repository's issue/PR history and serve it to agents and humans"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "The Hugging Face Team", email = "transformers@huggingface.co" }]
+keywords = ["github", "issues", "search", "agents", "project-memory"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development",
+]
+
+# The base install is the CLIENT. It must stay small enough to `pip install` inside a
+# constrained agent sandbox: no database driver, no parser, no ML stack.
+# See AGENTS.md, "The four invariants".
+dependencies = ["httpx>=0.27"]
+
+[project.optional-dependencies]
+# The daemon. Never a base dependency -- see the build plan section 2.
+# SQLAlchemy Core (not the ORM) owns the portable half of the schema; SQLite needs no
+# driver, so `[server]` alone runs on a dev laptop and in the test suite.
+server = ["SQLAlchemy>=2.0", "fastapi>=0.110", "uvicorn>=0.29", "pydantic>=2.6"]
+# Production. SQLite is for tests and laptops only -- see AGENTS.md.
+postgres = ["relore[server]", "psycopg[binary]>=3.1"]
+# The code-lens engine. Ships no grammars.
+code = ["tree-sitter>=0.21"]
+# One extra per language. Adding a language must not touch core.
+python = ["relore[code]", "tree-sitter-python>=0.21"]
+dev = ["relore[postgres,python]", "pytest>=8", "ruff>=0.5"]
+
+[project.scripts]
+relore = "relore.cli:main"
+# Through the shim, not straight at `relore.daemon:main`: the base install registers this
+# script and does NOT carry the daemon's dependencies, so the import has to be guarded or
+# a client-only install answers `relored --help` with a ModuleNotFoundError traceback.
+relored = "relore.entrypoints:relored"
+
+[project.urls]
+Homepage = "https://github.com/huggingface/relore"
+Repository = "https://github.com/huggingface/relore"
+Documentation = "https://github.com/huggingface/relore/tree/main/docs"
+Issues = "https://github.com/huggingface/relore/issues"
+Changelog = "https://github.com/huggingface/relore/blob/main/CHANGELOG.md"
+
+[project.entry-points."relore.languages"]
+python = "relore.code.providers.python:PythonProvider"
+
+[tool.setuptools.dynamic]
+version = { attr = "relore.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["relore*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

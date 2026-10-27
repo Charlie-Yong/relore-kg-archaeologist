@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BEGIN = '<!-- BEGIN COMMON CONTRACT -->'
 END = '<!-- END COMMON CONTRACT -->'
 VALID_STATES = {'todo', 'in_progress', 'blocked', 'ready_for_integration', 'verified_real', 'done'}
-EXCLUDED_ROOTS = {'.git', '.venv', 'venv', 'node_modules', 'data', 'clones', '.local', 'submission'}
+EXCLUDED_ROOTS = {'.git', '.venv', 'venv', 'node_modules', 'data', 'clones', '.local', 'submission', 'vendor'}
 
 
 def main():

@@ -77,7 +77,7 @@ class PlanningCheckTests(unittest.TestCase):
 
     def test_runtime_and_private_markdown_are_not_read(self):
         original = Path.rglob
-        excluded = [CHECK.ROOT / '.venv' / 'README.md', CHECK.ROOT / 'evaluation' / 'private_test' / 'reference.md']
+        excluded = [CHECK.ROOT / '.venv' / 'README.md', CHECK.ROOT / 'evaluation' / 'private_test' / 'reference.md', CHECK.ROOT / 'vendor' / 'relore' / 'unavailable.md']
 
         def rglob(path, pattern):
             yield from original(path, pattern)

@@ -11,6 +11,10 @@ venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.ruff_cache/
+*.egg-info/
+/build/
+/dist/
 # Runtime data and complete clones are distributed by a hashed manifest
 /data/
 /clones/

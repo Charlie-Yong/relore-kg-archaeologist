@@ -8,7 +8,7 @@
 
 本仓库已按用户授权公开，规划可直接阅读；提交和管理仍按实际授权。密钥、私有测试参考和个人材料不在公开仓库中保存。
 
-**当前交付：规划 v1.3.2 / 契约 1.3.2。** 独立本地小样已真实调用relore、PostgreSQL、Neo4j与DeepSeek走通技术链路，得到40条来源、20个实体、20条关系和3条决策；项目归属、理由漏抽和关联证据存在错误，知识质量未通过。详见[试跑事实与修订交接](deliveries/planning/2026-10-27-v1.3.0/pilot_findings.md)。本仓库仍交付规划、契约与工作单，正式模块接入、默认规模、自由提问界面、第二库、双平台及课程实验待验收。
+**当前交付：规划 v1.4.0 / 契约 1.4.0，以及可运行的“项目历史采集器”。** P4将relore 0.3.19固定源码纳入仓库，完成项目化安装、URL有限采集、SQLite/PostgreSQL入库与关键词检索接口。完整URL→模型抽取→图谱→问答仍按六人分工实施；此前独立小样的模型/Neo4j链路及知识质量问题见[试跑记录](deliveries/planning/2026-10-27-v1.3.0/pilot_findings.md)。
 
 **已完成的前期工作归属P4：** 项目起初调研、总体方案起草、多轮架构迭代、现有全部规划与规划协作框架、独立原型和期初小规模真实试跑，均由P4独立负责完成，计入其累计贡献。详见[P4前期工作与贡献记录](deliveries/P4/2026-10-27/handoff.md)，后续报告分工与展示引用该记录。
 
@@ -18,18 +18,34 @@
 
 1.3.2修正Release身份为repo与原样tag，避免同提交的不同标签被合并；代码实验统一为12个单文件快照（4开发/8测试），前后比较复用已采快照。默认采样规则保持，按现有安排试跑校准。
 
+## 项目历史采集器：安装与运行
+
+基于开源relore二次开发，P4负责移植、适配、基础数据接口及维护。[完整安装/调用说明](docs/collector.md)包含Windows PowerShell、macOS、SQLite/PostgreSQL及P1/P2接口；原始来源和许可证见[第三方说明](THIRD_PARTY_NOTICES.md)。
+
+macOS快速示例，在仓库根目录运行：
+
+~~~sh
+python3.11 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m historykg.collector doctor
+.venv/bin/python -m historykg.collector ingest https://github.com/pallets/flask
+.venv/bin/python -m historykg.collector search 'Flask' --repo pallets/flask
+~~~
+
+默认开发小样最多一个PR和一个Issue，使用本地SQLite；PostgreSQL为正式主线。它不调用模型，不是完整系统的自动建图验收。源码、基础接口、验证及交接均计入P4的已完成贡献。
+
 ## 成员如何开工
 
 首次把本人对应的一份完整工作单交给AI；AI已有仓库访问时，给该文件路径即可。文件已经指定角色和本轮首个可运行产物，AI读完即自行读状态、检查环境、恢复/建立个人分支并开始实施，不需要额外启动提示或回答“是否开始”。只收到通用规划且无法唯一确定角色时才询问分工。
 
-后续恢复会话时，AI自行读取STATUS、最新交接、请求和现有成果，接着做下一项可执行工作。缺上游先登记请求并推进独立任务；常规提交、审核、技术确认、集成、报告和PPT都由角色AI完成。当前交付仍是规划资料，本次维护不冒充六个模块已开始运行。
+后续恢复会话时，AI自行读取STATUS、最新交接、请求和现有成果，接着做下一项可执行工作。缺上游先登记请求并推进独立任务；常规提交、审核、技术确认、集成、报告和PPT都由角色AI完成。P4基础接口已有实现，其余模块按真实状态接入。
 
 | 角色 | 工作单 |
 |---|---|
 | P1 数据与集成 | [P1工作单](P1_数据与集成_给成员AI.md) |
 | P2 图谱与查询 | [P2工作单](P2_图谱与查询_给成员AI.md) |
 | P3 代码与演化 | [P3工作单](P3_代码与演化_给成员AI.md) |
-| P4 模型与知识抽取 | [P4工作单](P4_模型与知识抽取_给成员AI.md) |
+| P4 开源移植、基础数据接口与模型抽取 | [P4工作单](P4_模型与知识抽取_给成员AI.md) |
 | P5 原型与汇报 | [P5工作单](P5_原型与汇报_给成员AI.md) |
 | P6 模型参考与实验 | [P6工作单](P6_模型参考与实验_给成员AI.md) |
 
@@ -46,7 +62,8 @@ P4使用macOS，其余Windows；P2使用现有DeepSeek可执行开发工具，�
 - [relore与Flask可行性记录](02_relore与Flask可行性记录.md)
 - [范围与契约变更记录](03_范围与契约变更记录.md)
 - [成员与仓库登记](coordination/成员与仓库登记.md)
-- [当前修订与检查记录](deliveries/planning/2026-10-27-v1.3.2/README.md)
+- [当前修订与检查记录](deliveries/planning/2026-10-27-v1.4.0/README.md)
+- [v1.3.2身份与样本单位修正](deliveries/planning/2026-10-27-v1.3.2/README.md)
 - [v1.3.1执行要求精简](deliveries/planning/2026-10-27-v1.3.1/README.md)
 - [v1.3.0试跑反馈修订](deliveries/planning/2026-10-27-v1.3.0/README.md)
 - [v1.2.0自动建图目标修订](deliveries/planning/2026-10-26-v1.2.0/README.md)
@@ -56,7 +73,7 @@ P4使用macOS，其余Windows；P2使用现有DeepSeek可执行开发工具，�
 
 期中：**2026年11月11日，每组5分钟**。内部完整候选：**12月20日**。实际期末提交日期以老师通知为准。
 
-主要实验对象 [pallets/flask](https://github.com/pallets/flask) 与依赖 [huggingface/relore](https://github.com/huggingface/relore) 均为独立上游。本组新增URL自动流水线、版本关系、真实LLM决策理由抽取、知识图谱、可追溯应用与实验。relore不现成提供全部历史关系，代码/Commit/Release由P3模块从目标官方来源补充；保留上游来源与许可证说明。
+主要实验对象为[pallets/flask](https://github.com/pallets/flask)。项目历史采集器基于[huggingface/relore](https://github.com/huggingface/relore)二次开发，固定源码已纳入项目；本组实现项目化接入，并继续开发URL流水线、版本关系、LLM决策理由抽取、知识图谱、应用与实验。代码/Commit/Release由P3从目标官方来源补充。
 
 ## 检查规划资料
 

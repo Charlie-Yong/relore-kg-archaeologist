@@ -1,0 +1,6 @@
+apiVersion: v2
+name: relore
+version: 0.1.0
+type: application
+description: "relore — GitHub-history index: relored serve, relored poll, and its Postgres"
+icon: https://huggingface.co/front/assets/huggingface_logo-noborder.svg
