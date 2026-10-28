@@ -51,7 +51,7 @@ def main():
             errors.append(f'{path.name}: missing automatic-start section')
         else:
             boot = text.split('<!-- BEGIN AUTO START -->', 1)[1].split('<!-- END AUTO START -->', 1)[0]
-            for term in [f'自动开工：{role}第一轮', f'STATUS_{role}.md', f'feat/{role.lower()}', '本轮首个可运行产物', '最小接管', '恢复']:
+            for term in [f'自动开工：{role}第一轮', '0. **先讲清项目原理。**', '公共契约C0', f'STATUS_{role}.md', f'feat/{role.lower()}', '本轮首个可运行产物', '最小接管', '恢复']:
                 if term not in boot:
                     errors.append(f'{path.name}: automatic-start section missing {term}')
         tasks = text.split('<!-- BEGIN ROLE TASKS -->', 1)[-1]
@@ -62,7 +62,7 @@ def main():
     for term in required:
         if term not in contract:
             errors.append(f'Contract missing expected requirement: {term}')
-    for term in ['C3.1', 'C3.2', '人工接管', '无须额外启动提示', '所属AI当轮登记', '已批准预算', '离线电脑']:
+    for term in ['C0. 开工前必须向成员讲清项目原理', '先讲清项目原理', 'C3.1', 'C3.2', '人工接管', '无须额外启动提示', '所属AI当轮登记', '已批准预算', '离线电脑']:
         if term not in contract:
             errors.append(f'Contract missing autonomy requirement: {term}')
     link_count = 0
