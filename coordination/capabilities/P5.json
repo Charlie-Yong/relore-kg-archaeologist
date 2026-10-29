@@ -8,11 +8,11 @@
   "python": "3.11.15 (shared project venv)",
   "git": true,
   "shell": "zsh via exec_command",
-  "git_push": null,
-  "github_pr": null,
+  "git_push": true,
+  "github_pr": true,
   "github_merge": null,
   "github_token_read": null,
   "graph_access": null,
   "model_access": null,
-  "checked_at": "2026-10-30T07:43:00+08:00"
+  "checked_at": "2026-10-30T07:50:00+08:00"
 }

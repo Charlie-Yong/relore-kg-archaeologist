@@ -216,7 +216,9 @@ def main():
     if replay_path:
         try:
             replay = json.loads(Path(replay_path).read_text(encoding="utf-8"))
-            st.warning(f"冻结真实结果重放 · 原运行时间：{replay['recorded_at']}")
+            mode = ("冻结真实结果重放" if replay.get("mode") == "real_public_query"
+                    else "开发示例重放")
+            st.warning(f"{mode} · 原响应保存时间：{replay['recorded_at']}")
             st.caption("本页展示保存的原始响应；当前不启动构建或模型查询。")
             job = BuildJob_v1.model_validate(replay["job"]).model_dump(mode="json")
             if show_job(job):
@@ -225,6 +227,8 @@ def main():
                         raise ValueError("重放数据版本不一致")
                     st.markdown(f"**问题：{response['query']['question']}**")
                     show_result(response)
+            with st.expander("冻结响应来源记录"):
+                st.json(replay.get("provenance", {}), expanded=False)
         except (KeyError, ValueError, OSError, ValidationError):
             st.error("冻结结果文件无法核验，请由安装者检查备份。")
         return

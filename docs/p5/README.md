@@ -44,12 +44,15 @@ empty、unsupported、error分别显示，不根据空数组改写后端状态�
 设置`HISTORYKG_REPLAY_FILE`可进入显式标识的冻结结果重放，文件结构为：
 
 ```json
-{"recorded_at":"原记录时间", "job":{}, "queries":[]}
+{"mode":"real_public_query", "recorded_at":"原响应保存时间", "job":{}, "queries":[], "provenance":{}}
 ```
 
 job为公共BuildJob，queries为同一dataset_id的公共QueryResult。
 重放模式不显示在线输入框、不启动构建、不调用模型；不能把重放时间当在线性能。
 正式备份仅在真实公共查询完成后保存，本轮不拿toy或旧dev响应拼成Flask URL验收。
+本地归档工具`python -m app.replay --job-id JOB --query 原result.json --output 冻结包.json`
+只读取已存作业/响应，保存原query/model运行ID、文件SHA-256及保存时间；拒收未就绪、跨版本和toy。
+这些是演示安装者命令，普通用户仍只填写URL和自然语言问题。
 
 ## 本轮验证
 
