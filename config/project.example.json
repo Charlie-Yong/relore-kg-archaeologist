@@ -1,0 +1,21 @@
+{
+  "database_url": "postgresql://collector:collector_dev@127.0.0.1:16432/historykg_collector",
+  "extract_module": "historykg.extract",
+  "load_module": "historykg.graph",
+  "model": {
+    "provider": "deepseek",
+    "model_id": "deepseek-flash",
+    "thinking": "disabled",
+    "max_output_tokens": 4096,
+    "max_retries": 2,
+    "temperature": 0,
+    "max_input_bytes": 200000,
+    "chunk_characters": 20000,
+    "timeout_seconds": 90
+  },
+  "budget": {
+    "ledger_path": ".local/deepseek_budget.sqlite3",
+    "approved_cny": 0,
+    "max_cost_cny": 0
+  }
+}
