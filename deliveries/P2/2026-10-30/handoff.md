@@ -77,3 +77,8 @@ upsert new→第二dataset回放，旧dataset的raw命中/排名/候选完全不
 
 P6已接收最终context字段位置；P5已确认path.entities接口。未提前发布P1待extract的
 Flask同ID数据集，待独立参考先行完成、主代理唯一恢复生产流水线后再实问。
+
+已push feat/p2并创建[PR #5](https://github.com/Charlie-Yong/relore-kg-archaeologist/pull/5)，
+修复提交0209e47。主代理按依赖顺序合并其他角色后，PR祖先差异自然收窄；不重写长期分支。
+新增[报告方法草稿与核验引用](method_notes.md)、[期中片段口径](midterm_notes.md)，
+均只使用已有实际实现/工程结果，不填写待运行Flask实答或正式实验数字。
