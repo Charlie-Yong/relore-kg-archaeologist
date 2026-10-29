@@ -140,6 +140,44 @@ def test_selected_resume_preserves_pages_and_cumulative_requests(database_url, t
         )
 
 
+def test_interrupt_keeps_budget_and_completed_response_checkpoint(database_url, tmp_path):
+    _, _, upstream = fake_service()
+    calls = []
+
+    def interrupted(request):
+        calls.append(1)
+        if len(calls) == 7:
+            raise KeyboardInterrupt()
+        return upstream.handle_request(request)
+
+    selected = [{"kind": "pr", "number": 2}, {"kind": "issue", "number": 1}]
+    with pytest.raises(KeyboardInterrupt):
+        collector.collect_repo(
+            URL,
+            selected=selected,
+            token="",
+            database_url=database_url,
+            transport=httpx.MockTransport(interrupted),
+            output_dir=tmp_path / "cut",
+        )
+    capture = json.loads((tmp_path / "cut/capture.json").read_text())
+    assert capture["checkpoint"] is True
+    assert capture["result"]["github_requests"] == 7  # in-flight attempt is already counted
+    assert len(capture["http_responses"]) == 6
+    assert len(capture["payloads"]) == 1
+    resumed = collector.collect_repo(
+        URL,
+        selected=selected,
+        token="",
+        database_url=database_url,
+        transport=upstream,
+        resume_capture=tmp_path / "cut/capture.json",
+        output_dir=tmp_path / "continued",
+    )
+    assert resumed["status"] == "ok" and resumed["indexed_threads"] == 2
+    assert resumed["github_requests"] > 7
+
+
 def test_budget_before_first_thread_is_blocked(database_url, tmp_path):
     _, _, transport = fake_service()
     result = collector.collect_repo(

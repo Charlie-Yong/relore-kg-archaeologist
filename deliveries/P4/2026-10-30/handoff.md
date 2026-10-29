@@ -20,3 +20,5 @@ PYTHONPATH=vendor/relore:. RELORE_TEST_POSTGRES_URL=postgresql://postgres@127.0.
 ~~~
 
 后续批次持续更新本记录；正式实验与URL自动闭环待接收方实际运行。
+
+P1接收首批后指出末尾写capture无法恢复进程中断。已补每次请求前/每个响应后/线程完成后的原子checkpoint；在第7个请求模拟KeyboardInterrupt，累计耗用7、收到响应6、完整线程1均在磁盘，随后恢复到2线程成功。相关collector双后端30项通过（1.45秒）；这是真实异常分支回归，无付费请求。

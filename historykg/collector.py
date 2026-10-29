@@ -61,10 +61,12 @@ def _json_default(value: Any) -> Any:
 
 def _write_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(
         json.dumps(value, ensure_ascii=False, indent=2, default=_json_default) + "\n",
         encoding="utf-8",
     )
+    temporary.replace(path)
 
 
 def _result(status: str = "ok", **fields: Any) -> dict[str, Any]:
@@ -183,11 +185,13 @@ class _RequestBudget:
         self.limit = limit
         self.used = initial_requests
         self.responses: list[dict[str, Any]] = list(responses or [])
+        self.checkpoint = lambda: None
 
     def before_request(self, request: httpx.Request) -> None:
         if self.used >= self.limit:
             raise CollectionBlocked(f"已达到GitHub请求上限{self.limit}次。")
         self.used += 1
+        self.checkpoint()
 
     def after_response(self, response: httpx.Response) -> None:
         response.read()
@@ -205,6 +209,7 @@ class _RequestBudget:
                 "rate_limit_remaining": response.headers.get("x-ratelimit-remaining"),
             }
         )
+        self.checkpoint()
 
 
 def _retry_wait(seconds: float) -> None:
@@ -325,6 +330,45 @@ def collect_repo(
         headers["Authorization"] = f"Bearer {token}"
     status = "ok"
     counts = {"threads": 0, "documents": 0}
+    directory = (
+        Path(output_dir)
+        if output_dir
+        else ROOT
+        / ".local"
+        / "collector"
+        / "runs"
+        / (dt.datetime.now(dt.UTC).strftime("%Y%m%dT%H%M%SZ-") + uuid.uuid4().hex[:6])
+    )
+    capture_path = directory / "capture.json"
+
+    def checkpoint():
+        _write_json(
+            capture_path,
+            {
+                "format": CAPTURE,
+                "repo": repo,
+                "retrieved_at": _now(),
+                "relore_commit": COMMIT,
+                "checkpoint": True,
+                "result": _result(
+                    "partial" if payloads else "blocked",
+                    repo=repo,
+                    profile_version=profile_version,
+                    selected=selected_threads,
+                    indexed_threads=len(payloads),
+                    counts=counts,
+                    gaps=[*gaps, {"reason": "interrupted_or_running"}],
+                    github_requests=budget.used,
+                    max_requests=max_requests,
+                    authenticated=bool(token),
+                    capture_path=str(capture_path),
+                ),
+                "payloads": [dataclasses.asdict(p) for p in payloads],
+                "http_responses": budget.responses,
+            },
+        )
+
+    budget.checkpoint = checkpoint
     try:
         engine = _engine(database_url)
         migrate(engine)
@@ -353,6 +397,7 @@ def collect_repo(
                     raise UnsupportedRepository("当前项目范围为包含Python源码的公开仓库。")
             if selected is None and not selected_threads:
                 selected_threads = _select_threads(client, repo, max_issues, max_prs)
+            checkpoint()
             complete_numbers = {p.number for p in payloads}
             for item in selected_threads:
                 if item["number"] in complete_numbers:
@@ -365,6 +410,7 @@ def collect_repo(
                     counts = _counts(engine, repo)
                     if payload.unread:
                         gaps.append({**item, "reason": "unread", "parts": sorted(payload.unread)})
+                    checkpoint()
                 except GitHubError as exc:
                     gaps.append({**item, "reason": "fetch_failed", "http_status": exc.status})
             counts = _counts(engine, repo)
@@ -393,16 +439,6 @@ def collect_repo(
         if engine is not None:
             engine.dispose()
 
-    directory = (
-        Path(output_dir)
-        if output_dir
-        else ROOT
-        / ".local"
-        / "collector"
-        / "runs"
-        / (dt.datetime.now(dt.UTC).strftime("%Y%m%dT%H%M%SZ-") + uuid.uuid4().hex[:6])
-    )
-    capture_path = directory / "capture.json"
     result = _result(
         status,
         repo=repo,

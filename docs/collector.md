@@ -142,6 +142,9 @@ headers只保留分页所需`link`与`content-type`，不能传认证信息。
 
 `resume_capture=Path(...)`沿用冻结的仓库、selected清单、成功分页与已用请求数；
 完整线程直接复用，未完成线程重读时成功冻结页走本地回放，仅缺失页消耗新请求。
+每次网络请求发出前先原子保存已耗请求数，收到每个响应及完成每个线程后再更新capture；
+进程中断可从最后checkpoint继续，未收到响应的在途请求也保留耗用。checkpoint里的
+`interrupted_or_running`明确表示尚未结束，不能当成完整采集结果。
 保留原始capture，并指定新的`output_dir`保存续作。换仓库或换selected会被拒绝。
 旧capture没有分页headers时不用于网络页缓存，以免把缺Link误作最后一页；
 完整线程仍可直接复用。`replay_capture`仍表示纯离线导入，不是续采。
