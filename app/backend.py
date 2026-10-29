@@ -19,5 +19,5 @@ def resume(job_id):
 
 def ask(dataset_id, question, kind="search"):
     result = query(QueryRequest_v1(dataset_id=dataset_id, question=question, kind=kind),
-                   config=pipeline.load_config())
+                   config=pipeline.query_config(pipeline.load_config()))
     return result.model_dump(mode="json")
