@@ -203,7 +203,22 @@ def map_capture(
             parent[max(a, b)] = min(a, b)
     for unit, payload in zip(units, capture.get("payloads", []), strict=True):
         unit["topic_group"] = stable_id("topic", repo, f"thread:{find(payload['number'])}")
-    write_jsonl(root / "sources.jsonl", merge_records(sources, "source_id"))
+    # Repeated reads of identical API content retain the first frozen timestamp.
+    # The original capture still records every read and its exact request time.
+    unique_sources = {}
+    for source in sources:
+        previous = unique_sources.get(source["source_id"])
+        if previous:
+            left = {k: v for k, v in previous.items() if k != "retrieved_at"}
+            right = {k: v for k, v in source.items() if k != "retrieved_at"}
+            if left != right:
+                raise ValueError("同source_id存在冲突元数据")
+            if source["retrieved_at"] < previous["retrieved_at"]:
+                unique_sources[source["source_id"]] = source
+        else:
+            unique_sources[source["source_id"]] = source
+    sources = sorted(unique_sources.values(), key=lambda s: s["source_id"])
+    write_jsonl(root / "sources.jsonl", sources)
     write_jsonl(root / "source_units.jsonl", units)
     write_jsonl(root / "p1/entities.jsonl", entities)
     write_jsonl(root / "p1/evidence.jsonl", merge_records(evidence, "evidence_id"))
@@ -214,7 +229,9 @@ def map_capture(
             pr_details.get(p["number"], p) for p in snapshot.get("selected_prs", [])
         ]
         snapshot["sources"] = merge_records(sources, "source_id")
-        snapshot["paths"] = {"sources": str(root / "sources.jsonl")}
+        code_input = Path(snapshot_dir) / "code-input/sources.jsonl"
+        write_jsonl(code_input, snapshot["sources"])
+        snapshot["paths"] = {"sources": str(code_input)}
         snapshot["capture_path"] = str(capture_path)
         write_json(Path(snapshot_dir) / "snapshot.json", snapshot)
     build_subjects(root)
@@ -349,7 +366,16 @@ def finalize_relations(dataset_dir: str | Path) -> dict:
                 )
                 if explicit or commit:
                     add("Closes", pr["id"], issue_id, source, "github_api", event.get("created_at"))
-    write_jsonl(root / "p1/relations.jsonl", merge_records(relations, "id"))
+    combined = {}
+    for relation in relations:
+        if relation["id"] in combined:
+            earlier = combined[relation["id"]]
+            earlier["evidence_ids"] = sorted(
+                set(earlier["evidence_ids"] + relation["evidence_ids"])
+            )
+        else:
+            combined[relation["id"]] = relation
+    write_jsonl(root / "p1/relations.jsonl", sorted(combined.values(), key=lambda r: r["id"]))
     # Preserve producer-owned evidence shards; only add new P1 evidence here.
     write_jsonl(root / "p1/evidence.jsonl", merge_records(evidence, "evidence_id"))
     return {"status": "ok", "counts": {"p1_relations": len(relations)}, "gaps": []}

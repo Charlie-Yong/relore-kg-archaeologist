@@ -7,13 +7,14 @@ name = "historykg-archaeologist"
 version = "1.4.0"
 description = "Project history collector and knowledge-graph course project"
 requires-python = ">=3.11"
-dependencies = ["relore==0.3.19", "httpx[socks]>=0.27"]
+dependencies = ["relore==0.3.19", "httpx[socks]>=0.27", "pydantic>=2,<3", "neo4j==5.26.0"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.5"]
 
 [project.scripts]
 historykg-collector = "historykg.collector:main"
+historykg = "historykg.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["historykg*"]

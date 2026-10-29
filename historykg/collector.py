@@ -61,10 +61,12 @@ def _json_default(value: Any) -> Any:
 
 def _write_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(
         json.dumps(value, ensure_ascii=False, indent=2, default=_json_default) + "\n",
         encoding="utf-8",
     )
+    temporary.replace(path)
 
 
 def _result(status: str = "ok", **fields: Any) -> dict[str, Any]:
@@ -179,15 +181,17 @@ def doctor(database_url: str | None = None) -> dict[str, Any]:
 class _RequestBudget:
     """Count each network attempt, including retries and pagination, and freeze responses."""
 
-    def __init__(self, limit: int):
+    def __init__(self, limit: int, initial_requests: int = 0, responses: list | None = None):
         self.limit = limit
-        self.used = 0
-        self.responses: list[dict[str, Any]] = []
+        self.used = initial_requests
+        self.responses: list[dict[str, Any]] = list(responses or [])
+        self.checkpoint = lambda: None
 
     def before_request(self, request: httpx.Request) -> None:
         if self.used >= self.limit:
             raise CollectionBlocked(f"已达到GitHub请求上限{self.limit}次。")
         self.used += 1
+        self.checkpoint()
 
     def after_response(self, response: httpx.Response) -> None:
         response.read()
@@ -197,15 +201,43 @@ class _RequestBudget:
                 "status": response.status_code,
                 "retrieved_at": _now(),
                 "body": response.text,
+                "headers": {
+                    k: v
+                    for k, v in response.headers.items()
+                    if k.lower() in {"link", "content-type"}
+                },
                 "rate_limit_remaining": response.headers.get("x-ratelimit-remaining"),
             }
         )
+        self.checkpoint()
 
 
 def _retry_wait(seconds: float) -> None:
     if seconds > 10:
         raise CollectionBlocked(f"GitHub要求等待{int(seconds)}秒，请在额度恢复后重试。")
     time.sleep(seconds)
+
+
+class _ResumableClient(httpx.Client):
+    """Replay successful frozen GET pages; only uncaptured pages use the network."""
+
+    def __init__(self, *args, captured_responses: list, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.captured = {
+            r["url"]: r for r in captured_responses if r["status"] == 200 and "headers" in r
+        }
+
+    def send(self, request, *args, **kwargs):
+        captured = self.captured.get(str(request.url))
+        if captured is not None:
+            # Bypasses network hooks: a replay is neither a new attempt nor a new capture.
+            return httpx.Response(
+                captured["status"],
+                text=captured["body"],
+                request=request,
+                headers=captured.get("headers", {}),
+            )
+        return super().send(request, *args, **kwargs)
 
 
 def _select_threads(client: GitHubClient, repo: str, issues: int, prs: int) -> list[dict]:
@@ -233,6 +265,11 @@ def collect_repo(
     output_dir: str | Path | None = None,
     token: str | None = None,
     transport: httpx.BaseTransport | None = None,
+    selected: list[dict] | None = None,
+    resume_capture: str | Path | None = None,
+    initial_requests: int = 0,
+    initial_http_responses: list[dict] | None = None,
+    profile_version: str = PROFILE,
 ) -> dict[str, Any]:
     """Discover and index a bounded public Python repo sample, saving a replayable capture.
 
@@ -245,14 +282,40 @@ def collect_repo(
             raise ValueError("讨论单元总上限须在1到40之间。")
         if not 1 <= max_requests <= 300:
             raise ValueError("GitHub请求上限须在1到300之间。")
+        if not 0 <= initial_requests <= max_requests:
+            raise ValueError("已用请求数必须位于请求上限内。")
+        if selected is not None:
+            selected = list({(x["kind"], x["number"]): dict(x) for x in selected}.values())
+            if len(selected) > 40 or any(
+                x["kind"] not in {"issue", "pr"}
+                or not isinstance(x["number"], int)
+                or x["number"] <= 0
+                for x in selected
+            ):
+                raise ValueError("selected只允许至多40条合法线程。")
     except ValueError as exc:
         return _result("unsupported", error={"code": "input", "message": str(exc)})
 
     engine = None
     payloads: list[ThreadPayload] = []
-    selected: list[dict] = []
+    selected_threads: list[dict] = list(selected or [])
     gaps: list[dict] = []
-    budget = _RequestBudget(max_requests)
+    captured = list(initial_http_responses or [])
+    prior_payloads = []
+    if resume_capture is not None:
+        previous = json.loads(Path(resume_capture).read_text(encoding="utf-8"))
+        if previous.get("format") != CAPTURE or normalize_repo(previous["repo"]) != repo:
+            raise ValueError("续作快照格式或仓库不一致。")
+        old_selected = previous["result"]["selected"]
+        if selected is not None and selected != old_selected:
+            raise ValueError("续作必须沿用冻结selected清单。")
+        selected_threads = old_selected
+        prior_payloads = previous["payloads"]
+        captured = previous["http_responses"]
+        initial_requests = previous["result"]["github_requests"]
+        if initial_requests > max_requests:
+            raise ValueError("续作请求上限不能小于已有耗用。")
+    budget = _RequestBudget(max_requests, initial_requests, captured)
     token = (
         token
         if token is not None
@@ -267,10 +330,58 @@ def collect_repo(
         headers["Authorization"] = f"Bearer {token}"
     status = "ok"
     counts = {"threads": 0, "documents": 0}
+    directory = (
+        Path(output_dir)
+        if output_dir
+        else ROOT
+        / ".local"
+        / "collector"
+        / "runs"
+        / (dt.datetime.now(dt.UTC).strftime("%Y%m%dT%H%M%SZ-") + uuid.uuid4().hex[:6])
+    )
+    capture_path = directory / "capture.json"
+
+    def checkpoint():
+        _write_json(
+            capture_path,
+            {
+                "format": CAPTURE,
+                "repo": repo,
+                "retrieved_at": _now(),
+                "relore_commit": COMMIT,
+                "checkpoint": True,
+                "result": _result(
+                    "partial" if payloads else "blocked",
+                    repo=repo,
+                    profile_version=profile_version,
+                    selected=selected_threads,
+                    indexed_threads=len(payloads),
+                    counts=counts,
+                    gaps=[*gaps, {"reason": "interrupted_or_running"}],
+                    github_requests=budget.used,
+                    max_requests=max_requests,
+                    authenticated=bool(token),
+                    capture_path=str(capture_path),
+                ),
+                "payloads": [dataclasses.asdict(p) for p in payloads],
+                "http_responses": budget.responses,
+            },
+        )
+
+    budget.checkpoint = checkpoint
     try:
         engine = _engine(database_url)
         migrate(engine)
-        with httpx.Client(
+        for raw in prior_payloads:
+            payload = ThreadPayload(**{**raw, "unread": set(raw.get("unread", []))})
+            if normalize_repo(payload.repo) != repo:
+                raise ValueError("续作线程仓库不一致。")
+            if not payload.unread:
+                with engine.begin() as conn:
+                    index_payload(conn, payload)
+                payloads.append(payload)
+        with _ResumableClient(
+            captured_responses=captured,
             transport=transport,
             headers=headers,
             timeout=30,
@@ -284,8 +395,13 @@ def collect_repo(
                 languages = client.get_json(f"repos/{repo}/languages")
                 if "Python" not in languages:
                     raise UnsupportedRepository("当前项目范围为包含Python源码的公开仓库。")
-            selected = _select_threads(client, repo, max_issues, max_prs)
-            for item in selected:
+            if selected is None and not selected_threads:
+                selected_threads = _select_threads(client, repo, max_issues, max_prs)
+            checkpoint()
+            complete_numbers = {p.number for p in payloads}
+            for item in selected_threads:
+                if item["number"] in complete_numbers:
+                    continue
                 try:
                     payload = fetch_thread(client, repo, item["number"])
                     with engine.begin() as conn:
@@ -294,6 +410,7 @@ def collect_repo(
                     counts = _counts(engine, repo)
                     if payload.unread:
                         gaps.append({**item, "reason": "unread", "parts": sorted(payload.unread)})
+                    checkpoint()
                 except GitHubError as exc:
                     gaps.append({**item, "reason": "fetch_failed", "http_status": exc.status})
             counts = _counts(engine, repo)
@@ -322,21 +439,11 @@ def collect_repo(
         if engine is not None:
             engine.dispose()
 
-    directory = (
-        Path(output_dir)
-        if output_dir
-        else ROOT
-        / ".local"
-        / "collector"
-        / "runs"
-        / (dt.datetime.now(dt.UTC).strftime("%Y%m%dT%H%M%SZ-") + uuid.uuid4().hex[:6])
-    )
-    capture_path = directory / "capture.json"
     result = _result(
         status,
         repo=repo,
-        profile_version=PROFILE,
-        selected=selected,
+        profile_version=profile_version,
+        selected=selected_threads,
         indexed_threads=len(payloads),
         counts=counts,
         gaps=gaps,
