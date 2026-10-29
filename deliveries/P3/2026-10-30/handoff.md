@@ -17,7 +17,8 @@ STATUS、10月27日试跑与 P4 交接后，通过 agent message 向根协调会
 
 - 公共接口首批 e0f4ab2 已普通 merge（fast-forward）到本人分支。
 - 本人代码提交：`41d6020`，提供 `historykg/code/` 和 `tests/test_code.py`。
-- 已成功推送 `origin/feat/p3`；PR/后续文档提交与接收记录在本节续记。
+- 文档/能力/状态提交：`20f2e1a`。已成功推送 `origin/feat/p3` 并创建
+  [PR #3](https://github.com/Charlie-Yong/relore-kg-archaeologist/pull/3)。
 - 输入是 P1 `snapshot_dir/snapshot.json`，包括规范 repo、dataset_id、完整 selected_prs，
   可带 default_branch_sha、已有 SourceDocument 及 Release/tag 官方对象。
 - 生产入口：`historykg.code.run_code_stage(snapshot_dir, *, dataset_dir, profile, budget)`。

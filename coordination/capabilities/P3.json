@@ -9,7 +9,7 @@
   "git": "2.54.0 (Apple Git-157)",
   "shell": "zsh via exec_command",
   "git_push": true,
-  "github_pr": null,
+  "github_pr": true,
   "github_merge": null,
   "github_token_read": null,
   "graph_access": null,
