@@ -1,0 +1,18 @@
+{
+  "role": "P5",
+  "os": "macOS",
+  "can_read": true,
+  "can_write": true,
+  "can_run": true,
+  "can_network": true,
+  "python": "3.11.15 (shared project venv)",
+  "git": true,
+  "shell": "zsh via exec_command",
+  "git_push": null,
+  "github_pr": null,
+  "github_merge": null,
+  "github_token_read": null,
+  "graph_access": null,
+  "model_access": null,
+  "checked_at": "2026-10-30T07:43:00+08:00"
+}
