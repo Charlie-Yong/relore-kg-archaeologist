@@ -11,6 +11,7 @@ from historykg.contracts import CONTRACT_VERSION
 from historykg.ids import entity_id, relation_id, stable_id
 from historykg.ingest.discovery import parse_references
 from historykg.io import (
+    api_closer_matches,
     build_subjects,
     collect_records,
     freeze_api_source,
@@ -237,7 +238,11 @@ def map_capture(
     build_subjects(root)
     gaps = list(capture.get("result", {}).get("gaps", []))
     gaps += [
-        {"reason": "explicit_reference_" + r["resolution"], **r}
+        {
+            "reason": "explicit_reference_" + r["resolution"],
+            "severity": "coverage" if r["resolution"] == "over_limit" else "warning",
+            **r,
+        }
         for r in references
         if r["resolution"] not in {"collected", "out_of_scope"}
     ]
@@ -259,8 +264,11 @@ def map_capture(
             "github_requests": capture.get("result", {}).get("github_requests"),
         },
     )
+    incomplete = capture.get("result", {}).get("status") == "partial" or any(
+        g.get("severity", "warning") != "coverage" for g in gaps
+    )
     return {
-        "status": "partial" if gaps else "ok",
+        "status": "partial" if incomplete else "ok",
         "counts": {"sources": len(sources), "units": len(units)},
         "gaps": gaps,
         "artifacts": {"dataset_dir": str(root)},
@@ -356,9 +364,7 @@ def finalize_relations(dataset_dir: str | Path) -> dict:
             for pr in (e for e in entities.values() if e["type"] == "PullRequest"):
                 props = pr["properties"]
                 closer = event.get("closer") or event.get("source", {}).get("issue", {})
-                explicit = closer.get("number") == props["number"] and "/pull/" in closer.get(
-                    "html_url", ""
-                )
+                explicit = api_closer_matches(closer, repo, props["number"])
                 commit = (
                     props.get("merged") is True
                     and props.get("merge_commit_sha")
