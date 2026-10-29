@@ -124,3 +124,9 @@ model和共享账本；数据库迁移不因此换来源输入。
 自动采40个完整讨论单元并取得24份源码快照，369条统一来源的原文哈希、引文和端点校验通过。
 现阶段抽取、图和问答仍待接通；期中只展示实际运行材料，之后验证完整闭环和独立对照实验。
 P4承担前期方案及采集基础，P3承担版本源码，本轮P1承担数据与编排接入。
+
+## 分支和PR送达
+
+本批修复提交7dba6c5已实际推送feat/p1，已创建[PR #4](https://github.com/Charlie-Yong/relore-kg-archaeologist/pull/4)。推送与PR能力据实际结果更新，尚未做GitHub合并。主代理接收后按C3.3复跑受影响流程；本阶段不代表P1整体done。
+
+P5调用P2时传pipeline.query_config(pipeline.load_config(...))，与CLI和pipeline load相同，统一展开服务配置、answer/model回退及唯一共享预算，不由页面另做映射。
