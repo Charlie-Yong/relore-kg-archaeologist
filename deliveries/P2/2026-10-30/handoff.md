@@ -52,5 +52,33 @@ P1已确认pipeline/CLI按本接口传入graph配置、根database_url及P4 answ
 load返回dict，query返回公共Pydantic，CLI统一model_dump。P4回答器即将提交，
 复用其render_context与唯一共享账本；真实模型联调待该提交后继续。
 P1/主代理需按C3.3实际复跑本模块并做独立工程复核，当前不标verified_real/done。
-尚待：P4最终renderer联调与截断检查、真实Flask数据load/query、架构职责实答、
+尚待：真实Flask数据load/query、架构职责实答、
 11月11日展示真实缓存、Windows实机、P6正式实验与课程章节后续材料。
+
+## 接收复核后的实际接缝修复（同日）
+
+主代理已独立复跑首批14项真实namespace测试全部通过，并检查代码；反馈正常
+query配置缺P4回答输出目录、同repo刷新会污染旧dataset的relore排名，另需路径实体可读。
+同步主仓库main0855735（含P4 776e556、P1 7dba6c5）后，本批修复：
+
+- answer_output_root默认本数据集llm，显式配置仍优先；不再要求普通用户填内部目录。
+- 每dataset在同一Postgres实例独立schema回放实际P4 ThreadPayload，逐条验证原对象与
+  C5讨论正文；命中仍调用真实search_history，索引描述符不保存凭据。
+  exports/relore_input.json保存可搬迁的原始输入，随冻结包交付；SQLite开发使用单独文件。
+- path.entities返回当前数据集已存Entity及Source轻量标题，P5可读展示，不新增业务实体。
+- 真实relore datetime命中转换为ISO字符串再写审计；QueryResult透出usage/model_run_id。
+
+新增针对性验证（实际PostgreSQL16.4/Neo4j5.26.0）：同repo原对象old→全局index_payload
+upsert new→第二dataset回放，旧dataset的raw命中/排名/候选完全不变，新dataset命中新文本。
+真实P4 answer_question链使用无付费run_request替身验证默认目录和真实renderer，
+最终JSON<=12000码点、长来源在完整句/行边界裁剪且end/quote一致。真实模型不调用，
+不把该替身结果当成Flask质量证据。原测试受影响部分与新增测试共同检查：
+`tests/test_graph_query.py`最终16 passed in 2.57s（exit0），ruff/规划检查/diff检查均通过。
+
+P6已接收最终context字段位置；P5已确认path.entities接口。未提前发布P1待extract的
+Flask同ID数据集，待独立参考先行完成、主代理唯一恢复生产流水线后再实问。
+
+已push feat/p2并创建[PR #5](https://github.com/Charlie-Yong/relore-kg-archaeologist/pull/5)，
+修复提交0209e47。主代理按依赖顺序合并其他角色后，PR祖先差异自然收窄；不重写长期分支。
+新增[报告方法草稿与核验引用](method_notes.md)、[期中片段口径](midterm_notes.md)，
+均只使用已有实际实现/工程结果，不填写待运行Flask实答或正式实验数字。

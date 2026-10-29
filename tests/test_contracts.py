@@ -5,7 +5,15 @@ import pytest
 from historykg.ids import entity_id
 from historykg.ingest.discovery import parse_references
 from historykg.ingest.fixture import create_fixture
-from historykg.io import make_evidence, make_source, read_jsonl, validate_dataset, write_jsonl
+from historykg.io import (
+    _api_relation_supported,
+    api_closer_matches,
+    make_evidence,
+    make_source,
+    read_jsonl,
+    validate_dataset,
+    write_jsonl,
+)
 
 
 @pytest.fixture
@@ -100,3 +108,40 @@ def test_recreate_fixture_same_logical_records(dataset, tmp_path):
 def test_malformed_jsonl_controlled_error(dataset):
     (dataset / "p1/entities.jsonl").write_text('{"id":', encoding="utf-8")
     assert validate_dataset(dataset)["status"] == "error"
+
+
+def test_external_same_number_cannot_close_local_issue():
+    from historykg.io import freeze_api_source
+
+    repo = "pallets/flask"
+    left = {"repo": repo, "key": 7, "properties": {"number": 7}}
+    right = {"repo": repo, "key": 8, "properties": {"number": 8}}
+    event = {
+        "event": "closed",
+        "issue": {"number": 8},
+        "closer": {"number": 7, "html_url": "https://github.com/another/project/pull/7"},
+    }
+    source = freeze_api_source(
+        dataset_id="dev",
+        repo=repo,
+        endpoint="repos/pallets/flask/issues/8/timeline",
+        payload=event,
+        retrieved_at="2026-10-30T00:00:00Z",
+    )
+    evidence = make_evidence(source, source["text"])
+    assert not _api_relation_supported(
+        "Closes", left, right, [evidence], {source["source_id"]: source}
+    )
+    assert not api_closer_matches({"number": 7, "__typename": "PullRequest"}, repo, 7)
+    assert api_closer_matches(
+        {"number": 7, "html_url": "https://github.com/pallets/flask/pull/7"}, repo, 7
+    )
+    assert api_closer_matches(
+        {
+            "number": 7,
+            "__typename": "PullRequest",
+            "repository": {"nameWithOwner": "pallets/flask"},
+        },
+        repo,
+        7,
+    )

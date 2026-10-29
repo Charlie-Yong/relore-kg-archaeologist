@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 import uuid
+from dataclasses import asdict
 from pathlib import Path
 
 import pytest
@@ -12,6 +13,7 @@ from historykg import collector
 from historykg.graph import GraphStore, load_dataset
 from historykg.io import make_evidence, read_jsonl, write_jsonl, write_manifest
 from historykg.query import prepare_query, query
+from historykg.query.frozen_index import drop_index
 from historykg.query.retrieval import resolve_seeds
 
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures/toy_v1"
@@ -59,6 +61,9 @@ def graph_config(tmp_path):
     yield config
     with GraphStore(config) as store:
         for dataset in owned:
+            saved = store.snapshot(dataset)
+            if saved and saved.get("retrieval_index"):
+                drop_index(database, saved["retrieval_index"])
             store.delete_dataset(dataset)
 
 
@@ -191,6 +196,8 @@ def test_query_states_and_trace_evidence(sample, graph_config):
     assert ok.status == "ok" and ok.claims and ok.paths and ok.evidence
     assert all(set(c["evidence_ids"]) <= {e["evidence_id"] for e in ok.evidence}
                for c in ok.claims)
+    assert all(p["entities"] and [e["id"] for e in p["entities"]] == p["entity_ids"]
+               for p in ok.paths)
     output = Path(ok.model_extra["artifacts"]["query_run"])
     assert (output / "retrieval.json").is_file() and (output / "result.json").is_file()
     empty = query({**request, "question": "zzunfindableuniquezz"}, config=config)
@@ -209,9 +216,12 @@ def test_service_failure_is_error_not_empty(sample, graph_config):
     assert query(request, config=bad_graph).status == "error"
     assert not load_dataset(root, config=bad_graph)["graph_ready"]
     bad_retrieval = {**graph_config, "database_url": "postgresql://x@127.0.0.1:1/none"}
-    assert query(request, config=bad_retrieval).status == "error"
     result = load_dataset(root, config=bad_retrieval)
     assert not result["retrieval_ready"] and result["error"]
+    with GraphStore(graph_config) as store:
+        descriptor = store.snapshot(dataset)["retrieval_index"]
+    drop_index(graph_config["database_url"], descriptor)
+    assert query(request, config=graph_config).status == "error"
 
 
 def test_citation_outside_visible_context_is_rejected(sample, graph_config):
@@ -232,3 +242,92 @@ def test_external_issue_number_is_not_resolved_into_local_subject():
     package = read_package(FIXTURE)
     seeds, gaps = resolve_seeds("https://github.com/other/repo/issues/1", package, [])
     assert not seeds and gaps
+
+
+def test_same_repo_mutation_does_not_change_frozen_relore_hits(tmp_path, graph_config):
+    from fake_github import FakeGitHub
+    from relore.github.fetch_thread import ThreadPayload
+
+    from historykg.ingest.capture import map_capture
+
+    repo = "example/p2-frozen-" + uuid.uuid4().hex[:10]
+    fake = FakeGitHub(repo)
+    old = fake.add_issue(1, title="Frozen cache protocol", body="sentinel_old cache protocol")
+    payload = ThreadPayload(repo=repo, number=1, thread_type="issue", thread=old.payload)
+
+    def freeze_version(name, thread):
+        dataset = "p2_test_" + uuid.uuid4().hex
+        root = tmp_path / name
+        root.mkdir()
+        capture = root / "capture.json"
+        write = {"format": collector.CAPTURE, "repo": repo,
+                 "retrieved_at": "2026-10-30T00:00:00Z", "relore_commit": collector.COMMIT,
+                 "result": {"status": "ok", "gaps": []}, "http_responses": [],
+                 "payloads": [{**asdict(thread), "unread": []}]}
+        capture.write_text(json.dumps(write), encoding="utf-8")
+        map_capture(capture, dataset_dir=root, dataset_id=dataset)
+        graph_config["_owned"].append(dataset)
+        result = load_dataset(root, config=graph_config)
+        assert result["status"] == "ok", result
+        return dataset
+
+    assert collector.index_threads([payload], database_url=graph_config["database_url"])[
+        "status"] == "ok"
+    first = freeze_version("old", payload)
+    request = {"dataset_id": first, "question": "cache protocol"}
+    before = prepare_query(request, config={**graph_config, "system": "A"})
+    assert before["retrieval"]["raw_relore"]["hits"]
+    payload.thread = {**payload.thread, "body": "sentinel_new changed cache protocol"}
+    assert collector.index_threads([payload], database_url=graph_config["database_url"])[
+        "status"] == "ok"
+    second = freeze_version("new", payload)
+    global_hits = collector.search_history(repo, "cache protocol",
+                                           database_url=graph_config["database_url"])
+    assert any("sentinel_new" in hit["snippet"] for hit in global_hits["hits"])
+    after = prepare_query(request, config={**graph_config, "system": "A"})
+    newer = prepare_query({**request, "dataset_id": second}, config=graph_config)
+    assert before["retrieval"] == after["retrieval"]
+    assert before["candidates"] == after["candidates"]
+    assert "sentinel_old" in json.dumps(after["retrieval"]["raw_relore"])
+    assert "sentinel_new" not in json.dumps(after["retrieval"]["raw_relore"])
+    assert "sentinel_new" in json.dumps(newer["retrieval"]["raw_relore"])
+    result = query(request, config={**graph_config, "answerer": synthetic_answerer})
+    assert result.status == "ok" and Path(result.model_extra["artifacts"]["query_run"]).exists()
+
+
+def test_real_answerer_default_root_and_final_context_budget(sample, graph_config, monkeypatch):
+    from historykg.io import make_source
+
+    root, dataset = sample
+    source = make_source(dataset_id=dataset, repo="example/toy", kind="code",
+                         url="https://example.invalid/large.py", origin_key="large.py",
+                         text="Oversized special cache feature.\n" * 900,
+                         retrieved_at="2026-10-30T00:00:00Z")
+    write_jsonl(root / "sources.jsonl", [*read_jsonl(root / "sources.jsonl"), source])
+    refresh(root)
+    loaded(sample, graph_config)
+    seen = {}
+
+    def no_paid_call(request, *, budget, validator):
+        seen.update(request)
+        fragments = json.loads(request["body"]["messages"][1]["content"])["context"]
+        fragment = fragments[0]
+        parsed = {"claims": [{"text": "Synthetic wiring check only", "evidence": [{
+            "source_id": fragment["source_id"], "quote": fragment["quote"]}]}], "gaps": []}
+        validator(parsed)
+        return {"status": "ok", "parsed": parsed, "run_id": request["run_id"],
+                "usage": {"actual_requests": 0}, "cache_hit": False, "new_requests": 0}
+
+    monkeypatch.setattr("historykg.llm.answer.run_request", no_paid_call)
+    result = query({"dataset_id": dataset, "question": "Oversized special cache feature"},
+                   config=graph_config)
+    assert result.status == "ok", result
+    assert Path(seen["output_directory"]).is_relative_to(root / "llm")
+    audit = json.loads((Path(result.model_extra["artifacts"]["query_run"]) /
+                        "retrieval.json").read_text(encoding="utf-8"))
+    final = audit["answer"]["context"]
+    assert final["characters"] == len(final["rendered"]) <= 12000
+    fragment = next(f for f in final["fragments"] if f["source_id"] == source["source_id"])
+    assert fragment["end"] < len(source["text"])
+    assert source["text"][fragment["start"]:fragment["end"]] == fragment["quote"]
+    assert final["gaps"] and result.model_extra["usage"]["actual_requests"] == 0

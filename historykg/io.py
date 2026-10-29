@@ -7,6 +7,7 @@ import os
 import re
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ValidationError
 
@@ -271,6 +272,34 @@ def expected_entity_id(entity: dict) -> str:
     )
 
 
+def api_closer_matches(closer: dict, repo: str, number: int) -> bool:
+    """A bare PR number or typename is insufficient across repository boundaries."""
+    if not isinstance(closer, dict) or closer.get("number") != number:
+        return False
+    for key in ("html_url", "url"):
+        value = closer.get(key)
+        if not isinstance(value, str):
+            continue
+        parts = urlsplit(value)
+        expected = f"/{repo}/pull/{number}"
+        api_expected = f"/repos/{repo}/pulls/{number}"
+        if parts.netloc.lower() == "github.com" and parts.path.lower().rstrip("/") == expected:
+            return True
+        if (
+            parts.netloc.lower() == "api.github.com"
+            and parts.path.lower().rstrip("/") == api_expected
+        ):
+            return True
+        if repo == "example/toy" and parts.netloc == "example.invalid" and parts.path == expected:
+            return True
+    repository = closer.get("repository") or {}
+    return (
+        closer.get("__typename") == "PullRequest"
+        and isinstance(repository, dict)
+        and str(repository.get("nameWithOwner", "")).lower() == repo
+    )
+
+
 def _api_relation_supported(kind, left, right, refs, sources):
     """Bind official event/merge evidence to its actual endpoints, not isolated tokens."""
     if not left or not right:
@@ -315,10 +344,7 @@ def _api_relation_supported(kind, left, right, refs, sources):
                     )
                 )
                 closer = obj.get("closer") or (obj.get("source") or {}).get("issue") or {}
-                closer_match = closer.get("number") == pr_number and (
-                    "/pull/" in closer.get("html_url", closer.get("url", ""))
-                    or closer.get("__typename") == "PullRequest"
-                )
+                closer_match = api_closer_matches(closer, left["repo"], pr_number)
                 merge_sha = left["properties"].get("merge_commit_sha")
                 commit_match = bool(
                     merge_sha

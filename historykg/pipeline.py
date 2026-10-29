@@ -12,6 +12,7 @@ import os
 import sqlite3
 import threading
 import uuid
+from collections import Counter
 from pathlib import Path
 
 from pydantic import BaseModel
@@ -23,6 +24,7 @@ from historykg.ingest.capture import finalize_relations, map_capture
 from historykg.ingest.discovery import PROFILE, SnapshotClient, discover
 from historykg.io import (
     build_subjects,
+    collect_records,
     merge_sources,
     read_json,
     validate_dataset,
@@ -175,12 +177,17 @@ def start_build(
 
 
 def resume_build(job_id: str, *, config: dict | None = None, background: bool = True) -> dict:
+    supplied_config = config is not None
     config = load_config(config)
     directory = _find(job_id, config)
     job = read_json(directory / "job.json")
     if job["status"] in {"ready", "partial", "unsupported"}:
         return job
     frozen = read_json(directory / "config.json")
+    if supplied_config:
+        if config.get("database_url"):
+            frozen["database_url"] = config["database_url"]
+        frozen["graph"] = {**frozen.get("graph", {}), **config.get("graph", {})}
     job.update(status="queued", error=None)
     _save(job, directory, config)
     if background:
@@ -196,19 +203,28 @@ class StageBlocked(RuntimeError):
 
 def _claim_worker(directory):
     lock = directory.parent / "worker.lock"
+    stream = lock.open("a+b")
     try:
-        descriptor = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
-    except FileExistsError:
-        try:
-            pid = int(lock.read_text(encoding="utf-8").split(":")[0])
-            os.kill(pid, 0)
-            return None
-        except ProcessLookupError:
-            lock.unlink(missing_ok=True)
-            return _claim_worker(directory)
-    with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
-        stream.write(f"{os.getpid()}:{directory.name}")
-    return lock
+        if os.name == "nt":
+            import msvcrt
+
+            if lock.stat().st_size == 0:
+                stream.write(b"0")
+                stream.flush()
+            stream.seek(0)
+            msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+
+            fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        stream.close()
+        return None
+    stream.seek(0)
+    stream.truncate()
+    stream.write(f"{os.getpid()}:{directory.name}".encode("ascii"))
+    stream.flush()
+    return stream
 
 
 def _call(module, function, *args, **kwargs):
@@ -291,6 +307,8 @@ def _stage(job, directory, config):
             capture_path, dataset_dir=root, dataset_id=job["dataset_id"], snapshot_dir=snapshot_dir
         )
         mapped["gaps"] += metadata_gaps
+        if metadata_gaps:
+            mapped["status"] = "partial"
         mapped["usage"] = {"github_requests_total": job["usage"]["github_requests"]}
         mapped["artifacts"]["capture"] = str(capture_path)
         return mapped
@@ -314,6 +332,15 @@ def _stage(job, directory, config):
             finalize_relations(root)
             build_subjects(root)
             _manifest(root, job, frozen=False)
+            checked = validate_dataset(root)
+            result["module_counts"] = result.get("counts", {})
+            result["counts"] = {**result.get("counts", {}), **checked["counts"]}
+            result["coverage"] = _dataset_coverage(root, profile, checked["counts"])
+            if checked["status"] != "ok":
+                result.update(
+                    status="error",
+                    error={"code": "code_record_validation", "errors": checked["errors"]},
+                )
         return result
     if stage == "extract":
         budget = {**config.get("budget", {}), **job["usage"]}
@@ -345,6 +372,7 @@ def _stage(job, directory, config):
             **result,
             "artifacts": {"validation": str(directory / "validation.json")},
             "gaps": result.get("errors", []),
+            "coverage": _dataset_coverage(root, profile, result["counts"]),
         }
     return _call(config["load_module"], "load_dataset", root, config=query_config(config))
 
@@ -355,6 +383,45 @@ def query_config(config: dict) -> dict:
         "answer": config.get("answer", config.get("model", {})),
         "budget": config.get("budget", {}),
         **config.get("graph", {}),
+    }
+
+
+def _dataset_coverage(root, profile, counts):
+    sources = collect_records(root, "sources.jsonl", shards=False)
+    units = collect_records(root, "source_units.jsonl", shards=False)
+    entities = collect_records(root, "entities.jsonl")
+    timestamps = sorted(s["occurred_at"] for s in sources if s.get("occurred_at"))
+    completeness = Counter(unit["completeness"] for unit in units)
+    manifest = read_json(Path(root) / "manifest.json")
+    return {
+        **counts,
+        "discussion_units": len(units),
+        "complete_units": completeness["complete"],
+        "partial_units": completeness["partial"],
+        "unread_units": completeness["unread"],
+        "file_snapshots": len({e["id"] for e in entities if e["type"] == "File"}),
+        "time_range": {
+            "earliest": timestamps[0] if timestamps else None,
+            "latest": timestamps[-1] if timestamps else None,
+        },
+        "profile_limits": {
+            key: profile[key]
+            for key in (
+                "max_units",
+                "max_requests",
+                "max_releases",
+                "max_commits",
+                "max_file_snapshots",
+            )
+            if key in profile
+        },
+        "gap_counts": dict(
+            Counter(
+                g.get("reason", "unspecified")
+                for g in manifest.get("gaps", [])
+                if isinstance(g, dict)
+            )
+        ),
     }
 
 
@@ -373,6 +440,28 @@ def _manifest(root, job, *, frozen):
             "actual_llm_extraction": job["coverage"].get("actual_llm_extraction", False),
         },
     )
+
+
+def _completion_status(stage, result):
+    status = result.get("status", "ok")
+    # The first collect checkpoint predates the coverage/status correction.
+    # Its immutable source records remain valid; only the old status is normalized.
+    gaps = result.get("gaps", [])
+    if (
+        stage == "collect"
+        and status == "partial"
+        and gaps
+        and all(
+            isinstance(gap, dict)
+            and (
+                gap.get("severity") == "coverage"
+                or gap.get("reason") == "explicit_reference_over_limit"
+            )
+            for gap in gaps
+        )
+    ):
+        return "ok"
+    return status
 
 
 def _run(directory, config, stop_after=None):
@@ -399,6 +488,21 @@ def _run(directory, config, stop_after=None):
             result = _stage(job, directory, config)
             job["artifacts"].update(result.get("artifacts", {}))
             job["counts"].update(result.get("counts", {}))
+            job["coverage"].update(result.get("coverage", {}))
+            job.setdefault("stage_counts", {})[stage] = result.get(
+                "module_counts", result.get("counts", {})
+            )
+            for key in (
+                "sources",
+                "source_units",
+                "entities",
+                "relations",
+                "evidence",
+                "subjects",
+                "file_snapshots",
+            ):
+                if key in job["coverage"]:
+                    job["counts"][key] = job["coverage"][key]
             job["gaps"].extend(g for g in result.get("gaps", []) if g not in job["gaps"])
             usage = result.get("usage", {})
             if "github_requests_total" in usage:
@@ -434,6 +538,7 @@ def _run(directory, config, stop_after=None):
                     raise ValueError("空来源不能发布可查询数据集")
                 job["coverage"].update(graph_ready=True, retrieval_ready=True)
             job.setdefault("completed_stages", []).append(stage)
+            job.setdefault("stage_statuses", {})[stage] = _completion_status(stage, result)
             checkpoint_files = []
             dataset_root = Path(job["artifacts"]["dataset_dir"])
             if stage == "discover":
@@ -486,7 +591,16 @@ def _run(directory, config, stop_after=None):
                 )
                 _save(job, directory, config)
                 return
-        job.update(status="partial" if job["gaps"] else "ready", resume_from=None)
+        stage_statuses = dict(job.get("stage_statuses", {}))
+        for stage in job["completed_stages"]:
+            if stage not in stage_statuses:
+                stage_statuses[stage] = _completion_status(
+                    stage, read_json(directory / f"checkpoint_{stage}.json")["result"]
+                )
+        job["stage_statuses"] = stage_statuses
+        job.update(
+            status="partial" if "partial" in stage_statuses.values() else "ready", resume_from=None
+        )
         _save(job, directory, config)
     except (StageBlocked, collector.CollectionBlocked) as exc:
         job.update(status="blocked", error={"code": "dependency_or_budget", "message": str(exc)})
@@ -504,7 +618,7 @@ def _run(directory, config, stop_after=None):
         )
         _save(job, directory, config)
     finally:
-        worker_lock.unlink(missing_ok=True)
+        worker_lock.close()
 
 
 def wait_build(job_id: str, *, config: dict | None = None) -> dict:
