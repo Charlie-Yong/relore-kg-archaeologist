@@ -1,0 +1,18 @@
+{
+  "can_network": true,
+  "can_read": true,
+  "can_run": true,
+  "can_write": true,
+  "checked_at": "2026-10-29T17:12:39.116092+00:00",
+  "git": "git version 2.54.0 (Apple Git-157)",
+  "git_push": null,
+  "github_merge": null,
+  "github_pr": null,
+  "github_token_read": true,
+  "graph_access": null,
+  "model_access": null,
+  "os": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.11.15",
+  "role": "P1",
+  "shell": "zsh"
+}
