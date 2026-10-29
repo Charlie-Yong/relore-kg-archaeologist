@@ -1,0 +1,116 @@
+{
+  "actual_llm_extraction": false,
+  "api_json_format": "UTF-8/LF; json.dumps ensure_ascii=False sort_keys=True indent=2; canonical representation, not HTTP bytes",
+  "contract_version": "1.4.1",
+  "coverage": {
+    "discussion_units": 2,
+    "partial": 1
+  },
+  "dataset_id": "toy_v1",
+  "files": {
+    "p1/entities.jsonl": "e745dcd4f11457c647f0e1e50f36a53e5cd936d25eea774642f768f39a24596a",
+    "p1/evidence.jsonl": "d7fcd1aa2b234e73aa69c73549f79b5004fcfca338f01f28bb38825e1263da1c",
+    "p1/relations.jsonl": "1cb3a0350e12f6ca2146be427bf1ad174484f1ff156cdd98cabaf8d2b79cc15f",
+    "p4/decisions.jsonl": "18191dc4269ead1722ea22042c5854f35ceb356c2b39010b38c98436b1bf821a",
+    "p4/entities.jsonl": "18191dc4269ead1722ea22042c5854f35ceb356c2b39010b38c98436b1bf821a",
+    "p4/evidence.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "p4/relations.jsonl": "0ede20c9b8f7d6a94b0bf302dfc3e82baff3ae098df73eb49bf8cd0dd884a1c9",
+    "source_units.jsonl": "e53d12a55f65e9ffae34578c7ba8504cb5c908b8faafe4694627d5fccc463fb3",
+    "sources.jsonl": "3f5ea22df863ab0dc80f2926d11d6b372d2495aae82fb544c7f3d365a3311726",
+    "subjects.jsonl": "d88fc3e71a2d2577effb862257c9c6be62c8c4988a2afa968763ae9fcdc1e3fc"
+  },
+  "gaps": [
+    "Synthetic pagination gap"
+  ],
+  "license": "Synthetic fixture authored for this project",
+  "profile_version": "toy_v1",
+  "repo": "example/toy",
+  "retrieved_at": "2026-10-30T00:00:00Z",
+  "sources": [
+    {
+      "kind": "issue_body",
+      "origin_key": "issues/1",
+      "source_id": "SourceDocument:85712da5c6dc49ce7a00880b257d6bb1b60271018f98af06b19ae12b2a0ac247",
+      "text_sha256": "82fc8c74dec59388aadfb0197111871e936488f7dc108561a3f20415e34bba98",
+      "url": "https://example.invalid/issues/1"
+    },
+    {
+      "kind": "pr_body",
+      "origin_key": "pull/2",
+      "source_id": "SourceDocument:012a7059bfcf12758e453d0a3fc80e02116d851dbfdd0045a5b2c1c0fb1da512",
+      "text_sha256": "8eab1aa567ae8b81054c0d03197d7e83edbc7f3d8fed430355d5070143182723",
+      "url": "https://example.invalid/pull/2"
+    },
+    {
+      "kind": "comment",
+      "origin_key": "comments/11",
+      "source_id": "SourceDocument:cd34a14193614c2435246fc0deff387e84b55b93257f275f1d535dd6ce6bba60",
+      "text_sha256": "58b077b29debf6158575d4ebd93d9ded1e22acf0e56751a7b0cc720be6c73728",
+      "url": "https://example.invalid/comments/11"
+    },
+    {
+      "kind": "review",
+      "origin_key": "reviews/12",
+      "source_id": "SourceDocument:87341768f2adcca808ea6ab5f4d081b191b655970f4b3d27545dc0d932c7ed55",
+      "text_sha256": "fcb381bebbb59d28e2cc9d3eeb191f46fb5ebfe5b2610a629151d71879d33927",
+      "url": "https://example.invalid/reviews/12"
+    },
+    {
+      "kind": "review_comment",
+      "origin_key": "review-comments/13",
+      "source_id": "SourceDocument:9e0ec2d6d79aab79b8886373b5e99cf589014ff825db20dc533f8e6b3703329f",
+      "text_sha256": "3384ec894350e8f3fe74cf16ef14032f8d3dd9927a5433b3ba0a0b160815a436",
+      "url": "https://example.invalid/review-comments/13"
+    },
+    {
+      "kind": "review_comment",
+      "origin_key": "review-comments/14",
+      "source_id": "SourceDocument:e1aded34bc8a4eba88d7074d7f8caff302365f746f8861466b076bdda153a12b",
+      "text_sha256": "0c0ddf176c6253dc85c6ea525fb56852b86c07ef114c8e2d68acb4acd40e5cd0",
+      "url": "https://example.invalid/review-comments/14"
+    },
+    {
+      "kind": "code",
+      "origin_key": "code/old.py",
+      "source_id": "SourceDocument:6d8a5af1bf0510b4c6c53435ee86e851192ff2618b11daafb4a3b2a5163e648d",
+      "text_sha256": "960c9fe232e2f0c206a060f8a61efc7e39fef844abb945130860aed7b6b6fe50",
+      "url": "https://example.invalid/code/old.py"
+    },
+    {
+      "kind": "code",
+      "origin_key": "code/new.py",
+      "source_id": "SourceDocument:c3dbdaa09306f3993d0cd7756da16c0b56321903191a2840924355ade7c1c800",
+      "text_sha256": "f472d7ac36ce63b12857fb485c014d1b88d8ba1056655f54b69420189ec29bd2",
+      "url": "https://example.invalid/code/new.py"
+    },
+    {
+      "kind": "release_note",
+      "origin_key": "releases/v1.0",
+      "source_id": "SourceDocument:0d36e9dbdc9ea0afb0af731ebcd383e3dc5688ebb4ac7f0249220afd5506f57f",
+      "text_sha256": "d88ba936a12ad992514dc85a34d3d747ea94dec833ab90d7c97d36dff49f0c0d",
+      "url": "https://example.invalid/releases/v1.0"
+    },
+    {
+      "kind": "git_output",
+      "origin_key": "git/reachable",
+      "source_id": "SourceDocument:769d836d0c2e5f0f4b74e0ec326f877c2083bd85e9971889f42320e946508bc2",
+      "text_sha256": "e84bfe28f81ee9d01c981f9b33f3e4f82935ec35d02391f341c216241da1f30b",
+      "url": "https://example.invalid/git/reachable"
+    },
+    {
+      "kind": "api_response",
+      "origin_key": "https://api.github.com/repos/example/toy/pulls/2?{}",
+      "source_id": "SourceDocument:da405aadc5b381aa415913a4791f3ff71926f63957e114f3b1aa28aee4e34454",
+      "text_sha256": "258c5d1cc990772695e9cbd70f8b33490572e264a198aab3e66a616d48efdb99",
+      "url": "https://example.invalid/repos/example/toy/pulls/2"
+    },
+    {
+      "kind": "api_response",
+      "origin_key": "https://api.github.com/repos/example/toy/issues/1/timeline?{}",
+      "source_id": "SourceDocument:9a5213335e27b8d3579b0c199af590da7d1678d7caaf8a024b662b14afadb6ea",
+      "text_sha256": "d3d3b9716c19df874413865b5aea131dfe3969f87bfb9cbff4169b2d0a2ca0d0",
+      "url": "https://example.invalid/repos/example/toy/issues/1/timeline"
+    }
+  ],
+  "synthetic": true
+}
