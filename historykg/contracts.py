@@ -38,8 +38,18 @@ class SourceDocument(VersionedRecord):
     dataset_id: str
     source_id: str
     repo: str
-    kind: Literal["issue_body", "pr_body", "comment", "review", "review_comment",
-                  "release_note", "commit_message", "code", "git_output", "api_response"]
+    kind: Literal[
+        "issue_body",
+        "pr_body",
+        "comment",
+        "review",
+        "review_comment",
+        "release_note",
+        "commit_message",
+        "code",
+        "git_output",
+        "api_response",
+    ]
     url: str
     text: str
     text_sha256: str
@@ -105,8 +115,19 @@ class Entity(VersionedRecord):
 class Relation(VersionedRecord):
     dataset_id: str
     id: str
-    type: Literal["HasRelease", "ClaimsToClose", "Closes", "MergedAs", "Touches",
-                  "ReachableIn", "MentionsPR", "ChangesTo", "Imports", "ABOUT", "EVIDENCED_BY"]
+    type: Literal[
+        "HasRelease",
+        "ClaimsToClose",
+        "Closes",
+        "MergedAs",
+        "Touches",
+        "ReachableIn",
+        "MentionsPR",
+        "ChangesTo",
+        "Imports",
+        "ABOUT",
+        "EVIDENCED_BY",
+    ]
     from_id: str
     to_id: str
     properties: dict[str, Any]
