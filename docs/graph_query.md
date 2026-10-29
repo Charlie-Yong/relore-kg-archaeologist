@@ -31,7 +31,8 @@ print(result.model_dump(mode="json"))
 `graph_ready/retrieval_ready`、`counts/rejected/error`、冻结指纹和可见来源清单。
 先调用P1的`validate_dataset`核验偏移/哈希/身份/端点/关系类型/跨库记录和API事实，
 再核对manifest完整来源表。校验失败时整批拒收，不悄悄丢弃坏记录。
-实际relore数据库必须可读且schema就绪；Neo4j写完后读回所有记录并复算指纹。
+实际relore数据库必须可读；load为每个数据集建立冻结检索空间，
+Neo4j写完后读回所有记录并复算指纹。
 
 Neo4j约束为`HGDataset(dataset_id)`及`HGRecord/HGEvidence(dataset_id,id)`唯一。
 实体、来源分别标记`HGEntity/HGSource`，共同继承`HGRecord`以支持EVIDENCED_BY端点；
@@ -61,6 +62,16 @@ ClaimsToClose、Closes、MergedAs、MentionsPR与ReachableIn保留各自语义�
 两种排名通过`1/(60+rank)`合并。来源原文始终取当前冻结包，不取其他数据集文本。
 底座命中、映射及可见来源清单保留在查询日志，不能把适配检索称为纯relore原生排序。
 
+讨论检索不会访问随后可变的全局repo索引。load从P1 manifest所指的P4 capture
+回放ThreadPayload，对每个body/comment/review/review_comment按映射逐条核对C5冻结正文，
+多出/遗漏原对象或文本不一致整批拒收。原始回放输入保存为
+`exports/relore_input.json`，迁移/复现须随冻结数据包保留，可脱离旧capture绝对路径重建。
+正式Postgres使用同实例中按dataset_id哈希生成的独立schema；SQLite开发模式使用
+本数据集exports/relore_index.sqlite3。schema与源码层的真实relore仍保持不变。
+图中只保存无凭据的索引描述符，query按该描述符访问且核验冻结输入指纹。
+后续同repo构建更新全局index_payload不会改变旧dataset的命中、排序或文本。
+无讨论映射的toy/纯代码包在空relore索引上使用共同来源适配，不冒称讨论命中。
+
 `config['system']='A'`关闭图扩展，`B`为默认；两组共用问题解析、初始种子、
 来源池和词法/relore排名。B仅沿当前数据集的真实关系扩展，不从图引入新原文。
 当前界限：8个种子、3跳无重复节点路径、最多50路径、40上下文来源；按稳定ID打破同分。
@@ -69,6 +80,8 @@ P4渲染最终上下文，结构也计入12000 Unicode码点，裁剪同步更�
 
 `exports/queries/query-<id>/retrieval.json`保存候选、真实底座命中、种子、路径及
 回答器返回的最终context/run_id/usage；`result.json`保存QueryResult。
+回答模型记录默认写本数据集`llm/`，也可显式传answer_output_root或answer.output_root；
+普通使用者不填写内部路径。QueryResult附usage/model_run_id供界面与实验记账。
 最终可见证据以回答器保存的context为准，不按图节点、截断前候选或最终引用替代。
 答案展示仅连接claims.text；path证据可展示，但不能给未送入回答器的断言背书。
 查询日志和回答缓存不进入sources/manifest。P6私有题目/参考不在本模块读取范围内。
@@ -82,5 +95,6 @@ P2_TEST_NEO4J_URI=bolt://127.0.0.1:17687 python -m pytest tests/test_graph_query
 Windows PowerShell先用`$env:P2_TEST_NEO4J_URI=...`设置同一环境变量。
 可选`P2_TEST_DATABASE_URL`指定专用Postgres测试库；缺省使用临时SQLite。
 无Neo4j环境时集成测试明确skip。测试仅清理随机p2_test命名空间，不清全库。
-2026-10-30已在macOS/Python3.11.15、实际Neo4j5.26.0/PostgreSQL16.4完成14项检查；
-Windows实机验证及真实DeepSeek问答接收仍须后续运行记录。
+2026-10-30已在macOS/Python3.11.15、实际Neo4j5.26.0/PostgreSQL16.4完成首批14项检查，
+并对冻结检索、正常回答目录、真实P4渲染/截断和路径显示补充回归。
+Windows实机验证及真实Flask/DeepSeek问答接收仍须后续运行记录。
