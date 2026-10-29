@@ -46,10 +46,12 @@ def relation_id(repo: str, relation_type: str, from_id: str, to_id: str) -> str:
     return stable_id("Relation", repo, relation_type, from_id, to_id)
 
 
-def decision_id(repo: str, unit_id: str, subject_id: str, action: str,
-                status: str, statement: str) -> str:
-    return stable_id("Decision", repo, unit_id, subject_id, action, status,
-                     " ".join(statement.split()))
+def decision_id(
+    repo: str, unit_id: str, subject_id: str, action: str, status: str, statement: str
+) -> str:
+    return stable_id(
+        "Decision", repo, unit_id, subject_id, action, status, " ".join(statement.split())
+    )
 
 
 def dataset_id(repo: str, profile_version: str, job_id: str) -> str:
