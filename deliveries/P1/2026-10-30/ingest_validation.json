@@ -1,0 +1,55 @@
+{
+  "build_status": "blocked",
+  "checked_at": "2026-10-29T17:12:39.116092+00:00",
+  "completed_stages": [
+    "discover",
+    "collect",
+    "code"
+  ],
+  "dataset_dir": "data/dataset-810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+  "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+  "input_kind": "URL only; development/product acceptance, not formal experiment",
+  "job_dir": ".local/jobs/b61942bf06b742e48860d064dffe6df2",
+  "job_id": "b61942bf06b742e48860d064dffe6df2",
+  "manifest_sha256": "8755f701107b303788ddd11125f4561e373985abb4f3ecc3aeb9547cca6acb27",
+  "paid_model_calls_by_P1": 0,
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "profile_version": "course_small_v1",
+  "repo": "pallets/flask",
+  "role": "P1",
+  "source_kinds": {
+    "api_response": 157,
+    "code": 24,
+    "comment": 60,
+    "commit_message": 4,
+    "git_output": 62,
+    "issue_body": 19,
+    "pr_body": 21,
+    "release_note": 3,
+    "review": 12,
+    "review_comment": 7
+  },
+  "stage": "extract",
+  "unit_completeness": {
+    "complete": 40
+  },
+  "usage": {
+    "api_requests": 1,
+    "git_network_operations": 6,
+    "github_requests": 182,
+    "model_requests": 0
+  },
+  "validation": {
+    "counts": {
+      "entities": 72,
+      "evidence": 197,
+      "relations": 60,
+      "source_units": 40,
+      "sources": 369,
+      "subjects": 65
+    },
+    "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+    "errors": [],
+    "status": "ok"
+  }
+}

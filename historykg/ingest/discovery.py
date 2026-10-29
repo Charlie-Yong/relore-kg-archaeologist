@@ -7,8 +7,6 @@ import re
 from pathlib import Path
 from urllib.parse import parse_qsl, urlsplit
 
-import httpx
-
 from historykg import collector
 from historykg.ids import canonical_json, normalize_repo, stable_id
 from historykg.io import read_json, write_json
@@ -83,7 +81,8 @@ class SnapshotClient:
         }
         if self.token:
             headers["Authorization"] = "Bearer " + self.token
-        self.http = httpx.Client(
+        self.http = collector._ResumableClient(
+            captured_responses=self.state["http_responses"],
             headers=headers,
             timeout=30,
             transport=transport,
@@ -108,6 +107,11 @@ class SnapshotClient:
                 retrieved_at=collector._now(),
                 body=response.text,
                 rate_limit_remaining=response.headers.get("x-ratelimit-remaining"),
+                headers={
+                    key: response.headers[key]
+                    for key in ("link", "content-type")
+                    if key in response.headers
+                },
             )
         )
         write_json(self.path, self.state)
@@ -141,6 +145,14 @@ def discover(
     transport=None,
 ) -> dict:
     profile = {**PROFILE, **(profile or {})}
+    for key, upper in (
+        ("max_candidates_per_kind", 100),
+        ("max_units", 40),
+        ("max_prs", 40),
+        ("max_requests", 300),
+    ):
+        if not isinstance(profile[key], int) or not 1 <= profile[key] <= upper:
+            raise ValueError(f"profile {key}须在1到{upper}之间")
     repo = normalize_repo(repo_url, require_url=True)
     directory = Path(snapshot_dir)
     directory.mkdir(parents=True, exist_ok=True)
@@ -166,8 +178,10 @@ def discover(
         }
         prs = client.get(f"repos/{repo}/pulls", params)
         issues = [x for x in client.get(f"repos/{repo}/issues", params) if "pull_request" not in x]
+
         def order(x):
             return x.get("updated_at") or "", x["number"]
+
         prs.sort(key=lambda x: (bool(x.get("merged_at")), *order(x)), reverse=True)
         issues.sort(key=order, reverse=True)
         selected_prs = prs[: min(profile["max_prs"], profile["max_units"])]

@@ -111,7 +111,7 @@ def create_fixture(directory: str | Path) -> dict:
         retrieved_at=now,
         payload={
             "number": 2,
-            "html_url": "https://example.invalid/pull/2",
+            "html_url": "https://example.invalid/example/toy/pull/2",
             "merged": True,
             "merge_commit_sha": new,
         },
@@ -125,7 +125,9 @@ def create_fixture(directory: str | Path) -> dict:
             "event": "closed",
             "issue": {"number": 1},
             "created_at": now,
-            "source": {"issue": {"number": 2, "html_url": "https://example.invalid/pull/2"}},
+            "source": {
+                "issue": {"number": 2, "html_url": "https://example.invalid/example/toy/pull/2"}
+            },
         },
     )
     # Explicitly synthetic URLs are retained even for API-shaped fixture records.

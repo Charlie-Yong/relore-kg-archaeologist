@@ -7,6 +7,7 @@ import os
 import re
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ValidationError
 
@@ -271,11 +272,42 @@ def expected_entity_id(entity: dict) -> str:
     )
 
 
+def api_closer_matches(closer: dict, repo: str, number: int) -> bool:
+    """A bare PR number or typename is insufficient across repository boundaries."""
+    if not isinstance(closer, dict) or closer.get("number") != number:
+        return False
+    for key in ("html_url", "url"):
+        value = closer.get(key)
+        if not isinstance(value, str):
+            continue
+        parts = urlsplit(value)
+        expected = f"/{repo}/pull/{number}"
+        api_expected = f"/repos/{repo}/pulls/{number}"
+        if parts.netloc.lower() == "github.com" and parts.path.lower().rstrip("/") == expected:
+            return True
+        if (
+            parts.netloc.lower() == "api.github.com"
+            and parts.path.lower().rstrip("/") == api_expected
+        ):
+            return True
+        if repo == "example/toy" and parts.netloc == "example.invalid" and parts.path == expected:
+            return True
+    repository = closer.get("repository") or {}
+    return (
+        closer.get("__typename") == "PullRequest"
+        and isinstance(repository, dict)
+        and str(repository.get("nameWithOwner", "")).lower() == repo
+    )
+
+
 def _api_relation_supported(kind, left, right, refs, sources):
     """Bind official event/merge evidence to its actual endpoints, not isolated tokens."""
     if not left or not right:
         return False
-    pr_number = int(left["properties"].get("number", left["key"]))
+    try:
+        pr_number = int(left["properties"].get("number", left["key"]))
+    except (ValueError, TypeError):
+        return False
     for ev in refs:
         source = sources.get(ev["source_id"], {})
         if source.get("kind") != "api_response":
@@ -301,18 +333,18 @@ def _api_relation_supported(kind, left, right, refs, sources):
                 ):
                     return True
             else:
-                issue = int(right["properties"].get("number", right["key"]))
-                issue_match = obj.get("issue", {}).get("number") == issue or bool(
+                try:
+                    issue = int(right["properties"].get("number", right["key"]))
+                except (ValueError, TypeError):
+                    return False
+                issue_match = (obj.get("issue") or {}).get("number") == issue or bool(
                     re.search(
                         rf"/repos/{re.escape(left['repo'])}/issues/{issue}/(?:timeline|events)(?:\?|$)",
                         endpoint,
                     )
                 )
-                closer = obj.get("closer") or obj.get("source", {}).get("issue", {})
-                closer_match = closer.get("number") == pr_number and (
-                    "/pull/" in closer.get("html_url", closer.get("url", ""))
-                    or closer.get("__typename") == "PullRequest"
-                )
+                closer = obj.get("closer") or (obj.get("source") or {}).get("issue") or {}
+                closer_match = api_closer_matches(closer, left["repo"], pr_number)
                 merge_sha = left["properties"].get("merge_commit_sha")
                 commit_match = bool(
                     merge_sha
@@ -329,7 +361,18 @@ def validate_dataset(root: str | Path, *, check_manifest: bool = True) -> dict:
     root = Path(root)
     errors = []
     pools = {}
-    manifest = read_json(root / "manifest.json") if (root / "manifest.json").exists() else {}
+    try:
+        manifest = read_json(root / "manifest.json")
+        if not isinstance(manifest, dict):
+            raise ValueError("manifest必须为对象")
+    except (OSError, ValueError) as exc:
+        manifest = {}
+        errors.append(f"manifest: 缺失或损坏({type(exc).__name__})")
+    required_manifest = {"dataset_id", "repo"}
+    if manifest.get("frozen"):
+        required_manifest |= {"contract_version", "profile_version", "files"}
+    if not required_manifest <= manifest.keys():
+        errors.append("manifest: 缺必填字段")
     dataset = manifest.get("dataset_id")
     repo = manifest.get("repo")
     for name, model, key in (
@@ -341,6 +384,14 @@ def validate_dataset(root: str | Path, *, check_manifest: bool = True) -> dict:
         ("subjects", Subject, "subject_id"),
     ):
         try:
+            record_paths = [root / (name + ".jsonl")]
+            if name not in {"sources", "subjects", "source_units"}:
+                record_paths += [root / role / (name + ".jsonl") for role in ("p1", "p3", "p4")]
+            for path in record_paths:
+                if path.is_file():
+                    per_file = read_jsonl(path)
+                    if len({r.get(key) for r in per_file}) != len(per_file):
+                        errors.append(f"{path.relative_to(root)}: 重复ID")
             records = collect_records(
                 root, name + ".jsonl", shards=name not in {"sources", "subjects", "source_units"}
             )
@@ -358,7 +409,7 @@ def validate_dataset(root: str | Path, *, check_manifest: bool = True) -> dict:
                     pools[name][record[key]] = record
                 except (ValueError, ValidationError) as exc:
                     errors.append(f"{name}:{record.get(key)}: {exc}")
-        except (ValueError, KeyError) as exc:
+        except (ValueError, KeyError, TypeError) as exc:
             errors.append(f"{name}: {exc}")
             pools[name] = {}
     sources, evidence, entities = (pools[n] for n in ("sources", "evidence", "entities"))
@@ -413,7 +464,7 @@ def validate_dataset(root: str | Path, *, check_manifest: bool = True) -> dict:
                         ):
                             if eid not in evidence:
                                 raise ValueError("Decision引用缺证据")
-                except (KeyError, ValueError) as exc:
+                except (KeyError, ValueError, TypeError) as exc:
                     errors.append(f"entities:{identity}: {exc}")
             else:
                 kind = record["type"]
@@ -435,7 +486,11 @@ def validate_dataset(root: str | Path, *, check_manifest: bool = True) -> dict:
                     errors.append(f"relations:{identity}: 事实关系缺证据")
                 if kind in {"Closes", "MergedAs"}:
                     refs = [evidence[e] for e in record["evidence_ids"] if e in evidence]
-                    if not _api_relation_supported(kind, left, right, refs, sources):
+                    try:
+                        supported = _api_relation_supported(kind, left, right, refs, sources)
+                    except (ValueError, TypeError, AttributeError):
+                        supported = False
+                    if not supported:
                         errors.append(f"relations:{identity}: 缺可识别对象及合并/关闭事件API上下文")
                 if (
                     kind == "Imports"
@@ -470,8 +525,10 @@ def write_manifest(root: str | Path, **metadata: Any) -> dict:
     root = Path(root)
     manifest = {
         "contract_version": CONTRACT_VERSION,
-        "api_json_format": ("UTF-8/LF; json.dumps ensure_ascii=False sort_keys=True indent=2; "
-                            "canonical representation, not HTTP bytes"),
+        "api_json_format": (
+            "UTF-8/LF; json.dumps ensure_ascii=False sort_keys=True indent=2; "
+            "canonical representation, not HTTP bytes"
+        ),
         **metadata,
     }
     manifest["files"] = {
