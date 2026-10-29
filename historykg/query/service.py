@@ -12,6 +12,7 @@ from historykg.contracts import QueryRequest_v1, QueryResult_v1
 from historykg.graph.store import GraphStore, read_package, settings
 from historykg.io import write_json
 
+from .frozen_index import verify_index
 from .retrieval import (
     METHOD_VERSION,
     context_candidates,
@@ -47,7 +48,13 @@ def prepare_query(request, *, config: dict | None = None) -> dict:
             if current["fingerprint"] != package["fingerprint"]:
                 raise ValueError("输入目录与已冻结图库版本不一致")
         seeds, gaps = resolve_seeds(req.question, package, req.seed_ids)
-        retrieved = retrieve(req.question, package, database_url=cfg.get("database_url"))
+        if not package.get("retrieval_index"):
+            raise ValueError("数据集缺少冻结relore索引，请从冻结包重新load")
+        scoped_url = verify_index(
+            cfg.get("database_url"), package["retrieval_index"], req.dataset_id
+        )
+        retrieved = retrieve(req.question, package, database_url=scoped_url)
+        retrieved["backend"]["frozen_index"] = package["retrieval_index"]
         # This resolution is shared by A/B and never uses a reference or task label.
         resolved_seeds = seeds[:]
         seeds = list(dict.fromkeys(seeds + seed_from_sources(package, retrieved["source_ids"])))[:8]
@@ -89,6 +96,13 @@ def prepare_query(request, *, config: dict | None = None) -> dict:
         p["evidence_ids"] = sorted({eid for rid in p["relation_ids"]
                                     for eid in relation_by_id[rid]["evidence_ids"]})
         p["relations"] = [relation_by_id[r] for r in p["relation_ids"]]
+        entity_by_id = {e["id"]: e for e in package["entities"]}
+        p["entities"] = [entity_by_id[identity] if identity in entity_by_id else {
+            "id": identity, "dataset_id": req.dataset_id, "type": "SourceDocument",
+            "properties": {"title": source_by_id[identity].get("title")
+                           or source_by_id[identity]["kind"],
+                           "url": source_by_id[identity]["url"]},
+        } for identity in p["entity_ids"]]
     timeline = sorted((r for r in package["relations"] if r["occurred_at"]),
                       key=lambda r: (r["occurred_at"], r["id"])) if req.kind == "timeline" else []
     return dict(request=req.model_dump(), system=system, method_version=METHOD_VERSION,
@@ -136,9 +150,13 @@ def query(request, *, config: dict | None = None) -> QueryResult_v1:
                 dataset_id=req.dataset_id,
                 repo=next(iter(prepared["source_by_id"].values()))["repo"],
                 question=req.question, context=prepared["candidates"], config=answer_cfg,
-                budget=cfg.get("budget") or {}, output_root=cfg.get("answer_output_root"),
+                budget=cfg.get("budget") or {},
+                output_root=cfg.get("answer_output_root") or answer_cfg.get("output_root")
+                or Path(prepared["dataset_dir"]) / "llm",
             )
             audit["answer"] = answer
+            base["usage"] = answer.get("usage", {})
+            base["model_run_id"] = answer.get("run_id")
             if answer["status"] not in {"ok", "empty"}:
                 base.update(status="error", error={"code": "answer_failed",
                                                   "run_id": answer.get("run_id")})

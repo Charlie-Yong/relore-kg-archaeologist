@@ -116,12 +116,14 @@ class GraphStore:
             tx.run(
                 "MATCH (d:HGDataset {dataset_id:$dataset}) "
                 "SET d.fingerprint=$fingerprint,d.manifest=$manifest,"
-                "d.subjects=$subjects,d.dataset_dir=$dataset_dir,d.ready=true",
+                "d.subjects=$subjects,d.dataset_dir=$dataset_dir,"
+                "d.retrieval_index=$retrieval_index,d.ready=true",
                 dataset=dataset,
                 fingerprint=package["fingerprint"],
                 manifest=canonical_json(package["manifest"]),
                 subjects=canonical_json(package["subjects"]),
                 dataset_dir=package["dataset_dir"],
+                retrieval_index=canonical_json(package["retrieval_index"]),
             ).consume()
 
         with self.driver.session(database=self.database) as session:
@@ -140,6 +142,8 @@ class GraphStore:
             "subjects": json.loads(meta["subjects"]),
             "dataset_dir": meta["dataset_dir"],
             "fingerprint": meta["fingerprint"],
+            "retrieval_index": json.loads(meta["retrieval_index"])
+            if meta.get("retrieval_index") else None,
         }
         for pool, label in (("sources", "HGSource"), ("entities", "HGEntity"),
                             ("evidence", "HGEvidence")):
@@ -235,9 +239,11 @@ def load_dataset(dataset_dir: str | Path, *, config: dict | None = None, **_kwar
         # Doctor validates the real relore backend; supplementary texts share the frozen pool.
         cfg = settings(config)
         retrieval = collector.doctor(database_url=cfg.get("database_url"))
-        if retrieval.get("status") != "ok" or not retrieval.get("schema_ready"):
+        if retrieval.get("status") != "ok":
             result["error"] = {"code": "retrieval_unavailable", "details": retrieval}
             return result
+        from historykg.query.frozen_index import freeze_index
+        package["retrieval_index"] = freeze_index(package, cfg.get("database_url"))
         with GraphStore(cfg) as store:
             store.write(package)
             stored = store.snapshot(result["dataset_id"])
@@ -245,6 +251,7 @@ def load_dataset(dataset_dir: str | Path, *, config: dict | None = None, **_kwar
                 raise ValueError("图库/共同来源池读回不一致")
         result.update(status="ok", graph_ready=True, retrieval_ready=True,
                       fingerprint=package["fingerprint"],
+                      retrieval_index=package["retrieval_index"],
                       retrieval_backend={"discussion": "relore.search_history",
                                          "common_sources": "fixed_lexical_rrf_v1",
                                          "visible_source_ids": [s["source_id"]

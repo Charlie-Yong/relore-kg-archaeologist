@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import datetime as dt
+import json
 import re
 from collections import defaultdict
 
@@ -72,6 +74,12 @@ def retrieve(question: str, package: dict, *, database_url: str | None,
     sources = {s["source_id"]: s for s in package["sources"]}
     raw = collector.search_history(package["manifest"]["repo"], question,
                                    database_url=database_url, limit=10)
+    # Public collector hits retain datetime values; audits use explicit ISO strings.
+    def json_date(value):
+        if isinstance(value, (dt.datetime, dt.date)):
+            return value.isoformat()
+        raise TypeError(type(value).__name__)
+    raw = json.loads(json.dumps(raw, ensure_ascii=False, default=json_date))
     if raw["status"] not in {"ok", "empty"}:
         raise RuntimeError("relore检索失败，不能当作成功空结果")
     mapping = defaultdict(list)
