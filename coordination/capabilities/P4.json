@@ -13,7 +13,7 @@
   "github_merge": null,
   "github_token_read": null,
   "graph_access": null,
-  "model_access": null,
-  "checked_at": "2026-10-27T23:20:18+08:00",
-  "note": "基础采集器使用匿名GitHub访问、SQLite及专用PostgreSQL库验证；本轮未调用模型API。"
+  "model_access": true,
+  "checked_at": "2026-10-30T07:38:10+08:00",
+  "note": "本轮真实DeepSeek返回deepseek-flash，thinking disabled；已授权本人本机配置在进程内置环境变量，未输出密钥。SQLite及16432专用PostgreSQL测试库验证通过；用主仓库既有venv但显式PYTHONPATH确保本副本源码。Windows模型模块未实测。git_push沿用既有真实记录，提交后再次验证。"
 }
