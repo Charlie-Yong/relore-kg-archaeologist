@@ -2,6 +2,7 @@
 
 import json
 import time
+from pathlib import Path
 
 import httpx
 import pytest
@@ -92,6 +93,51 @@ def test_request_budget_preserves_usable_prefix(database_url, tmp_path):
     replayed = collector.replay_capture(result["capture_path"], database_url=database_url)
     assert replayed["status"] == "partial"
     assert replayed["collection_gaps"]
+
+
+def test_selected_resume_preserves_pages_and_cumulative_requests(database_url, tmp_path):
+    fake, _, transport = fake_service()
+    selected = [{"kind": "pr", "number": 2}, {"kind": "issue", "number": 1}]
+    first = collector.collect_repo(
+        URL,
+        selected=selected,
+        initial_requests=2,
+        database_url=database_url,
+        token="",
+        transport=transport,
+        max_requests=8,
+        output_dir=tmp_path / "first",
+    )
+    assert first["status"] == "partial"
+    assert first["github_requests"] == 8
+    previous_requests = len(fake.requests)
+    resumed = collector.collect_repo(
+        URL,
+        selected=selected,
+        resume_capture=first["capture_path"],
+        database_url=database_url,
+        token="",
+        transport=transport,
+        max_requests=30,
+        output_dir=tmp_path / "resumed",
+        profile_version="course_small_v1",
+    )
+    assert resumed["status"] == "ok", resumed
+    assert resumed["profile_version"] == "course_small_v1"
+    assert resumed["indexed_threads"] == 2
+    assert resumed["github_requests"] > first["github_requests"]
+    assert len(fake.requests) > previous_requests
+    capture = json.loads(Path(resumed["capture_path"]).read_text())
+    issue = next(p for p in capture["payloads"] if p["number"] == 1)
+    assert len(issue["issue_comments"]) == 2
+    with pytest.raises(ValueError, match="冻结selected"):
+        collector.collect_repo(
+            URL,
+            selected=selected[:1],
+            resume_capture=first["capture_path"],
+            database_url=database_url,
+            transport=transport,
+        )
 
 
 def test_budget_before_first_thread_is_blocked(database_url, tmp_path):

@@ -133,6 +133,19 @@ capture是开发接口的冻结输入，不冒充正式C5统一来源包；P1后
 `replay_capture`读取损坏、非本模块格式或跨仓库混用的文件时抛出ValueError/OSError，
 调用方应将其作为输入故障处理；有效文件的数据库故障通过结果status报告。
 
+2026-10-30增加P1自动发现的接入参数（原调用兼容）：`selected=[{"kind":"pr",
+"number":2}]`可直接使用P1冻结的至多40条线程，不在底层重新选案例；
+`initial_requests`和`initial_http_responses`接收发现阶段已经耗用的请求量与响应，
+总量仍受`max_requests<=300`约束。响应使用`url/status/body/retrieved_at/headers`，
+headers只保留分页所需`link`与`content-type`，不能传认证信息。
+`profile_version`标明实际profile，底层不会因此自动扩大范围。
+
+`resume_capture=Path(...)`沿用冻结的仓库、selected清单、成功分页与已用请求数；
+完整线程直接复用，未完成线程重读时成功冻结页走本地回放，仅缺失页消耗新请求。
+保留原始capture，并指定新的`output_dir`保存续作。换仓库或换selected会被拒绝。
+旧capture没有分页headers时不用于网络页缓存，以免把缺Link误作最后一页；
+完整线程仍可直接复用。`replay_capture`仍表示纯离线导入，不是续采。
+
 检索hit包含`repo,number,thread_type,title,source_type,source_id,url,author,trust,snippet`
 等relore字段。`source_id`是relore来源标识，不是C5的SHA-256 SourceDocument ID。
 原文片段和链接用于核对，检索不生成模型答案或新的修复结论。
