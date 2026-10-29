@@ -1,0 +1,19 @@
+{
+  "role": "P2",
+  "os": "macOS",
+  "can_read": true,
+  "can_write": true,
+  "can_run": true,
+  "can_network": true,
+  "python": "3.11.15",
+  "git": true,
+  "shell": "zsh / exec",
+  "git_push": null,
+  "github_pr": null,
+  "github_merge": null,
+  "github_token_read": null,
+  "graph_access": true,
+  "model_access": null,
+  "checked_at": "2026-10-30",
+  "note": "实际macOS共享服务验证；未宣称Windows通过。模型调用仅使用P4共享网关账本，当前尚无P2真实付费调用。"
+}

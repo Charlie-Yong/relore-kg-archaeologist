@@ -1,0 +1,358 @@
+{
+  "actual_attempts": [
+    {
+      "attempt_id": "8603708d4f5db701f678c7c860f8de020a13fb0f9a2e70e322feda8efc3966da:0",
+      "charged_micro_cny": 9858,
+      "dataset_id": "p4_connectivity_dev_20261030",
+      "reserved_micro_cny": 9858,
+      "state": "uncertain",
+      "task": "extract",
+      "usage": null
+    },
+    {
+      "attempt_id": "200e0ba7d8af2fbc067f4af3396fa3b9e0602ba89b45fa071ffe3f07347cfcf1:0",
+      "charged_micro_cny": 204,
+      "dataset_id": "p4_connectivity_dev_20261030",
+      "reserved_micro_cny": 9858,
+      "state": "settled",
+      "task": "extract",
+      "usage": {
+        "completion_tokens": 5,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 82,
+        "prompt_tokens": 82,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 87
+      }
+    },
+    {
+      "attempt_id": "68c89025be7556e5292d5e8a40afe9420303f96762d61bc4c62bc2f781bb1be6:0",
+      "charged_micro_cny": 16556,
+      "dataset_id": "p4_dev_6133_20261030",
+      "reserved_micro_cny": 70080,
+      "state": "settled",
+      "task": "extract",
+      "usage": {
+        "completion_tokens": 1061,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 4034,
+        "prompt_tokens": 4034,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 5095
+      }
+    },
+    {
+      "attempt_id": "de39d7a5a7f58d30b5c4eecec627f507ee51f543c5e8328b0fff9fe4427bc86e:0",
+      "charged_micro_cny": 15876,
+      "dataset_id": "p4_dev_6133_20261030",
+      "reserved_micro_cny": 70946,
+      "state": "settled",
+      "task": "extract",
+      "usage": {
+        "completion_tokens": 955,
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 3990,
+        "prompt_tokens": 4118,
+        "prompt_tokens_details": {
+          "cached_tokens": 128
+        },
+        "total_tokens": 5073
+      }
+    },
+    {
+      "attempt_id": "69cd2f74139959a8d3e54032584cefc7663ee11416e6fe0dacc05514a9ad4b23:0",
+      "charged_micro_cny": 8746,
+      "dataset_id": "p4_dev_6133_20261030",
+      "reserved_micro_cny": 39976,
+      "state": "settled",
+      "task": "answer",
+      "usage": {
+        "completion_tokens": 263,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 3321,
+        "prompt_tokens": 3321,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 3584
+      }
+    },
+    {
+      "attempt_id": "69cd2f74139959a8d3e54032584cefc7663ee11416e6fe0dacc05514a9ad4b23:1",
+      "charged_micro_cny": 10514,
+      "dataset_id": "p4_dev_6133_20261030",
+      "reserved_micro_cny": 40590,
+      "state": "settled",
+      "task": "answer",
+      "usage": {
+        "completion_tokens": 470,
+        "prompt_cache_hit_tokens": 3200,
+        "prompt_cache_miss_tokens": 177,
+        "prompt_tokens": 3377,
+        "prompt_tokens_details": {
+          "cached_tokens": 3200
+        },
+        "total_tokens": 3847
+      }
+    },
+    {
+      "attempt_id": "69cd2f74139959a8d3e54032584cefc7663ee11416e6fe0dacc05514a9ad4b23:2",
+      "charged_micro_cny": 10538,
+      "dataset_id": "p4_dev_6133_20261030",
+      "reserved_micro_cny": 40590,
+      "state": "settled",
+      "task": "answer",
+      "usage": {
+        "completion_tokens": 473,
+        "prompt_cache_hit_tokens": 3200,
+        "prompt_cache_miss_tokens": 177,
+        "prompt_tokens": 3377,
+        "prompt_tokens_details": {
+          "cached_tokens": 3200
+        },
+        "total_tokens": 3850
+      }
+    },
+    {
+      "attempt_id": "17c1e34047352702632cae4cdae17fccc7e251606920770aa241ec2452d6bb0c:0",
+      "charged_micro_cny": 8288,
+      "dataset_id": "p4_dev_6133_20261030",
+      "reserved_micro_cny": 40100,
+      "state": "settled",
+      "task": "answer",
+      "usage": {
+        "completion_tokens": 204,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 3328,
+        "prompt_tokens": 3328,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 3532
+      }
+    }
+  ],
+  "answer_replay": {
+    "cache_hit": true,
+    "claims": [
+      {
+        "evidence_ids": [
+          "Evidence:7b831a26c8f26626f57802929461ac464e49781f0baa42c10538c0919e786934"
+        ],
+        "text": "该 PR 调整测试的原因是 Werkzeug 尚未发布（相关功能尚未在已发布的 Werkzeug 中可用）。"
+      },
+      {
+        "evidence_ids": [
+          "Evidence:53a8496cb37faf244934c30c908cf00ed2681fd1e58a0875176ad56b063c2152"
+        ],
+        "text": "新增的 `client.query` 方法属于 Werkzeug 项目（在 pallets/werkzeug 的 PR #3219 中添加）。"
+      }
+    ],
+    "evidence": [
+      {
+        "author": "davidism",
+        "dataset_id": "p4_dev_6133_20261030",
+        "end": 352,
+        "evidence_id": "Evidence:7b831a26c8f26626f57802929461ac464e49781f0baa42c10538c0919e786934",
+        "quote": "Adjusted the test here to account for Werkzeug not being released yet.",
+        "source_id": "SourceDocument:513a495ca7082891d64c4ea58fd376643d12ba061b208ed52f6c5adf352e5c45",
+        "start": 282,
+        "time": "2026-08-11T20:17:29Z",
+        "url": "https://github.com/pallets/flask/pull/6133"
+      },
+      {
+        "author": "davidism",
+        "dataset_id": "p4_dev_6133_20261030",
+        "end": 281,
+        "evidence_id": "Evidence:53a8496cb37faf244934c30c908cf00ed2681fd1e58a0875176ad56b063c2152",
+        "quote": "Added `client.query` method in https://github.com/pallets/werkzeug/pull/3219.",
+        "source_id": "SourceDocument:513a495ca7082891d64c4ea58fd376643d12ba061b208ed52f6c5adf352e5c45",
+        "start": 204,
+        "time": "2026-08-11T20:17:29Z",
+        "url": "https://github.com/pallets/flask/pull/6133"
+      }
+    ],
+    "gaps": [],
+    "new_requests": 0,
+    "run_id": "17c1e34047352702632cae4cdae17fccc7e251606920770aa241ec2452d6bb0c",
+    "status": "ok",
+    "usage": {
+      "actual_requests": 1,
+      "charged_upper_cny": 0.008288,
+      "completion_tokens": 204,
+      "known_usage_attempts": 1,
+      "new_charge_upper_cny": 0,
+      "prompt_tokens": 3328
+    }
+  },
+  "artifact_sha256": {
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/17c1e34047352702632cae4cdae17fccc7e251606920770aa241ec2452d6bb0c/attempts/0/record.json": "ea89528469019dbff5648077f27374a00897aec852301c4ea897bb79e6afd855",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/17c1e34047352702632cae4cdae17fccc7e251606920770aa241ec2452d6bb0c/attempts/0/request.json": "23f8531965cbd9d8eb43b87630d8a179f4876de78018efbeca4c5932bbe598f1",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/17c1e34047352702632cae4cdae17fccc7e251606920770aa241ec2452d6bb0c/attempts/0/response.json": "7c4a147e5624aa4552267e2caa089dd32451027a201315940a06f36be45759f0",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/17c1e34047352702632cae4cdae17fccc7e251606920770aa241ec2452d6bb0c/context.json": "71490e9e13ec9ac92107c04640203ff651bf723db658b591ceae6cd9250fb4cd",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/17c1e34047352702632cae4cdae17fccc7e251606920770aa241ec2452d6bb0c/request.json": "1733ca45635b178aced568b980be78428fac6f1a06b4f9f5625ae367fb65d518",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/69cd2f74139959a8d3e54032584cefc7663ee11416e6fe0dacc05514a9ad4b23/attempts/0/record.json": "242a56c0b9d16decc54d9b98c6aeb79fac451339ae4689c98598e563dac7b184",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/69cd2f74139959a8d3e54032584cefc7663ee11416e6fe0dacc05514a9ad4b23/attempts/0/request.json": "7928871a27ccdd0806f7e8098d613b38257cd6af528abb4649625642229a794f",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/69cd2f74139959a8d3e54032584cefc7663ee11416e6fe0dacc05514a9ad4b23/attempts/0/response.json": "e62c41b2ce55473a38a7e98c96406427cc5d8e03745d151f868f812ad92ed0cb",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/69cd2f74139959a8d3e54032584cefc7663ee11416e6fe0dacc05514a9ad4b23/attempts/1/record.json": "cd5446124cb26f41aa1c0c8286bcc84ae2780c0d75ddef3e949a53b472627ed3",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/69cd2f74139959a8d3e54032584cefc7663ee11416e6fe0dacc05514a9ad4b23/attempts/1/request.json": "5769867a1d51e07364d3c172306fa0a1477ab16d4fd2a9755f8d7774aac926f8",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/69cd2f74139959a8d3e54032584cefc7663ee11416e6fe0dacc05514a9ad4b23/attempts/1/response.json": "ab936a0aaa40ddce859e53d565bb367ed814e3edef073ae6250674c90af8fe05",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/69cd2f74139959a8d3e54032584cefc7663ee11416e6fe0dacc05514a9ad4b23/attempts/2/record.json": "cb423a65a03a20e7656de512fab588e59c4cd357da8dcfae0725780117eca6e2",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/69cd2f74139959a8d3e54032584cefc7663ee11416e6fe0dacc05514a9ad4b23/attempts/2/request.json": "8969c91cbd6ebe160fc4df2d3fa199d2c0e33db94e290eba5a82d28f562cb7ce",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/69cd2f74139959a8d3e54032584cefc7663ee11416e6fe0dacc05514a9ad4b23/attempts/2/response.json": "3847fdc070fa54fec4174389a0479c6a4058125415158def9bdbd965bf1265cc",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/69cd2f74139959a8d3e54032584cefc7663ee11416e6fe0dacc05514a9ad4b23/context.json": "71490e9e13ec9ac92107c04640203ff651bf723db658b591ceae6cd9250fb4cd",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/answer/69cd2f74139959a8d3e54032584cefc7663ee11416e6fe0dacc05514a9ad4b23/request.json": "0a57ff18f22caa9f0912e4210eed9c91c55ddc8185d611c9ce35a929038ae0f9",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/extract/68c89025be7556e5292d5e8a40afe9420303f96762d61bc4c62bc2f781bb1be6/attempts/0/record.json": "4623d8331fa1136bff0a378ab94eb6b69c22fa3270091dcb2af7c7b0cf1d2ff8",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/extract/68c89025be7556e5292d5e8a40afe9420303f96762d61bc4c62bc2f781bb1be6/attempts/0/request.json": "d09900520078d4a7fa18be2601b0db6d748ffb4726c1554a1077618629bf2426",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/extract/68c89025be7556e5292d5e8a40afe9420303f96762d61bc4c62bc2f781bb1be6/attempts/0/response.json": "f9bdb57cb79eee1a443ec3683457e4afeaf3c680a77a00cb3268ca4590c4c8ae",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/extract/68c89025be7556e5292d5e8a40afe9420303f96762d61bc4c62bc2f781bb1be6/request.json": "d09900520078d4a7fa18be2601b0db6d748ffb4726c1554a1077618629bf2426",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/extract/de39d7a5a7f58d30b5c4eecec627f507ee51f543c5e8328b0fff9fe4427bc86e/attempts/0/record.json": "df9da2f3be9bc3d8e2f8444b5009b3accd9e585a8a7c1c3ee3a585590fcccd50",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/extract/de39d7a5a7f58d30b5c4eecec627f507ee51f543c5e8328b0fff9fe4427bc86e/attempts/0/request.json": "a9d2e3afbc7cf29413d18318ad30c56aeeb1401d9e28961d5bcc79163214b055",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/extract/de39d7a5a7f58d30b5c4eecec627f507ee51f543c5e8328b0fff9fe4427bc86e/attempts/0/response.json": "c8175d3f4038133f71328b3af399b0bf54630ad2c8240c74e835458f79f94bc4",
+    "llm/d5d95955dcf37a8d7a2efd0e37d8472fd1cd12205f8640179f32ea27181e239e/extract/de39d7a5a7f58d30b5c4eecec627f507ee51f543c5e8328b0fff9fe4427bc86e/request.json": "519b38179b67c2c877424ed39e4a528c3eca049672b5461f2cf0644dfc0e32a8"
+  },
+  "budget_snapshot": {
+    "approved_cny": 10.0,
+    "charged_upper_cny": 0.08058,
+    "effective_cap_cny": 9.84,
+    "ledger_path": "/Users/Exile/工作与学习/课程学习/知识图谱/relore-kg-archaeologist/.local/execution/deepseek_budget.sqlite3",
+    "remaining_cny": 9.75942,
+    "states": {
+      "settled": {
+        "attempts": 7,
+        "charged_micro_cny": 70722
+      },
+      "uncertain": {
+        "attempts": 1,
+        "charged_micro_cny": 9858
+      }
+    }
+  },
+  "candidate_resolutions": [
+    {
+      "rationale": "RFC 10008 isn't accepted yet, but it has been around for years and looks like it will pass; the author is adding it now so they don't have to watch it anymore.",
+      "resolution": "accepted_record",
+      "statement": "Flask PR #6133 adds an `app.query` route decorator.",
+      "target_repo": "pallets/flask"
+    },
+    {
+      "rationale": "Werkzeug is not released yet.",
+      "resolution": "accepted_record",
+      "statement": "Flask PR #6133 adjusts the local test to account for Werkzeug not being released yet.",
+      "target_repo": "pallets/flask"
+    },
+    {
+      "rationale": null,
+      "resolution": "external_project",
+      "statement": "Werkzeug PR #3219 adds a `client.query` method.",
+      "target_repo": "pallets/werkzeug"
+    }
+  ],
+  "dataset_id": "p4_dev_6133_20261030",
+  "decisions": [
+    {
+      "action": "add",
+      "contract_version": "1.4.1",
+      "dataset_id": "p4_dev_6133_20261030",
+      "id": "Decision:8f93b74e739458e9752fbd7a2d640bb9dc1b733925a60de055aa972b875b2955",
+      "model_run_id": "de39d7a5a7f58d30b5c4eecec627f507ee51f543c5e8328b0fff9fe4427bc86e",
+      "rationale": "RFC 10008 isn't accepted yet, but it has been around for years and looks like it will pass; the author is adding it now so they don't have to watch it anymore.",
+      "rationale_evidence_ids": [
+        "Evidence:0f3a3f5d8fb5f9f1c972d7114752719d5344950fc0612ce1838f7e8a6809c3ca"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/flask",
+      "statement": "Flask PR #6133 adds an `app.query` route decorator.",
+      "statement_evidence_ids": [
+        "Evidence:ea5debb11044168e29f9ff412c1d075e19ed7249ba79374d67f47945be7789e8",
+        "Evidence:edaba08cddc35225bc7e9e9e57f0276c98f3f43277d66c9f460e4d14c387fa9a"
+      ],
+      "status": "accepted",
+      "subject_id": "PullRequest:060eec7c867d23a44749fcc55d169e1678b528db6ff11076695415202d4bbc66",
+      "unit_id": "SourceUnit:a3900e26f9981c80dbbdaf09793d2f8ebd6ecc8c8ec9d8b58332fcf49ff126ae"
+    },
+    {
+      "action": "change",
+      "contract_version": "1.4.1",
+      "dataset_id": "p4_dev_6133_20261030",
+      "id": "Decision:818292b43dafc2d0b5b62234029a92ba1edfc3e3eeb8a0a40bfdf02273bd32e8",
+      "model_run_id": "de39d7a5a7f58d30b5c4eecec627f507ee51f543c5e8328b0fff9fe4427bc86e",
+      "rationale": "Werkzeug is not released yet.",
+      "rationale_evidence_ids": [
+        "Evidence:7b831a26c8f26626f57802929461ac464e49781f0baa42c10538c0919e786934"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/flask",
+      "statement": "Flask PR #6133 adjusts the local test to account for Werkzeug not being released yet.",
+      "statement_evidence_ids": [
+        "Evidence:7b831a26c8f26626f57802929461ac464e49781f0baa42c10538c0919e786934"
+      ],
+      "status": "accepted",
+      "subject_id": "PullRequest:060eec7c867d23a44749fcc55d169e1678b528db6ff11076695415202d4bbc66",
+      "unit_id": "SourceUnit:a3900e26f9981c80dbbdaf09793d2f8ebd6ecc8c8ec9d8b58332fcf49ff126ae"
+    }
+  ],
+  "extraction_replay": {
+    "artifacts": {
+      "candidates": ".local/p4/dev_regression_6133/p4/candidates.jsonl",
+      "coverage": ".local/p4/dev_regression_6133/p4/coverage.jsonl",
+      "decisions": ".local/p4/dev_regression_6133/p4/decisions.jsonl",
+      "entities": ".local/p4/dev_regression_6133/p4/entities.jsonl",
+      "evidence": ".local/p4/dev_regression_6133/p4/evidence.jsonl",
+      "failures": ".local/p4/dev_regression_6133/p4/failures.jsonl",
+      "relations": ".local/p4/dev_regression_6133/p4/relations.jsonl"
+    },
+    "counts": {
+      "candidates": 3,
+      "decisions": 2,
+      "failed_chunks_or_candidates": 0
+    },
+    "gaps": [
+      {
+        "missing_parts": [
+          "full_thread_not_reverified_from_old_pilot"
+        ],
+        "reason": "source_unit_partial",
+        "unit_id": "SourceUnit:a3900e26f9981c80dbbdaf09793d2f8ebd6ecc8c8ec9d8b58332fcf49ff126ae"
+      },
+      {
+        "candidate_id": "d151ec895955a0507e797a00c16e98ab974a6524e53b59df8e443e6de9b8c872",
+        "reason": "external_project",
+        "target_repo": "pallets/werkzeug",
+        "unit_id": "SourceUnit:a3900e26f9981c80dbbdaf09793d2f8ebd6ecc8c8ec9d8b58332fcf49ff126ae"
+      }
+    ],
+    "model_run_ids": [
+      "de39d7a5a7f58d30b5c4eecec627f507ee51f543c5e8328b0fff9fe4427bc86e"
+    ],
+    "status": "partial",
+    "usage": {
+      "actual_llm_extraction": true,
+      "charged_upper_cny": 0.0,
+      "cost_cny": 0.0,
+      "new_model_requests": 0,
+      "successful_extraction_chunks": 1,
+      "tokens_including_cached_runs": 5073
+    }
+  },
+  "original_source": "old frozen pilot sources, not new GitHub collection",
+  "public_validation": {
+    "counts": {
+      "entities": 3,
+      "evidence": 6,
+      "relations": 5,
+      "source_units": 1,
+      "sources": 2,
+      "subjects": 1
+    },
+    "dataset_id": "p4_dev_6133_20261030",
+    "errors": [],
+    "status": "ok"
+  },
+  "purpose": "development verification, not formal experiment or URL acceptance",
+  "source_completeness": "partial: full discussion not reverified"
+}

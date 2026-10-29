@@ -1,0 +1,62 @@
+# 原型入口与演示
+
+P5页面仅调用P1构建和P2查询；资料采集、任务编排、图查询及统一回答器均沿用所属模块。
+
+## 启动
+
+在仓库根目录按锁文件安装依赖。一次配置由安装者完成，普通使用只输入仓库URL。
+`HISTORYKG_PROJECT_CONFIG`指向P1项目配置；凭据仍由P1/P4后端从本机环境读取。
+
+macOS：
+
+```text
+export HISTORYKG_PROJECT_CONFIG=/实际位置/project.json
+PYTHONPATH=vendor/relore:. .venv/bin/python -m streamlit run app/main.py --server.address 127.0.0.1
+```
+
+Windows PowerShell：
+
+```powershell
+$env:HISTORYKG_PROJECT_CONFIG = "C:\实际位置\project.json"
+$env:PYTHONPATH = "vendor/relore;."
+.venv\Scripts\python.exe -m streamlit run app/main.py --server.address 127.0.0.1
+```
+
+本轮实际平台为macOS；Windows命令待实机验证。
+
+## 正常操作
+
+1. 填写公开GitHub Python仓库链接，点“开始整理”。P1按默认profile自动推进。
+2. 查看当前阶段、实际覆盖和缺口。任务身份保存在页面地址中；浏览器刷新只读取同一任务。
+3. 构建暂停/失败时可显式“继续构建”，调用P1恢复接口。未就绪时没有问答入口。
+4. 后端发布ready或partial数据后，输入自然语言问题。页面按顺序展示全部claims，证据链接可定位到对应原文组件。
+5. 展开证据查看quote、Unicode位置、来源链接与冻结版本；展开关系链查看后端返回的真实关系、方法和原文。
+
+empty、unsupported、error分别显示，不根据空数组改写后端状态。
+同一问题响应保存在页面会话中，普通重绘不会重复调用模型。
+查询方式的辅助选项只复用已有记录；缺少适用资料时显示unsupported。
+
+## 同一真实任务与冻结重放
+
+安装者可设置`HISTORYKG_DEMO_JOB_ID`，页面启动后只调用get_build观察已存任务，
+不重新start。任务目录由同一P1配置决定，不能用其他副本的默认目录冒充原任务。
+
+设置`HISTORYKG_REPLAY_FILE`可进入显式标识的冻结结果重放，文件结构为：
+
+```json
+{"recorded_at":"原记录时间", "job":{}, "queries":[]}
+```
+
+job为公共BuildJob，queries为同一dataset_id的公共QueryResult。
+重放模式不显示在线输入框、不启动构建、不调用模型；不能把重放时间当在线性能。
+正式备份仅在真实公共查询完成后保存，本轮不拿toy或旧dev响应拼成Flask URL验收。
+
+## 本轮验证
+
+`python -m pytest tests/test_app.py -q`：15项通过。使用明确的合成后端响应，覆盖七种构建状态、
+四种查询状态、所有claims顺序、空claims仍保留关系链、刷新/恢复及冻结重放无在线调用。
+它是界面逻辑验证，不是实际LLM、Neo4j或真实仓库全流程验收。
+
+真实只读接入：同一Flask任务显示blocked/extract，覆盖369来源、40完整讨论、24文件快照；
+未显示成功或问答入口。见[截图](screenshots/flask-build-paused-20261030.png)。
+具体版本、任务与待验收项统一记录于[P5 handoff](../../deliveries/P5/2026-10-30/handoff.md)。
