@@ -149,3 +149,9 @@ B中位延迟2688毫秒、A为2285毫秒。配对事实覆盖差0.157，胜负B/
 测试抽取图见[extraction_test.png](../../../evaluation/results/figures/extraction_test.png)，
 QA图见[qa_test.png](../../../evaluation/results/figures/qa_test.png)。图中文字和底部注脚
 已逐张目视检查后修正排版。测试、lint与全池限制在最终核验段落更新。
+
+最终本地核验为全仓114 passed、28 skipped，evaluation/contracts 23 passed，ruff通过；
+planning检查通过并核对199个本地链接。公开汇总中的共享账本保守记账为8.373512元，
+其中已知用量6.679102元、失败预留上界1.694410元，剩余保守额度1.466488元。服务商
+余额会受本账本外充值和调整影响，不能替代该调用预算审计。PR #8在最新main上无冲突，
+planning与collector两项远端检查均通过。
