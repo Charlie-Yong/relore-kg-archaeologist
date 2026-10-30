@@ -19,13 +19,23 @@
 
 真实闭环节选为一个源码职责问题：同一版本`src/flask/testing.py`中的`FlaskClient.session_transaction`为何使用临时请求上下文，以及它如何处理会话与Cookie。页面返回6条claims，证据32至37逐条对应冻结源码；每条claim可跳到相应原文，证据组件同时显示Unicode位置、来源编号、原始链接和冻结数据版本。首次保存的真实重放包保留原查询运行ID、模型运行ID、响应哈希与保存时间；另有`empty`响应原样保留，不把证据不足改写为成功或错误。
 
+P3在P2新增契约1.4.2上完成了Developer/Function增量。新增实体和关系只来自原Flask作业已冻结的PR API JSON与24个文件×SHA源码：PR顶层`user`生成`Authored: Developer→PullRequest`，`merged_by`生成`Merged: Developer→PullRequest`，顶层函数AST生成`Defines: File→Function`。真实只读重放得到18 Developer、384 Function、20 Authored、4 Merged、384 Defines；PR→Commit仍沿用P1的`MergedAs`，没有生成Developer→Commit，也未从commit author推断PR作者。该结果是新数据版本重放，不是向旧1.4.1生产图原地补写。固定链
+`PR #6096（lkk7→davidism）→05e9c6b→src/flask/testing.py→flask.testing._get_werkzeug_version`
+的Authored/Merged、Defines证据和全部508条新增证据区间已核对；`FlaskClient`是ClassDef，不冒充Function。
+
 资料覆盖受自动profile限制，外部依赖、未采文件和版本可达性等缺口继续展示。
 正式实验在30个测试线程上得到抽取Precision/Recall/F1为0.568/0.962/0.714，
 参考理由覆盖13/15=0.867。20道测试题的A/B事实覆盖分别为0.600和0.740，
 证据组召回分别为0.636和0.691，无依据断言率分别为0.026和0.043。
 B-A平均事实覆盖差为0.157，但配对胜负为B胜5、A胜4、平6，
 95%描述性bootstrap区间`[-0.122, 0.457]`跨零，因此不宣称显著收益。
-全池核验成功86/92，正确弃答率保持N/A。第二小库与跨平台记录引用全组实际验收。
+P6最终公开结果为全池92/92；6道候选题均完成两遍完整核验，确认证据不足为0，
+正确弃答率为N/A但仅因分子和合格分母均为0，不是核验未完成。48个A/B答案仍保留为
+32 ok、15 empty、1 error。第二小库`pallets/itsdangerous`由同一URL入口和默认profile生成
+347来源、30完整讨论、82实体、78关系和180证据；作业为partial并保留10次HTTP 404及
+147个未补采显式引用等记录缺口，但validate、graph、retrieval均ready。依赖查询返回
+50条路径、25条证据和5条有出处claims，全部引文及来源哈希复核通过。
+共享账本保守累计9.465795元，余10.374205元。跨平台记录引用全组实际验收。
 成员承担理解、课堂表达和真实互评；本轮页面与展示由P5角色AI实施。
 P4前期独立调研、总体方案、架构、协作框架、探索性试跑及采集器移植保留原贡献归属。
 

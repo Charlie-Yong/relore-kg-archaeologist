@@ -1,0 +1,445 @@
+{
+  "schemaVersion": "p5.final-presentation-validation.v2",
+  "checkedAt": "2026-10-30T15:57:09+08:00",
+  "status": "pass_with_declared_residuals",
+  "presentation": {
+    "absolutePath": "/Users/Exile/工作与学习/课程学习/知识图谱/relore-agents/p5/demo/final/期末汇报_20261030最终版.pptx",
+    "repositoryPath": "demo/final/期末汇报_20261030最终版.pptx",
+    "sha256": "ed766becdd55530d953d4fc645eb3aff8356a18095f028f2ab87a90bb7516fae",
+    "byteCount": 249863,
+    "slideCount": 10,
+    "slideSizeInches": [
+      13.3333,
+      7.5
+    ],
+    "designSizePx": [
+      1280,
+      720
+    ],
+    "notesCount": 10,
+    "nativeTableCount": 3,
+    "nativeChartCount": 1
+  },
+  "artifactToolValidation": {
+    "packageIntegrity": "pass",
+    "packageFindingCount": 0,
+    "packageWarnings": [],
+    "layoutFindingCount": 0,
+    "layoutWarningCount": 0,
+    "observedFontFamilies": [
+      "Songti SC"
+    ],
+    "checkedTextScriptCount": 358,
+    "exactReimport": true,
+    "reimportShaMatchesFinal": true,
+    "everySlideRendered": true,
+    "everySlideHasNotes": true,
+    "everySlideInspectRecordNonEmpty": true,
+    "allElementsWithinSlideBounds": true,
+    "nativeFontRenderingVerified": false,
+    "nativePowerPointOpenVerified": false,
+    "tempChartDirectoriesPackaged": false
+  },
+  "visualReview": {
+    "performed": true,
+    "method": "Artifact Tool 2x per-slide PNG review plus final montage and layout geometry inspection",
+    "allTenSlidesReviewed": true,
+    "allTenSlidesPass": true,
+    "clippingFound": false,
+    "overlapFound": false,
+    "perSlide": [
+      {
+        "slide": 1,
+        "title": "知识图谱课程 · 期末汇报",
+        "preview": "demo/final/previews/slide-01.png",
+        "previewSha256": "49349a579116affb766a7ebe1e0b3da96a48d1ca3d50e00b164d9ceecdfe1a8b",
+        "previewBytes": 235896,
+        "renderScale": 2,
+        "renderedSizePx": [
+          2560,
+          1440
+        ],
+        "notesEmbedded": true,
+        "notesCharacters": 266,
+        "inspectRecordCount": 11,
+        "elementsOutsideSlideBounds": 0,
+        "visualInspection": "pass",
+        "clippingOrOverlapFound": false
+      },
+      {
+        "slide": 2,
+        "title": "研究问题：代码说明结果，历史解释为什么",
+        "preview": "demo/final/previews/slide-02.png",
+        "previewSha256": "606ab56c7a1258e6a3828d9050119c44bee9b3953adfc12621433c4477b6a690",
+        "previewBytes": 362942,
+        "renderScale": 2,
+        "renderedSizePx": [
+          2560,
+          1440
+        ],
+        "notesEmbedded": true,
+        "notesCharacters": 252,
+        "inspectRecordCount": 26,
+        "elementsOutsideSlideBounds": 0,
+        "visualInspection": "pass",
+        "clippingOrOverlapFound": false
+      },
+      {
+        "slide": 3,
+        "title": "自动URL流程：一次输入，六阶段可恢复",
+        "preview": "demo/final/previews/slide-03.png",
+        "previewSha256": "8ed0efd75c603ad2e40232937e782c19080c02e8a72ad73cdbbb71899ee6d243",
+        "previewBytes": 350592,
+        "renderScale": 2,
+        "renderedSizePx": [
+          2560,
+          1440
+        ],
+        "notesEmbedded": true,
+        "notesCharacters": 329,
+        "inspectRecordCount": 33,
+        "elementsOutsideSlideBounds": 0,
+        "visualInspection": "pass",
+        "clippingOrOverlapFound": false
+      },
+      {
+        "slide": 4,
+        "title": "Schema与证据：关系必须能回到原文",
+        "preview": "demo/final/previews/slide-04.png",
+        "previewSha256": "0e2ab8982927ea42e2e190097e8fe96b05e07d85e2fc3645e4aac36862c38660",
+        "previewBytes": 424472,
+        "renderScale": 2,
+        "renderedSizePx": [
+          2560,
+          1440
+        ],
+        "notesEmbedded": true,
+        "notesCharacters": 766,
+        "inspectRecordCount": 23,
+        "elementsOutsideSlideBounds": 0,
+        "visualInspection": "pass",
+        "clippingOrOverlapFound": false
+      },
+      {
+        "slide": 5,
+        "title": "真实数据集范围：369条来源，40个完整讨论",
+        "preview": "demo/final/previews/slide-05.png",
+        "previewSha256": "50fef33e35f752dc16b144c2f8b443c73a5f69721436fa5fcf22a7dff34f1bb7",
+        "previewBytes": 456832,
+        "renderScale": 2,
+        "renderedSizePx": [
+          2560,
+          1440
+        ],
+        "notesEmbedded": true,
+        "notesCharacters": 395,
+        "inspectRecordCount": 28,
+        "elementsOutsideSlideBounds": 0,
+        "visualInspection": "pass",
+        "clippingOrOverlapFound": false
+      },
+      {
+        "slide": 6,
+        "title": "跨源案例：PR #6096 到函数实体",
+        "preview": "demo/final/previews/slide-06.png",
+        "previewSha256": "df0aa193758c809e03b12cc8e8c76433701049f0730352e7ff7284ae083b388a",
+        "previewBytes": 359790,
+        "renderScale": 2,
+        "renderedSizePx": [
+          2560,
+          1440
+        ],
+        "notesEmbedded": true,
+        "notesCharacters": 727,
+        "inspectRecordCount": 23,
+        "elementsOutsideSlideBounds": 0,
+        "visualInspection": "pass",
+        "clippingOrOverlapFound": false
+      },
+      {
+        "slide": 7,
+        "title": "原型问答：6条claims逐条对应冻结源码",
+        "preview": "demo/final/previews/slide-07.png",
+        "previewSha256": "01c0ebdd4103fe126b45559c52d0e75a9de1972991214f930bd238c64ce99e42",
+        "previewBytes": 473031,
+        "renderScale": 2,
+        "renderedSizePx": [
+          2560,
+          1440
+        ],
+        "notesEmbedded": true,
+        "notesCharacters": 426,
+        "inspectRecordCount": 28,
+        "elementsOutsideSlideBounds": 0,
+        "visualInspection": "pass",
+        "clippingOrOverlapFound": false
+      },
+      {
+        "slide": 8,
+        "title": "抽取实验：测试集高召回，但精度只有 0.568",
+        "preview": "demo/final/previews/slide-08.png",
+        "previewSha256": "df939f479f69428da8cc5fa335124c251078eb495c06913544964dee80fde12f",
+        "previewBytes": 243329,
+        "renderScale": 2,
+        "renderedSizePx": [
+          2560,
+          1440
+        ],
+        "notesEmbedded": true,
+        "notesCharacters": 321,
+        "inspectRecordCount": 19,
+        "elementsOutsideSlideBounds": 0,
+        "visualInspection": "pass",
+        "clippingOrOverlapFound": false
+      },
+      {
+        "slide": 9,
+        "title": "A/B对照：事实覆盖+0.157，但区间跨零",
+        "preview": "demo/final/previews/slide-09.png",
+        "previewSha256": "26357cad45729e70916ef344d3261096bec4bdc698026b614e3855dad2b41036",
+        "previewBytes": 402843,
+        "renderScale": 2,
+        "renderedSizePx": [
+          2560,
+          1440
+        ],
+        "notesEmbedded": true,
+        "notesCharacters": 820,
+        "inspectRecordCount": 19,
+        "elementsOutsideSlideBounds": 0,
+        "visualInspection": "pass",
+        "clippingOrOverlapFound": false
+      },
+      {
+        "slide": 10,
+        "title": "复现、贡献与结论",
+        "preview": "demo/final/previews/slide-10.png",
+        "previewSha256": "22586b5d5b55ba5890b7cbab665568b9eb0ceb560cb28bb4d47262c78459f874",
+        "previewBytes": 400983,
+        "renderScale": 2,
+        "renderedSizePx": [
+          2560,
+          1440
+        ],
+        "notesEmbedded": true,
+        "notesCharacters": 564,
+        "inspectRecordCount": 21,
+        "elementsOutsideSlideBounds": 0,
+        "visualInspection": "pass",
+        "clippingOrOverlapFound": false
+      }
+    ]
+  },
+  "contentAcceptance": {
+    "passed": true,
+    "requiredStrings": {
+      "slide4_developer": true,
+      "slide4_function": true,
+      "slide4_authored_direction": true,
+      "slide4_merged_direction": true,
+      "slide4_defines_direction": true,
+      "slide4_no_developer_commit": true,
+      "slide4_new_data_version_replay": true,
+      "slide6_fixed_chain": true,
+      "slide6_author_merger_boundary": true,
+      "slide9_b_minus_a": true,
+      "slide9_ci_crosses_zero": true,
+      "slide9_correct_abstention_na_zero_denominator": true,
+      "slide9_full_pool_92_of_92": true,
+      "slide9_six_questions_two_passes": true,
+      "slide9_confirmed_insufficient_zero": true,
+      "slide9_answer_status_retained": true,
+      "slide9_second_repo_counts": true,
+      "slide9_second_repo_readiness": true,
+      "slide9_dependency_answer": true,
+      "slide9_budget": true,
+      "slide10_member_names_pending": true,
+      "slide10_completed_work_removed_from_next_steps": true,
+      "slide10_real_residuals": true
+    },
+    "obsoletePhrasesAbsent": {
+      "old_snapshot_label": true,
+      "old_pool_count": true,
+      "old_incomplete_review": true,
+      "old_not_final_label": true
+    },
+    "inspectionSource": "Artifact Tool exact reimport of the final PPTX",
+    "p3Increment": {
+      "sourceCommit": "b6f4582a26084e1322e2609ec017c96ce0d70e97",
+      "sourceArtifact": "P3 commit b6f4582a26084e1322e2609ec017c96ce0d70e97: deliveries/P3/2026-10-30/developer_function_validation.json",
+      "interpretation": "new-contract read-only replay on a new data version; not an in-place update of the old production graph",
+      "entities": {
+        "Developer": 18,
+        "Function": 384
+      },
+      "relations": {
+        "Authored": {
+          "count": 20,
+          "direction": "Developer->PullRequest"
+        },
+        "Merged": {
+          "count": 4,
+          "direction": "Developer->PullRequest"
+        },
+        "Defines": {
+          "count": 384,
+          "direction": "File->Function"
+        }
+      },
+      "prCommitEdgeOwner": "P1 MergedAs",
+      "developerToCommitGenerated": false,
+      "commitAuthorRelationAdded": false
+    },
+    "fixedChain": {
+      "text": "PR #6096（lkk7→davidism）→05e9c6b→src/flask/testing.py→flask.testing._get_werkzeug_version",
+      "present": true
+    },
+    "experiment": {
+      "extractionTpFpFn": [
+        25,
+        19,
+        1
+      ],
+      "extractionPrecisionRecallF1": [
+        0.568,
+        0.962,
+        0.714
+      ],
+      "rationaleCoverage": "13/15=0.867",
+      "bMinusA": 0.157,
+      "bootstrap95": [
+        -0.122,
+        0.457
+      ],
+      "intervalCrossesZero": true,
+      "wins": {
+        "B": 5,
+        "A": 4,
+        "ties": 6
+      },
+      "correctAbstentionRate": "N/A",
+      "correctAbstentionDenominator": 0
+    },
+    "memberInformation": {
+      "sixRoleResponsibilitiesPresent": true,
+      "namesAndStudentIds": "待本人补充",
+      "inventedMemberInformation": false
+    }
+  },
+  "p6StatusUpdate": {
+    "sourceCommit": "78eaa072c0dc2ecaf422c82667959c307bbe5547",
+    "sourceBranch": "feat/p6-formal-results",
+    "slide": 9,
+    "shapeName": "p6-status-update",
+    "text": "全池 92/92；6 题均两遍完整核验；确认证据不足 0；正确弃答率 N/A（分母 0）。\n48 答案：32 ok / 15 empty / 1 error · itsdangerous：347来源/30讨论/82实体/78关系/180证据。\nitsdangerous 为 partial（保留记录缺口），但 validate/graph/retrieval ready；依赖查询 50路径/25证据/5 claims，出处全通过。\n预算累计 9.465795 / 剩余 10.374205。",
+    "uniqueRegion": true,
+    "externalReceiverSignoff": false,
+    "wholePool": {
+      "ok": 92,
+      "expected": 92,
+      "complete": true,
+      "questionsAssessed": 6,
+      "questionsWithTwoCompletePasses": 6,
+      "confirmedInsufficient": 0,
+      "retryOk": 6,
+      "retryFailed": 0
+    },
+    "correctAbstention": {
+      "status": "N/A",
+      "numerator": 0,
+      "denominator": 0,
+      "reason": "All 92 pool positions completed twice, but zero questions were confirmed insufficient; a correct-abstention rate has no eligible denominator."
+    },
+    "answerSnapshot": {
+      "ok": 32,
+      "empty": 15,
+      "error": 1
+    },
+    "secondRepository": {
+      "repo": "pallets/itsdangerous",
+      "jobStatus": "partial",
+      "validationStatus": "ok",
+      "graphReady": true,
+      "retrievalReady": true,
+      "counts": {
+        "complete_units": 30,
+        "entities": 82,
+        "evidence": 180,
+        "file_snapshots": 17,
+        "partial_units": 0,
+        "relations": 78,
+        "source_units": 30,
+        "sources": 347,
+        "subjects": 48
+      },
+      "gapCounts": {
+        "explicit_reference_not_collected": 147,
+        "external_or_unresolved": 78,
+        "fetch_failed": 10,
+        "import_target_not_collected": 74,
+        "release_reachability_unknown": 60
+      },
+      "verifiedQuery": {
+        "kind": "dependencies",
+        "question": "Which modules does src/itsdangerous/timed.py import or depend on?",
+        "status": "ok",
+        "path_count": 50,
+        "evidence_count": 25,
+        "claim_count": 5,
+        "claim_evidence_ids_resolve": true,
+        "all_cited_quotes_match_frozen_source": true,
+        "source_sha256_recomputed": true,
+        "example_source_url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/src/itsdangerous/timed.py"
+      }
+    },
+    "budget": {
+      "ledger_scope": "shared main deployment ledger for the whole project; not a provider account balance",
+      "approved_cny": 20,
+      "effective_cap_cny": 19.84,
+      "prior_snapshot_cny": 8.373512,
+      "new_charged_cny": 1.092283,
+      "accounted_conservative_cny": 9.465795,
+      "known_usage_cny": 7.771385,
+      "unknown_upper_cny": 1.69441,
+      "remaining_cny": 10.374205,
+      "attempts": 387,
+      "settled_attempts": 362,
+      "uncertain_attempts": 25,
+      "new_charge_breakdown": {
+        "second_repository_cny": 0.589461,
+        "whole_pool_retry_cny": 0.502822
+      },
+      "snapshot_checked_at": "2026-10-30T07:40:03+00:00",
+      "cost_rule": "The ledger charges settled usage and retains peak-price upper bounds for uncertain attempts; no additional ledger or budget reset was created."
+    }
+  },
+  "governance": {
+    "noModelCallsThisUpdate": true,
+    "privateTestRead": false,
+    "publicP6FilesOnly": true,
+    "tempChartDirectoriesPackaged": false
+  },
+  "regression": {
+    "uiAndReplayTests": {
+      "command": "PYTHONPATH=vendor/relore:. <venv>/bin/python -m pytest tests/test_app.py tests/test_app_replay.py -q",
+      "result": "21 passed"
+    },
+    "ruff": {
+      "command": "<venv>/bin/ruff check app tests/test_app*.py",
+      "result": "All checks passed"
+    },
+    "gitDiffCheck": {
+      "command": "git diff --check",
+      "result": "pass"
+    }
+  },
+  "residualLimits": [
+    "Correct-abstention rate is N/A because the numerator and eligible denominator are both zero after complete review; this is not an incomplete-review result.",
+    "The itsdangerous job is partial with recorded collection gaps; it does not establish arbitrary-repository completeness.",
+    "Neo4j could not be reconnected live during the final audit; saved real graph/query evidence is used instead.",
+    "Microsoft PowerPoint/WPS native-open verification is not claimed.",
+    "Windows real-machine font substitution check is pending.",
+    "Formal classroom live timing and member rehearsal are pending.",
+    "Member names, student IDs, and formal peer review remain to be filled by the members."
+  ]
+}
