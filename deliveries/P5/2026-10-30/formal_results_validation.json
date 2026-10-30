@@ -1,0 +1,74 @@
+{
+  "validated_at": "2026-10-30T14:44:00+08:00",
+  "source_summary": "evaluation/results/formal_summary.json",
+  "official_results": {
+    "extraction_test": {
+      "tp": 25,
+      "fp": 19,
+      "fn": 1,
+      "precision": 0.5681818181818181,
+      "recall": 0.9615384615384616,
+      "f1": 0.7142857142857143,
+      "rationale_covered": 13,
+      "rationale_eligible": 15,
+      "rationale_coverage": 0.8666666666666667
+    },
+    "qa_test": {
+      "questions": 20,
+      "A": {
+        "fact_coverage": 0.6,
+        "evidence_group_recall": 0.6363636363636364,
+        "unsupported_rate": 0.02564102564102564
+      },
+      "B": {
+        "fact_coverage": 0.74,
+        "evidence_group_recall": 0.6909090909090909,
+        "unsupported_rate": 0.0425531914893617
+      },
+      "paired_mean_difference_B_minus_A": 0.15714285714285714,
+      "bootstrap95": [
+        -0.12222222222222225,
+        0.45714285714285713
+      ],
+      "wins_A": 4,
+      "wins_B": 5,
+      "ties": 6
+    },
+    "whole_pool": {
+      "successful": 86,
+      "expected": 92,
+      "correct_abstention_rate": null
+    }
+  },
+  "presentation": {
+    "path": "demo/midterm/期中汇报_20261111_20261030正式结果版.pptx",
+    "sha256": "15020e0dc50ea3ef56b2b40fff8de4d8821208820ea6b9c5476477f08918b7e8",
+    "byte_count": 241922,
+    "slides": 5,
+    "size_inches": [
+      13.3333,
+      7.5
+    ],
+    "package_integrity": "pass",
+    "layout_geometry": "pass",
+    "font_policy": "pass",
+    "exact_file_import": "pass",
+    "findings": 0,
+    "warnings": 0,
+    "all_slides_rendered": 5,
+    "all_slides_visually_inspected": true,
+    "previews": "demo/midterm/previews/slide-1.png through slide-5.png"
+  },
+  "verification": {
+    "ui_and_replay_tests": "21 passed",
+    "ruff": "pass",
+    "planning": "pass",
+    "diff_check": "pass"
+  },
+  "limitations": [
+    "Windows native PowerPoint opening and font substitution were not executed.",
+    "The 5-minute classroom run-through remains for the presenting members.",
+    "Results compare with model silver references and do not claim human-gold accuracy.",
+    "The B-A paired bootstrap interval crosses zero, so no significant graph gain is claimed."
+  ]
+}
