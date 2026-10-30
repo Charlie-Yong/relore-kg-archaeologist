@@ -1,11 +1,28 @@
 {
-  "package_path": "/Users/Exile/工作与学习/课程学习/知识图谱/relore-agents/p1/tmp/submission-final/relore-kg-course-final.zip",
-  "sha256": "e09693e98740fd8398f1a6f4dcf83eb569f9dd8a6c473395c74d375fd44b50cc",
-  "source_commit": "e71fd0b6dd473e5f03242baef13180ae49e7906b",
-  "files": 1014,
+  "package_path": "/Users/Exile/工作与学习/课程学习/知识图谱/relore-kg-archaeologist/tmp/submission-final/relore-kg-course-final.zip",
+  "sha256": "a7b199b006a32fe5ffd5929bb4e694cb28ebcbe9512de7f7ed4f69d5729c8620",
+  "source_commit": "74613621fc3dff2453cca641b8611e52a77eb95e",
+  "package_status": "final_candidate",
+  "bytes": 30459259,
+  "files": 1043,
+  "archive_entries": 1044,
+  "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+  "final_presentation": {
+    "path": "demo/final/期末汇报_20261030最终版.pptx",
+    "sha256": "7052104cb9015da779f35a8a97c53a763fd98ebec21f4ec049a1e7ca984aff46",
+    "bytes": 251298
+  },
+  "technical_report": {
+    "path": "output/pdf/historykg_technical_report.pdf",
+    "sha256": "cb883b345ef7635db8e2c8e166239ae87295a3b7888341d64291179efed0ffe3",
+    "bytes": 355203,
+    "pages": 14
+  },
   "new_model_requests": 0,
   "includes": [
     "P1/P2/P3/P4/P5/P6 merged final records",
+    "project evolution timeline with 25 events and 46 exact evidence spans",
+    "14-page technical report and 10-slide final presentation",
     "P6 public formal evaluation summaries and figures",
     "P5 formal-results midterm deck and replay",
     "frozen Flask production dataset and audit logs"
@@ -16,5 +33,18 @@
     "complete Git clones",
     "local personal configuration"
   ],
-  "note": "Final stage candidate rebuilt after all six role merges; human classroom rehearsal remains outside machine validation."
+  "verification": {
+    "zip_crc": "pass",
+    "member_hashes": "1043/1043",
+    "source_matches_git_archive": true,
+    "forbidden_paths_found": 0,
+    "private_test_included": false
+  },
+  "human_remaining": [
+    "member names, student IDs, and responsibility confirmation",
+    "six-member peer evaluation scores and factual comments",
+    "Windows font-substitution check",
+    "formal classroom rehearsal and live presentation"
+  ],
+  "note": "Final candidate rebuilt from a clean committed source tree; it is submission-ready after the listed member-owned fields and classroom checks are completed."
 }
