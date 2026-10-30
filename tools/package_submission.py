@@ -13,7 +13,8 @@ from pathlib import Path
 from historykg.io import read_json, validate_dataset
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_FINAL_PPT = Path("demo/midterm/期中汇报_20261111_20261030正式结果版.pptx")
+DEFAULT_FINAL_PPT = Path("demo/final/期末汇报_20261030最终版.pptx")
+DEFAULT_REPORT_PDF = Path("output/pdf/historykg_technical_report.pdf")
 PACKAGE_STATUSES = ("stage_candidate", "final_candidate", "final")
 FORBIDDEN_PARTS = {".local", "clones", "private_test", "submission"}
 FORBIDDEN_NAMES = {"credentials.json", "id_ed25519", "id_rsa", "secrets.json"}
@@ -90,6 +91,60 @@ def presentation_for_status(status: str, final_ppt: Path | None) -> dict | None:
     )
 
 
+def inspect_report_pdf(
+    path: Path | None,
+    *,
+    require_exists: bool = False,
+    require_tracked: bool = False,
+    root: Path = ROOT,
+) -> dict | None:
+    """Return final-report metadata and enforce its presence for final packages."""
+    if path is None:
+        if require_exists:
+            raise ValueError("final状态要求最终PDF报告存在")
+        return None
+    candidate = path if path.is_absolute() else root / path
+    if not candidate.exists():
+        if require_exists:
+            raise ValueError(f"final状态要求最终PDF报告存在: {path}")
+        return None
+    if candidate.is_symlink() or not candidate.is_file():
+        raise ValueError("最终PDF报告必须是非符号链接的普通文件")
+    if candidate.suffix.lower() != ".pdf":
+        raise ValueError("最终PDF报告必须是.pdf文件")
+    resolved = candidate.resolve()
+    if not resolved.is_relative_to(root.resolve()):
+        raise ValueError("最终PDF报告必须位于待打包仓库内")
+    relative = resolved.relative_to(root.resolve()).as_posix()
+    if require_tracked:
+        tracked = subprocess.run(
+            ["git", "-C", str(root), "ls-files", "--error-unmatch", relative],
+            capture_output=True,
+            text=True,
+        )
+        if tracked.returncode:
+            raise ValueError("final状态要求最终PDF报告由待打包提交跟踪")
+    body = resolved.read_bytes()
+    return {
+        "path": relative,
+        "sha256": hashlib.sha256(body).hexdigest(),
+        "bytes": len(body),
+    }
+
+
+def report_for_status(status: str, report_pdf: Path | None) -> dict | None:
+    if status not in PACKAGE_STATUSES:
+        raise ValueError(f"未知包状态: {status}")
+    require = status == "final"
+    if require and report_pdf is None:
+        report_pdf = DEFAULT_REPORT_PDF
+    return inspect_report_pdf(
+        report_pdf,
+        require_exists=require or report_pdf is not None,
+        require_tracked=require,
+    )
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", type=Path, required=True)
@@ -98,15 +153,21 @@ def main(argv=None):
         "--package-status",
         choices=PACKAGE_STATUSES,
         default="final_candidate",
-        help="包状态；final仅在最终PPT存在且由待打包提交跟踪时允许",
+        help="包状态；final仅在最终PPT和PDF报告存在且由待打包提交跟踪时允许",
     )
     parser.add_argument(
         "--final-ppt",
         type=Path,
         help=f"最终PPT路径；final默认使用 {DEFAULT_FINAL_PPT.as_posix()}",
     )
+    parser.add_argument(
+        "--report-pdf",
+        type=Path,
+        help=f"最终PDF报告路径；final默认使用 {DEFAULT_REPORT_PDF.as_posix()}",
+    )
     args = parser.parse_args(argv)
     presentation = presentation_for_status(args.package_status, args.final_ppt)
+    report_pdf = report_for_status(args.package_status, args.report_pdf)
     dataset = args.dataset.resolve()
     if "private_test" in dataset.parts:
         raise ValueError("只接收冻结生产数据，不打包P6私有目录")
@@ -153,7 +214,8 @@ def main(argv=None):
             "source/ 是准确提交的源码与锁定依赖；frozen/ 是冻结生产来源、图与模型运行记录。\n"
             "包内不含密钥、个人运行配置、完整clone或P6私有测试。\n\n"
             "PACKAGE.json 的 package_status 区分 stage_candidate、final_candidate 与 final；\n"
-            "final 只在最终PPT存在且由待打包提交跟踪时允许，final_candidate 仍需成员核对\n"
+            "final 只在最终PPT和最终PDF报告均存在且由待打包提交跟踪时允许，\n"
+            "final_candidate 仍需成员核对\n"
             "姓名、学号、互评及现场材料。\n\n"
             "1. 无付费重建：按 source/repro/README.md 安装、配置本机数据库，然后在source中运行\n"
             "   python tools/run_platform_rebuild.py --dataset ../frozen"
@@ -171,6 +233,7 @@ def main(argv=None):
             "source_commit": commit, "dataset_id": manifest["dataset_id"],
             "package_status": args.package_status,
             "final_ppt": presentation,
+            "report_pdf": report_pdf,
             "excluded": [
                 "P6 private test material",
                 "API credentials and personal local configuration",
@@ -192,6 +255,7 @@ def main(argv=None):
         "source_commit": commit,
         "package_status": args.package_status,
         "final_ppt": presentation,
+        "report_pdf": report_pdf,
         "new_model_requests": 0,
     }, ensure_ascii=False))
 
