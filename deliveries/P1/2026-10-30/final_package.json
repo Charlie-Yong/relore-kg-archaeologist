@@ -1,21 +1,21 @@
 {
   "package_path": "/Users/Exile/工作与学习/课程学习/知识图谱/relore-kg-archaeologist/tmp/submission-final/relore-kg-course-final.zip",
-  "sha256": "dfe6c9e28706a7fb16bf3283a5c86321dde8163bc8878c2e9c2cccb2f618391a",
-  "source_commit": "380eb891b3070a3332a1c636a030bfe35ff2f0be",
+  "sha256": "07a6afb5e3c7fed48ed0661ca4c883a6d510762a27c3271d41f6c6100622275f",
+  "source_commit": "2877e8313d0d0680767d3545f672bde7fcabdcc7",
   "package_status": "final_candidate",
-  "bytes": 30460065,
+  "bytes": 30014849,
   "files": 1043,
   "archive_entries": 1044,
   "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
   "final_presentation": {
     "path": "demo/final/期末汇报_20261030最终版.pptx",
-    "sha256": "7052104cb9015da779f35a8a97c53a763fd98ebec21f4ec049a1e7ca984aff46",
-    "bytes": 251298
+    "sha256": "2550a0a1e02e5382204c381704088d5b6e3c86c0354bb06a2251de69256d4453",
+    "bytes": 251230
   },
   "technical_report": {
     "path": "output/pdf/historykg_technical_report.pdf",
-    "sha256": "2e52f7bcc2b0010bb7bbdd0eed5be9fef114084a2409abd665a27b83f7cb4c8f",
-    "bytes": 355301,
+    "sha256": "dd300be2dcc8d4a32b571a57a36f23248e78195e5d02dd70137508bb2dada2f1",
+    "bytes": 357531,
     "pages": 14
   },
   "new_model_requests": 0,
@@ -40,11 +40,12 @@
     "forbidden_paths_found": 0,
     "private_test_included": false
   },
+  "deferred_by_user": [
+    "member names, student IDs, responsibility confirmation, and peer evaluation are intentionally left blank"
+  ],
   "human_remaining": [
-    "member names, student IDs, and responsibility confirmation",
-    "six-member peer evaluation scores and factual comments",
     "Windows font-substitution check",
     "formal classroom rehearsal and live presentation"
   ],
-  "note": "Final candidate rebuilt from a clean committed source tree; it is submission-ready after the listed member-owned fields and classroom checks are completed."
+  "note": "Final candidate rebuilt from a clean committed source tree. Personal fields are intentionally blank and are not represented as completed; Windows font substitution and classroom presentation remain real checks."
 }
