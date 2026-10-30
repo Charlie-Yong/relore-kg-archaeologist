@@ -35,15 +35,12 @@ Flash高峰命中0.04、未命中2、输出8元/百万token；空闲分别0.02�
 HTTP结果继续占原预留。金额用Decimal逐attempt向上取整到微元。所有失败与重试均留账。
 `attempts.settlement_json`保存价格、时段、token细分和官方依据，不参与run_id或请求身份。
 已固定上限不能通过
-新实例提高；`lower_ceiling()`只允许降低有效上限。本轮已固定有效ceiling为9.84元。
-
-2026-10-30已对165次历史尝试做一次原子对账：164次有usage且时间证据完整覆盖北京时间
-00:59–08:01，按空闲及缓存细分核算3.770932元；1次401仍占未知上界0.009858元，
-累计3.780790元，原10元授权/9.84元ceiling均不变，余6.059210元（此为对账时快照）。
-精确token费率金额为3.77085592元，逐attempt向上取微元后为3.770932元；账户余额的
-精度核对仅留本地审计。原账本SQLite backup、逐attempt old/new与价格依据保留在主部署私有
-`.local/execution/`和账本的`budget_reconciliation_items/budget_reconciliations`中；
-公共[核算摘要](../../deliveries/P4/2026-10-30/budget_reconciliation.json)仅含token/费用元数据。
+新实例提高；`lower_ceiling()`只允许降低有效上限。2026-10-30用户追加10元后，主代理
+本地审计文件`.local/execution/budget_extension_20261030T072516Z.json`记录授权上限
+由10元扩展为20元、有效ceiling为19.84元，历史费用未清零；当前本地审计余量为
+11.466488元。此前165次历史尝试的原子对账仍保留在账本与
+[历史核算摘要](../../deliveries/P4/2026-10-30/budget_reconciliation.json)中，
+不能把旧快照的1.466488元余额继续当作当前余额。本轮最终回答链审计没有新增模型请求。
 
 费用报告以共享账本`attempts.charged`为当前核算额；可按task/state或明确的attempt_id聚合。
 `snapshot()`另给`accounted_cny/known_usage_cny/unknown_upper_cny`。既有不可变缓存中的
@@ -85,6 +82,8 @@ partial/unread源单元和未处理分块记录覆盖缺口；长文本按码点
 make_evidence定位；重复引文必须有offset或邻近上下文，不能任选一次。校验同时限制
 引文在本次可见块内。有效Decision通过公共decision_id赋ID，Entity与ABOUT/EVIDENCED_BY
 确定性派生。源码引用存在仅证明定位正确，语义质量仍待P6独立评审。
+空白statement、空白rationale和只含空白的证据quote在Pydantic边界直接拒绝，不进入
+候选文件或Decision派生；证据原文中的空白本身不能充当结论依据。
 
 ## 回答与最终上下文
 
@@ -99,6 +98,15 @@ characters为实际送入prompt的context数组规范JSON的Python len，包含�
 问题与系统指令另存。answer保存候选及最终context.json供P6按最终可见区间复算召回。
 模型只输出逐字quote，程序计算码点偏移；不要求模型猜数值位置。重复quote需扩大到唯一
 原文，无法定位的claim使该次请求失败，最多2次重试后返回error，不悄悄丢掉断言。
+claim正文、弃答gap和证据quote的纯空白值都在Schema边界拒绝；没有证据的claim不能通过。
+若两个上下文项具有相同source_id/start/end但quote不同，渲染直接报不一致，不采用先到先得。
+
+`Developer`、`Function`等新增实体和`Authored`、`Defines`等新增关系属于P2的路径数据，
+answerer不枚举类型，也不把路径标签当作事实证据。`render_context`只读取冻结来源的
+source_id/start/end/quote及标题、URL、作者、时间等白名单字段；未知或新增的路径元数据
+会被安全忽略，不会改变最终可见片段。路径本身由P2保留在QueryResult.paths，界面按
+entity.type、relation.type和properties.display_name/key做通用展示；因此新类型无需新增
+模型调用。若同一冻结来源的同一偏移出现不同quote，仍按上文判为数据不一致。
 
 ## 当前实测与复现边界
 
@@ -107,10 +115,18 @@ characters为实际送入prompt的context数组规范JSON的Python len，包含�
 开发旧试跑主题6133的新抽取与回答记录见[P4交接](../../deliveries/P4/2026-10-30/handoff.md)。
 缓存重放不发新请求；修改提示后的实际效果单独用新真实请求验证。P6正式冻结实验已完成：
 测试集抽取Precision/Recall/F1为0.568/0.962/0.714，理由覆盖13/15；A/B事实覆盖为
-0.600/0.740，配对差0.157，但bootstrap区间[-0.122,0.457]跨零。共享账本保守入账
-8.373512元，有效上限9.84元，余1.466488元。逐项分母、限制和复算入口见
+0.600/0.740，配对差0.157，但bootstrap区间[-0.122,0.457]跨零。共享账本当前授权
+20元、有效上限19.84元，历史已入账8.373512元；追加后的本地审计余量为11.466488元。
+逐项分母、限制和复算入口见
 [正式汇总](../../evaluation/results/formal_summary.json)与
 [P4最终验证](../../deliveries/P4/2026-10-30/formal_validation.json)。
+
+2026-10-30最终回答链无费审计使用公开冻结Flask包完成一次
+`prepare_query`与`render_context`：包指纹与共享图库一致，37个候选、40条路径，
+最终6个片段、11972/12000码点、32个裁剪gap，新模型请求0。该检查只验证接口和证据渲染，
+不是回答质量实验；实际冻结数据尚未包含Developer/Function/Authored/Defines，新增类型由
+合成兼容测试覆盖。机器记录见
+[最终回答与渲染审计](../../deliveries/P4/2026-10-30/final_answer_render_audit.json)。
 
 核对的原始文档（2026-10-30）：
 

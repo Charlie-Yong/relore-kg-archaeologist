@@ -6,9 +6,10 @@ from pathlib import Path
 
 import httpx
 import pytest
+from pydantic import ValidationError
 
 from historykg.llm import BudgetLedger, answer_question, prepare_request, run_request
-from historykg.llm.answer import render_context
+from historykg.llm.answer import AnswerOutput, render_context
 from historykg.llm.budget import BudgetBlocked
 
 
@@ -201,6 +202,21 @@ def test_final_context_clips_at_complete_boundary_with_real_offsets():
     assert visible["end"] < item["end"]
 
 
+@pytest.mark.parametrize("blank", ["", " ", "\n\t"])
+def test_answer_output_rejects_blank_claims_gaps_and_evidence(blank):
+    quote = {"source_id": "s", "quote": "visible text"}
+    with pytest.raises(ValidationError, match="text"):
+        AnswerOutput.model_validate(
+            {"claims": [{"text": blank, "evidence": [quote]}], "gaps": []}
+        )
+    with pytest.raises(ValidationError, match="quote"):
+        AnswerOutput.model_validate(
+            {"claims": [{"text": "claim", "evidence": [{**quote, "quote": blank}]}], "gaps": []}
+        )
+    with pytest.raises(ValidationError, match="gaps"):
+        AnswerOutput.model_validate({"claims": [], "gaps": [blank]})
+
+
 def test_answer_only_returns_cited_claims_and_no_free_summary(tmp_path, monkeypatch):
     monkeypatch.setenv("DEEPSEEK_API_KEY", "x")
     import historykg.llm.answer as module
@@ -239,3 +255,39 @@ def test_answer_only_returns_cited_claims_and_no_free_summary(tmp_path, monkeypa
     assert "summary" not in result and "answer" not in result
     assert result["evidence"][0]["start"] == 40
     assert result["usage"]["actual_requests"] == 2
+
+
+def test_answer_does_not_publish_blank_model_claims(tmp_path, monkeypatch):
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "x")
+    import historykg.llm.answer as module
+
+    original = module.run_request
+    outputs = [
+        {
+            "claims": [{"text": " ", "evidence": [{"source_id": "s", "quote": "visible"}]}],
+            "gaps": [],
+        }
+    ] * 3
+
+    def handler(_):
+        return response(outputs.pop(0))
+
+    monkeypatch.setattr(
+        module,
+        "run_request",
+        lambda request, **kwargs: original(
+            request, **kwargs, transport=httpx.MockTransport(handler)
+        ),
+    )
+    text = "visible"
+    result = answer_question(
+        dataset_id="data1",
+        repo="example/toy",
+        question="What changed?",
+        context=[{"source_id": "s", "start": 0, "end": len(text), "quote": text}],
+        config={"output_root": tmp_path / "runs", "max_retries": 2},
+        budget=budget(tmp_path),
+    )
+    assert result["status"] == "error"
+    assert result["claims"] == []
+    assert result["usage"]["actual_requests"] == 3
