@@ -1,0 +1,16 @@
+{
+  "task": "extraction",
+  "provenance": "explicit synthetic scorer acceptance; not Flask experimental results",
+  "references": [
+    {"reference_id": "r1", "rationale_status": "stated"},
+    {"reference_id": "r2", "rationale_status": "stated"}
+  ],
+  "predictions": [
+    {"prediction_id": "p1", "rationale": null, "rationale_status": "not_stated"},
+    {"prediction_id": "p2", "rationale": null, "rationale_status": "not_stated"}
+  ],
+  "judgments": [
+    {"prediction_id": "p1", "reference_ids": ["r1"], "support": "supported", "rationale_support": "unsupported"},
+    {"prediction_id": "p2", "reference_ids": ["r1"], "support": "supported", "rationale_support": "unsupported"}
+  ]
+}
