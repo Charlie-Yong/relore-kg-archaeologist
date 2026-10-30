@@ -88,3 +88,33 @@ CUA/IAB已实际核对完成态、覆盖/缺口与自然语言提问入口，新
 防止第二条答案跳到第一条原文。新增双响应引用验证；UI/归档合计21 passed，ruff通过。
 报告原型章节已改为真实就绪稿，附三张可用图；公共问答、完成态证据截图、真实重放与两次PPT继续进行。
 本批日常小修按C3.3无需新增独立模型审核；根/P1后续集中接收。
+
+## 最终真实闭环版（2026-10-30 14:30）
+
+沿用同一`ready/index_graph`作业和公共响应，不新增DeepSeek调用。真实源码职责问题返回
+6条claims、37条证据；证据32至37逐条回到冻结`src/flask/testing.py`，页面并展示
+Unicode位置、来源编号、原始链接和dataset版本。另保留`dev-01`原始`empty`状态。
+冻结重放包为`demo/replay/flask-public-20261030.json`，其两份响应哈希分别与P1公开查询文件
+`8ad3d9...501f`、`93a74c...bd5a2`一致，原记录时间和运行ID未改写。
+
+在线只读页面实际读取到`pallets/flask · 已就绪`、369来源、40完整讨论、24文件快照，
+同时显示覆盖缺口和自然语言输入；AppTest无异常，健康端点返回`ok`，没有start/resume/新ask。
+同一冻结包另以AppTest验收：页面明确显示冻结真实结果重放，包含`ok`与`empty`两项响应，
+无构建或查询按钮及输入框，发生0次在线调用。UI/归档回归21 passed，ruff通过。
+
+最终期中材料：
+
+- `demo/midterm/期中汇报_20261111_20261030真实闭环版.pptx`
+- `demo/midterm/讲稿.md`
+- `demo/midterm/演示步骤.md`
+- `demo/midterm/previews/slide-1.png`至`slide-5.png`
+- `docs/p5/screenshots/flask-architecture-claims-20261030.png`
+- `docs/p5/screenshots/flask-architecture-source-20261030.png`
+
+原进度版PPT保留不改；最终版另存并保持五页及原字体、配色和原生架构图。第4页用真实
+claims截图替换暂停进度表；第1、2、5页及相应notes同步到真实闭环。五页逐页渲染后目视检查，
+未发现裁切、重叠或错误结论；PPTX包完整性`pass`，13.3333×7.5英寸、5页、
+heading fit/punctuation均0 finding。机器可读汇总见`final_validation.json`。
+
+限制不变：真实开发问答不替代P6正式F1、A/B增益或正确弃答率；Windows实机、正式课堂
+彩排和原PowerPoint客户端检查不在本轮已完成证据范围。P5本轮交付为done。

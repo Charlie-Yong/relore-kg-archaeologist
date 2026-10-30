@@ -61,12 +61,13 @@ def show_evidence(evidence, *, title="原文证据", anchor_prefix=""):
             st.caption(f"冻结数据版本：{item['dataset_id']}")
 
 
-def show_paths(paths, evidence):
+def show_paths(paths, evidence, *, anchor_prefix=""):
     if not paths:
         return
     st.subheader("已有关系链")
     st.caption("关系链呈现当前数据中的关联；每种关系保留各自含义。")
     evidence_by_id = {e["evidence_id"]: e for e in evidence}
+    evidence_index = {e["evidence_id"]: n for n, e in enumerate(evidence, 1)}
     for index, path in enumerate(paths, 1):
         with st.expander(f"关系链 {index} · {len(path.get('relation_ids', []))} 条关系"):
             entities = {e["id"]: e for e in path.get("entities", [])}
@@ -87,8 +88,12 @@ def show_paths(paths, evidence):
                                f"事件时间：{relation.get('occurred_at') or '未知'}")
                     for eid in relation.get("evidence_ids", []):
                         item = evidence_by_id.get(eid)
-                        if item and item.get("url"):
-                            st.markdown(f"[关系原文]({item['url']}) · {item['quote']}")
+                        if item:
+                            number = evidence_index[eid]
+                            target = f"#{anchor_prefix}evidence-{number}"
+                            st.markdown(f"[查看关系证据 {number}]({target})")
+                            if item.get("url"):
+                                st.markdown(f"[打开关系来源]({item['url']})")
             else:
                 st.write(" → ".join(map(label, path.get("entity_ids", []))))
                 st.caption("后端未提供关系标签；详细标识保留在响应中。")
@@ -119,7 +124,7 @@ def show_result(result):
     if value["error"]:
         st.write("请稍后重试，或由安装者检查检索、图数据库和模型配置。")
     show_evidence(value["evidence"], anchor_prefix=anchor_prefix)
-    show_paths(value["paths"], value["evidence"])
+    show_paths(value["paths"], value["evidence"], anchor_prefix=anchor_prefix)
     with st.expander("本次查询详情"):
         st.json(value, expanded=False)
 

@@ -64,4 +64,13 @@ job为公共BuildJob，queries为同一dataset_id的公共QueryResult。
 graph_ready、retrieval_ready及actual_llm_extraction均为真。浏览器已核对
 [完成态](screenshots/flask-ready-20261030.png)、[覆盖缺口](screenshots/flask-ready-coverage-20261030.png)
 与[自然语言入口](screenshots/flask-ready-question-20261030.png)。保留原暂停截图作为真实阶段记录。
+
+冻结公共响应另完成两项问题验收：源码职责问题返回6条claims与37条证据，
+[claim列表](screenshots/flask-architecture-claims-20261030.png)与
+[逐字源码](screenshots/flask-architecture-source-20261030.png)均已核对；
+`dev-01` 保留原 `empty` 状态。重放包保存原运行ID、响应哈希和保存时间，页面关闭在线输入和模型调用。
+最终期中材料为
+`demo/midterm/期中汇报_20261111_20261030真实闭环版.pptx`；五页逐页渲染、PPTX结构完整性、
+版式几何、页数和标题检查均通过。完整机器可读记录见
+[final_validation.json](../../deliveries/P5/2026-10-30/final_validation.json)。
 具体版本、任务与待验收项统一记录于[P5 handoff](../../deliveries/P5/2026-10-30/handoff.md)。

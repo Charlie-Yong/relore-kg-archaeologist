@@ -16,6 +16,8 @@
 
 同一Flask作业已完成采集、代码处理、真实LLM抽取、校验、索引与建图，发布369条来源、40个完整讨论和24个文件快照，含133个实体、183条关系及333条证据。实际页面显示ready/index_graph，并开放自然语言提问；图与检索均已就绪。界面与归档21项检查通过，其中合成输入只证明状态与渲染逻辑，真实页面另由浏览器核对并保存截图。问答内容与证据以同次公共响应为准，不把图谱规模解释为答案质量。
 
+真实闭环节选为一个源码职责问题：同一版本`src/flask/testing.py`中的`FlaskClient.session_transaction`为何使用临时请求上下文，以及它如何处理会话与Cookie。页面返回6条claims，证据32至37逐条对应冻结源码；每条claim可跳到相应原文，证据组件同时显示Unicode位置、来源编号、原始链接和冻结数据版本。首次保存的真实重放包保留原查询运行ID、模型运行ID、响应哈希与保存时间；另有`empty`响应原样保留，不把证据不足改写为成功或错误。
+
 资料覆盖受自动profile限制，外部依赖、未采文件和版本可达性等缺口继续展示。第二小库与跨平台记录引用全组实际验收，正式抽取和问答指标仅使用P6发布汇总。成员承担理解、课堂表达和真实互评；本轮页面与展示由P5角色AI实施。P4前期独立调研、总体方案、架构、协作框架、探索性试跑及采集器移植保留原贡献归属。
 
 ## 图件与插入建议
@@ -23,6 +25,8 @@
 - 图1：Flask真实作业完成态与URL入口。文件：`docs/p5/screenshots/flask-ready-20261030.png`。
 - 图2：同一作业覆盖与缺口。文件：`docs/p5/screenshots/flask-ready-coverage-20261030.png`。
 - 图3：仅在发布可查询数据后出现的自然语言入口。文件：`docs/p5/screenshots/flask-ready-question-20261030.png`。
+- 图4：真实自然语言问答返回6条claims。文件：`docs/p5/screenshots/flask-architecture-claims-20261030.png`。
+- 图5：claim可定位到冻结源码、位置、来源编号和数据版本。文件：`docs/p5/screenshots/flask-architecture-source-20261030.png`。
 - 图题共同注明：2026-10-30；job b61942bf06b742e48860d064dffe6df2；数据版本dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c。
 
 依据：P5 handoff、同一P1 BuildJob、公共QueryResult与P4前期贡献记录。正式PDF由P1统稿。
