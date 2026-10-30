@@ -9,7 +9,7 @@
 实际进度：10页期末PPT、逐页PNG、讲稿、演示步骤和材料说明已交付。PPT包含研究问题、
 自动URL流程、Schema/证据、真实数据范围、PR #6096跨源链、原型问答、抽取实验、A/B与限制、
 复现与六角色贡献。第4页准确保留18 Developer、384 Function、20 Authored、4 Merged、
-384 Defines的新数据版本只读重放口径；第6页保留固定链
+384 Defines的新数据版本只读重放口径；第6页使用Issue→PR→合并提交→文件→函数的跨源演化链
 `PR #6096（lkk7→davidism）→05e9c6b→src/flask/testing.py→flask.testing._get_werkzeug_version`。
 第9页保留B-A=0.157、区间跨零，并更新为P6最终公开状态：全池92/92、6题均两遍完整核验、
 确认不足0；正确弃答率N/A仅因合格分母0。第二小库itsdangerous为347来源/30讨论/
@@ -24,7 +24,7 @@
 恢复动作：若P6发布更新的公开提交，只更新第9页`p6-status-update`、讲稿/材料说明与本状态；
 不读取`evaluation/private_test`，不把partial结果外推为任意仓库完整可运行。
 
-限制：Microsoft PowerPoint/WPS原生打开、
+限制：Windows字体替换、WPS（可选）、
 Windows实机字体、正式课堂彩排、成员姓名学号与正式互评待本人补充。
 
 更新：主代理已恢复持久Neo4j服务。P2在公开提交`19602e6`使用真实Neo4j/PostgreSQL

@@ -91,9 +91,9 @@ A/B结果，并明确bootstrap区间跨零和正确弃答率N/A。五页逐页�
 为18 Developer、384 Function、20 Authored、4 Merged、384 Defines。该结果是新数据版本重放，
 不是旧1.4.1生产图原地补写；`Authored/Merged`方向为`Developer→PullRequest`，
 `Defines`方向为`File→Function`，不生成`Developer→Commit`。
-第6页使用固定链
-`PR #6096（lkk7→davidism）→05e9c6b→src/flask/testing.py→flask.testing._get_werkzeug_version`，
-并说明`class`不冒充Function。
+第6页使用跨源演化链：Issue #6093→PR #6096→08-11合并→`05e9c6b`→
+`src/flask/testing.py`→`flask.testing._get_werkzeug_version`，同时说明Issue关闭、
+PR合并与Release可达是不同强度的证据，`class`不冒充Function。
 
 第9页唯一`p6-status-update`文本区采用`feat/p6-formal-results`提交`78eaa07`的公开最终结果：
 全池92/92，6道候选题均两遍完整核验，确认证据不足0；正确弃答率为`N/A`仅因合格分母为0。
@@ -103,9 +103,9 @@ A/B结果，并明确bootstrap区间跨零和正确弃答率N/A。五页逐页�
 共享账本累计9.465795元，剩余10.374205元。A/B的B-A为0.157，95%描述性bootstrap区间
 `[-0.122,0.457]`跨零，仍不宣称显著收益。
 
-最终PPTX已经Artifact Tool精确重导入、10页逐页渲染和目视检查；包结构、几何、字体、
-3个原生表格、1个原生图表、10份notes、页数与逐页inspect记录通过，未发现裁切或重叠。
-这不等同于Microsoft PowerPoint/WPS原生打开检查，也不替代Windows实机、
-成员姓名学号填写和正式课堂彩排。P2已在真实Neo4j完成扩展分片四跳验收；
+最终PPTX已经macOS Microsoft PowerPoint 16.113.4原生打开、导出10页PDF、按2倍比例渲染并复核；
+包结构、几何、字体、3个原生表格、1个原生图表、10份notes、页数与新版第6页均通过，
+未发现裁切或重叠。这不替代Windows字体替换、WPS（可选）、成员姓名学号填写和正式课堂彩排。
+P2已在真实Neo4j完成扩展分片四跳验收；
 当前生产图仍为旧1.4.1，新增实体来自真实新数据版本重放。公开验收记录为提交
 `19602e6`，真实Neo4j/PostgreSQL回归26 passed，PR #6096两条方向路径均通过。

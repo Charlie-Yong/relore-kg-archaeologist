@@ -1,7 +1,7 @@
 # P1 数据、公共契约与 URL 流水线交接
 
 角色P1，2026-10-30，规划/契约1.4.1，独立副本relore-agents/p1、长期分支feat/p1。
-阶段状态final_candidate：期末统稿、正式实验结果、第二仓库验收和P5最终PPT已完成，仅余真实成员信息、Windows/PowerPoint原生复核与课堂彩排等人工项。
+阶段状态final_candidate：期末统稿、正式实验结果、第二仓库验收和P5最终PPT已完成，仅余真实成员信息、Windows字体替换检查与课堂彩排等人工项。
 
 ## 原理说明与授权记录
 
@@ -184,45 +184,52 @@ P3只读增量为18 Developer、384 Function、20 Authored、4 Merged、384 Defi
 姓名、学号、贡献确认与互评均保留“待本人填写/待本人补充”，没有虚构。
 
 PDF使用指定Codex primary runtime的`python3 reports/build_pdf.py`重新生成。结果为
-`output/pdf/historykg_technical_report.pdf`，13页、345655 bytes、PDF文本抽取19806字符、
-其中汉字10621字；SHA-256为
-`86ae7707157ce38e7062b7204bdb0f54952e391567950094945dfb4802752b4d`。九类指定旧
+`output/pdf/historykg_technical_report.pdf`，14页、355203 bytes、PDF文本抽取21454字符、
+其中汉字11280字；SHA-256为
+`cb883b345ef7635db8e2c8e166239ae87295a3b7888341d64291179efed0ffe3`。九类指定旧
 状态词的扫描计数均为0，覆盖过期全池分母、过期第二库缺口、过期核验状态、过期正式
 PPT页数、过期发布状态及过期阶段名称。最终指标、P3固定链、
 第二仓库/依赖查询、预算、10页期末PPT和人员待补标记的文本提取检查全部PASS。
 
 PDF共7个URI annotation，对应6个唯一外部URL；逐一实际请求均返回HTTP 200。pdfplumber
-检出5个表格，边界全部位于页面可打印区域，无裁切；第7、11、12、13页另行渲染目视复核，
-抽取结果表、A/B表、六角色表、成员表、互评表及参考文献显示正常，成员信息表未跨页拆行。
+检出6个表格，边界全部位于页面可打印区域，无裁切；第4、10、11、14页另行渲染目视复核，
+项目演化时间线表、展示材料说明、结论和参考文献显示正常，成员信息表未跨页拆行。
 
 实际检查命令与结果：
 
 ~~~text
 指定runtime python3 reports/build_pdf.py
-  成功生成13页PDF
+  成功生成14页PDF
 
-指定runtime python3 tools/check_planning.py
-  passed=true；68份Markdown、246个本地链接；P1-P6均为done；errors=[]
+PYTHONPATH=vendor/relore:. .venv/bin/python tools/check_planning.py
+  passed=true；70份Markdown、250个本地链接；P1-P6均为done；errors=[]
 
-指定runtime python3 tools/test_check_planning.py
-  7 tests passed
+PYTHONPATH=vendor/relore:. .venv/bin/python -m pytest tools/test_check_planning.py -q
+  7 passed, 8 subtests passed
 
-P4独立工作树.venv/bin/ruff check reports/build_pdf.py
+RELORE_TEST_POSTGRES_URL、P2_TEST_NEO4J_URI、P2_TEST_DATABASE_URL、
+P2_REAL_P3_DATASET_DIR配置真实服务后运行全量pytest
+  181 passed
+
+P2真实图查询专项
+  26 passed
+
+.venv/bin/ruff check historykg app tests tools/build_evolution_timeline.py
   All checks passed!
 
 git diff --check
   通过
 ~~~
 
-指定runtime自身未安装ruff（`No module named ruff`），因此Ruff使用另一独立工作树
-已有的可执行环境运行，未安装包、未调用模型。规划测试及Markdown本地链接检查均使用
-指定runtime完成。
+PDF重建和规划检查使用指定runtime；Ruff使用项目`.venv/bin/ruff`。完整pytest连接真实
+PostgreSQL/Neo4j及P1+P3合并分片运行，未新增模型请求。
 
-最终集成分支已接收P5提交`6c3ca52`，`demo/final/期末汇报_20261030最终版.pptx`为
-250639 bytes、SHA-256 `3742e6dc6ff593c922ed6182e9f64eb2ccea11663e8844ec54347fe0cd947479`，
-已由待打包提交跟踪并通过10页重导入与逐页渲染检查。P2亦已在真实Neo4j/PostgreSQL上完成
+最终集成分支已接收P5最终材料，`demo/final/期末汇报_20261030最终版.pptx`为
+251298 bytes、SHA-256 `7052104cb9015da779f35a8a97c53a763fd98ebec21f4ec049a1e7ca984aff46`，
+已由待打包提交跟踪，并通过Microsoft PowerPoint 16.113.4（macOS）原生打开、10页PDF导出、
+2倍渲染和总览复核。P2亦已在真实Neo4j/PostgreSQL上完成
 P1+P3合并分片四跳验收，临时namespace与schema均清理；生产图仍保持旧1.4.1口径。
 
 仍需人工完成的最终项：六名成员须本人填写真实姓名、学号、职责确认和互评，不能用Git
-作者名或AI结果代填；最终PPT须在Windows/PowerPoint原生环境复核并完成课堂彩排。上述
+作者名或AI结果代填；最终PPT须完成Windows字体替换检查并完成课堂彩排。上述
 人工项未完成前，成品保持`final_candidate`，不能把机器检查冒充真人核验或正式课堂验收。

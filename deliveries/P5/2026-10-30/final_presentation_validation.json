@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "p5.final-presentation-validation.v2",
-  "checkedAt": "2026-10-30T16:04:09+08:00",
+  "schemaVersion": "p5.final-presentation-validation.v3",
+  "checkedAt": "2026-10-30T16:40:00+08:00",
   "status": "pass_with_declared_residuals",
   "presentation": {
-    "absolutePath": "/Users/Exile/工作与学习/课程学习/知识图谱/relore-agents/p5/demo/final/期末汇报_20261030最终版.pptx",
+    "absolutePath": "/Users/Exile/工作与学习/课程学习/知识图谱/relore-kg-archaeologist/demo/final/期末汇报_20261030最终版.pptx",
     "repositoryPath": "demo/final/期末汇报_20261030最终版.pptx",
-    "sha256": "3742e6dc6ff593c922ed6182e9f64eb2ccea11663e8844ec54347fe0cd947479",
-    "byteCount": 250639,
+    "sha256": "7052104cb9015da779f35a8a97c53a763fd98ebec21f4ec049a1e7ca984aff46",
+    "byteCount": 251298,
     "slideCount": 10,
     "slideSizeInches": [
       13.3333,
@@ -20,7 +20,7 @@
     "nativeTableCount": 3,
     "nativeChartCount": 1
   },
-  "artifactToolValidation": {
+  "presentationValidation": {
     "packageIntegrity": "pass",
     "packageFindingCount": 0,
     "packageWarnings": [],
@@ -29,20 +29,23 @@
     "observedFontFamilies": [
       "Songti SC"
     ],
-    "checkedTextScriptCount": 362,
-    "exactReimport": true,
-    "reimportShaMatchesFinal": true,
+    "checkedTextScriptCount": 3850,
+    "exactReimport": false,
+    "reimportShaMatchesFinal": false,
     "everySlideRendered": true,
     "everySlideHasNotes": true,
     "everySlideInspectRecordNonEmpty": true,
     "allElementsWithinSlideBounds": true,
-    "nativeFontRenderingVerified": false,
-    "nativePowerPointOpenVerified": false,
+    "nativeFontRenderingVerified": true,
+    "nativePowerPointOpenVerified": true,
+    "nativePowerPointVersion": "16.113.4 (macOS)",
+    "pdfExportPageCount": 10,
+    "windowsFontSubstitutionVerified": false,
     "tempChartDirectoriesPackaged": false
   },
   "visualReview": {
     "performed": true,
-    "method": "Artifact Tool 2x per-slide PNG review plus final montage and layout geometry inspection",
+    "method": "Microsoft PowerPoint native PDF export, 2x page render and 10-slide contact-sheet review",
     "allTenSlidesReviewed": true,
     "allTenSlidesPass": true,
     "clippingFound": false,
@@ -140,17 +143,17 @@
       },
       {
         "slide": 6,
-        "title": "跨源案例：PR #6096 到函数实体",
+        "title": "跨源演化：从 IPv6 Issue 到函数实体",
         "preview": "demo/final/previews/slide-06.png",
-        "previewSha256": "df0aa193758c809e03b12cc8e8c76433701049f0730352e7ff7284ae083b388a",
-        "previewBytes": 359790,
+        "previewSha256": "b11f2a4aa9ff462912bbd6d975738e27104a27212a48d7918d700833155c0e40",
+        "previewBytes": 296069,
         "renderScale": 2,
         "renderedSizePx": [
           2560,
           1440
         ],
         "notesEmbedded": true,
-        "notesCharacters": 727,
+        "notesCharacters": 688,
         "inspectRecordCount": 23,
         "elementsOutsideSlideBounds": 0,
         "visualInspection": "pass",
@@ -267,7 +270,7 @@
       "old_not_final_label": true,
       "old_neo4j_reconnect_residual": true
     },
-    "inspectionSource": "Artifact Tool exact reimport of the final PPTX",
+    "inspectionSource": "Microsoft PowerPoint native open/export plus PPTX shape and notes inspection",
     "p3Increment": {
       "sourceCommit": "b6f4582a26084e1322e2609ec017c96ce0d70e97",
       "sourceArtifact": "P3 commit b6f4582a26084e1322e2609ec017c96ce0d70e97: deliveries/P3/2026-10-30/developer_function_validation.json",
@@ -440,8 +443,7 @@
   "residualLimits": [
     "Correct-abstention rate is N/A because the numerator and eligible denominator are both zero after complete review; this is not an incomplete-review result.",
     "The itsdangerous job is partial with recorded collection gaps; it does not establish arbitrary-repository completeness.",
-    "Microsoft PowerPoint/WPS native-open verification is not claimed.",
-    "Windows real-machine font substitution check is pending.",
+    "macOS Microsoft PowerPoint 16.113.4 native open/export passed; Windows font substitution and WPS remain pending.",
     "Formal classroom live timing and member rehearsal are pending.",
     "Member names, student IDs, and formal peer review remain to be filled by the members.",
     "The current production graph remains 1.4.1; Developer/Function entities come from the real replayed data version, not an in-place production write."

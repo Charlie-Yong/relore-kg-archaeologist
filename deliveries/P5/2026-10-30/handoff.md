@@ -135,22 +135,22 @@ Precision/Recall/F1=0.568/0.962/0.714，理由覆盖13/15=0.867；
 包完整性、几何、字体、标题适配与逐页渲染检查，finding/warning均为0。
 五页PNG已用新版正式结果文件重渲染。讲稿、演示步骤、材料说明和报告章节同步更新。
 机器可读汇总见[formal_results_validation.json](formal_results_validation.json)。
-未调用DeepSeek，未读取`evaluation/private_test`。仍保留Windows/PowerPoint原生实机
-与成员课堂彩排限制。
+未调用DeepSeek，未读取`evaluation/private_test`。macOS Microsoft PowerPoint原生打开
+已完成；仍保留Windows字体替换实机检查与成员课堂彩排限制。
 
 ## 期末汇报最终可提交版（2026-10-30）
 
 已基于正式冻结数据、P3 Developer/Function增量、真实截图、冻结重放和P6公开汇总制作10页期末汇报。
 正式文件为`demo/final/期末汇报_20261030最终版.pptx`，SHA-256
-`3742e6dc6ff593c922ed6182e9f64eb2ccea11663e8844ec54347fe0cd947479`，250639字节。
+`7052104cb9015da779f35a8a97c53a763fd98ebec21f4ec049a1e7ca984aff46`，251298字节。
 
 第4页加入Developer/Function及三类增量关系，并写明真实冻结只读重放为18 Developer、
 384 Function、20 Authored、4 Merged、384 Defines。方向为
 `Authored/Merged: Developer→PullRequest`、`Defines: File→Function`；PR→Commit沿用P1
 的MergedAs，不生成Developer→Commit。页面明确该重放是新数据版本，不是旧1.4.1生产图
-原地补写。第6页固定链为
-`PR #6096（lkk7→davidism）→05e9c6b→src/flask/testing.py→flask.testing._get_werkzeug_version`，
-并说明FlaskClient是ClassDef，不冒充Function。
+原地补写。第6页已改为“跨源演化”，把Issue #6093、PR #6096、08-11合并、提交、文件与函数
+按时间链展示；时间相邻不升级为修复因果，也没有把提交谎称为已随某Release发布。
+FlaskClient是ClassDef，不冒充Function。
 
 第9页正式指标保留B-A=+0.157、95%描述性bootstrap区间`[-0.122,0.457]`跨零。
 唯一P6状态文本框名为`p6-status-update`，采用`feat/p6-formal-results`提交`78eaa07`
@@ -166,10 +166,9 @@ P2在公开提交`19602e6`使用真实Neo4j/PostgreSQL完成扩展数据集加�
 当前生产图仍为旧1.4.1，新增实体来自真实新数据版本重放，不是生产图原地补写。
 
 交付还包含`demo/final/讲稿.md`、`demo/final/演示步骤.md`、`demo/final/材料说明.md`及
-`demo/final/previews/slide-01.png`至`slide-10.png`。最终PPTX已由Artifact Tool精确重导入，
-10页逐页渲染并目视检查；每页有独立inspect记录与notes，所有元素均在页面边界内，
-未发现裁切、重叠或异常换行。包结构、13.3333×7.5英寸、10页、3个原生表格、1个原生图表、
-标题适配均通过，finding与warning均为0。机器记录见
+`demo/final/previews/slide-01.png`至`slide-10.png`。最终PPTX已由本机Microsoft PowerPoint
+16.113.4原生打开并导出10页PDF，再按2倍比例渲染和总览复核；包结构、13.3333×7.5英寸、
+10页、10份notes、3个原生表格、1个原生图表及新版第6页均通过，未发现裁切、重叠或异常换行。机器记录见
 [final_presentation_validation.json](final_presentation_validation.json)。
 
 本轮未修改`app/`：现有页面没有发现需要在本任务范围内修复的真实缺陷。
@@ -177,5 +176,5 @@ P2在公开提交`19602e6`使用真实Neo4j/PostgreSQL完成扩展数据集加�
 为21 passed；`ruff check app tests/test_app*.py`通过；`git diff --check`通过。
 未调用付费模型，未读取`evaluation/private_test`。
 
-残余项：Microsoft PowerPoint/WPS原生打开、
-Windows实机字体检查、正式课堂计时彩排、成员姓名学号及正式互评待本人补充。
+残余项：Windows实机字体替换检查、WPS打开（可选）、正式课堂计时彩排、
+成员姓名学号及正式互评待本人补充。macOS Microsoft PowerPoint原生打开已完成。

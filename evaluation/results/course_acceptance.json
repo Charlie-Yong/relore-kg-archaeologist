@@ -1,6 +1,6 @@
 {
   "schema_version": "course_final_acceptance_v1",
-  "generated_at": "2026-10-30T16:33:46+08:00",
+  "generated_at": "2026-10-30T16:46:44+08:00",
   "course_topic": "选题3：GitHub 项目考古学家——开源项目历史与演化分析系统",
   "integration_branch": "final/course-2026",
   "overall_status": "machine_acceptance_passed_human_signoff_pending",
@@ -15,6 +15,25 @@
         "reports/technical_report.md",
         "historykg/contracts.py"
       ]
+    },
+    {
+      "id": "project_evolution_timeline",
+      "requirement": "将重要功能、Bug修复、技术决策和版本变化形成可追溯的项目演化时间线",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/evolution_timeline.json",
+        "tools/build_evolution_timeline.py",
+        "tests/test_evolution_timeline.py",
+        "reports/technical_report.md"
+      ],
+      "measurements": {
+        "events": 25,
+        "cases": 5,
+        "exact_evidence_spans": 46,
+        "pr_to_commit_paths": 4,
+        "release_checkpoints": 3
+      },
+      "note": "时间线只使用同一冻结包，保留Release检查点、Issue关闭与PR声明之间的证据边界。"
     },
     {
       "id": "six_person_roles",
@@ -107,13 +126,16 @@
         "output/pdf/historykg_technical_report.pdf"
       ],
       "measurements": {
-        "pages": 13,
-        "extracted_characters": 19909,
-        "han_characters": 10658,
+        "pages": 14,
+        "extracted_characters": 21454,
+        "han_characters": 11280,
+        "extraction_method": "pypdf plain text, newline joined",
+        "sha256": "cb883b345ef7635db8e2c8e166239ae87295a3b7888341d64291179efed0ffe3",
         "required_sections": {
           "摘要": true,
           "引言": true,
           "数据集与知识图谱构造": true,
+          "项目演化时间线": true,
           "任务定义": true,
           "系统方法": true,
           "实验设计与正式结果": true,
@@ -127,7 +149,7 @@
     {
       "id": "presentation",
       "requirement": "内容完整、有文字说明和实例的汇报PPT",
-      "status": "pass_machine_pending_native",
+      "status": "pass_with_declared_residuals",
       "evidence": [
         "demo/final/期末汇报_20261030最终版.pptx",
         "deliveries/P5/2026-10-30/final_presentation_validation.json"
@@ -149,11 +171,12 @@
           "ab_experiment": true,
           "second_repo": true,
           "repro_and_limits": true,
-          "six_roles": true
+          "six_roles": true,
+          "project_evolution_timeline": true
         },
-        "sha256": "3742e6dc6ff593c922ed6182e9f64eb2ccea11663e8844ec54347fe0cd947479"
+        "sha256": "7052104cb9015da779f35a8a97c53a763fd98ebec21f4ec049a1e7ca984aff46"
       },
-      "note": "Artifact Tool重导入、逐页渲染和几何检查通过；Microsoft PowerPoint/WPS原生打开仍待本人确认。"
+      "note": "Microsoft PowerPoint 16.113.4（macOS）原生打开、10页PDF导出、2倍渲染与总览复核通过；Windows字体替换仍待实机检查。"
     },
     {
       "id": "code_dataset_demo",
@@ -212,7 +235,7 @@
   ],
   "machine_checks": {
     "full_pytest": {
-      "result": "180 passed",
+      "result": "181 passed",
       "skipped": 0,
       "scope": "including real PostgreSQL/Neo4j and reconstructed P1+P3 merged-shard acceptance"
     },
@@ -225,21 +248,21 @@
     "planning_check": {
       "passed": true,
       "markdown_files": 70,
-      "local_links_checked": 249,
+      "local_links_checked": 250,
       "all_six_roles_done": true
     },
-    "planning_tool_tests": "7 passed",
+    "planning_tool_tests": "7 passed, 8 subtests passed",
     "pdf_links": {
       "annotations": 7,
       "unique_urls": 6,
       "all_http_200": true
     },
-    "pdf_tables": 5
+    "pdf_tables": 6
   },
   "human_remaining": [
     "六位成员真实姓名、学号、职责确认",
     "六人组内互评真实分数、事实依据和改进建议",
-    "Microsoft PowerPoint或WPS原生打开、Windows字体替换检查",
+    "Windows字体替换检查（WPS可选）",
     "正式课堂计时彩排与现场展示"
   ],
   "notes": [
