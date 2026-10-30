@@ -1,9 +1,9 @@
 {
   "package_path": "/Users/Exile/工作与学习/课程学习/知识图谱/relore-kg-archaeologist/tmp/submission-final/relore-kg-course-final.zip",
-  "sha256": "a7b199b006a32fe5ffd5929bb4e694cb28ebcbe9512de7f7ed4f69d5729c8620",
-  "source_commit": "74613621fc3dff2453cca641b8611e52a77eb95e",
+  "sha256": "dfe6c9e28706a7fb16bf3283a5c86321dde8163bc8878c2e9c2cccb2f618391a",
+  "source_commit": "380eb891b3070a3332a1c636a030bfe35ff2f0be",
   "package_status": "final_candidate",
-  "bytes": 30459259,
+  "bytes": 30460065,
   "files": 1043,
   "archive_entries": 1044,
   "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
@@ -14,8 +14,8 @@
   },
   "technical_report": {
     "path": "output/pdf/historykg_technical_report.pdf",
-    "sha256": "cb883b345ef7635db8e2c8e166239ae87295a3b7888341d64291179efed0ffe3",
-    "bytes": 355203,
+    "sha256": "2e52f7bcc2b0010bb7bbdd0eed5be9fef114084a2409abd665a27b83f7cb4c8f",
+    "bytes": 355301,
     "pages": 14
   },
   "new_model_requests": 0,
