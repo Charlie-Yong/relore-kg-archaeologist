@@ -4,10 +4,10 @@
 
 状态：ready_for_integration。
 
-实际进度：采集器选择清单/分页续作及持久checkpoint已交P1。共享费用账本、四任务DeepSeek网关、Decision/理由抽取、证据限定统一回答器已实现；真实开发抽取与回答通过，并完成无密钥缓存回放。57项测试通过，待P1/P2实际闭环接收，不代表角色done或正式实验完成。
+本轮交付分支：feat/p4-budget-render-public；预算结算和同语义上下文二分裁剪均已修复，41项相关测试通过。
 
-最新记录：[本轮模型与采集器交接](../deliveries/P4/2026-10-30/handoff.md)。前期贡献继续引用[原记录](../deliveries/P4/2026-10-27/handoff.md)。
+最新记录：[模型、采集器及预算核算交接](../deliveries/P4/2026-10-30/handoff.md)；[历史费用核算摘要](../deliveries/P4/2026-10-30/budget_reconciliation.json)。前期贡献继续引用[原记录](../deliveries/P4/2026-10-27/handoff.md)。
 
-恢复动作：P1普通merge feat/p4并让已有job进入extract，传同一共享ledger路径和approved_cny=10；P2合并统一回答器，复用render_context。P6从自己的private_test根调用reference/judge。集成失败由P4同一上下文修复，不重新采集或重复已成功模型请求。
+恢复动作：各调用方先普通merge预算结算修复后再恢复请求，仍只用主部署同一ledger与approved_cny=10。2026-10-30 13:28对账后核算3.780790元（含未知上界0.009858），余6.059210元；总cap10元/ceiling9.84元未变，后续以实时账本为准。旧缓存费用字段保留历史上界，当前核算按账本attempts.charged。
 
-阻塞：无须成员接管。Windows模型模块尚未实机验证；URL闭环、独立工程复核及正式reference/judge由接收方继续。费用保守累计0.080580元，effective cap9.84元，余9.759420元；后续以共享账本实时值为准。
+阻塞：本轮预算误核算已修复；正式reference/judge和成品接收由对应角色继续。P4未done；Windows模型模块尚未实机验证。

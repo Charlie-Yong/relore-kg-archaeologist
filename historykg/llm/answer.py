@@ -75,7 +75,13 @@ def render_context(context: list[dict], *, max_characters: int = 12000) -> dict:
         # Try the longest complete sentence/line that still fits after JSON escaping.
         boundaries = [m.end() for m in re.finditer(r"[.!?。！？\n](?:\s|$)", fragment["quote"])]
         clipped = None
-        for end in reversed(boundaries):
+        # Prefix JSON length is monotone: quote escaping and the nonnegative
+        # end offset can only grow. Find the same longest fitting boundary in
+        # logarithmically many serializations, including for large API JSON.
+        low, high = 0, len(boundaries)
+        while low < high:
+            middle = (low + high) // 2
+            end = boundaries[middle]
             candidate = {
                 **fragment,
                 "quote": fragment["quote"][:end],
@@ -83,7 +89,9 @@ def render_context(context: list[dict], *, max_characters: int = 12000) -> dict:
             }
             if len(canonical([*fragments, candidate])) <= max_characters:
                 clipped = candidate
-                break
+                low = middle + 1
+            else:
+                high = middle
         if clipped:
             fragments.append(clipped)
         gaps.append(

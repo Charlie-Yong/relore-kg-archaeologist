@@ -1,0 +1,12 @@
+{
+  "public_dev_candidates": 40,
+  "largest_quote_characters": 1811025,
+  "elapsed_seconds": 0.05601,
+  "rendered_characters": 11983,
+  "rendered_sha256": "b9c175d3c0af176f957598bd201f75f0a95717cb2db837bf58f38a63442279c5",
+  "fragments": 4,
+  "gaps": 38,
+  "legacy_small_sample_comparisons": 500,
+  "legacy_comparison_digest": "9805d7f46dc408b3c395f727f4ae875a19423daa0f4933699df45b303a6a848a",
+  "no_model_requests": true
+}
