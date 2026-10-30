@@ -3,6 +3,8 @@
 P6维护`historykg/evaluation`，生产采集、图与回答接口仍由P1/P2/P4负责。
 命令`python -m historykg.cli evaluate score <records.json> --out <metrics.json>`
 直接从保存的逐项判断重算，无需模型调用。`evaluate freeze`只读取来源、主体与元数据。
+`python -m historykg.cli evaluate summarize <qa_metrics.json> --split test --out <summary.json>`
+从逐题指标重算汇总和配对统计，亦不调用模型；正式发布后以配套逐项记录复核输入指标。
 
 ## 冻结和隔离
 

@@ -8,6 +8,7 @@ from historykg.io import read_json, write_json
 
 from .metrics import score_extraction, score_qa
 from .reference import freeze_sources
+from .statistics import summarize_qa
 
 
 def main(argv=None):
@@ -16,6 +17,10 @@ def main(argv=None):
     score = commands.add_parser("score", help="用已保存逐项判断离线重算，无模型费用")
     score.add_argument("records", type=Path)
     score.add_argument("--out", type=Path)
+    summary = commands.add_parser("summarize", help="从逐题QA指标离线重算汇总和配对统计")
+    summary.add_argument("records", type=Path)
+    summary.add_argument("--split", choices=("dev", "test"), default="test")
+    summary.add_argument("--out", type=Path)
     freeze = commands.add_parser("freeze", help="冻结来源清单/主题划分，不读取生产预测")
     freeze.add_argument("dataset_dir", type=Path)
     freeze.add_argument("--out", type=Path, required=True)
@@ -36,6 +41,10 @@ def main(argv=None):
             )
         else:
             raise ValueError("unsupported scoring task")
+        if args.out:
+            write_json(args.out, result)
+    elif args.command == "summarize":
+        result = summarize_qa(read_json(args.records), split=args.split)
         if args.out:
             write_json(args.out, result)
     else:

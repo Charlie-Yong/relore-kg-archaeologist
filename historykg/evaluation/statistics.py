@@ -8,19 +8,30 @@ import statistics
 from .metrics import ratio
 
 
-def summarize_qa(rows, *, split="test"):
+def summarize_qa(rows, *, split="test", expected_questions=None):
     selected = [r for r in rows if r["split"] == split]
+    expected_questions = (
+        expected_questions if expected_questions is not None else (20 if split == "test" else 4)
+    )
+    identities = [(r["question_id"], r["system"]) for r in selected]
+    if len(identities) != len(set(identities)):
+        raise ValueError("duplicate question/system score")
     result = {}
     for system in ("A", "B"):
         cohort = [r for r in selected if r["system"] == system]
         metrics = [r["metrics"] for r in cohort]
+        cohort_complete = len(cohort) == expected_questions
         eligible = [
             m
             for r, m in zip(cohort, metrics, strict=True)
             if r.get("answerability") == "answerable"
         ]
-        all_judged = all(m["claim_judgment_complete"] for m in metrics)
-        facts_judged = all(m["fact_coverage"] is not None for m in eligible)
+        subset_claims_judged = bool(metrics) and all(m["claim_judgment_complete"] for m in metrics)
+        subset_facts_judged = bool(eligible) and all(
+            m["fact_coverage"] is not None for m in eligible
+        )
+        all_judged = cohort_complete and subset_claims_judged
+        facts_judged = cohort_complete and subset_facts_judged
         claims = sum(m["claim_count"] for m in metrics)
         unsupported = sum(m["unsupported"] for m in metrics)
         facts_hit, facts_total = (
@@ -31,6 +42,9 @@ def summarize_qa(rows, *, split="test"):
         latency = [r["timings_ms"]["total"] for r in cohort if "total" in r.get("timings_ms", {})]
         result[system] = {
             "questions": len(cohort),
+            "expected_questions": expected_questions,
+            "question_coverage": ratio(len(cohort), expected_questions),
+            "question_set_complete": cohort_complete,
             "claim_count": claims,
             "unsupported_claims": unsupported,
             "unsupported_rate": ratio(unsupported, claims) if all_judged else None,
@@ -41,6 +55,14 @@ def summarize_qa(rows, *, split="test"):
             "facts_total": facts_total,
             "fact_coverage": ratio(facts_hit, facts_total) if facts_judged else None,
             "fact_judgment_complete": facts_judged,
+            "evaluated_subset": {
+                "unsupported_rate": ratio(unsupported, claims) if subset_claims_judged else None,
+                "fact_coverage": ratio(facts_hit, facts_total) if subset_facts_judged else None,
+                "answers_with_complete_claim_judgments": sum(
+                    m["claim_judgment_complete"] for m in metrics
+                ),
+                "questions_with_fact_scores": sum(m["fact_coverage"] is not None for m in eligible),
+            },
             "evidence_groups_hit": sum(m["evidence"]["hit"] for m in metrics),
             "evidence_groups_total": sum(m["evidence"]["total"] for m in metrics),
             "evidence_group_recall": ratio(

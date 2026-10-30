@@ -174,3 +174,21 @@ def test_qa_judge_sees_reference_context_and_rejects_an_omitted_claim(tmp_path, 
     monkeypatch.setattr(qa_run, "run_request", run)
     result = qa_run.judge_answers({"dataset_dir": str(dataset), "dataset_id": "toy"}, root, {}, {})
     assert result == {"answers_scored": 1, "questions_reviewed": 1, "judgment_failures": 0}
+
+
+def test_partial_question_cohort_never_reports_a_complete_overall_score():
+    from historykg.evaluation.statistics import summarize_qa
+
+    metric = score_qa(
+        {"answerability": "answerable", "facts": [{"fact_id": "f"}]},
+        {"status": "empty", "claims": []}, {}, [],
+    )
+    row = {"question_id": "q", "system": "A", "split": "test",
+           "answerability": "answerable", "metrics": metric}
+    partial = summarize_qa([row])["A"]
+    assert partial["questions"] == 1 and partial["expected_questions"] == 20
+    assert partial["fact_coverage"] is None
+    assert partial["evaluated_subset"]["fact_coverage"] == 0
+    assert summarize_qa([], split="test")["A"]["claim_judgment_complete"] is False
+    with pytest.raises(ValueError, match="duplicate question/system"):
+        summarize_qa([row, row])
