@@ -29,5 +29,6 @@ lkk7→PR→Commit→File→Function及反向Function→File→Commit→PR→dav
 残余缺口：生产dataset
 `dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c`
 当前仍只有PR→Commit→File，没有Developer/Function；四跳只在真实P1+P3合并shard的
-测试namespace验收，未冒充生产节点。Windows实机和正式A/B实验仍待主代理后续运行。
+测试namespace验收，未冒充生产节点。Windows CI和P6正式A/B/全池实验均已完成，
+主集成复跑真实P1+P3合并shard为26 passed。
 P2未启动、停止、重启Neo4j/PostgreSQL或杀Java进程。

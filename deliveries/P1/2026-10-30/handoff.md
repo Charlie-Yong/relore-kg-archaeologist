@@ -1,7 +1,7 @@
 # P1 数据、公共契约与 URL 流水线交接
 
 角色P1，2026-10-30，规划/契约1.4.1，独立副本relore-agents/p1、长期分支feat/p1。
-阶段状态final_candidate：期末统稿、正式实验结果和第二仓库验收已完成，仅余真实成员信息、最终PPTX入包及现场/服务复核等人工项。
+阶段状态final_candidate：期末统稿、正式实验结果、第二仓库验收和P5最终PPT已完成，仅余真实成员信息、Windows/PowerPoint原生复核与课堂彩排等人工项。
 
 ## 原理说明与授权记录
 
@@ -218,9 +218,11 @@ git diff --check
 已有的可执行环境运行，未安装包、未调用模型。规划测试及Markdown本地链接检查均使用
 指定runtime完成。
 
-仍需人工或P5处理的最终项：P5最终PPTX原件当前尚未随本工作树提交，`demo/final/`
-当前只有`材料说明.md`，最终打包前必须由P5补齐并确认被待打包提交跟踪；六名成员须
-本人填写真实姓名、学号、职责确认和互评，不能用Git作者名或AI结果代填；最终PPT须在
-Windows/PowerPoint原生环境复核并完成课堂彩排；最终审计时Neo4j live bolt/HTTP未保持
-在线，打包前需复验服务可用性。本轮未读取`evaluation/private_test`，未调用付费模型，
-未修改P2代码、P5 PPT或`tools/package_submission.py`。
+最终集成分支已接收P5提交`6c3ca52`，`demo/final/期末汇报_20261030最终版.pptx`为
+250639 bytes、SHA-256 `3742e6dc6ff593c922ed6182e9f64eb2ccea11663e8844ec54347fe0cd947479`，
+已由待打包提交跟踪并通过10页重导入与逐页渲染检查。P2亦已在真实Neo4j/PostgreSQL上完成
+P1+P3合并分片四跳验收，临时namespace与schema均清理；生产图仍保持旧1.4.1口径。
+
+仍需人工完成的最终项：六名成员须本人填写真实姓名、学号、职责确认和互评，不能用Git
+作者名或AI结果代填；最终PPT须在Windows/PowerPoint原生环境复核并完成课堂彩排。上述
+人工项未完成前，成品保持`final_candidate`，不能把机器检查冒充真人核验或正式课堂验收。

@@ -1,0 +1,249 @@
+{
+  "schema_version": "course_final_acceptance_v1",
+  "generated_at": "2026-10-30T16:33:46+08:00",
+  "course_topic": "选题3：GitHub 项目考古学家——开源项目历史与演化分析系统",
+  "integration_branch": "final/course-2026",
+  "overall_status": "machine_acceptance_passed_human_signoff_pending",
+  "machine_complete": true,
+  "course_submission_ready_after_human_fields": true,
+  "requirements": [
+    {
+      "id": "topic_fit",
+      "requirement": "围绕多源异构动态项目历史，使用LLM抽取并构建显式知识图谱而非仅做问答/RAG",
+      "status": "pass",
+      "evidence": [
+        "reports/technical_report.md",
+        "historykg/contracts.py"
+      ]
+    },
+    {
+      "id": "six_person_roles",
+      "requirement": "六人小组与明确分工",
+      "status": "pending_human_identity",
+      "evidence": [
+        "coordination/STATUS_P1.md",
+        "coordination/STATUS_P2.md",
+        "coordination/STATUS_P3.md",
+        "coordination/STATUS_P4.md",
+        "coordination/STATUS_P5.md",
+        "coordination/STATUS_P6.md",
+        "reports/technical_report.md"
+      ],
+      "note": "六个角色产物和贡献均可核对；真实姓名、学号仍待本人填写。"
+    },
+    {
+      "id": "ontology_schema_rules",
+      "requirement": "Ontology、规则、Schema和证据约束",
+      "status": "pass",
+      "evidence": [
+        "docs/graph_query.md",
+        "docs/public_interfaces.md",
+        "historykg/contracts.py"
+      ]
+    },
+    {
+      "id": "multisource_collection",
+      "requirement": "采集代码、Issue、PR、Commit、Release和讨论等多源信息",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "repro/README.md"
+      ]
+    },
+    {
+      "id": "real_llm_extraction",
+      "requirement": "使用真实LLM抽取实体、关系、Decision及理由",
+      "status": "pass",
+      "evidence": [
+        "deliveries/P4/2026-10-30/production_provenance.json",
+        "evaluation/results/extraction_summary.json"
+      ]
+    },
+    {
+      "id": "knowledge_graph",
+      "requirement": "构建可查询的真实知识图谱并支持跨来源路径",
+      "status": "pass_with_versioned_gap",
+      "evidence": [
+        "evaluation/results/cross_source_chain.json",
+        "evaluation/results/final_acceptance.json"
+      ],
+      "note": "旧生产图保持1.4.1；P1+P3合并分片真实验收Developer/Function四跳，未冒充生产图更新。"
+    },
+    {
+      "id": "downstream_application",
+      "requirement": "将知识图谱用于实际下游任务而非只画图",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "evaluation/results/second_repo_acceptance.json",
+        "demo/replay/flask-public-20261030.json"
+      ]
+    },
+    {
+      "id": "extraction_experiment",
+      "requirement": "针对知识抽取任务完成实验、指标与限制分析",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/extraction_summary.json",
+        "evaluation/results/figures/extraction_test.png"
+      ]
+    },
+    {
+      "id": "graph_vs_rag",
+      "requirement": "与普通LLM/RAG方法进行公平对照并分析适用条件",
+      "status": "pass_with_limitations",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "evaluation/results/figures/qa_test.png"
+      ],
+      "note": "B-A事实覆盖+0.157，95%区间[-0.122,0.457]跨零，不宣称显著收益。"
+    },
+    {
+      "id": "technical_report",
+      "requirement": "完整PDF技术报告，规定章节齐全且除参考文献外不少于5000字",
+      "status": "pass",
+      "evidence": [
+        "reports/technical_report.md",
+        "output/pdf/historykg_technical_report.pdf"
+      ],
+      "measurements": {
+        "pages": 13,
+        "extracted_characters": 19909,
+        "han_characters": 10658,
+        "required_sections": {
+          "摘要": true,
+          "引言": true,
+          "数据集与知识图谱构造": true,
+          "任务定义": true,
+          "系统方法": true,
+          "实验设计与正式结果": true,
+          "原型系统与使用展示": true,
+          "结论与后续工作": true,
+          "参考文献": true,
+          "人员与工作安排及组内互评": true
+        }
+      }
+    },
+    {
+      "id": "presentation",
+      "requirement": "内容完整、有文字说明和实例的汇报PPT",
+      "status": "pass_machine_pending_native",
+      "evidence": [
+        "demo/final/期末汇报_20261030最终版.pptx",
+        "deliveries/P5/2026-10-30/final_presentation_validation.json"
+      ],
+      "measurements": {
+        "slides": 10,
+        "notes_all": true,
+        "native_tables": 3,
+        "native_charts": 1,
+        "required_content": {
+          "research_question": true,
+          "six_stage_pipeline": true,
+          "schema_and_evidence": true,
+          "data_scale": true,
+          "developer_function": true,
+          "four_hop_chain": true,
+          "traceable_qa": true,
+          "extraction_experiment": true,
+          "ab_experiment": true,
+          "second_repo": true,
+          "repro_and_limits": true,
+          "six_roles": true
+        },
+        "sha256": "3742e6dc6ff593c922ed6182e9f64eb2ccea11663e8844ec54347fe0cd947479"
+      },
+      "note": "Artifact Tool重导入、逐页渲染和几何检查通过；Microsoft PowerPoint/WPS原生打开仍待本人确认。"
+    },
+    {
+      "id": "code_dataset_demo",
+      "requirement": "提交数据集、模型/演示相关代码",
+      "status": "pass",
+      "evidence": [
+        "historykg/",
+        "app/main.py",
+        "evaluation/results/",
+        "repro/flask_frozen.tar.gz"
+      ]
+    },
+    {
+      "id": "references",
+      "requirement": "参考文献可核验",
+      "status": "pass",
+      "evidence": [
+        "reports/technical_report.md"
+      ],
+      "measurements": {
+        "pdf_uri_annotations": 7,
+        "unique_external_urls": 6,
+        "all_http_200": true
+      }
+    },
+    {
+      "id": "personnel_work_plan",
+      "requirement": "人员与工作安排",
+      "status": "pending_human_identity",
+      "evidence": [
+        "reports/technical_report.md",
+        "coordination/STATUS_P1.md"
+      ],
+      "note": "六角色职责与可核验贡献已完整；真实姓名、学号待本人填写。"
+    },
+    {
+      "id": "peer_evaluation",
+      "requirement": "组内互评",
+      "status": "pending_human_input",
+      "evidence": [
+        "reports/technical_report.md"
+      ],
+      "note": "表格与口径已准备，真实评分和说明必须由成员本人填写，不能由AI代填。"
+    },
+    {
+      "id": "classroom_presentation",
+      "requirement": "期中与期末课堂展示",
+      "status": "pending_human_event",
+      "evidence": [
+        "demo/midterm/",
+        "demo/final/",
+        "demo/final/讲稿.md"
+      ],
+      "note": "材料齐备；真实课堂展示、计时彩排与现场问答尚不能由仓库文件证明。"
+    }
+  ],
+  "machine_checks": {
+    "full_pytest": {
+      "result": "180 passed",
+      "skipped": 0,
+      "scope": "including real PostgreSQL/Neo4j and reconstructed P1+P3 merged-shard acceptance"
+    },
+    "graph_query_real": {
+      "result": "26 passed",
+      "neo4j": "bolt://127.0.0.1:17687",
+      "postgresql_port": 16432
+    },
+    "ruff": "All checks passed",
+    "planning_check": {
+      "passed": true,
+      "markdown_files": 70,
+      "local_links_checked": 249,
+      "all_six_roles_done": true
+    },
+    "planning_tool_tests": "7 passed",
+    "pdf_links": {
+      "annotations": 7,
+      "unique_urls": 6,
+      "all_http_200": true
+    },
+    "pdf_tables": 5
+  },
+  "human_remaining": [
+    "六位成员真实姓名、学号、职责确认",
+    "六人组内互评真实分数、事实依据和改进建议",
+    "Microsoft PowerPoint或WPS原生打开、Windows字体替换检查",
+    "正式课堂计时彩排与现场展示"
+  ],
+  "notes": [
+    "本矩阵证明机器可验证的课程要求已经完成，不把空白人员信息或模型银标冒充人工验收。",
+    "最终提交包应保持final_candidate，直至人员信息和课堂核验完成；不得伪造互评。"
+  ]
+}

@@ -14,7 +14,9 @@ Defines，Function键保留`start_line`以区分同文件重复定义。真实Fl
 [Developer/Function交接](../deliveries/P3/2026-10-30/developer_function_handoff.md)；
 [只读验证JSON](../deliveries/P3/2026-10-30/developer_function_validation.json)。
 
-恢复动作：P2合并1.4.2并按`Developer.key=identity_key`、Function含`start_line`的真实形状
-接图；P1用新job/dataset跑端到端。旧1.4.1冻结数据继续只读，不重采、不原地补写。
+恢复动作：P2已合并1.4.2并按`Developer.key=identity_key`、Function含`start_line`的真实
+形状接图；P1+P3真实合并分片已通过端到端四跳验收。旧1.4.1生产图继续只读，不重采、
+不原地补写；新增类型只存在于新的合并验收数据版本。
 
-阻塞：等待P2契约与图加载合并、P1新数据版本端到端。无本人接管事项；不读取private_test。
+阻塞：无模块阻塞。Windows实机、PowerPoint原生检查、成员信息和课堂表达由主代理或成员完成；
+不读取private_test。
