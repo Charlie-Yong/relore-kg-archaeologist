@@ -1,4 +1,4 @@
-# relore 项目历史知识图谱｜六人 AI 执行规划
+# relore 项目历史知识图谱
 
 基于 relore 的开源项目历史知识图谱自动构建与可追溯问答，以 Flask 为主要实验对象。
 
@@ -8,7 +8,9 @@
 
 本仓库已按用户授权公开，规划可直接阅读；提交和管理仍按实际授权。密钥、私有测试参考和个人材料不在公开仓库中保存。
 
-**当前交付：规划 v1.4.1 / 契约 1.4.1，以及可运行的“项目历史采集器”。** P4将relore 0.3.19固定源码纳入仓库，完成项目化安装、URL有限采集、SQLite/PostgreSQL入库与关键词检索接口。完整URL→模型抽取→图谱→问答仍按六人分工实施；此前独立小样的模型/Neo4j链路及知识质量问题见[试跑记录](deliveries/planning/2026-10-27-v1.3.0/pilot_findings.md)。
+**当前交付（2026-10-30）：URL自动流水线、真实LLM抽取、Neo4j与同源检索、统一问答接口及Streamlit原型已接通。** 默认Flask URL作业已完成全部六阶段并发布ready，冻结369来源、40个完整讨论单元和24个源码快照，产出133个业务实体、183条关系、333份证据，其中61个Decision已包含在实体总数中。40个生产抽取run共42次实际尝试，含重试；旧manifest中P3阶段model_requests=0不代表全流程零调用，见[事后版本与用量核对](deliveries/P1/2026-10-30/production_provenance.json)。正式质量实验、第二库检查和课程最终材料仍在完成，不提前报告F1或图谱增益。
+
+公共接口见[流水线与CLI](docs/public_interfaces.md)、[图与查询](docs/graph_query.md)、[模型与证据](docs/p4/models.md)；[公开冻结重建包](repro/README.md)可无网络回放来源并重建图和索引，不需要本组密钥。原型入口为`app/main.py`。[技术报告正文](reports/technical_report.md)为阶段统稿，正式统计由P6发布后补入。Windows真实验证及限制以[重建记录](repro/README.md)和对应CI结果为准，不把安装说明当作实测。
 
 **已完成的前期工作归属P4：** 项目起初调研、总体方案起草、多轮架构迭代、现有全部规划与规划协作框架、独立原型和期初小规模真实试跑，均由P4独立负责完成，计入其累计贡献。详见[P4前期工作与贡献记录](deliveries/P4/2026-10-27/handoff.md)，后续报告分工与展示引用该记录。
 
@@ -18,7 +20,28 @@
 
 1.3.2修正Release身份为repo与原样tag，避免同提交的不同标签被合并；代码实验统一为12个单文件快照（4开发/8测试），前后比较复用已采快照。默认采样规则保持，按现有安排试跑校准。
 
-## 项目历史采集器：安装与运行
+## 完整系统：安装与运行
+
+Windows PowerShell，在仓库根目录运行：
+
+~~~powershell
+py -3.11 -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+New-Item -ItemType Directory -Force .local
+Copy-Item config/project.example.json .local/project.json
+~~~
+
+在本机`.local/project.json`设置PostgreSQL地址及自己已批准的共享账本额度；通过环境变量配置GitHub只读访问、`DEEPSEEK_API_KEY`和`HISTORYKG_NEO4J_URI`。不复制本组密钥或账本路径。服务安装见[采集器说明](docs/collector.md)，原生Windows自动化步骤见`tools/ci/start_windows_services.ps1`。首次建图会访问GitHub和模型并产生相应账户费用。
+
+~~~powershell
+.venv\Scripts\python -m historykg.cli doctor
+.venv\Scripts\python -m historykg.cli build https://github.com/pallets/flask
+.venv\Scripts\python -m streamlit run app/main.py
+~~~
+
+页面可直接输入URL并观察同一持久作业，发布后输入自然语言问题。CLI的`build-status`只读状态，`resume`从未完成阶段继续；全部选项见`.venv\Scripts\python -m historykg.cli --help`。需要无新增模型费用地重建已交结果时，按[冻结重建说明](repro/README.md)操作，不重新build。
+
+## 底层采集器：独立开发小样
 
 基于开源relore二次开发，P4负责移植、适配、基础数据接口及维护。[完整安装/调用说明](docs/collector.md)包含Windows PowerShell、macOS、SQLite/PostgreSQL及P1/P2接口；原始来源和许可证见[第三方说明](THIRD_PARTY_NOTICES.md)。
 
@@ -42,7 +65,7 @@ python3.11 -m venv .venv
 
 讲解结束后，AI按已有授权检查环境、恢复/建立个人分支并开始首个可运行产物，不要求成员答题或回复“可以开始”；成员提问先解答。只收到通用规划且无法唯一确定角色时才询问分工。
 
-后续恢复会话时，AI自行读取STATUS、最新交接、请求和现有成果，核对handoff中的讲解发送记录；无记录先补讲，有记录且目标/角色未变则简述现状继续。缺上游先登记请求并推进独立任务；常规提交、审核、技术确认、集成、报告和PPT都由角色AI完成。P4基础接口已有实现，其余模块按真实状态接入。
+后续恢复会话时，AI自行读取STATUS、最新交接、请求和现有成果，核对handoff中的讲解发送记录；无记录先补讲，有记录且目标/角色未变则简述现状继续。缺上游先登记请求并推进独立任务；常规提交、审核、技术确认、集成、报告和PPT都由角色AI完成。已有实现与正式质量验收分别依据实际运行记录。
 
 | 角色 | 工作单 |
 |---|---|

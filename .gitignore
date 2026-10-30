@@ -23,3 +23,4 @@ __pycache__/
 /evaluation/private_test/
 # Later explicit course packaging must be reviewed before sharing
 /submission/
+/tmp/

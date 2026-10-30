@@ -124,3 +124,33 @@ model和共享账本；数据库迁移不因此换来源输入。
 自动采40个完整讨论单元并取得24份源码快照，369条统一来源的原文哈希、引文和端点校验通过。
 现阶段抽取、图和问答仍待接通；期中只展示实际运行材料，之后验证完整闭环和独立对照实验。
 P4承担前期方案及采集基础，P3承担版本源码，本轮P1承担数据与编排接入。
+
+## 分支和PR送达
+
+本批修复提交7dba6c5已实际推送feat/p1，已创建[PR #4](https://github.com/Charlie-Yong/relore-kg-archaeologist/pull/4)。推送与PR能力据实际结果更新，尚未做GitHub合并。主代理接收后按C3.3复跑受影响流程；本阶段不代表P1整体done。
+
+P5调用P2时传pipeline.query_config(pipeline.load_config(...))，与CLI和pipeline load相同，统一展开服务配置、answer/model回退及唯一共享预算，不由页面另做映射。
+
+## Windows、最新主线与候选包复核（2026-10-30）
+
+PR #4当前提交e107439的三项远端检查均已成功。Windows run
+41014535324（job 123927748027）在windows-2022上安装锁依赖并启动原生
+PostgreSQL 16.4和Neo4j 5.26.0；上传JUnit共150 tests、0 failures、0 errors、
+0 skipped。上传记录中toy_v1与Flask冻结包均首次加载ready，Flask重复加载幂等，
+369来源、40完整单元、133实体、183关系、333证据，指纹
+5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe，
+新增模型请求0。PostgreSQL日志中的pgvector不可用仅说明部署采用既有词法回退，
+没有把该可选扩展计入成功条件。脱敏摘要见[平台验证](platform_validation.json)，
+原始JUnit、服务日志和两份重建JSON由Actions artifact
+`windows-verification`保存，不提交到Git。
+
+随后普通merge origin/main到feat/p1，接收P6正式抽取公共汇总，并在本机同一
+PostgreSQL/Neo4j配置上运行全部150项测试，实际150 passed。新增
+`test_old_published_job_display_is_correct_without_rewriting`确认旧ready job的展示用量
+可从既有checkpoint只读恢复，既不触发阶段也不改写原job.json。技术报告已加入
+P6测试集TP/FP/FN=25/19/1、P=0.5682、R=0.9615、F1=0.7143和理由覆盖13/15，
+同时保留银标局限；报告PDF已重新生成并逐页渲染检查。复现目录附Flask BSD-3-Clause
+许可证，新增候选成品打包工具拒绝私有测试目录并使用准确干净提交。
+
+该阶段放行Windows CI、正式抽取汇总与候选工程包验收，不表示P6下游A/B或完整课程
+材料已经完成。原job仍保持ready，禁止重新resume、采集或抽取。
