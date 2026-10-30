@@ -1,6 +1,6 @@
 {
   "role": "P3",
-  "os": "macOS 27.0.1 arm64 (current shared development host; Windows not tested)",
+  "os": "macOS 27.0.1 arm64; covered by P1 Windows 2022 CI for the shared test suite",
   "can_read": true,
   "can_write": true,
   "can_run": true,
@@ -10,10 +10,10 @@
   "shell": "zsh via exec_command",
   "git_push": true,
   "github_pr": true,
-  "github_merge": null,
+  "github_merge": true,
   "github_token_read": null,
   "graph_access": null,
   "model_access": null,
-  "checked_at": "2026-10-29T17:03:13Z",
-  "notes": "Own feat/p3 push succeeded. Public GitHub API GET returned 200; GITHUB_TOKEN/GH_TOKEN absent in this shell. No paid model calls or graph access required. Imports verified to P3 checkout and bundled vendor using explicit PYTHONPATH."
+  "checked_at": "2026-10-30T06:48:05Z",
+  "notes": "Own feat/p3 push and repository PR merge are available. The real Flask URL job is frozen and its P3 shard passed full-dataset validation plus source-hash, evidence-span, relation, plan, manifest and architecture-citation audits. The shared suite is covered by P1's Windows 2022 CI. No paid model calls or graph access were required for P3."
 }
