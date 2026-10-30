@@ -91,7 +91,24 @@ def _find(job_id, config):
 
 def get_build(job_id: str, *, config: dict | None = None) -> dict:
     config = load_config(config)
-    return read_json(_find(job_id, config) / "job.json")
+    directory = _find(job_id, config)
+    job = read_json(directory / "job.json")
+    _restore_usage(job, directory)
+    return job
+
+
+def _restore_usage(job, directory):
+    # Old published jobs retain their immutable manifest. Reconstruct their display
+    # counters from existing stage checkpoints, with no stage execution or writes.
+    if job.get("stage_usage_history"):
+        return
+    frozen = read_json(directory / "config.json")
+    root = Path(job["artifacts"].get("dataset_dir", directory))
+    output_root = Path(frozen.get("model", {}).get("output_root", root / "llm"))
+    for stage in STAGES:
+        path = directory / f"checkpoint_{stage}.json"
+        if stage in job.get("completed_stages", []) and path.exists():
+            merge_stage_usage(job, stage, read_json(path)["result"], output_root=output_root)
 
 
 def _enqueue(directory, config):
@@ -183,7 +200,7 @@ def resume_build(job_id: str, *, config: dict | None = None, background: bool = 
     directory = _find(job_id, config)
     job = read_json(directory / "job.json")
     if job["status"] in {"ready", "partial", "unsupported"}:
-        return job
+        return get_build(job_id, config=config)
     frozen = read_json(directory / "config.json")
     if supplied_config:
         if config.get("database_url"):
@@ -471,6 +488,7 @@ def _run(directory, config, stop_after=None):
     if worker_lock is None:
         return  # Another process owns the sole worker; persisted queued work remains resumable.
     job = read_json(directory / "job.json")
+    _restore_usage(job, directory)
     try:
         if job["dataset_id"] is None:
             job["dataset_id"] = dataset_id(job["repo"], job["profile_version"], job["job_id"])

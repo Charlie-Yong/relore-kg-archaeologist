@@ -50,7 +50,7 @@ def page(canvas, doc):
     canvas.drawString(56, 802, "开源项目历史知识图谱 · Flask")
     canvas.drawRightString(539, 802, "技术报告 / 阶段统稿 2026.10.30")
     canvas.line(56, 45, 539, 45)
-    canvas.drawString(56, 31, "公开方法与工程结果；正式质量指标待独立汇总")
+    canvas.drawString(56, 31, "公开方法、工程结果与正式抽取统计；下游 A/B 待完成")
     canvas.drawRightString(539, 31, str(doc.page))
     canvas.restoreState()
 
@@ -58,6 +58,19 @@ def page(canvas, doc):
 def main():
     flow, references = [], False
     for block in (ROOT / "reports/technical_report.md").read_text().strip().split("\n\n"):
+        if block.startswith("| "):
+            rows = [[Paragraph(escape(cell.strip()), STYLES["small"])
+                     for cell in line.strip().strip("|").split("|")]
+                    for line in block.splitlines() if not line.startswith("| ---")]
+            table = Table(rows, colWidths=[79, 92, 78, 78, 78, 78], repeatRows=1)
+            table.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), HexColor("#edf4f5")),
+                ("GRID", (0, 0), (-1, -1), .4, HexColor("#bdcfd3")),
+                ("TOPPADDING", (0, 0), (-1, -1), 7),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+            ]))
+            flow.extend([table, Spacer(1, 10)])
+            continue
         if block.startswith("# "):
             kind, text = "title", block[2:]
         elif block.startswith("### "):

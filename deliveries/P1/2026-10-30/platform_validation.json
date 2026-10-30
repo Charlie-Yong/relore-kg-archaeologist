@@ -1,0 +1,78 @@
+{
+  "checked_at": "2026-10-30T14:29:49+08:00",
+  "scope": "engineering validation only; no new model requests",
+  "macos_local": {
+    "application_base_commit": "c2aa0aa1deb1dbbe978b99f983c49fdeb25ac226",
+    "python": "3.11.15",
+    "postgresql": "16.4",
+    "neo4j": "5.26.0",
+    "pytest": {
+      "passed": 150,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 10.78
+    }
+  },
+  "windows_ci": {
+    "repository": "Charlie-Yong/relore-kg-archaeologist",
+    "head_sha": "a23839934de365177156481b93e0fa60269430f8",
+    "workflow_run_id": 41009562544,
+    "job_id": 123912123544,
+    "workflow_url": "https://github.com/Charlie-Yong/relore-kg-archaeologist/actions/runs/41009562544",
+    "runner": "windows-2022",
+    "conclusion": "success",
+    "junit": {
+      "tests": 138,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "duration_seconds": 198.892
+    },
+    "artifact": {
+      "name": "windows-verification",
+      "artifact_id": 12957162389,
+      "expired": false,
+      "contains": [
+        "flask.json",
+        "toy.json",
+        "tests.xml",
+        "postgres.log",
+        "neo4j.stdout.log",
+        "neo4j.stderr.log",
+        "download-hashes.txt"
+      ]
+    },
+    "toy_rebuild": {
+      "status": "ok",
+      "graph_ready": true,
+      "retrieval_ready": true,
+      "fingerprint": "9f091ddd76b94d0dfcec8447ea8c25338a3e1ba958fd84422383a9d3d2fb0aef",
+      "counts": {
+        "sources": 12,
+        "source_units": 2,
+        "evidence": 12,
+        "entities": 11,
+        "relations": 14,
+        "subjects": 5
+      }
+    },
+    "flask_rebuild": {
+      "status": "ok",
+      "graph_ready": true,
+      "retrieval_ready": true,
+      "first_and_idempotent_rebuild": true,
+      "new_model_requests": 0,
+      "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+      "fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "counts": {
+        "sources": 369,
+        "source_units": 40,
+        "evidence": 333,
+        "entities": 133,
+        "relations": 183,
+        "subjects": 65
+      }
+    }
+  },
+  "postgres_note": "The stock PostgreSQL distribution reported pgvector unavailable; the frozen rebuild used the existing lexical fallback. This optional extension was not counted as a passed requirement."
+}

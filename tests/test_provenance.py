@@ -40,3 +40,22 @@ def test_existing_cache_does_not_claim_new_requests(tmp_path):
     }, output_root=tmp_path)
     assert job["usage"]["model_requests"] == job["usage"]["reused_model_attempts"] == 1
     assert job["usage"]["new_model_requests"] == 0
+
+
+def test_old_published_job_display_is_correct_without_rewriting(tmp_path):
+    from historykg.pipeline import get_build
+
+    job_dir = tmp_path / "jobs" / "abc123"
+    job = {"dataset_id": "dataset:old", "usage": {"model_requests": 0},
+           "completed_stages": ["code", "extract"], "artifacts": {}}
+    write_json(job_dir / "job.json", job)
+    write_json(job_dir / "config.json", {})
+    write_json(job_dir / "checkpoint_code.json", {"result": {"usage": {"model_requests": 0}}})
+    write_json(job_dir / "checkpoint_extract.json", {
+        "result": {"usage": {"new_model_requests": 42}},
+    })
+    before = (job_dir / "job.json").read_bytes()
+    displayed = get_build("abc123", config={"jobs_root": str(tmp_path / "jobs")})
+    assert displayed["usage"]["model_requests"] == 42
+    assert displayed["usage"]["new_model_requests"] == 42
+    assert (job_dir / "job.json").read_bytes() == before

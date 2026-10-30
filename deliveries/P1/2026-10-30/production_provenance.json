@@ -14,6 +14,15 @@
     "missing_run_ids": [],
     "new_model_requests_in_production_resume": 42,
     "prompt_tokens": 621615,
+    "reconciled": {
+      "accounted_cny": 0.65714,
+      "attempts": 42,
+      "policy": "deepseek-2026-10-30-cache-and-beijing-period-v1",
+      "recorded_at": "2026-10-30",
+      "scope": "only the 42 recorded Flask production extract attempts; excludes development extract and all reference/judge/answer",
+      "source": "P4 shared ledger attempts.charged; read-only selection by exact production attempt_id",
+      "unknown_upper_cny": 0.0
+    },
     "run_count": 40,
     "scope": "production_extract_only"
   },
