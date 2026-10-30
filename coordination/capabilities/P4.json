@@ -14,6 +14,6 @@
   "github_token_read": null,
   "graph_access": null,
   "model_access": true,
-  "checked_at": "2026-10-30T07:38:10+08:00",
-  "note": "本轮真实DeepSeek返回deepseek-flash，thinking disabled；已授权本人本机配置在进程内置环境变量，未输出密钥。SQLite及16432专用PostgreSQL测试库验证通过；用主仓库既有venv但显式PYTHONPATH确保本副本源码。Windows模型模块未实测。git_push沿用既有真实记录，提交后再次验证。"
+  "checked_at": "2026-10-30T14:56:18+08:00",
+  "note": "P4最终无费核验通过：71项LLM/pricing/render/extract/collector双后端测试与Ruff通过；SQLite及16432专用PostgreSQL测试库可用。P1登记的Windows CI已实际运行全仓151项测试，0失败、0错误、0跳过。正式结果与共享账本公共汇总一致；未新增模型请求、未读取private_test、未输出密钥。"
 }

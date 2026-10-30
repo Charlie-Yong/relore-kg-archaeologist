@@ -1,0 +1,133 @@
+{
+  "role": "P4",
+  "date": "2026-10-30",
+  "scope": "Final no-fee consistency check of P4 model gateway, extraction, answerer, context renderer and shared budget records against P6 public formal results.",
+  "source_commit_before_record": "c24b3ed253ac5ef4a7c9087242bdb5e945979337",
+  "public_sources": {
+    "formal_summary": "evaluation/results/formal_summary.json",
+    "execution_amendment": "evaluation/results/execution_amendment.json",
+    "render_context_regression": "deliveries/P4/2026-10-30/render_context_regression.json",
+    "historical_reconciliation": "deliveries/P4/2026-10-30/budget_reconciliation.json"
+  },
+  "no_new_model_requests": true,
+  "private_test_read": false,
+  "formal_extraction_test": {
+    "source_units": 30,
+    "tp": 25,
+    "fp": 19,
+    "fn": 1,
+    "precision": 0.5681818181818182,
+    "recall": 0.9615384615384616,
+    "f1": 0.7142857142857143,
+    "rationale_covered": 13,
+    "rationale_eligible": 15,
+    "rationale_coverage": 0.8666666666666667,
+    "judgment_complete": true
+  },
+  "formal_qa_test": {
+    "questions": 20,
+    "answerable_questions": 15,
+    "fact_coverage": {
+      "A": {
+        "numerator": 30,
+        "denominator": 50,
+        "value": 0.6
+      },
+      "B": {
+        "numerator": 37,
+        "denominator": 50,
+        "value": 0.74
+      }
+    },
+    "evidence_group_recall": {
+      "A": {
+        "numerator": 35,
+        "denominator": 55,
+        "value": 0.6363636363636364
+      },
+      "B": {
+        "numerator": 38,
+        "denominator": 55,
+        "value": 0.6909090909090909
+      }
+    },
+    "unsupported_rate": {
+      "A": {
+        "numerator": 1,
+        "denominator": 39,
+        "value": 0.02564102564102564
+      },
+      "B": {
+        "numerator": 2,
+        "denominator": 47,
+        "value": 0.0425531914893617
+      }
+    },
+    "paired_fact_coverage": {
+      "pairs": 15,
+      "mean_difference_B_minus_A": 0.15714285714285714,
+      "wins_A": 4,
+      "wins_B": 5,
+      "ties": 6,
+      "bootstrap95": [
+        -0.12222222222222225,
+        0.45714285714285713
+      ],
+      "crosses_zero": true
+    },
+    "correct_abstention_rate": null
+  },
+  "qa_execution": {
+    "answers_expected": 48,
+    "answers_saved": 48,
+    "answer_status_counts": {
+      "ok": 32,
+      "empty": 15,
+      "error": 1
+    },
+    "judgments_expected": 24,
+    "judgments_ok": 24
+  },
+  "whole_pool": {
+    "expected": 92,
+    "ok": 86,
+    "failed": 6,
+    "confirmed_insufficient": 0,
+    "correct_abstention_rate": null
+  },
+  "budget_snapshot": {
+    "approved_cny": 10.0,
+    "effective_cap_cny": 9.84,
+    "accounted_cny": 8.373512,
+    "known_usage_cny": 6.679102,
+    "unknown_upper_cny": 1.69441,
+    "remaining_cny": 1.466488,
+    "settled_attempts": 328,
+    "uncertain_attempts": 25
+  },
+  "validation": {
+    "p4_tests": {
+      "passed": 71,
+      "failed": 0,
+      "command_scope": "llm, pricing, render_context, extract and collector SQLite/PostgreSQL"
+    },
+    "main_tests": {
+      "passed": 125,
+      "skipped": 28
+    },
+    "ruff": "passed",
+    "windows_ci": {
+      "run_id": 41015286789,
+      "passed": 151,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "limitations": [
+    "References are independently reviewed model silver references, not human gold.",
+    "The formal A/B cohort is a frozen course sample; the bootstrap interval is descriptive and crosses zero.",
+    "Six of 92 whole-pool positions failed, so correct-abstention rate remains N/A.",
+    "The P2 dev-01 ordering fix occurred after the frozen formal v1 run and is not mixed into those metrics."
+  ]
+}
