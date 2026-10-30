@@ -1,0 +1,36 @@
+{
+  "f1": 0.5,
+  "fn": 1,
+  "fp": 1,
+  "judgment_complete": true,
+  "judgment_coverage": 1.0,
+  "matches": [
+    {
+      "prediction_id": "p1",
+      "reference_id": "r1"
+    }
+  ],
+  "precision": 0.5,
+  "rationale": {
+    "coverage": 0.0,
+    "covered": 0,
+    "covered_ids": [],
+    "eligible": 2,
+    "empty_ids": [
+      "r1"
+    ],
+    "incomplete_or_unsupported_ids": [],
+    "judgment_complete": true,
+    "missing_decision_ids": [
+      "r2"
+    ],
+    "status_error_ids": [
+      "r1"
+    ]
+  },
+  "recall": 0.5,
+  "reference_complete": true,
+  "tp": 1,
+  "unclear": 0,
+  "unjudged_prediction_ids": []
+}

@@ -1,0 +1,93 @@
+{
+  "provenance": "actual public-query prepare_query and equivalent optimized shared render_context; no answer model called",
+  "rows": [
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": 11983,
+      "final_fragments": 4,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 0,
+      "question_id": "dev-01",
+      "status": "ok",
+      "system": "A"
+    },
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": 11963,
+      "final_fragments": 2,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 46,
+      "question_id": "dev-01",
+      "status": "ok",
+      "system": "B"
+    },
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": 11956,
+      "final_fragments": 3,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 0,
+      "question_id": "dev-02",
+      "status": "ok",
+      "system": "A"
+    },
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": 11993,
+      "final_fragments": 2,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 47,
+      "question_id": "dev-02",
+      "status": "ok",
+      "system": "B"
+    },
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": 11969,
+      "final_fragments": 4,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 0,
+      "question_id": "dev-03",
+      "status": "ok",
+      "system": "A"
+    },
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": 11963,
+      "final_fragments": 3,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 47,
+      "question_id": "dev-03",
+      "status": "ok",
+      "system": "B"
+    },
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": 11966,
+      "final_fragments": 6,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 0,
+      "question_id": "dev-04",
+      "status": "ok",
+      "system": "A"
+    },
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": 11925,
+      "final_fragments": 5,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 37,
+      "question_id": "dev-04",
+      "status": "ok",
+      "system": "B"
+    }
+  ]
+}
