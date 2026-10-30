@@ -72,6 +72,7 @@ def response(value, *, finish="stop", tokens=12):
 
 def test_truncated_http_success_is_failed_attempt_and_billed_before_retry(tmp_path, monkeypatch):
     monkeypatch.setenv("DEEPSEEK_API_KEY", "test-secret-never-serialize")
+    monkeypatch.setattr("historykg.llm.gateway.now", lambda: "2026-10-30T01:30:00Z")
     seen = []
 
     def handler(request):
