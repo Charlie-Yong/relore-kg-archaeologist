@@ -33,21 +33,22 @@ jobs:
           java-version: '21'
       - name: Install the locked project and bundled relore
         run: python -m pip install -r requirements.txt
-      - name: Start PostgreSQL 16.4 and Neo4j 5.26.0 on loopback
+      - name: Run native databases, checks and both frozen rebuilds in one process lifetime
         shell: pwsh
-        run: ./tools/ci/start_windows_services.ps1
-      - name: Check source, contracts, actual databases, UI and job recovery
         run: |
-          python -m pip check
-          python -m ruff check historykg app tests tools/run_platform_rebuild.py
-          python -m pytest tests -q --junitxml=.local/windows-validation/tests.xml
-          python tools/check_planning.py
-      - name: Rebuild the public synthetic fixture against both services
-        run: python tools/run_platform_rebuild.py --dataset fixtures/toy_v1 --out .local/windows-validation/toy.json
-      - name: Unpack the frozen public Flask sources and graph
-        run: python -m tarfile -e repro/flask_frozen.tar.gz .local/frozen
-      - name: Rebuild the real frozen Flask graph without external model calls
-        run: python tools/run_platform_rebuild.py --dataset .local/frozen/flask --out .local/windows-validation/flask.json --question "stream context"
+          $ErrorActionPreference = 'Stop'
+          function Invoke-Python {
+            & python @args
+            if ($LASTEXITCODE -ne 0) { throw "Python check failed with exit $LASTEXITCODE" }
+          }
+          ./tools/ci/start_windows_services.ps1
+          Invoke-Python -m pip check
+          Invoke-Python -m ruff check historykg app tests tools/run_platform_rebuild.py
+          Invoke-Python -m pytest tests -q --junitxml=.local/windows-validation/tests.xml
+          Invoke-Python tools/check_planning.py
+          Invoke-Python tools/run_platform_rebuild.py --dataset fixtures/toy_v1 --out .local/windows-validation/toy.json
+          Invoke-Python -m tarfile -e repro/flask_frozen.tar.gz .local/frozen
+          Invoke-Python tools/run_platform_rebuild.py --dataset .local/frozen/flask --out .local/windows-validation/flask.json --question "stream context"
       - name: Upload the exact verification record and service logs
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
