@@ -117,3 +117,10 @@ evaluation/results/protocol_freeze.json记录方法文件哈希、模型配置�
 两者是不同范围，不混用。公开期中材料见midterm_experiment.md；正式实验结果仍未发布。
 本地.local/evaluation/run_experiments.py已准备extraction/answers/judge/statistics逐阶段恢复，
 不自动启动；费用修复需先普通merge主main，以避免旧版网关写入不兼容的结算列。
+
+开发语义负例的原始结果必须一并披露：semantic_negative_result.json的严格双标签预期
+通过0/3（all_passed=false），三条结论支持性均符合预期，空理由被judge判为unclear而非
+预期unsupported。程序依据空rationale仍将理由覆盖判0，不让该分歧抬高覆盖。评审还指出
+#6133参考未列出测试调整决策；这属于银标遗漏，保留reference disagreement，不反向修改
+既有参考或为通过负例重开成功请求。正式指标按当前参考解释，报告该开发已知局限。
+已普通merge origin/main d5cca1b，解开远端旧基线差异，未重写历史。
