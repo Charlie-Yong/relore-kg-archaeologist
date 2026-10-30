@@ -14,7 +14,7 @@ from historykg.graph import GraphStore, load_dataset
 from historykg.io import make_evidence, read_jsonl, write_jsonl, write_manifest
 from historykg.query import prepare_query, query
 from historykg.query.frozen_index import drop_index
-from historykg.query.retrieval import resolve_seeds
+from historykg.query.retrieval import context_candidates, resolve_seeds
 
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures/toy_v1"
 
@@ -242,6 +242,68 @@ def test_external_issue_number_is_not_resolved_into_local_subject():
     package = read_package(FIXTURE)
     seeds, gaps = resolve_seeds("https://github.com/other/repo/issues/1", package, [])
     assert not seeds and gaps
+
+
+def test_candidate_priority_prefers_scoped_discussion_over_generic_sources():
+    def source(identity, kind, origin_key, text):
+        return {
+            "source_id": identity,
+            "source_key": identity,
+            "kind": kind,
+            "origin_key": origin_key,
+            "title": None,
+            "text": text,
+            "url": "https://example.invalid/" + identity,
+            "author": None,
+            "occurred_at": None,
+        }
+
+    package = {
+        "sources": [
+            source("body", "issue_body", "example/repo:body:7", "server close context"),
+            source("comment", "comment", "example/repo:comment:900", "server close context"),
+            source("api", "api_response", "https://api.example/issues/7", "server close context"),
+            source("code", "code", "code:abc:src/app.py", "server close context"),
+        ]
+    }
+    retrieval = {
+        "scores": {"api": 0.9, "code": 0.8, "comment": 0.2, "body": 0.1}
+    }
+    ordered = context_candidates(
+        package, retrieval, [], question="issue #7 server close", limit=4
+    )
+    assert [item["source_id"] for item in ordered] == ["body", "comment", "api", "code"]
+
+
+def test_candidate_priority_keeps_explicit_code_snapshot_first():
+    def source(identity, kind, origin_key):
+        return {
+            "source_id": identity,
+            "source_key": identity,
+            "kind": kind,
+            "origin_key": origin_key,
+            "title": None,
+            "text": "session cookie implementation",
+            "url": "https://example.invalid/" + identity,
+            "author": None,
+            "occurred_at": None,
+        }
+
+    package = {
+        "sources": [
+            source("comment", "comment", "example/repo:comment:900"),
+            source(
+                "code",
+                "code",
+                "code:514fc6b:src/example/testing.py",
+            ),
+        ]
+    }
+    question = "提交 514fc6b 的 src/example/testing.py 如何处理 session cookie？"
+    ordered = context_candidates(
+        package, {"scores": {"comment": 0.9, "code": 0.1}}, [], question=question
+    )
+    assert ordered[0]["source_id"] == "code"
 
 
 def test_same_repo_mutation_does_not_change_frozen_relore_hits(tmp_path, graph_config):

@@ -55,11 +55,14 @@ ClaimsToClose、Closes、MergedAs、MentionsPR与ReachableIn保留各自语义�
 也从共同检索命中的实体证据取得种子。并列主体返回候选缺口，不声称查全。
 外库URL编号不映射成本地同号主体。
 
-固定方法版本`relore_common_rrf_graph_v1`：先真实调用P4 `search_history`（10命中），
+固定方法版本`relore_common_rrf_graph_v2`：先真实调用P4 `search_history`（10命中），
 按P1 `relore_mapping`映射到本数据集来源；再对完整共同来源池使用固定词法适配，
 包括讨论、code、release_note、commit_message、git_output、api_response。
 词法为英语/标识符与中文二元词，标题加权，按得分降序、source_id升序；
-两种排名通过`1/(60+rank)`合并。来源原文始终取当前冻结包，不取其他数据集文本。
+两种排名通过`1/(60+rank)`合并。候选再按问题显式范围排序：Issue/PR编号且没有
+代码路径或提交SHA时，优先issue_body、comment、review与pr_body，并降低通用API元数据；
+问题明确给出代码路径或SHA时，优先origin_key同时匹配的code快照。该排序对A/B一致，
+图扩展只用于同一直接相关层内的次级排序。来源原文始终取当前冻结包，不取其他数据集文本。
 底座命中、映射及可见来源清单保留在查询日志，不能把适配检索称为纯relore原生排序。
 
 讨论检索不会访问随后可变的全局repo索引。load从P1 manifest所指的P4 capture

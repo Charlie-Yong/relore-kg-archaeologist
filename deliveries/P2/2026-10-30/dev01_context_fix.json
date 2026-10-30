@@ -1,0 +1,67 @@
+{
+  "question_id": "dev-01",
+  "mechanism": "Issue/PR 问题优先正文与评论；显式路径或提交优先对应代码快照",
+  "model_calls": 0,
+  "historical_replay": {
+    "answer_status": "empty",
+    "claim_count": 0,
+    "final_fragment_count": 4,
+    "reason": "仅issue正文进入最终可见上下文，关键维护者评论被通用API/代码候选挤出12000码点"
+  },
+  "current_context_audit": {
+    "method_version": "relore_common_rrf_graph_v2",
+    "prepare_status": "ok",
+    "candidate_count": 40,
+    "candidate_kinds_top": [
+      "issue_body",
+      "comment",
+      "comment",
+      "comment",
+      "comment",
+      "issue_body",
+      "comment",
+      "comment",
+      "comment",
+      "comment",
+      "comment",
+      "comment"
+    ],
+    "final_fragment_count": 5,
+    "final_characters": 11832,
+    "final_sources": [
+      {
+        "source_id": "SourceDocument:cf7b13ae1efbba77709a69b3d133580d8cdbd4a25952455aef287431527c81c8",
+        "kind": "issue_body",
+        "origin_key": "pallets/flask:body:6123",
+        "characters": 4740
+      },
+      {
+        "source_id": "SourceDocument:58f914a687de30216c08218c0fd0d4c51b8c16372b2b1658be6fad8a13dec6e2",
+        "kind": "comment",
+        "origin_key": "pallets/flask:issue_comment:5248222849",
+        "characters": 3062
+      },
+      {
+        "source_id": "SourceDocument:8db6e6c737f7625ad45e3d43ba2b8587c9c79b0de18d9ce8fa6e8032096641ab",
+        "kind": "comment",
+        "origin_key": "pallets/flask:issue_comment:5248665763",
+        "characters": 776
+      },
+      {
+        "source_id": "SourceDocument:4777b2bad51f67e027dd684748e1ed6371bc2cf6684b74b1f1f72b01be5520df",
+        "kind": "comment",
+        "origin_key": "pallets/flask:issue_comment:5247491749",
+        "characters": 412
+      },
+      {
+        "source_id": "SourceDocument:4fa7075b3871abfadb6cdb8277d6703c855e67597ac04045f6a42555c38db370",
+        "kind": "comment",
+        "origin_key": "pallets/flask:issue_comment:5247528837",
+        "characters": 566
+      }
+    ],
+    "contains_close_guidance": true,
+    "contains_server_root_cause": true
+  },
+  "note": "这是无需回答模型的上下文可达性核验，不是正式问答正确率；正式P6实验若已按v1冻结，应保留原协议并披露修复后置。"
+}
