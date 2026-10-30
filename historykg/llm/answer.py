@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from historykg.ids import evidence_id, normalize_repo
 
@@ -33,17 +33,38 @@ class AnswerQuote(BaseModel):
     source_id: str
     quote: str = Field(min_length=1)
 
+    @field_validator("quote")
+    @classmethod
+    def quote_is_not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("证据quote不能为空白。")
+        return value
+
 
 class Claim(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
     text: str = Field(min_length=1)
     evidence: list[AnswerQuote] = Field(min_length=1)
 
+    @field_validator("text")
+    @classmethod
+    def claim_is_not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("claim.text不能为空白。")
+        return value
+
 
 class AnswerOutput(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
     claims: list[Claim]
     gaps: list[str]
+
+    @field_validator("gaps")
+    @classmethod
+    def gaps_are_not_blank(cls, value: list[str]) -> list[str]:
+        if any(not gap.strip() for gap in value):
+            raise ValueError("gaps不能包含空白字符串。")
+        return value
 
 
 def render_context(context: list[dict], *, max_characters: int = 12000) -> dict:
@@ -54,7 +75,7 @@ def render_context(context: list[dict], *, max_characters: int = 12000) -> dict:
     """
     if max_characters < 2:
         raise ValueError("上下文预算至少2码点。")
-    fragments, seen, gaps = [], set(), []
+    fragments, seen, gaps = [], {}, []
     for item in context:
         if not all(k in item for k in ("source_id", "start", "end", "quote")):
             raise ValueError("上下文缺少source_id/start/end/quote。")
@@ -62,8 +83,10 @@ def render_context(context: list[dict], *, max_characters: int = 12000) -> dict:
             raise ValueError("上下文偏移长度错误。")
         identity = (item["source_id"], item["start"], item["end"])
         if identity in seen:
+            if seen[identity] != item["quote"]:
+                raise ValueError("上下文相同来源和偏移出现不一致引文。")
             continue
-        seen.add(identity)
+        seen[identity] = item["quote"]
         fragment = {
             k: item[k]
             for k in ("source_id", "start", "end", "quote", "title", "url", "author", "time")

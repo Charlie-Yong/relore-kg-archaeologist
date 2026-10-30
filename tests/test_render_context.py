@@ -74,3 +74,67 @@ def test_large_json_uses_logarithmic_number_of_serializations(monkeypatch):
     assert visible["quote"] == text[: visible["end"]]
     next_end = next(end for end in boundaries if end > visible["end"])
     assert len(canonical([{**item, "quote": text[:next_end], "end": next_end}])) > 12000
+
+
+def test_conflicting_quotes_for_same_source_span_are_rejected():
+    first = {"source_id": "s", "start": 10, "end": 15, "quote": "alpha"}
+    second = {"source_id": "s", "start": 10, "end": 15, "quote": "bravo"}
+    with pytest.raises(ValueError, match="相同来源和偏移.*不一致引文"):
+        answer.render_context([first, second])
+
+
+def test_new_entity_and_relation_types_in_path_metadata_are_safe():
+    quote = "Developer @maintainer authored close()."
+    path = {
+        "entity_ids": ["dev-1", "fn-1", "pr-1"],
+        "entities": [
+            {
+                "id": "dev-1",
+                "type": "Developer",
+                "properties": {"display_name": "@maintainer"},
+            },
+            {
+                "id": "fn-1",
+                "type": "Function",
+                "properties": {"display_name": "close()"},
+            },
+            {
+                "id": "pr-1",
+                "type": "PullRequest",
+                "properties": {"display_name": "PR 1"},
+            },
+        ],
+        "relations": [
+            {"type": "Authored", "from_id": "dev-1", "to_id": "pr-1"},
+            {"type": "Defines", "from_id": "fn-1", "to_id": "pr-1"},
+        ],
+    }
+    item = {
+        "source_id": "s",
+        "start": 7,
+        "end": 7 + len(quote),
+        "quote": quote,
+        "title": "PR discussion",
+        "url": "https://example.invalid/pr/1",
+        "entity_type": "Developer",
+        "relation_type": "Authored",
+        "path": path,
+    }
+    result = answer.render_context([item])
+    assert result["fragments"] == [
+        {
+            "source_id": "s",
+            "start": 7,
+            "end": 7 + len(quote),
+            "quote": quote,
+            "title": "PR discussion",
+            "url": "https://example.invalid/pr/1",
+        }
+    ]
+    assert result["characters"] == len(canonical(result["fragments"]))
+    assert [entity["type"] for entity in path["entities"]] == [
+        "Developer",
+        "Function",
+        "PullRequest",
+    ]
+    assert [relation["type"] for relation in path["relations"]] == ["Authored", "Defines"]

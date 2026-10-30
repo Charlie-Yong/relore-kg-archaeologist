@@ -118,3 +118,21 @@ heading fit/punctuation均0 finding。机器可读汇总见`final_validation.jso
 
 限制不变：真实开发问答不替代P6正式F1、A/B增益或正确弃答率；Windows实机、正式课堂
 彩排和原PowerPoint客户端检查不在本轮已完成证据范围。P5本轮交付为done。
+
+## 续接：正式结果版（2026-10-30）
+
+P6正式结果合并main后，P5基于最新主线另存
+`demo/midterm/期中汇报_20261111_20261030正式结果版.pptx`，原五页版式和真实截图保持不变。
+第5页改为公开正式指标：30个测试线程抽取TP/FP/FN=25/19/1，
+Precision/Recall/F1=0.568/0.962/0.714，理由覆盖13/15=0.867；
+20道测试题A/B事实覆盖=0.600/0.740，证据组召回=0.636/0.691，
+无依据断言率=0.026/0.043。B-A覆盖差0.157，但配对胜负B胜5、A胜4、平6，
+95%描述性bootstrap区间[-0.122, 0.457]跨零，因此明确写为不宣称显著收益。
+全池核验86/92，正确弃答率保持N/A。
+
+新版PPT经Artifact Tool精确重导入、5页原生可编辑对象、13.3333×7.5英寸、
+包完整性、几何、字体、标题适配与逐页渲染检查，finding/warning均为0。
+五页PNG已用新版正式结果文件重渲染。讲稿、演示步骤、材料说明和报告章节同步更新。
+机器可读汇总见[formal_results_validation.json](formal_results_validation.json)。
+未调用DeepSeek，未读取`evaluation/private_test`。仍保留Windows/PowerPoint原生实机
+与成员课堂彩排限制。

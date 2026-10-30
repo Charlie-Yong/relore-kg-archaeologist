@@ -2,12 +2,24 @@
 
 角色：P4｜更新：2026-10-30｜规划v1.4.1 / 契约1.4.1。
 
-状态：ready_for_integration。
+状态：done。
 
-本轮交付分支：feat/p4-budget-render-public；预算结算和同语义上下文二分裁剪均已修复，41项相关测试通过。
+本轮最终回答链审计分支待推送/接收复核。
 
-最新记录：[模型、采集器及预算核算交接](../deliveries/P4/2026-10-30/handoff.md)；[历史费用核算摘要](../deliveries/P4/2026-10-30/budget_reconciliation.json)。前期贡献继续引用[原记录](../deliveries/P4/2026-10-27/handoff.md)。
+本轮交付分支：feat/p4-final-audit-p4，基于公开main `2af7ea9`。已完成空白claim/gap/
+证据quote拒收、相同source/start/end不同quote冲突检测、Developer/Function/Authored/
+Defines路径元数据兼容测试；公开冻结Flask包无模型prepare/render检查通过。
 
-恢复动作：各调用方先普通merge预算结算修复后再恢复请求，仍只用主部署同一ledger与approved_cny=10。2026-10-30 13:28对账后核算3.780790元（含未知上界0.009858），余6.059210元；总cap10元/ceiling9.84元未变，后续以实时账本为准。旧缓存费用字段保留历史上界，当前核算按账本attempts.charged。
+最新记录：[模型、采集器及预算核算交接](../deliveries/P4/2026-10-30/handoff.md)；
+[最终回答与渲染审计](../deliveries/P4/2026-10-30/final_answer_render_audit.json)；
+[最终机器验证](../deliveries/P4/2026-10-30/formal_validation.json)；
+[历史费用核算摘要](../deliveries/P4/2026-10-30/budget_reconciliation.json)。
+前期贡献继续引用[原记录](../deliveries/P4/2026-10-27/handoff.md)。
 
-阻塞：本轮预算误核算已修复；正式reference/judge和成品接收由对应角色继续。P4未done；Windows模型模块尚未实机验证。
+本轮检查：定向32项、全仓162项无费测试通过，Ruff通过；冻结Flask包指纹与共享图库一致，
+37候选/40路径，最终11972码点、6片段、32裁剪gap，新模型请求0，未读取private_test。
+追加预算后的本地审计文件为`.local/execution/budget_extension_20261030T072516Z.json`：
+approved=20元、effective cap=19.84元，历史费用未清零，当前余11.466488元。
+
+剩余限制：P4不把模型银标称为人工金标；全池核验6/92失败，正确弃答率保持N/A；
+实际冻结数据尚未包含新增类型，新增类型仅由合成兼容测试覆盖；路径标签仍由P2/UI负责。

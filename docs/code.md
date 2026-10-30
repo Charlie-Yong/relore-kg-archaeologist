@@ -2,7 +2,8 @@
 
 本模块接收 P1 的固定发现快照，自动补充官方 git、Python 原文和有限发布资料。
 它只静态读取目标仓库，不安装、导入或执行目标代码，不调用付费模型。
-公共来源、ID、证据和校验直接使用 `historykg.ids`、`historykg.io`，契约为 1.4.1。
+公共来源、ID、证据和校验直接使用 `historykg.ids`、`historykg.io`。旧实体和关系保持
+契约 1.4.1；新增 Developer、Function、Authored、Merged、Defines 使用 P2 的增量契约 1.4.2。
 
 ## 调用与输入
 
@@ -22,7 +23,8 @@ result = run_code_stage(
 
 `snapshot_dir/snapshot.json` 至少包含 `repo`、`dataset_id`、`selected_prs`。
 `selected_prs` 是已经冻结的官方 PR 对象，保留 `number`、`merged` 或 `merged_at`、
-`merge_commit_sha`。没有合并依据的条目排除并记录原因，不用标题推测提交。
+`merge_commit_sha` 和指向完整 PR JSON 的 `source_id`。没有合并依据的条目排除并记录原因，
+不用标题推测提交。
 可提供 `default_branch_sha`、`releases`、`tags` 和已有 `sources`；
 `paths.sources` 可指向已有 C5 来源 JSONL。未给默认分支 SHA 时从官方 git HEAD 自动固定；
 未给发布资料时读取官方 Releases API，按发布时间取最多三个，空时按 tags 接口顺序回退。
@@ -36,6 +38,8 @@ client=None, git_repo=None)`。`client` 和 `git_repo` 用于冻结响应与本�
 
 - 最多 40 个选中合并提交、24 个 Python 文件×SHA 状态、3 个 Release/tag。
   同一 SHA/path 去重；同路径不同 SHA 保持不同 File ID。
+- Developer 只消费 `selected_prs` 已指向的冻结 PR API 原文，不新增网络请求。
+  Function 只消费已读入 24 状态预算的源码，不额外读取文件。
 - 变更候选按生产代码优先、每提交轮转选择。24 状态中预留最多 8 状态，
   自动读取默认快照中最浅包入口及其一层内部静态 import 目标，供有限架构问答。
   入口优先 `src/`，没有包入口时用生产 Python 文件。此规则不依赖未来测试题。
@@ -58,6 +62,17 @@ client=None, git_repo=None)`。`client` 和 `git_repo` 用于冻结响应与本�
 相对 import 超出包、目标未采、外部模块、语法错误与读文件失败分别进入 gaps。
 AST 的 UTF-8 列号会转换为公共证据要求的 Unicode 码点偏移。
 
+`Authored` 只来自 PR JSON 顶层 `user` 对象，连接 Developer 与 PullRequest；
+`Merged` 只来自已合并 PR 的顶层 `merged_by` 对象，方向同为 Developer→PullRequest。
+本模块不生成 Developer→Commit，也不从 PR 标题、登录名或 git 用户名推断真实姓名。
+有 GitHub 数字用户 ID 时以其构造稳定 Developer ID；只有 login 时以规范化 login 构造。
+`display_name` 始终保存原文 login。证据引用对应 JSON 字段的完整原文对象。
+
+Function 只收已解析文件的顶层 `FunctionDef`/`AsyncFunctionDef`，不混入 ClassDef 或方法。
+实体至少含 `qualified_name`、`kind`（`function`/`async_function`）、`start_line`，
+另含 `end_line`、源码路径与完整 SHA；同一文件同名重复定义以起始行区分。
+`Defines` 从同 SHA 的 File 指向 Function，证据逐字引用函数签名，Unicode 偏移可校验。
+
 Release ID 使用规范 repo 与原样 tag，同提交的 `1` 和 `v1` 不合并。
 Release notes 的 PR 引用只产生 MentionsPR；ReachableIn 只来自 git 可达，均不宣称首次发布。
 API 证据保存完整响应的 P1 规范 JSON，一份响应供多个实体共享，不生成裁剪对象冒充原响应。
@@ -74,9 +89,19 @@ python -m ruff check historykg/code tests/test_code.py
 ```
 
 本地 git fixture 覆盖修改、删除、改名、语法失败、普通与相对 import、缺失与读取失败、
-Unicode 偏移、同提交不同 tag、可达、共享预算、缓存重放与冻结输入拒改。
+Unicode 偏移、async 函数、同名跨文件及同文件重复定义、ClassDef 排除、多作者、
+无作者、login-only 回退、稳定 ID、同提交不同 tag、可达、共享预算、缓存重放与冻结输入拒改。
 测试还实际调用 P1 的 merge_sources、build_subjects、validate_dataset 验证下游消费。
-平台与运行结果见 P3 handoff；尚未执行的 Flask URL 及 Windows 实机验证不计通过。
+对原默认 Flask URL job 的冻结快照和本地裸 git 缓存做纯只读重放（网络请求 0）：
+24 个文件×SHA、4 个提交、18 个 Developer、20 条 Authored、4 条 Merged、
+384 个顶层 Function、384 条 Defines；24 个文件全部 AST 解析成功。
+固定目标链为 PR #6096（作者 lkk7、合并者 davidism）→
+`05e9c6bd630ecf4ec0ec884b1fc7901663737bc7` → `src/flask/testing.py` →
+`flask.testing._get_werkzeug_version`；`FlaskClient` 作为 ClassDef 不生成 Function。
+所有新增证据均校验来源原文的 Unicode 区间。
+P2 合并 1.4.2 契约后需在**新数据版本**上跑端到端；旧冻结数据保持只读，不原地补写。
+深度 64 浅历史与未采 import 目标继续保留为 gaps。
+P3 的 Windows 兼容由 P1 跨平台 CI 单独记录；本模块仍不执行目标仓库代码。
 
 方法依据：[Git diff-tree](https://git-scm.com/docs/git-diff-tree)、
 [Python 3.11 AST](https://docs.python.org/3.11/library/ast.html)、

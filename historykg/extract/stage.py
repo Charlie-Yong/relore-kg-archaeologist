@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from historykg.contracts import CONTRACT_VERSION, SourceDocument, SourceUnit, Subject
 from historykg.ids import decision_id, normalize_repo, relation_id
@@ -50,6 +50,13 @@ class Quote(BaseModel):
     before: str | None = None
     after: str | None = None
 
+    @field_validator("quote")
+    @classmethod
+    def quote_is_not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("证据quote不能为空白。")
+        return value
+
 
 class Candidate(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
@@ -64,6 +71,20 @@ class Candidate(BaseModel):
     statement_evidence: list[Quote] = Field(min_length=1)
     rationale_evidence: list[Quote]
     attribution_evidence: list[Quote] = Field(min_length=1)
+
+    @field_validator("statement")
+    @classmethod
+    def statement_is_not_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("candidate.statement不能为空白。")
+        return value
+
+    @field_validator("rationale")
+    @classmethod
+    def rationale_is_not_blank_when_present(cls, value: str | None) -> str | None:
+        if value is not None and not value.strip():
+            raise ValueError("candidate.rationale存在时不能为空白。")
+        return value
 
     @model_validator(mode="after")
     def reason_is_separate(self):

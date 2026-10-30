@@ -10,9 +10,23 @@ from collections import defaultdict
 from historykg import collector
 from historykg.ids import evidence_id
 
-METHOD_VERSION = "relore_common_rrf_graph_v1"
+METHOD_VERSION = "relore_common_rrf_graph_v2"
 STOPWORDS = set("a an the is are was were to of for in on and or with what why how does did "
                 "this that it which when where please tell explain".split())
+CODE_KINDS = {"code"}
+DISCUSSION_KINDS = {
+    "comment", "issue_body", "pr_body", "review", "review_comment"
+}
+PATH_PATTERN = re.compile(
+    r"(?<![\w/])(?:[\w.-]+/)+[\w.-]+\.(?:py|pyi|js|jsx|ts|tsx|go|rs|java|kt|rb|php|c|h|"
+    r"cc|cpp|hpp|md|rst|toml|ya?ml|json)(?![\w.])",
+    re.IGNORECASE,
+)
+SHA_PATTERN = re.compile(r"\b[0-9a-f]{7,40}\b", re.IGNORECASE)
+NUMBER_PATTERN = re.compile(
+    r"(?:#\s*(\d+)\b|\b(?:issue|pull\s+request|pr)\s*#?\s*(\d+)\b)",
+    re.IGNORECASE,
+)
 
 
 def tokens(text: str) -> set[str]:
@@ -29,6 +43,44 @@ def lexical_score(question: str, source: dict) -> float:
     origin = source["origin_key"].lower()
     return sum(1 + min(text.count(t), 3) + 2 * (t in title) + (t in origin)
                for t in terms if t in text or t in title or t in origin)
+
+
+def direct_affinity(question: str, source: dict) -> int:
+    """Rank the source type that can directly answer an explicitly scoped question."""
+    terms = tokens(question)
+    title = str(source.get("title", "")).lower()
+    origin = source["origin_key"].lower()
+    text = source["text"].lower()
+    matched = sum(term in text or term in title or term in origin for term in terms)
+    score = min(matched, 8) * 2
+    kind = source["kind"]
+    paths = [value.lower() for value in PATH_PATTERN.findall(question)]
+    shas = [value.lower() for value in SHA_PATTERN.findall(question)]
+    numbers = {
+        first or second for first, second in NUMBER_PATTERN.findall(question)
+    }
+    if paths or shas:
+        if kind in CODE_KINDS:
+            score += 20
+        elif kind in DISCUSSION_KINDS:
+            score -= 4
+    else:
+        if kind in DISCUSSION_KINDS:
+            score += 16
+        elif kind == "api_response":
+            score -= 12
+        elif kind in CODE_KINDS:
+            score -= 6
+    if numbers and any(
+        re.search(rf"(?<!\d){re.escape(number)}(?!\d)", origin)
+        for number in numbers
+    ):
+        score += 20
+    if any(path in origin for path in paths):
+        score += 40
+    if any(sha in origin for sha in shas):
+        score += 40
+    return score
 
 
 def resolve_seeds(question: str, package: dict, supplied: list[str]) -> tuple[list[str], list]:
@@ -143,13 +195,23 @@ def graph_sources(package: dict, paths: list[dict]) -> list[str]:
 
 
 def context_candidates(package: dict, retrieval: dict, expansion: list[str], *,
-                       limit: int = 40) -> list[dict]:
+                       question: str = "", limit: int = 40) -> list[dict]:
     scores = dict(retrieval["scores"])
     for rank, sid in enumerate(expansion, 1):
         scores[sid] = scores.get(sid, 0) + 1 / (60 + rank)
     sources = {s["source_id"]: s for s in package["sources"]}
     candidates = []
-    for sid in sorted(scores, key=lambda s: (-scores[s], s))[:limit]:
+    # A/B share this direct relevance ordering; graph expansion changes only the
+    # second key and can add a source, rather than promote generic API/code noise.
+    ordered = sorted(
+        scores,
+        key=lambda sid: (
+            -direct_affinity(question, sources[sid]),
+            -scores[sid],
+            sid,
+        ),
+    )
+    for sid in ordered[:limit]:
         source = sources[sid]
         if not source["text"]:
             continue

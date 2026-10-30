@@ -1,0 +1,20 @@
+{
+  "package_path": "/Users/Exile/工作与学习/课程学习/知识图谱/relore-agents/p1/tmp/submission-final/relore-kg-course-final.zip",
+  "sha256": "e09693e98740fd8398f1a6f4dcf83eb569f9dd8a6c473395c74d375fd44b50cc",
+  "source_commit": "e71fd0b6dd473e5f03242baef13180ae49e7906b",
+  "files": 1014,
+  "new_model_requests": 0,
+  "includes": [
+    "P1/P2/P3/P4/P5/P6 merged final records",
+    "P6 public formal evaluation summaries and figures",
+    "P5 formal-results midterm deck and replay",
+    "frozen Flask production dataset and audit logs"
+  ],
+  "excludes": [
+    "API credentials",
+    "evaluation/private_test",
+    "complete Git clones",
+    "local personal configuration"
+  ],
+  "note": "Final stage candidate rebuilt after all six role merges; human classroom rehearsal remains outside machine validation."
+}

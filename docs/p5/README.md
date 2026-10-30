@@ -70,7 +70,8 @@ graph_ready、retrieval_ready及actual_llm_extraction均为真。浏览器已核
 [逐字源码](screenshots/flask-architecture-source-20261030.png)均已核对；
 `dev-01` 保留原 `empty` 状态。重放包保存原运行ID、响应哈希和保存时间，页面关闭在线输入和模型调用。
 最终期中材料为
-`demo/midterm/期中汇报_20261111_20261030真实闭环版.pptx`；五页逐页渲染、PPTX结构完整性、
-版式几何、页数和标题检查均通过。完整机器可读记录见
-[final_validation.json](../../deliveries/P5/2026-10-30/final_validation.json)。
+`demo/midterm/期中汇报_20261111_20261030正式结果版.pptx`；第5页已写入P6正式抽取与
+A/B结果，并明确bootstrap区间跨零和正确弃答率N/A。五页逐页渲染、PPTX结构完整性、
+版式几何、字体、页数、标题及精确重导入检查均通过。完整机器可读记录见
+[formal_results_validation.json](../../deliveries/P5/2026-10-30/formal_results_validation.json)。
 具体版本、任务与待验收项统一记录于[P5 handoff](../../deliveries/P5/2026-10-30/handoff.md)。

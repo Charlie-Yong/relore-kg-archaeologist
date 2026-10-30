@@ -1,7 +1,8 @@
 # P6 独立参考、实验与自动验收交接
 
-P6，2026-10-30，规划/契约1.4.1，唯一副本relore-agents/p6，长期分支feat/p6。
-状态in_progress；独立参考先行阶段完成，正式计分与A/B、自动验收继续运行。
+P6，2026-10-30，规划/契约1.4.1，唯一副本relore-agents/p6，长期分支
+`feat/p6-formal-results`。状态`ready_for_integration`；独立参考、正式计分、A/B、
+全池重试、第二小库和最终自动验收已完成，等待接收方按C3.3/C10独立复核。
 
 ## 说明与发送记录
 
@@ -130,3 +131,98 @@ evaluation/results/protocol_freeze.json记录方法文件哈希、模型配置�
 完整对照；重复question/system拒绝。新增覆盖回归后11个evaluation测试通过、ruff通过。
 本次为尚未正式计分前的聚合缺口修复，不修改生产提示或题目。完整方法章节草稿已交P1，
 后续以真实结果替换阶段段落，不将方法稿标为正式实验完成。
+
+## GLM高推理恢复与正式结果（2026-10-30 14:25）
+
+恢复成员先只读交接、公开控制文件和私有目录状态，不打开测试题、参考答案或评审正文。
+答案阶段核验为24题×A/B=48条：32条ok、15条empty、1条error；无费回放未新增请求。
+首次评审运行使用cc-switch中已失效的DeepSeek token，24题均在模型调用前返回HTTP 401；
+24条失败记录、请求哈希和保守预留全部保留，未覆盖或删除。随后用模型目录探测找到本机
+另一条仍有效凭据，只在运行时环境注入，不写入仓库或日志；恢复脚本改为优先使用显式凭据。
+修订只改变请求版本标识，评审提示正文未改：`p6_blind_qa_judge_v1_20261030_auth_retry`。
+
+修复后24次匿名评审全部ok，48个答案的全部claims和参考事实均完成逐项判断。测试集A/B
+事实覆盖为30/50与37/50，证据组召回为35/55与38/55，无依据断言率为1/39与2/47；
+B中位延迟2688毫秒、A为2285毫秒。配对事实覆盖差0.157，胜负B/A=5/4、6题持平，
+固定种子95%描述性bootstrap区间[-0.122,0.457]跨零，结论不称显著。
+
+公开汇总见[evaluation/results/formal_summary.json](../../../evaluation/results/formal_summary.json)，
+测试抽取图见[extraction_test.png](../../../evaluation/results/figures/extraction_test.png)，
+QA图见[qa_test.png](../../../evaluation/results/figures/qa_test.png)。图中文字和底部注脚
+已逐张目视检查后修正排版。测试、lint与全池限制在最终核验段落更新。
+
+最终本地核验为全仓114 passed、28 skipped，evaluation/contracts 23 passed，ruff通过；
+planning检查通过并核对199个本地链接。公开汇总中的共享账本保守记账为8.373512元，
+其中已知用量6.679102元、失败预留上界1.694410元，剩余保守额度1.466488元。服务商
+余额会受本账本外充值和调整影响，不能替代该调用预算审计。PR #8在最新main上无冲突，
+planning与collector两项远端检查均通过。
+
+## 第二小库、全池重试与最终收口（2026-10-30）
+
+主代理扩展共享账本后重新只读加载`.local/project.json`与账本：authorized=20元、
+effective cap=19.84元。凭据只检查“存在且可用”并复用现有cc-switch运行注入，未输出
+密钥；PostgreSQL 16432实测ok。最终检查时Neo4j bolt 17687/HTTP 17474连接拒绝；按主
+代理要求未启动、停止或重启任何数据库，也未杀Java/Postgres进程。既有冻结图、查询结果
+与证据导出保留，用于本次验收；实时重问能力当前不可用，已作为真实缺口记录。
+
+第二小库使用未硬编码的`pallets/itsdangerous`，只输入公开仓库URL，走同一
+`python -m historykg.cli build <repo_url>`入口和默认`course_small_v1`，未手选线程、
+SHA或路径，未改源码、关系或证据。job=`ebfd8c8dae5e4bcf998a79fef35de981`，
+dataset=`dataset:d817eee2ee7ff9763526b36aeb4d918493d0e6902633771deffca4bb33d69888`；
+固化profile SHA-256=`c553085aa5164c800be3c06b82b591f0ff53d55b913301a74aaa351ba37d3366`，
+来源池哈希=`60be0729a0aecf73795aba43075bce82e85a49f0a3cb598a764997915d007afd`，
+图指纹=`12c370e99369a7bc2b1ea54c749fa464673c04b43515344f034404359aa2e682`。
+作业生成347份来源、30个完整讨论单元、82个实体、78条关系和180条证据；validate ok，
+graph/retrieval均ready。采集保留10次HTTP 404、147个未补采显式引用及分页/外部目标缺口，
+故job状态诚实地为partial，但没有执行失败或人工补图。
+
+两次真实查询分别为`search` empty和`dependencies` ok。可核对回答为
+“Which modules does src/itsdangerous/timed.py import or depend on?”：返回50条路径、
+25条证据和5条有出处claims；每条cited evidence ID均可解析，引文为冻结源码逐字子串，
+来源SHA-256复算一致。原文URL为
+`https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/src/itsdangerous/timed.py`。
+公开证据、完整答案、费用及复现命令见
+[second_repo_acceptance.json](../../../evaluation/results/second_repo_acceptance.json)和
+[second_repo_acceptance.png](../../../evaluation/results/figures/second_repo_acceptance.png)。
+第二库真实费用为0.589461元，其中抽取26次0.569861元、2次回答0.019600元。
+
+全池原记录92位置中86 ok、6 failed。仅对失败位置
+pass/batch=0/2、0/11、0/21、1/11、1/12、1/27沿原分片和缓存做一次格式恢复重试，
+6/6 ok；旧失败记录与备份保留，最终progress为92/92 ok。assessments的6题均完成两遍
+完整核验，确认证据不足=0。因此正确弃答率继续N/A，分子0、分母0，原因是全池完整但无
+确认不足题，不得把有效分母0表述为核验未完成，也不得把空回答算作正确弃答。重试
+费用0.502822元。
+
+共享账本最终保守累计9.465795元，其中settled 362次/7.771385元、uncertain 25次/
+1.694410元，余10.374205元；本轮新增1.092283元，等于第二库0.589461元加全池重试
+0.502822元。公开汇总、图表、最终验收矩阵和预算快照见
+[formal_summary.json](../../../evaluation/results/formal_summary.json)、
+[final_acceptance.json](../../../evaluation/results/final_acceptance.json)、
+[extraction_test.png](../../../evaluation/results/figures/extraction_test.png)、
+[qa_test.png](../../../evaluation/results/figures/qa_test.png)。private_test题面、参考、
+回答及评审正文未读取输出到公开文件；公开JSON只含计数和标记。
+
+复现命令如下（`$PRIMARY_VENV`、`$PROJECT_CONFIG`为本地路径，不在仓库保存凭据）：
+
+```text
+PYTHONPATH=vendor/relore:. "$PRIMARY_VENV/bin/python" -m historykg.cli \
+  --config "$PROJECT_CONFIG" build https://github.com/pallets/itsdangerous
+PYTHONPATH=vendor/relore:. "$PRIMARY_VENV/bin/python" -m historykg.cli \
+  --config "$PROJECT_CONFIG" query \
+  "Which modules does src/itsdangerous/timed.py import or depend on?" \
+  --dataset-id dataset:d817eee2ee7ff9763526b36aeb4d918493d0e6902633771deffca4bb33d69888 \
+  --kind dependencies
+PYTHONPATH=vendor/relore:. "$PRIMARY_VENV/bin/python" -m historykg.cli \
+  evaluate retry-pool "$PRIVATE/source_freeze.json" \
+  --model-config .local/evaluation/config.json \
+  --ledger "$LEDGER" --approved-cny 20
+```
+
+`--approved-cny 20`只是与账本固定cap匹配；账本ceiling=19.84仍由`MIN(cap,ceiling)`强制，
+不会扩大有效预算。重试命令已完成且当前92/92无失败项，再次读取只会产生无费缓存/空重试。
+
+最终实际检查在`PYTHONPATH=vendor/relore:.`下为全仓116 passed、28 skipped；
+`ruff check historykg tests`通过。Matplotlib生成的SVG已清理机械行尾空格，最终
+`git diff --check`通过。最终状态保持`ready_for_integration`，不冒充外部接收方
+`verified_real/done`。剩余真实缺口是Windows未在本机实跑、Neo4j当前不可新连，
+以及正确弃答因分母0保持N/A；这些均不影响已保存的第二库图/回答证据和92/92全池结论。

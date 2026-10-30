@@ -114,3 +114,75 @@ canonical逐字相同，摘要见[无费回归](render_context_regression.json)�
 本轮仍无模型请求。公共资料仅保留实验费用与预算上限；账户余额前后值及精度核对仅在
 主部署本地审计中。当前公开交付分支为feat/p4-budget-render-public，基于已共享main前缀
 生成清洁提交，不包含本地含私有余额的预算草稿提交祖先；本地私有ref保留原审计历史。
+
+## 正式结果一致性与最终收口（2026-10-30）
+
+P6正式实验完成后，P4只读取公共`evaluation/results/formal_summary.json`和共享SQLite聚合元数据，
+没有读取私有题目、参考、claims或原始评审，也没有新增模型请求。抽取、回答和评审继续使用
+同一网关、同一冻结提示、同一共享预算；P2后来修复`dev-01`候选排序，属于正式v1冻结之后的
+改进，未回写或混入已完成的v1 A/B结果。
+
+正式测试集30个完整线程的抽取TP/FP/FN为25/19/1，Precision/Recall/F1为
+0.5681818182/0.9615384615/0.7142857143；参考中15条明确理由覆盖13条，覆盖率0.8666666667。
+20道测试题的A/B事实覆盖分别为30/50=0.600与37/50=0.740，证据组召回分别为
+35/55=0.6363636364与38/55=0.6909090909，无依据断言率分别为1/39=0.0256410256与
+2/47=0.0425531915。B-A配对覆盖差0.1571428571，A胜4题、B胜5题、6题持平，
+固定种子bootstrap 95%区间[-0.1222222222,0.4571428571]跨零，不宣称显著提升。
+
+共享账本最终保守快照为：授权10元、有效上限9.84元、入账8.373512元、余1.466488元；
+其中已知用量6.679102元，25次失败或未知结果按预留上界1.694410元计。provider余额不作
+账本替代。全池核验86/92成功、6个位置失败，没有题目通过两遍完整核验，因此正确弃答率
+保持N/A。P4不把模型银标称为人工金标，也不把bootstrap描述性区间解释为总体显著收益。
+
+最终无费回归：P4的LLM、pricing、render_context、extract和collector双后端共71项通过；
+Ruff通过。合入P1/P2/P3/P5/P6后的主仓测试125项通过、28项因未配置可选服务跳过；
+P1登记的Windows CI实际运行151项测试，0失败、0错误、0跳过。机器记录见
+[formal_validation.json](formal_validation.json)。
+
+## 最终回答链无费审计（2026-10-30）
+
+在独立工作树`relore-agents/p4`新建`feat/p4-final-audit-p4`，基于公开main `2af7ea9`；
+没有修改主共享目录。本轮只改P4职责文件，未读取P6私有资料，未发送任何模型请求。
+
+修复三项实际缺陷：
+
+- `AnswerQuote.quote`、`Claim.text`、`AnswerOutput.gaps`以及抽取候选的statement、
+  rationale和证据quote现在拒绝纯空白值；空白claim不会再被当作成功回答。
+- `render_context`发现相同`source_id/start/end`但不同quote时直接报数据不一致，
+  不再静默保留先到项；相同内容的重复span仍正常去重。
+- 新增Developer/Function/Authored/Defines路径元数据兼容回归，确认answerer不枚举
+  未知类型，未知路径字段不会进入最终可见来源，也不会触发额外模型调用。
+
+公开冻结Flask包检查：`repro/flask_frozen.tar.gz` SHA-256
+`b361eda156abba3b8af715b0c62cd3263ae76a1903aa8e88dca771c98af512de`，dataset
+`dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c`。
+解包后包指纹与共享Neo4j冻结图一致，均为
+`5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe`。
+问题“Why keep the cache API?”的`prepare_query`返回37候选、40路径、8种子；
+`render_context`输出6片段、11972/12000码点、32个裁剪gap。该结果只验证接口和渲染，
+不声称回答质量；实际冻结数据尚未包含新增类型，新增类型由合成测试覆盖。
+机器记录见[final_answer_render_audit.json](final_answer_render_audit.json)。
+
+实际命令与结果：
+
+```text
+.venv/bin/python -m pytest tests/test_llm.py tests/test_extract.py tests/test_render_context.py -q
+# 32 passed
+P2_TEST_NEO4J_URI=bolt://127.0.0.1:17687 \
+P2_TEST_DATABASE_URL=postgresql://postgres@127.0.0.1:16432/historykg_course_test \
+RELORE_TEST_POSTGRES_URL=postgresql://postgres@127.0.0.1:16432/historykg_course_test \
+.venv/bin/python -m pytest tests -q
+# 162 passed
+.venv/bin/python -m ruff check historykg/llm historykg/extract \
+  tests/test_llm.py tests/test_extract.py tests/test_render_context.py
+# All checks passed
+```
+
+预算口径：用户追加10元后的主代理本地审计文件
+`.local/execution/budget_extension_20261030T072516Z.json`记录approved=20元、
+effective cap=19.84元，历史费用未清零；当前本地审计余量11.466488元。本轮新模型请求0。
+
+残余风险：路径标签仍由P2/QueryResult与UI负责；当前实际冻结路径中的Decision节点仍可能
+回退到标识符显示，新增实体/关系需要提供可读`properties.display_name`或其他通用标签。
+语义支持度仍由P6独立评审，程序只能保证claim有最终可见quote、不能仅凭结构校验证明
+claim与quote在自然语言语义上必然蕴含。
