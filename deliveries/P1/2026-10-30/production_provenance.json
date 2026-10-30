@@ -1,0 +1,99 @@
+{
+  "attestation_date": "2026-10-30",
+  "attested_stages": [
+    "extract",
+    "validate",
+    "index_graph"
+  ],
+  "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+  "extract_model_usage": {
+    "completion_tokens": 24717,
+    "cost_semantics": "historical upper bound; shared ledger reconciliation is authoritative",
+    "cumulative_model_attempts": 42,
+    "historical_record_upper_cny": 1.440966,
+    "missing_run_ids": [],
+    "new_model_requests_in_production_resume": 42,
+    "prompt_tokens": 621615,
+    "run_count": 40,
+    "scope": "production_extract_only"
+  },
+  "method_inputs": {
+    "model_config": {
+      "chunk_characters": 20000,
+      "max_input_bytes": 200000,
+      "max_output_tokens": 4096,
+      "max_retries": 2,
+      "model_id": "deepseek-flash",
+      "provider": "deepseek",
+      "temperature": 0,
+      "thinking": "disabled",
+      "timeout_seconds": 90
+    },
+    "profile_version": "course_small_v1",
+    "relore_commit": "06a1c99c4653e9db899a18e96d8ff0ee6b419815"
+  },
+  "note": "Added after publication from root execution session 83570 and code-file hashes; does not claim original pre-collection provenance. Earlier collect/code execution used the P1 working tree documented in handoff. Original manifest, source hashes and graph fingerprint unchanged.",
+  "original_graph_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+  "posthoc_attestation": true,
+  "production_execution": {
+    "application_commit": "6d1c514f3b7e3ffe200b67c15a9ce8f22ebda065",
+    "application_source_file_sha256": {
+      "historykg/__init__.py": "3d38f0c8e2beb562089610eec29688c6a6c6c4e220f52d311723fc214cc597b2",
+      "historykg/cli.py": "6053e4d64f11071d0e4e0b64e0ec5d0531914379f855dea059b91379b23af02b",
+      "historykg/code/__init__.py": "f11cacad02df53db606b8e19d1928b89d846b3de8d47f178634b24d98f963950",
+      "historykg/code/ast_analysis.py": "f84199e087cc9a99495f81a0e9dd134f6f235647cc66bae8d2abd6fb433da9b1",
+      "historykg/code/collect.py": "6b18f137344d11f0885dec59d113990b9a0384712c1216333c1c754d66c5d560",
+      "historykg/code/git_reader.py": "a63df9190ff48719a3f3ad89629d4aa7e593c10b54061371f272f180c33f025d",
+      "historykg/collector.py": "def48324a4560b9a93d27fc74c707bd5947491f4ae1a391db45439fe2715f9b3",
+      "historykg/contracts.py": "1abd3886eb76b96211dbc6ab089d7a19bbff657521060c25f0eba228584210fc",
+      "historykg/extract/__init__.py": "4cf0e28df9cf10286b46fa741e433f4ab398b3ea62e6fc87d95f51994d942479",
+      "historykg/extract/stage.py": "dfcf79a8ac931e35f0770bd0d215fc6c2f5276eb2ae86be869bfb1152158ba31",
+      "historykg/graph/__init__.py": "116eb2bcc7a765c3b3dbe94bcba765718533cb1f5337ec56290f17601b7390cc",
+      "historykg/graph/store.py": "d069ad32b0b3e3b3f2ad6c9ac89c70b8b9fcead911d139992bbd44edbdc3c514",
+      "historykg/ids.py": "596bf635ccf55670fcd6b07fab6000b7d8403695e8f9d437e469901b5ee0c071",
+      "historykg/ingest/__init__.py": "a758643b6ecc6a6fce4c46950f999408fce50424ae14a4cbf7d3e112d4842499",
+      "historykg/ingest/capture.py": "d480167875e58ebe340dfb6d9f67e4b0e188c5a806512aec41ead3d7e17a5102",
+      "historykg/ingest/discovery.py": "fa86bc203fb9317cf242a1c538face14f1eb0520dc8dbd7a7dcde71368839bc7",
+      "historykg/ingest/fixture.py": "871b2fa0807cd5ce3412910536dedf33bcb1a8f33a5045db5ff6e239b76a5e80",
+      "historykg/io.py": "d36f47d2d467ea9d0648a0be0ffc7637f966d604b2f421f05a0eaf662ae2bfd2",
+      "historykg/llm/__init__.py": "93b9d724cb168931ed720cf3c2e33fb390d05153728a54053397631b20ab6b86",
+      "historykg/llm/answer.py": "53c96eab766bbc4a456ea051ffe71480432fa587a1c14b97e599dd89b1049ccb",
+      "historykg/llm/budget.py": "ba08e56000bbff6be6d652de2b62ed33b55b1505d0afcdcaeb9a0826d916d5cc",
+      "historykg/llm/gateway.py": "04768e4014e993e58a0c6a2771bcb21ecad198dcfb9e6673bbaa95b2bc7a17d9",
+      "historykg/pipeline.py": "f1a4f9f0d29503babc852208c457fcf6840ef796ae6e8c21cf8697b214ebf0dc",
+      "historykg/query/__init__.py": "a17e2e7798324258aaaf205d2cb31db1cb47551497ee369f3650398767ee7dfc",
+      "historykg/query/frozen_index.py": "aabef7f96d0b8a85bd97db094cdadc67260bec0906bb4da1286282f9f515343a",
+      "historykg/query/retrieval.py": "5853f51a5ec0ce3faa544b567e95ea363b3702ccb9c5075669e44e02f6e7cfd2",
+      "historykg/query/service.py": "9924e716e16672cb68c9da77e16959ad78a09e1ae217f61d7d08f9f02970995e"
+    },
+    "job_id": "b61942bf06b742e48860d064dffe6df2",
+    "note": "Root working tree unchanged from production resume through this audit; original source/code snapshots retained.",
+    "production_exec_session_id": 83570
+  },
+  "stages": {
+    "code": {
+      "api_requests": 1,
+      "git_network_operations": 6,
+      "github_requests": 7,
+      "github_requests_total": 182,
+      "model_requests": 0
+    },
+    "collect": {
+      "github_requests_total": 175
+    },
+    "discover": {
+      "github_requests_total": 3
+    },
+    "extract": {
+      "actual_llm_extraction": true,
+      "charged_upper_cny": 1.440966,
+      "cost_cny": 1.440966,
+      "new_model_requests": 42,
+      "successful_extraction_chunks": 40,
+      "tokens_including_cached_runs": 646332
+    },
+    "index_graph": {},
+    "validate": {}
+  },
+  "usage_warning": "Original manifest model_requests=0 is the P3 code-stage local value, not a global counter. 42 real extract attempts including retries; historical record upper is not reconciled actual cost."
+}

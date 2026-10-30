@@ -31,6 +31,7 @@ from historykg.io import (
     write_json,
     write_manifest,
 )
+from historykg.provenance import application_version, merge_stage_usage
 
 ROOT = Path(__file__).resolve().parents[1]
 _EXECUTOR = concurrent.futures.ThreadPoolExecutor(max_workers=1, thread_name_prefix="historykg")
@@ -438,6 +439,7 @@ def _manifest(root, job, *, frozen):
             "usage": job["usage"],
             "gaps": job["gaps"],
             "actual_llm_extraction": job["coverage"].get("actual_llm_extraction", False),
+            "application_versions": job.get("application_versions", {}),
         },
     )
 
@@ -484,6 +486,14 @@ def _run(directory, config, stop_after=None):
                         raise ValueError("已冻结阶段产物变化，不能在旧job混用新输入")
                 continue
             job.update(status="running", stage=stage, resume_from=stage, error=None)
+            version = {**application_version(ROOT), "recorded_at": _now()}
+            job.setdefault("application_versions", {})[stage] = version
+            write_json(directory / "application_versions.json", job["application_versions"])
+            job["artifacts"]["application_versions"] = str(directory / "application_versions.json")
+            dataset_root = Path(job["artifacts"]["dataset_dir"])
+            if dataset_root.is_dir():
+                write_json(dataset_root / "exports/application_versions.json",
+                           job["application_versions"])
             _save(job, directory, config)
             result = _stage(job, directory, config)
             job["artifacts"].update(result.get("artifacts", {}))
@@ -505,11 +515,12 @@ def _run(directory, config, stop_after=None):
                     job["counts"][key] = job["coverage"][key]
             job["gaps"].extend(g for g in result.get("gaps", []) if g not in job["gaps"])
             usage = result.get("usage", {})
-            if "github_requests_total" in usage:
-                job["usage"]["github_requests"] = usage["github_requests_total"]
-            for key, value in usage.items():
-                if key not in {"github_requests", "github_requests_total"}:
-                    job["usage"][key] = value
+            merge_stage_usage(
+                job, stage, result,
+                output_root=Path(config.get("model", {}).get(
+                    "output_root", Path(job["artifacts"]["dataset_dir"]) / "llm"
+                )),
+            )
             if result.get("status") in {"blocked", "unsupported", "error", "failed"}:
                 job["status"] = (
                     "failed" if result["status"] in {"error", "failed"} else result["status"]
