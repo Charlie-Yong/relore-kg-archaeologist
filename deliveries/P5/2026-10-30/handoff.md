@@ -142,7 +142,7 @@ Precision/Recall/F1=0.568/0.962/0.714，理由覆盖13/15=0.867；
 
 已基于正式冻结数据、P3 Developer/Function增量、真实截图、冻结重放和P6公开汇总制作10页期末汇报。
 正式文件为`demo/final/期末汇报_20261030最终版.pptx`，SHA-256
-`ed766becdd55530d953d4fc645eb3aff8356a18095f028f2ab87a90bb7516fae`，249863字节。
+`3742e6dc6ff593c922ed6182e9f64eb2ccea11663e8844ec54347fe0cd947479`，250639字节。
 
 第4页加入Developer/Function及三类增量关系，并写明真实冻结只读重放为18 Developer、
 384 Function、20 Authored、4 Merged、384 Defines。方向为
@@ -160,6 +160,11 @@ Precision/Recall/F1=0.568/0.962/0.714，理由覆盖13/15=0.867；
 job为partial并保留记录缺口，但validate/graph/retrieval ready。依赖查询返回
 50路径、25证据、5 claims，全部出处校验通过。预算累计9.465795元，剩余10.374205元。
 
+P2真实服务验收已补入第9、10页notes及讲稿：主代理已恢复持久Neo4j服务，
+P2在公开提交`19602e6`使用真实Neo4j/PostgreSQL完成扩展数据集加载与PR #6096四跳验收，
+26项真实服务回归通过，包含author-to-function与function-to-merger两条方向路径。
+当前生产图仍为旧1.4.1，新增实体来自真实新数据版本重放，不是生产图原地补写。
+
 交付还包含`demo/final/讲稿.md`、`demo/final/演示步骤.md`、`demo/final/材料说明.md`及
 `demo/final/previews/slide-01.png`至`slide-10.png`。最终PPTX已由Artifact Tool精确重导入，
 10页逐页渲染并目视检查；每页有独立inspect记录与notes，所有元素均在页面边界内，
@@ -172,5 +177,5 @@ job为partial并保留记录缺口，但validate/graph/retrieval ready。依赖�
 为21 passed；`ruff check app tests/test_app*.py`通过；`git diff --check`通过。
 未调用付费模型，未读取`evaluation/private_test`。
 
-残余项：最终审计时Neo4j现场重连不可用；Microsoft PowerPoint/WPS原生打开、
+残余项：Microsoft PowerPoint/WPS原生打开、
 Windows实机字体检查、正式课堂计时彩排、成员姓名学号及正式互评待本人补充。

@@ -22,5 +22,9 @@
 恢复动作：若P6发布更新的公开提交，只更新第9页`p6-status-update`、讲稿/材料说明与本状态；
 不读取`evaluation/private_test`，不把partial结果外推为任意仓库完整可运行。
 
-限制：P6最终审计时Neo4j现场重连不可用；Microsoft PowerPoint/WPS原生打开、
+限制：Microsoft PowerPoint/WPS原生打开、
 Windows实机字体、正式课堂彩排、成员姓名学号与正式互评待本人补充。
+
+更新：主代理已恢复持久Neo4j服务。P2在公开提交`19602e6`使用真实Neo4j/PostgreSQL
+完成扩展数据集加载与PR #6096四跳验收，26 passed，两条方向路径均通过；
+当前生产图仍为旧1.4.1，新增实体来自真实新数据版本重放。
