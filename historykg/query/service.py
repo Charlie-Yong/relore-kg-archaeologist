@@ -57,11 +57,25 @@ def prepare_query(request, *, config: dict | None = None) -> dict:
         retrieved["backend"]["frozen_index"] = package["retrieval_index"]
         # This resolution is shared by A/B and never uses a reference or task label.
         resolved_seeds = seeds[:]
-        seeds = list(dict.fromkeys(seeds + seed_from_sources(package, retrieved["source_ids"])))[:8]
+        source_seeds = (
+            seed_from_sources(package, retrieved["source_ids"])
+            if cfg.get("graph_expand_seeds", True) else []
+        )
+        seeds = list(dict.fromkeys(seeds + source_seeds))[:8]
         kinds = {"dependencies": ["Imports"], "compare": ["ChangesTo"]}.get(
             req.kind, sorted({r["type"] for r in package["relations"]})
         )
-        paths = store.paths(req.dataset_id, seeds, kinds=kinds) if system == "B" else []
+        paths = (
+            store.paths(
+                req.dataset_id,
+                seeds,
+                depth=int(cfg.get("graph_depth", 3)),
+                limit=int(cfg.get("graph_path_limit", 50)),
+                kinds=kinds,
+            )
+            if system == "B"
+            else []
+        )
         supported = True
         if req.kind in {"dependencies", "compare"}:
             supporting = [r for r in package["relations"] if r["type"] in kinds]

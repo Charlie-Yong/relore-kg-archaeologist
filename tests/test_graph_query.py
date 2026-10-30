@@ -10,11 +10,13 @@ from pathlib import Path
 import pytest
 
 from historykg import collector
-from historykg.graph import GraphStore, load_dataset
+from historykg.contracts import CONTRACT_VERSION
+from historykg.graph import GraphStore, load_dataset, validate_extended_dataset
+from historykg.ids import entity_id, relation_id
 from historykg.io import make_evidence, read_jsonl, write_jsonl, write_manifest
 from historykg.query import prepare_query, query
 from historykg.query.frozen_index import drop_index
-from historykg.query.retrieval import context_candidates, resolve_seeds
+from historykg.query.retrieval import context_candidates, resolve_seeds, subject_records
 
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures/toy_v1"
 
@@ -23,6 +25,124 @@ def refresh(root):
     metadata = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
     return write_manifest(root, **{k: v for k, v in metadata.items()
                                   if k not in {"files", "sources"}})
+
+
+def add_extended_graph_records(root):
+    manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+    dataset, repo = manifest["dataset_id"], manifest["repo"]
+    entities_path = root / "p1/entities.jsonl"
+    relations_path = root / "p1/relations.jsonl"
+    entities = read_jsonl(entities_path)
+    relations = read_jsonl(relations_path)
+    pull_request = next(
+        entity for entity in entities
+        if entity["type"] == "PullRequest" and entity["properties"]["number"] == 2
+    )
+    commit = next(entity for entity in entities if entity["type"] == "Commit")
+    file = next(
+        entity for entity in entities
+        if entity["type"] == "File"
+        and entity["properties"]["path"] == "toy/cache.py"
+        and entity["properties"]["commit_sha"]
+        == commit["properties"]["sha"]
+    )
+    sha, path = file["properties"]["commit_sha"], file["properties"]["path"]
+    function_name = "cache"
+    qualified_name = "toy.cache.cache"
+
+    def developer(login, github_id):
+        identity_key = (
+            f"github:{github_id}" if github_id is not None
+            else "login:" + login.casefold()
+        )
+        return {
+            "contract_version": CONTRACT_VERSION,
+            "dataset_id": dataset,
+            "id": entity_id("Developer", repo, identity_key),
+            "repo": repo,
+            "type": "Developer",
+            "key": identity_key,
+            "properties": {
+                "login": login,
+                "display_name": login,
+                "logins": [login],
+                "github_user_id": github_id,
+            },
+            "evidence_ids": pull_request["evidence_ids"][:1],
+        }
+
+    def function(start_line, end_line):
+        return {
+            "contract_version": CONTRACT_VERSION,
+            "dataset_id": dataset,
+            "id": entity_id(
+                "Function", repo, sha, path, qualified_name, start_line
+            ),
+            "repo": repo,
+            "type": "Function",
+            "key": [sha, path, qualified_name, start_line],
+            "properties": {
+                "commit_sha": sha,
+                "path": path,
+                "name": function_name,
+                "qualified_name": qualified_name,
+                "kind": "function",
+                "start_line": start_line,
+                "end_line": end_line,
+                "scope": "module",
+            },
+            "evidence_ids": file["evidence_ids"][:1],
+        }
+
+    author, merger = developer("Alice", 101), developer("bob", None)
+    function_record = function(1, 5)
+    repeated_function = function(20, 24)
+    assert function_record["id"] != repeated_function["id"]
+    write_jsonl(
+        entities_path,
+        [*entities, author, merger, function_record, repeated_function],
+    )
+
+    def relation(kind, from_id, to_id, evidence_ids, method):
+        return {
+            "contract_version": CONTRACT_VERSION,
+            "dataset_id": dataset,
+            "id": relation_id(repo, kind, from_id, to_id),
+            "repo": repo,
+            "type": kind,
+            "from_id": from_id,
+            "to_id": to_id,
+            "properties": {},
+            "evidence_ids": evidence_ids,
+            "method": method,
+            "extractor_version": "test_extended_v1",
+            "occurred_at": None,
+        }
+
+    write_jsonl(
+        relations_path,
+        [
+            *relations,
+            relation("Authored", author["id"], pull_request["id"],
+                     pull_request["evidence_ids"][:1], "github_api"),
+            relation("Merged", merger["id"], pull_request["id"],
+                     pull_request["evidence_ids"][:1], "github_api"),
+            relation("Defines", file["id"], function_record["id"],
+                     file["evidence_ids"][:1], "ast"),
+            relation("Defines", file["id"], repeated_function["id"],
+                     file["evidence_ids"][:1], "ast"),
+        ],
+    )
+    refresh(root)
+    return (
+        author,
+        merger,
+        pull_request,
+        commit,
+        file,
+        function_record,
+        repeated_function,
+    )
 
 
 @pytest.fixture
@@ -97,6 +217,323 @@ def test_idempotent_load_and_isolated_dataset(sample, graph_config):
         after = store.snapshot(dataset)
         assert before == after
         assert all(r["dataset_id"] == dataset for r in after["relations"])
+
+
+def test_extended_entities_import_and_developer_to_function_path(sample, graph_config):
+    root, dataset = sample
+    (
+        author,
+        _merger,
+        pull_request,
+        commit,
+        file,
+        function,
+        repeated_function,
+    ) = add_extended_graph_records(root)
+    loaded(sample, graph_config)
+    with GraphStore(graph_config) as store:
+        before = store.snapshot(dataset)
+        assert {"Developer", "Function"} <= {e["type"] for e in before["entities"]}
+        function_ids = {
+            entity["id"] for entity in before["entities"]
+            if entity["type"] == "Function"
+        }
+        assert function["id"] in function_ids
+        assert repeated_function["id"] in function_ids
+        assert function["id"] != repeated_function["id"]
+        assert store.run(
+            "MATCH (n:HGDeveloper {dataset_id:$dataset}) RETURN count(n) AS count",
+            dataset=dataset,
+        )[0]["count"] == 2
+        assert store.run(
+            "MATCH (n:HGFunction {dataset_id:$dataset}) RETURN count(n) AS count",
+            dataset=dataset,
+        )[0]["count"] == 2
+    repeat = load_dataset(root, config=graph_config)
+    assert repeat["status"] == "ok"
+    with GraphStore(graph_config) as store:
+        assert store.snapshot(dataset) == before
+
+    default_prepared = prepare_query(
+        {"dataset_id": dataset, "question": "Alice", "kind": "trace"},
+        config=graph_config,
+    )
+    assert author["id"] in default_prepared["seed_ids"]
+    assert default_prepared["method_version"] == "relore_common_rrf_graph_v2"
+    expected = [
+        author["id"],
+        pull_request["id"],
+        commit["id"],
+        file["id"],
+        function["id"],
+    ]
+    assert not any(
+        path["entity_ids"] == expected for path in default_prepared["paths"]
+    )
+
+    prepared = prepare_query(
+        {"dataset_id": dataset, "question": "Alice", "kind": "trace"},
+        config={**graph_config, "graph_depth": 4},
+    )
+    assert author["id"] in prepared["seed_ids"]
+    path = next(path for path in prepared["paths"] if path["entity_ids"] == expected)
+    assert [relation["type"] for relation in path["relations"]] == [
+        "Authored", "MergedAs", "Touches", "Defines"
+    ]
+
+    by_function = prepare_query(
+        {
+            "dataset_id": dataset,
+            "question": "toy/cache.py::toy.cache.cache",
+            "kind": "trace",
+        },
+        config={**graph_config, "graph_depth": 4},
+    )
+    assert function["id"] in by_function["seed_ids"]
+    result = query(
+        {"dataset_id": dataset, "question": "Alice", "kind": "trace"},
+        config={
+            **graph_config,
+            "graph_depth": 4,
+            "answerer": synthetic_answerer,
+        },
+    )
+    assert result.status == "ok"
+    assert any(
+        {"Developer", "Function"} <= {entity["type"] for entity in path["entities"]}
+        for path in result.paths
+    )
+
+
+def test_extended_subject_fallback_and_validation(sample):
+    root, _dataset = sample
+    add_extended_graph_records(root)
+    package = {
+        "manifest": json.loads((root / "manifest.json").read_text(encoding="utf-8")),
+        "entities": read_jsonl(root / "p1/entities.jsonl"),
+        "evidence": read_jsonl(root / "p1/evidence.jsonl"),
+        "subjects": read_jsonl(root / "subjects.jsonl"),
+    }
+    subjects = subject_records(package)
+    developer_subject = next(
+        subject for subject in subjects if subject["entity_type"] == "Developer"
+    )
+    function_subject = next(
+        subject for subject in subjects if subject["entity_type"] == "Function"
+    )
+    assert developer_subject["display_name"] == "Alice"
+    assert {"Alice", "101"} <= set(developer_subject["aliases"])
+    assert not any("github:101" in alias or alias.startswith("[")
+                   for alias in developer_subject["aliases"])
+    assert function_subject["display_name"] == "toy.cache.cache"
+    assert {"cache", "toy/cache.py", "toy/cache.py::toy.cache.cache"} <= set(
+        function_subject["aliases"]
+    )
+    assert not any(alias.startswith("[") for alias in function_subject["aliases"])
+
+    seeds, gaps = resolve_seeds(
+        "toy/cache.py::toy.cache.cache", package, []
+    )
+    function_ids = {
+        entity["id"] for entity in package["entities"]
+        if entity["type"] == "Function"
+    }
+    assert function_ids <= set(seeds)
+    assert any("主体匹配多个" in gap for gap in gaps)
+    assert validate_extended_dataset(root)["status"] == "ok"
+
+    functions = read_jsonl(root / "p1/entities.jsonl")
+    function = next(entity for entity in functions if entity["type"] == "Function")
+    function["properties"]["path"] = "toy/other.py"
+    function["key"][1] = "toy/other.py"
+    function["id"] = entity_id(
+        "Function",
+        function["repo"],
+        function["properties"]["commit_sha"],
+        "toy/other.py",
+        function["properties"]["qualified_name"],
+        function["properties"]["start_line"],
+    )
+    write_jsonl(root / "p1/entities.jsonl", functions)
+    relations = read_jsonl(root / "p1/relations.jsonl")
+    defines = next(relation for relation in relations if relation["type"] == "Defines")
+    defines["to_id"] = function["id"]
+    defines["id"] = relation_id(
+        function["repo"], "Defines", defines["from_id"], defines["to_id"]
+    )
+    write_jsonl(root / "p1/relations.jsonl", relations)
+    refresh(root)
+    report = validate_extended_dataset(root)
+    assert report["status"] == "error"
+    assert any("Defines必须连接同SHA同路径" in error for error in report["errors"])
+
+
+@pytest.mark.parametrize(
+    ("fault", "message"),
+    [
+        ("developer_key", "Developer.key与github_user_id不一致"),
+        ("developer_id", "稳定ID不匹配"),
+        ("function_missing_start_line", "Function.key须为"),
+        ("function_id_without_start_line", "稳定ID不匹配"),
+    ],
+)
+def test_p3_developer_function_key_and_id_validation(sample, fault, message):
+    root, _dataset = sample
+    add_extended_graph_records(root)
+    path = root / "p1/entities.jsonl"
+    entities = read_jsonl(path)
+    developer = next(
+        entity for entity in entities
+        if entity["type"] == "Developer" and entity["key"] == "github:101"
+    )
+    function = next(
+        entity for entity in entities
+        if entity["type"] == "Function"
+        and entity["properties"]["start_line"] == 1
+    )
+    if fault == "developer_key":
+        developer["key"] = ["github:999"]
+    elif fault == "developer_id":
+        developer["id"] = entity_id("Developer", developer["repo"], "login:alice")
+    elif fault == "function_missing_start_line":
+        function["key"] = function["key"][:3]
+        function["properties"].pop("start_line")
+    else:
+        function["id"] = entity_id(
+            "Function",
+            function["repo"],
+            function["properties"]["commit_sha"],
+            function["properties"]["path"],
+            function["properties"]["qualified_name"],
+        )
+    write_jsonl(path, entities)
+    refresh(root)
+    report = validate_extended_dataset(root)
+    assert report["status"] == "error"
+    assert any(message in error for error in report["errors"])
+
+
+def test_p3_real_flask_identity_shape_matches_known_ids():
+    from historykg.graph.store import _extended_entity_id
+
+    repo = "pallets/flask"
+    sha = "05e9c6bd630ecf4ec0ec884b1fc7901663737bc7"
+    path = "src/flask/testing.py"
+    qualified_name = "flask.testing._get_werkzeug_version"
+    author = {
+        "type": "Developer",
+        "repo": repo,
+        "key": "github:14022447",
+        "properties": {
+            "login": "lkk7",
+            "display_name": "lkk7",
+            "github_user_id": 14022447,
+        },
+    }
+    function = {
+        "type": "Function",
+        "repo": repo,
+        "key": [sha, path, qualified_name, 100],
+        "properties": {
+            "commit_sha": sha,
+            "path": path,
+            "qualified_name": qualified_name,
+            "start_line": 100,
+        },
+    }
+    assert _extended_entity_id(author) == (
+        "Developer:14b5ede4facfe75a5c84e846f8806df7b7157b48e5a73fc948372544334e53b6"
+    )
+    wrapped_author = {**author, "key": ["github:14022447"]}
+    assert _extended_entity_id(wrapped_author) == _extended_entity_id(author)
+    assert _extended_entity_id(function) == (
+        "Function:b0f5e030cc7a9050d0a339cf3cceadc153ecb023cd578a7ed5192fb09f0edb31"
+    )
+    repeated = {
+        **function,
+        "key": [sha, path, qualified_name, 120],
+        "properties": {**function["properties"], "start_line": 120},
+    }
+    assert _extended_entity_id(repeated) != _extended_entity_id(function)
+
+
+@pytest.mark.skipif(
+    not os.environ.get("P2_REAL_P3_DATASET_DIR"),
+    reason="P2_REAL_P3_DATASET_DIR enables the actual P1+P3 shard acceptance test",
+)
+def test_real_p3_merged_shard_loads_and_returns_four_hop_path(graph_config):
+    root = Path(os.environ["P2_REAL_P3_DATASET_DIR"]).resolve()
+    report = validate_extended_dataset(root)
+    assert report["status"] == "ok", report["errors"]
+    assert report["counts"] == {
+        "sources": 370,
+        "source_units": 40,
+        "evidence": 741,
+        "entities": 535,
+        "relations": 591,
+        "subjects": 65,
+    }
+    dataset = report["dataset_id"]
+    graph_config["_owned"].append(dataset)
+    loaded_result = load_dataset(root, config=graph_config)
+    assert loaded_result["status"] == "ok", loaded_result
+
+    with GraphStore(graph_config) as store:
+        snapshot = store.snapshot(dataset)
+    developer = next(
+        entity for entity in snapshot["entities"]
+        if entity["id"] == (
+            "Developer:14b5ede4facfe75a5c84e846f8806df7b7157b48e5a73fc948372544334e53b6"
+        )
+    )
+    function = next(
+        entity for entity in snapshot["entities"]
+        if entity["id"] == (
+            "Function:b0f5e030cc7a9050d0a339cf3cceadc153ecb023cd578a7ed5192fb09f0edb31"
+        )
+    )
+    assert developer["key"] == "github:14022447"
+    assert function["key"] == [
+        "05e9c6bd630ecf4ec0ec884b1fc7901663737bc7",
+        "src/flask/testing.py",
+        "flask.testing._get_werkzeug_version",
+        100,
+    ]
+
+    prepared = prepare_query(
+        {
+            "dataset_id": dataset,
+            "question": (
+                "PR #6096（作者 lkk7、合并者 davidism）合并为 commit "
+                "05e9c6bd630ecf4ec0ec884b1fc7901663737bc7，请追到 "
+                "src/flask/testing.py 中的顶层函数 "
+                "flask.testing._get_werkzeug_version。"
+            ),
+            "kind": "trace",
+            "seed_ids": [developer["id"], function["id"]],
+        },
+        config={
+            **graph_config,
+            "graph_depth": 4,
+            "graph_path_limit": 100,
+            "graph_expand_seeds": False,
+        },
+    )
+    expected_relations = {
+        "Relation:a93b5efa39826afd9b209821b4923674ff414115ba9a9b406f9b993b01859004",
+        "Relation:90007a4e1f5c7293bd980420d8745213fae4187664d822224e0480a30deb4125",
+        "Relation:6e186e8d98eb9dd86a305dcf58d3079567de12c642c7d06a301d5e716e290a18",
+        "Relation:da169aa17eb6819c0d417c20a7a1bcd85b9b94a2d90226ee2e11f3b9fa7b68d4",
+    }
+    merged_relations = {
+        "Relation:c73048f6644f5b2bda50e54119330fe8e63fc40481e7574addde0e570a368d9c",
+        "Relation:90007a4e1f5c7293bd980420d8745213fae4187664d822224e0480a30deb4125",
+        "Relation:6e186e8d98eb9dd86a305dcf58d3079567de12c642c7d06a301d5e716e290a18",
+        "Relation:da169aa17eb6819c0d417c20a7a1bcd85b9b94a2d90226ee2e11f3b9fa7b68d4",
+    }
+    path_relations = {frozenset(path["relation_ids"]) for path in prepared["paths"]}
+    assert frozenset(expected_relations) in path_relations
+    assert frozenset(merged_relations) in path_relations
 
 
 @pytest.mark.parametrize("fault", ["span", "endpoint", "dataset", "manifest"])

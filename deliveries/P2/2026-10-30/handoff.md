@@ -102,3 +102,56 @@ P6若已在旧`relore_common_rrf_graph_v1`协议下开始正式答题，应保�
 
 实际回归：`tests/test_graph_query.py`在真实PostgreSQL/Neo4j上18 passed；ruff通过。
 新增用例覆盖“Issue讨论优先于高分通用API/代码”和“显式路径/SHA的代码快照优先”。
+
+## 1.4.2 图谱实体覆盖与 P3 形状修复（同日）
+
+为课程选题补齐公共实体`Developer`、`Function`，保留原实体/关系不变，并新增
+`Authored(Developer→PullRequest)`、`Merged(Developer→PullRequest)`、
+`Defines(File→Function)`；没有Feature，也没有无证据的Developer→Commit。
+Neo4j为`HGDeveloper/HGFunction`增加dataset内`(dataset_id,id)`约束和类型标签，
+加载、读回、端点校验与查询路径均覆盖新实体；旧1.4.1 fixture仍可加载。
+
+Developer以P3当前重放分片的标量`key=identity_key`为准，校验器同时兼容早期交接的
+单元素`key=[identity_key]`；identity_key为`github:<id>`或
+`login:<casefold(login)>`，稳定ID为`entity_id("Developer",repo,identity_key)`。
+Function按`key=[sha,path,qualified_name,start_line]`并以相同四项生成稳定ID，
+同名不同行不会合并。查询主体回退只使用标量属性形成Developer/Function别名，不把
+列表key字符串化。已发布`relore_common_rrf_graph_v2`的正式A/B默认仍为3跳；展示
+Developer→PR→Commit→File→Function必须显式传`graph_depth=4`，必要时再显式提高
+`graph_path_limit`（默认50、上限100）并关闭验收查询的来源种子追加
+（`graph_expand_seeds=false`），不改变正式A/B默认行为。
+
+真实Flask冻结数据跨源验收和机器可读证据见
+[`evaluation/results/cross_source_chain.json`](../../../evaluation/results/cross_source_chain.json)。
+P3实际重放分片有18 Developer、384 Function、20 Authored、4 Merged、384 Defines，
+manifest的代码阶段本地model_requests=0（非整个历史生产抽取计数）；Developer key为
+标量`github:<id>`/`login:<casefold(login)>`，
+Function key为四元`[sha,path,qualified_name,start_line]`。与P1冻结包合并后的数据集
+`p2_p3_real_014e28d89e1f`为sources 370、source_units 40、evidence 741、entities 535、
+relations 591、subjects 65，真实`validate_extended_dataset` status ok且
+`historykg.graph.load_dataset` graph_ready/retrieval_ready均为true，fingerprint
+`d0c1be456f70acdf354776e2fbee24ee5d6614e94437add2a3e90239a48539dd`。
+
+使用随机测试namespace和PostgreSQL schema，显式
+`graph_depth=4, graph_path_limit=100, graph_expand_seeds=false`运行PR #6096链：
+run_id `query-0746f75077e84b6f8759782dd7a76d80`，status ok，99路径、53 evidence、
+0请求/0模型；两条匹配路径分别为
+`lkk7→PR→Commit→File→Function`（Authored→MergedAs→Touches→Defines）及
+`Function→File→Commit→PR→davidism`（Defines→Touches→MergedAs→Merged）。
+测试结束后两个临时namespace均已清理。正式A/B默认仍为3跳/50路径/启用来源种子扩展。
+
+可直接展示的问题：
+
+```text
+Issue #6093 报告 IPv6 地址解析问题。请沿 PR #6096（作者 lkk7、合并者 davidism）
+追到 merge commit 05e9c6bd630ecf4ec0ec884b1fc7901663737bc7、src/flask/testing.py
+以及顶层函数 flask.testing._get_werkzeug_version。
+```
+
+真实`tests/test_graph_query.py`（Neo4j 17687 + PostgreSQL 16432/test库）为26 passed，
+全套pytest为149 passed / 13 skipped，Ruff与`git diff --check`通过。生产只读查询
+status ok且不调用模型，但当前生产图无Developer/Function，只能覆盖PR→Commit→File。
+该缺口已写入机器可读证据，不将测试namespace的4跳结果冒充生产节点。
+本轮新增/修订回归位于`tests/test_graph_query.py`和`tests/test_contracts.py`，
+覆盖P3实际Flask身份ID、同文件同名不同`start_line`、错误key/ID、缺行号拒收、
+默认3跳与显式4跳差异。测试服务由主代理唯一管理，P2未启动、停止、重启Neo4j或PostgreSQL。

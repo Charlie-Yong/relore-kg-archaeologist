@@ -27,6 +27,7 @@ NUMBER_PATTERN = re.compile(
     r"(?:#\s*(\d+)\b|\b(?:issue|pull\s+request|pr)\s*#?\s*(\d+)\b)",
     re.IGNORECASE,
 )
+EXTENDED_SUBJECT_TYPES = {"Developer", "Function"}
 
 
 def tokens(text: str) -> set[str]:
@@ -83,6 +84,59 @@ def direct_affinity(question: str, source: dict) -> int:
     return score
 
 
+def subject_records(package: dict) -> list[dict]:
+    """Include additive subjects even before P1 materializes subjects.jsonl."""
+    subjects = [dict(subject) for subject in package.get("subjects", [])]
+    seen = {subject["subject_id"] for subject in subjects}
+    evidence = {item["evidence_id"]: item for item in package.get("evidence", [])}
+    for entity in package.get("entities", []):
+        if entity["type"] not in EXTENDED_SUBJECT_TYPES or entity["id"] in seen:
+            continue
+        props = entity["properties"]
+        if entity["type"] == "Developer":
+            display = props.get("display_name") or props.get("name") or props.get("login")
+            logins = props.get("logins")
+            aliases = [
+                props.get("login"),
+                props.get("display_name"),
+                props.get("name"),
+                props.get("github_user_id"),
+                props.get("github_id"),
+                *(logins if isinstance(logins, list) else []),
+            ]
+        else:
+            qualified_name = props.get("qualified_name")
+            name = props.get("name")
+            display = qualified_name or name or props.get("path")
+            aliases = [
+                qualified_name,
+                name,
+                props.get("path"),
+                f"{props.get('path')}::{qualified_name}"
+                if props.get("path") and qualified_name else None,
+            ]
+        subjects.append(
+            {
+                "subject_id": entity["id"],
+                "repo": entity["repo"],
+                "entity_type": entity["type"],
+                "display_name": str(display or entity["id"]),
+                "aliases": sorted({
+                    str(value) for value in aliases
+                    if isinstance(value, (str, int)) and not isinstance(value, bool) and value
+                }),
+                "source_ids": sorted(
+                    {
+                        evidence[eid]["source_id"]
+                        for eid in entity.get("evidence_ids", [])
+                        if eid in evidence
+                    }
+                ),
+            }
+        )
+    return subjects
+
+
 def resolve_seeds(question: str, package: dict, supplied: list[str]) -> tuple[list[str], list]:
     entities = {e["id"]: e for e in package["entities"]}
     if any(seed not in entities for seed in supplied):
@@ -105,10 +159,10 @@ def resolve_seeds(question: str, package: dict, supplied: list[str]) -> tuple[li
         ) in local_numbers:
             seeds.add(entity["id"])
     ranked = []
-    for subject in package["subjects"]:
+    for subject in subject_records(package):
         labels = [subject["display_name"], *subject.get("aliases", [])]
         labels = [str(s) for s in labels if s and not str(s).isdigit()]
-        matches = [len(s) for s in labels if s.lower() in question.lower()]
+        matches = [len(s) for s in labels if s.casefold() in question.casefold()]
         score = max(matches, default=0)
         if score:
             ranked.append((score, subject["subject_id"]))
