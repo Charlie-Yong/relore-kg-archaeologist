@@ -6,7 +6,21 @@ import ast
 from pathlib import PurePosixPath
 from typing import Any
 
-PARSER_VERSION = "python_ast_v1"
+PARSER_VERSION = "python_ast_v2"
+
+
+def _line_offsets(text: str) -> tuple[list[str], list[int]]:
+    lines = text.splitlines(keepends=True)
+    offsets = [0]
+    for line in lines:
+        offsets.append(offsets[-1] + len(line))
+    return lines, offsets
+
+
+def _node_offset(lines: list[str], offsets: list[int], line: int, column: int) -> int:
+    """Convert an AST UTF-8 byte column to a Unicode code-point offset."""
+    prefix = lines[line - 1].encode("utf-8")[:column].decode("utf-8")
+    return offsets[line - 1] + len(prefix)
 
 
 def module_name(path: str) -> str:
@@ -33,6 +47,7 @@ def analyze_python(text: str, path: str, available_paths: list[str]) -> dict[str
             "line": getattr(exc, "lineno", None),
             "imports": [],
             "symbols": [],
+            "functions": [],
             "parser_version": PARSER_VERSION,
         }
     index: dict[str, list[str]] = {}
@@ -41,21 +56,13 @@ def analyze_python(text: str, path: str, available_paths: list[str]) -> dict[str
             index.setdefault(module_name(candidate), []).append(candidate)
     current = module_name(path).split(".")
     package = current if path.endswith("/__init__.py") else current[:-1]
-    lines = text.splitlines(keepends=True)
-    offsets = [0]
-    for line in lines:
-        offsets.append(offsets[-1] + len(line))
+    lines, offsets = _line_offsets(text)
     imports = []
     for node in ast.walk(tree):
         if not isinstance(node, (ast.Import, ast.ImportFrom)):
             continue
-        # AST columns are UTF-8 byte offsets; evidence offsets are Unicode points.
-        start = offsets[node.lineno - 1] + len(
-            lines[node.lineno - 1].encode("utf-8")[: node.col_offset].decode("utf-8")
-        )
-        end = offsets[node.end_lineno - 1] + len(
-            lines[node.end_lineno - 1].encode("utf-8")[: node.end_col_offset].decode("utf-8")
-        )
+        start = _node_offset(lines, offsets, node.lineno, node.col_offset)
+        end = _node_offset(lines, offsets, node.end_lineno, node.end_col_offset)
         if isinstance(node, ast.Import):
             requested = [(alias.name, None) for alias in node.names]
         else:
@@ -100,15 +107,40 @@ def analyze_python(text: str, path: str, available_paths: list[str]) -> dict[str
                     "quote": text[start:end],
                 }
             )
-    symbols = [
-        {"name": node.name, "kind": type(node).__name__, "line": node.lineno}
-        for node in tree.body
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
-    ]
+    symbols = []
+    functions = []
+    module = module_name(path)
+    for node in tree.body:
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            continue
+        symbols.append({"name": node.name, "kind": type(node).__name__, "line": node.lineno})
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        start = _node_offset(lines, offsets, node.lineno, node.col_offset)
+        body_start = _node_offset(
+            lines, offsets, node.body[0].lineno, node.body[0].col_offset
+        )
+        quote = text[start:body_start].rstrip()
+        end = start + len(quote)
+        functions.append(
+            {
+                "name": node.name,
+                "qualified_name": f"{module}.{node.name}" if module else node.name,
+                "kind": "async_function"
+                if isinstance(node, ast.AsyncFunctionDef)
+                else "function",
+                "start_line": node.lineno,
+                "end_line": node.end_lineno,
+                "start": start,
+                "end": end,
+                "quote": quote,
+            }
+        )
     return {
         "status": "parsed",
         "imports": sorted(imports, key=lambda item: (item["start"], item["module"])),
         "symbols": symbols,
+        "functions": functions,
         "docstring": ast.get_docstring(tree, clean=False),
         "parser_version": PARSER_VERSION,
     }

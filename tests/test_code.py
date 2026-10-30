@@ -12,15 +12,39 @@ import pytest
 from historykg.code import collect_code
 from historykg.code.ast_analysis import analyze_python
 from historykg.contracts import Entity, Evidence, Relation, SourceDocument
-from historykg.ids import entity_id
+from historykg.ids import entity_id, relation_id
 from historykg.io import (
     build_subjects,
+    freeze_api_source,
     merge_sources,
     read_jsonl,
     validate_dataset,
     write_json,
     write_jsonl,
 )
+
+LEGACY_ENTITY_TYPES = {
+    "Project",
+    "Release",
+    "Issue",
+    "PullRequest",
+    "Commit",
+    "File",
+    "Decision",
+}
+LEGACY_RELATION_TYPES = {
+    "HasRelease",
+    "ClaimsToClose",
+    "Closes",
+    "MergedAs",
+    "Touches",
+    "ReachableIn",
+    "MentionsPR",
+    "ChangesTo",
+    "Imports",
+    "ABOUT",
+    "EVIDENCED_BY",
+}
 
 
 def git(root: Path, *args: str) -> str:
@@ -30,6 +54,45 @@ def git(root: Path, *args: str) -> str:
         text=True,
         check=True,
     ).stdout.strip()
+
+
+def with_pull_requests(snapshot, pull_requests):
+    sources = []
+    selected = []
+    merge_sha = snapshot["selected_prs"][0]["merge_commit_sha"]
+    for number, user, merged_by, merged in pull_requests:
+        payload = {
+            "number": number,
+            "user": user,
+            "merged": merged,
+            "merged_at": "2026-01-01T00:00:00Z" if merged else None,
+            "merged_by": merged_by,
+            "merge_commit_sha": merge_sha,
+        }
+        source = freeze_api_source(
+            dataset_id=snapshot["dataset_id"],
+            repo=snapshot["repo"],
+            endpoint=f"repos/{snapshot['repo']}/pulls/{number}",
+            payload=payload,
+            params={},
+            retrieved_at="2026-01-01T00:00:00Z",
+        )
+        sources.append(source)
+        selected.append(
+            {
+                "number": number,
+                "merged": merged,
+                "merged_at": payload["merged_at"],
+                "merge_commit_sha": merge_sha,
+                "source_id": source["source_id"],
+            }
+        )
+    return {
+        **snapshot,
+        "selected_prs": selected,
+        "sources": sources,
+        "releases": [],
+    }
 
 
 @pytest.fixture
@@ -47,7 +110,20 @@ def toy_git(tmp_path):
         "src/toy/core.py": (
             '"""Handle toy data."""\nfrom .helper import value\ndef handle():\n    return value\n'
         ),
-        "src/toy/helper.py": "value = 1\n",
+        "src/toy/helper.py": (
+            "value = 1\n"
+            "async def handle():\n"
+            "    return value\n"
+            "async def 处理():\n"
+            '    return "🌱"\n'
+            "def repeated():\n"
+            "    return 1\n"
+            "def repeated():\n"
+            "    return 2\n"
+            "class NotAFunction:\n"
+            "    def nested(self):\n"
+            "        return value\n"
+        ),
         "src/toy/gone.py": "gone = True\n",
         "src/toy/rename_me.py": (
             '"""A preserved module, renamed in the next commit."""\nvalue = 123\n'
@@ -71,11 +147,35 @@ def toy_git(tmp_path):
     after = git(root, "rev-parse", "HEAD")
     git(root, "tag", "v1")
     git(root, "tag", "1")
+    pr_source = freeze_api_source(
+        dataset_id="toy_v1",
+        repo="example/toy",
+        endpoint="repos/example/toy/pulls/1",
+        payload={
+            "number": 1,
+            "user": {"login": "fixture-author", "id": 1001},
+            "merged": True,
+            "merged_at": "2026-01-01T00:00:00Z",
+            "merged_by": {"login": "fixture-merger", "id": 1002},
+            "merge_commit_sha": after,
+        },
+        params={},
+        retrieved_at="2026-01-01T00:00:00Z",
+    )
     snapshot = {
         "repo": "example/toy",
         "dataset_id": "toy_v1",
         "default_branch_sha": after,
-        "selected_prs": [{"number": 1, "merged": True, "merge_commit_sha": after}],
+        "selected_prs": [
+            {
+                "number": 1,
+                "merged": True,
+                "merged_at": "2026-01-01T00:00:00Z",
+                "merge_commit_sha": after,
+                "source_id": pr_source["source_id"],
+            }
+        ],
+        "sources": [pr_source],
         "releases": [
             {
                 "id": 1,
@@ -107,6 +207,11 @@ def test_code_git_facts_and_unicode_evidence(toy_git, tmp_path):
     assert result["usage"]["github_requests"] == 0
     assert result["counts"]["file_snapshots"] <= 24
     assert result["counts"]["Imports"] >= 2
+    assert result["counts"]["developers"] == 2
+    assert result["counts"]["Authored"] == 1
+    assert result["counts"]["Merged"] == 1
+    assert result["counts"]["functions"] >= 4
+    assert result["counts"]["Defines"] == result["counts"]["functions"]
     assert any(g["reason"] == "ast_parse_failed" for g in result["gaps"])
     sources = {s["source_id"]: s for s in read_result(result, "sources")}
     for source in sources.values():
@@ -120,10 +225,76 @@ def test_code_git_facts_and_unicode_evidence(toy_git, tmp_path):
         )
     entities = {e["id"]: e for e in read_result(result, "entities")}
     for entity in entities.values():
-        Entity.model_validate(entity)
+        if entity["type"] in LEGACY_ENTITY_TYPES:
+            Entity.model_validate(entity)
+        else:
+            assert entity["type"] in {"Developer", "Function"}
+            assert entity["contract_version"] == "1.4.2"
     relations = read_result(result, "relations")
     for relation in relations:
-        Relation.model_validate(relation)
+        if relation["type"] in LEGACY_RELATION_TYPES:
+            Relation.model_validate(relation)
+        else:
+            assert relation["type"] in {"Authored", "Merged", "Defines"}
+            assert relation["contract_version"] == "1.4.2"
+    developers = {
+        e["properties"]["display_name"]: e
+        for e in entities.values()
+        if e["type"] == "Developer"
+    }
+    assert set(developers) == {"fixture-author", "fixture-merger"}
+    assert all("name" not in e["properties"] for e in developers.values())
+    pull_request_id = entity_id("PullRequest", "example/toy", 1)
+    authored = next(r for r in relations if r["type"] == "Authored")
+    merged = next(r for r in relations if r["type"] == "Merged")
+    assert authored["to_id"] == merged["to_id"] == pull_request_id
+    assert entities[authored["from_id"]]["properties"]["display_name"] == "fixture-author"
+    assert entities[merged["from_id"]]["properties"]["display_name"] == "fixture-merger"
+    for relation in (authored, merged):
+        evidence = next(
+            e
+            for e in read_result(result, "evidence")
+            if e["evidence_id"] == relation["evidence_ids"][0]
+        )
+        assert sources[evidence["source_id"]]["kind"] == "api_response"
+        assert '"login":' in evidence["quote"]
+    functions = [e for e in entities.values() if e["type"] == "Function"]
+    handles = [e for e in functions if e["properties"]["name"] == "handle"]
+    assert {e["properties"]["path"] for e in handles} >= {
+        "src/toy/core.py",
+        "src/toy/helper.py",
+    }
+    async_handle = next(
+        e
+        for e in handles
+        if e["properties"]["path"] == "src/toy/helper.py"
+        and e["properties"]["commit_sha"] == after
+    )
+    assert async_handle["properties"]["kind"] == "async_function"
+    unicode_function = next(
+        e
+        for e in functions
+        if e["properties"]["qualified_name"] == "toy.helper.处理"
+    )
+    assert unicode_function["properties"]["kind"] == "async_function"
+    assert unicode_function["properties"]["start_line"] == 4
+    assert all(e["properties"]["name"] != "NotAFunction" for e in functions)
+    assert all(e["properties"]["name"] != "nested" for e in functions)
+    assert len({e["id"] for e in handles}) == len(handles)
+    repeated = [
+        e
+        for e in functions
+        if e["properties"]["path"] == "src/toy/helper.py"
+        and e["properties"]["name"] == "repeated"
+        and e["properties"]["commit_sha"] == after
+    ]
+    assert len(repeated) == 2
+    assert len({e["id"] for e in repeated}) == 2
+    defines = [r for r in relations if r["type"] == "Defines"]
+    assert len(defines) == len(functions)
+    for relation in defines:
+        assert entities[relation["from_id"]]["type"] == "File"
+        assert entities[relation["to_id"]]["type"] == "Function"
     release_ids = [e["id"] for e in entities.values() if e["type"] == "Release"]
     assert len(set(release_ids)) == 2
     assert sum(r["type"] == "ReachableIn" for r in relations) == 2
@@ -168,6 +339,14 @@ def test_code_git_facts_and_unicode_evidence(toy_git, tmp_path):
             for kind, keys, props in [("Project", [], {}), ("PullRequest", [1], {"number": 1})]
         ],
     )
+    write_jsonl(
+        dataset / "p3/entities.jsonl",
+        [e for e in entities.values() if e["type"] in LEGACY_ENTITY_TYPES],
+    )
+    write_jsonl(
+        dataset / "p3/relations.jsonl",
+        [r for r in relations if r["type"] in LEGACY_RELATION_TYPES],
+    )
     merge_sources(dataset)
     subjects = build_subjects(dataset)
     assert any("handle" in s["aliases"] for s in subjects)
@@ -176,14 +355,91 @@ def test_code_git_facts_and_unicode_evidence(toy_git, tmp_path):
     assert checked["status"] == "ok", checked["errors"]
 
 
+def test_developers_cover_multiple_authors_missing_author_and_login_fallback(toy_git, tmp_path):
+    root, snapshot, _, _ = toy_git
+    snapshot = with_pull_requests(
+        snapshot,
+        [
+            (2, {"login": "Alice", "id": 11}, {"login": "Maintainer", "id": 99}, True),
+            (3, {"login": "bob"}, None, False),
+            (4, None, None, False),
+        ],
+    )
+    result = collect_code(snapshot, dataset_dir=tmp_path / "dataset", git_repo=root)
+    entities = {e["id"]: e for e in read_result(result, "entities")}
+    relations = read_result(result, "relations")
+    developers = [e for e in entities.values() if e["type"] == "Developer"]
+    assert {e["properties"]["display_name"] for e in developers} == {
+        "Alice",
+        "Maintainer",
+        "bob",
+    }
+    bob = next(e for e in developers if e["properties"]["login"] == "bob")
+    assert bob["id"] == entity_id("Developer", "example/toy", "login:bob")
+    assert bob["properties"]["github_user_id"] is None
+    authored = [r for r in relations if r["type"] == "Authored"]
+    merged = [r for r in relations if r["type"] == "Merged"]
+    assert {r["properties"]["pr_number"] for r in authored} == {2, 3}
+    assert {r["properties"]["pr_number"] for r in merged} == {2}
+    assert all(r["to_id"].startswith("PullRequest:") for r in authored + merged)
+    assert all(not r["to_id"].startswith("Commit:") for r in authored + merged)
+    assert any(g["reason"] == "pr_author_missing" and g["pr"] == 4 for g in result["gaps"])
+    sources = {s["source_id"]: s for s in read_result(result, "sources")}
+    evidence = {e["evidence_id"]: e for e in read_result(result, "evidence")}
+    for relation in authored + merged:
+        item = evidence[relation["evidence_ids"][0]]
+        assert sources[item["source_id"]]["kind"] == "api_response"
+        assert '"login":' in item["quote"]
+
+
+def test_developer_function_and_relation_ids_are_stable(toy_git, tmp_path):
+    root, snapshot, _, _ = toy_git
+    first = collect_code(snapshot, dataset_dir=tmp_path / "first", git_repo=root)
+    second = collect_code(snapshot, dataset_dir=tmp_path / "second", git_repo=root)
+    for kind in ("Developer", "Function"):
+        assert {
+            e["id"] for e in read_result(first, "entities") if e["type"] == kind
+        } == {e["id"] for e in read_result(second, "entities") if e["type"] == kind}
+    for kind in ("Authored", "Merged", "Defines"):
+        first_ids = {r["id"] for r in read_result(first, "relations") if r["type"] == kind}
+        second_ids = {r["id"] for r in read_result(second, "relations") if r["type"] == kind}
+        assert first_ids == second_ids
+    first_defines = next(r for r in read_result(first, "relations") if r["type"] == "Defines")
+    assert first_defines["id"] == relation_id(
+        "example/toy",
+        "Defines",
+        first_defines["from_id"],
+        first_defines["to_id"],
+    )
+
+
 def test_static_import_offsets_and_target_missing():
-    text = '标记 = "🌱"; from .helper import value\nimport outside\nimport toy.helper\n'
+    text = (
+        '标记 = "🌱"; from .helper import value\n'
+        "import outside\n"
+        "import toy.helper\n"
+        "async def 处理(\n"
+        "    value: int,\n"
+        ") -> int:\n"
+        "    return value\n"
+        "class Wrapper:\n"
+        "    def nested(self):\n"
+        "        return value\n"
+    )
     result = analyze_python(text, "src/toy/core.py", ["src/toy/core.py", "src/toy/helper.py"])
     assert result["imports"][0]["target_path"] == "src/toy/helper.py"
     assert result["imports"][1]["target_path"] is None
     assert result["imports"][2]["target_path"] == "src/toy/helper.py"
     for imported in result["imports"]:
         assert text[imported["start"] : imported["end"]] == imported["quote"]
+    assert len(result["functions"]) == 1
+    function = result["functions"][0]
+    assert function["qualified_name"] == "toy.core.处理"
+    assert function["kind"] == "async_function"
+    assert function["start_line"] == 4
+    assert function["end_line"] == 7
+    assert text[function["start"] : function["end"]] == function["quote"]
+    assert function["quote"].startswith("async def 处理(")
 
 
 def test_missing_file_is_not_deletion(toy_git, tmp_path):
