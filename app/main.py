@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from collections import Counter
@@ -41,12 +42,12 @@ def show_gaps(gaps):
                     st.json([g for g in gaps if isinstance(g, dict)], expanded=False)
 
 
-def show_evidence(evidence, *, title="原文证据"):
+def show_evidence(evidence, *, title="原文证据", anchor_prefix=""):
     if not evidence:
         return
     st.subheader(title)
     for number, item in enumerate(evidence, 1):
-        st.markdown(f'<a id="evidence-{number}"></a>', unsafe_allow_html=True)
+        st.markdown(f'<a id="{anchor_prefix}evidence-{number}"></a>', unsafe_allow_html=True)
         with st.expander(f"证据 {number} · {item.get('kind', '冻结原文')}", expanded=False):
             st.code(item["quote"], language=None, wrap_lines=True)
             if item.get("url"):
@@ -97,6 +98,10 @@ def show_paths(paths, evidence):
 
 def show_result(result):
     value = QueryResult_v1.model_validate(result).model_dump(mode="json")
+    # A replay can contain several responses. Keep citations within their response.
+    anchor_prefix = hashlib.sha256(json.dumps(
+        [value["dataset_id"], value["query"], value.get("run_id")],
+        sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()[:16] + "-"
     status = value["status"]
     {"ok": st.success, "empty": st.info, "unsupported": st.warning, "error": st.error}[status](
         {"ok": "查询已返回", "empty": "本次数据范围未返回可支持答案的记录",
@@ -106,14 +111,14 @@ def show_result(result):
     # The answer body is exactly every claim, in order. No additional summary.
     for claim in value["claims"]:
         st.write(claim["text"])
-        citations = [f"[证据 {evidence_index[e]}](#evidence-{evidence_index[e]})"
+        citations = [f"[证据 {evidence_index[e]}](#{anchor_prefix}evidence-{evidence_index[e]})"
                      if e in evidence_index else f"未返回：{e}"
                      for e in claim.get("evidence_ids", [])]
         st.markdown("对应证据：" + ("、".join(citations) or "未提供"))
     show_gaps(value["gaps"])
     if value["error"]:
         st.write("请稍后重试，或由安装者检查检索、图数据库和模型配置。")
-    show_evidence(value["evidence"])
+    show_evidence(value["evidence"], anchor_prefix=anchor_prefix)
     show_paths(value["paths"], value["evidence"])
     with st.expander("本次查询详情"):
         st.json(value, expanded=False)

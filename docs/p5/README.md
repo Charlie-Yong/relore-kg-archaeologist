@@ -49,17 +49,19 @@ empty、unsupported、error分别显示，不根据空数组改写后端状态�
 
 job为公共BuildJob，queries为同一dataset_id的公共QueryResult。
 重放模式不显示在线输入框、不启动构建、不调用模型；不能把重放时间当在线性能。
-正式备份仅在真实公共查询完成后保存，本轮不拿toy或旧dev响应拼成Flask URL验收。
+正式备份仅在同一真实作业的公共查询完成后保存，不使用toy或旧独立dev数据拼成Flask URL验收。
 本地归档工具`python -m app.replay --job-id JOB --query 原result.json --output 冻结包.json`
 只读取已存作业/响应，保存原query/model运行ID、文件SHA-256及保存时间；拒收未就绪、跨版本和toy。
 这些是演示安装者命令，普通用户仍只填写URL和自然语言问题。
 
 ## 本轮验证
 
-`python -m pytest tests/test_app.py -q`：15项通过。使用明确的合成后端响应，覆盖七种构建状态、
+`python -m pytest tests/test_app.py tests/test_app_replay.py -q`：21项通过。使用明确的合成后端响应，覆盖七种构建状态、
 四种查询状态、所有claims顺序、空claims仍保留关系链、刷新/恢复及冻结重放无在线调用。
 它是界面逻辑验证，不是实际LLM、Neo4j或真实仓库全流程验收。
 
-真实只读接入：同一Flask任务显示blocked/extract，覆盖369来源、40完整讨论、24文件快照；
-未显示成功或问答入口。见[截图](screenshots/flask-build-paused-20261030.png)。
+真实只读接入：同一Flask任务现为ready/index_graph，覆盖369来源、40完整讨论、24文件快照；
+graph_ready、retrieval_ready及actual_llm_extraction均为真。浏览器已核对
+[完成态](screenshots/flask-ready-20261030.png)、[覆盖缺口](screenshots/flask-ready-coverage-20261030.png)
+与[自然语言入口](screenshots/flask-ready-question-20261030.png)。保留原暂停截图作为真实阶段记录。
 具体版本、任务与待验收项统一记录于[P5 handoff](../../deliveries/P5/2026-10-30/handoff.md)。
