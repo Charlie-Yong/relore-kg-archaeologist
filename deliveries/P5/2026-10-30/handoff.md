@@ -69,3 +69,52 @@ P5只展示P1返回值，没有自行重算采集或运行阶段。
 私有构建/完整验证回执在`.local/p5-presentation/`，不入Git。
 接收方P1/主代理继续跨平台CI、统稿；P5后续收到真实同次query响应后补完成态截图、
 冻结真实重放包及期中更新，期末材料待正式P6汇总再写，不接触私有参考。
+
+## 续接：真实完成态与多响应证据定位
+
+2026-10-30 13:40（Asia/Shanghai），P5按现有讲解记录恢复，沿用成果和同一job，未重新开工。
+普通merge根本地main 6d1c514后，再普通merge已获根验收的P4清洁提交90668621。
+未合入含私人历史的8b98ce4。未读取P6私有测试/参考；等待根共享公共dev响应以免重复收费。
+
+同一BuildJob实际读取得到ready/index_graph，graph_ready、retrieval_ready、actual_llm_extraction均true。
+369来源、40完整讨论、24文件快照，133实体、183关系、333证据（其中61 Decision）。
+CUA/IAB已实际核对完成态、覆盖/缺口与自然语言提问入口，新增`docs/p5/screenshots/flask-ready*.png`。
+原暂停截图与原五页进度PPT保留。原PID88284与18501监听均已结束，核实后重启同端口18501，
+当前命令会话session_id=92211，仍使用根`.local/project.json`及P1原任务/数据目录。
+凭据由进程内读取已授权的本机配置，未输出、落盘或写Git；未start/resume，也未发出模型查询。
+
+真实ready AppTest：异常0、显示两个输入/369–40–24，连续重绘后start/resume/ask调用均0。
+多响应重放原会复用`evidence-1`锚点，本次给每条响应的引用和证据组件加入相同唯一前缀，
+防止第二条答案跳到第一条原文。新增双响应引用验证；UI/归档合计21 passed，ruff通过。
+报告原型章节已改为真实就绪稿，附三张可用图；公共问答、完成态证据截图、真实重放与两次PPT继续进行。
+本批日常小修按C3.3无需新增独立模型审核；根/P1后续集中接收。
+
+## 最终真实闭环版（2026-10-30 14:30）
+
+沿用同一`ready/index_graph`作业和公共响应，不新增DeepSeek调用。真实源码职责问题返回
+6条claims、37条证据；证据32至37逐条回到冻结`src/flask/testing.py`，页面并展示
+Unicode位置、来源编号、原始链接和dataset版本。另保留`dev-01`原始`empty`状态。
+冻结重放包为`demo/replay/flask-public-20261030.json`，其两份响应哈希分别与P1公开查询文件
+`8ad3d9...501f`、`93a74c...bd5a2`一致，原记录时间和运行ID未改写。
+
+在线只读页面实际读取到`pallets/flask · 已就绪`、369来源、40完整讨论、24文件快照，
+同时显示覆盖缺口和自然语言输入；AppTest无异常，健康端点返回`ok`，没有start/resume/新ask。
+同一冻结包另以AppTest验收：页面明确显示冻结真实结果重放，包含`ok`与`empty`两项响应，
+无构建或查询按钮及输入框，发生0次在线调用。UI/归档回归21 passed，ruff通过。
+
+最终期中材料：
+
+- `demo/midterm/期中汇报_20261111_20261030真实闭环版.pptx`
+- `demo/midterm/讲稿.md`
+- `demo/midterm/演示步骤.md`
+- `demo/midterm/previews/slide-1.png`至`slide-5.png`
+- `docs/p5/screenshots/flask-architecture-claims-20261030.png`
+- `docs/p5/screenshots/flask-architecture-source-20261030.png`
+
+原进度版PPT保留不改；最终版另存并保持五页及原字体、配色和原生架构图。第4页用真实
+claims截图替换暂停进度表；第1、2、5页及相应notes同步到真实闭环。五页逐页渲染后目视检查，
+未发现裁切、重叠或错误结论；PPTX包完整性`pass`，13.3333×7.5英寸、5页、
+heading fit/punctuation均0 finding。机器可读汇总见`final_validation.json`。
+
+限制不变：真实开发问答不替代P6正式F1、A/B增益或正确弃答率；Windows实机、正式课堂
+彩排和原PowerPoint客户端检查不在本轮已完成证据范围。P5本轮交付为done。

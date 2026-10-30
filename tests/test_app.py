@@ -133,3 +133,21 @@ def test_replay_never_invokes_online_services(tmp_path, monkeypatch):
         assert not test.text_input
         start.assert_not_called()
         ask.assert_not_called()
+
+
+def test_replay_citations_target_their_own_response(tmp_path, monkeypatch):
+    import json
+    import re
+
+    second = result()
+    second["query"]["question"] = "另一个开发示例问题"
+    replay = tmp_path / "two-responses.json"
+    replay.write_text(json.dumps({"recorded_at": "synthetic", "job": JOB,
+                                  "queries": [result(), second]}), encoding="utf-8")
+    monkeypatch.setenv("HISTORYKG_REPLAY_FILE", str(replay))
+    test = AppTest.from_file(APP).run()
+    assert not test.exception
+    rendered = "\n".join(x.value for x in test.markdown)
+    anchors = re.findall(r'<a id="([^"]+)">', rendered)
+    assert len(anchors) == len(set(anchors)) == 2
+    assert all(f"](#{anchor})" in rendered for anchor in anchors)
