@@ -1,7 +1,7 @@
 # P1 数据、公共契约与 URL 流水线交接
 
 角色P1，2026-10-30，规划/契约1.4.1，独立副本relore-agents/p1、长期分支feat/p1。
-阶段状态in_progress，公共骨架可集成；完整成品尚未验收。
+阶段状态final_candidate：期末统稿、正式实验结果和第二仓库验收已完成，仅余真实成员信息、最终PPTX入包及现场/服务复核等人工项。
 
 ## 原理说明与授权记录
 
@@ -152,5 +152,75 @@ P6测试集TP/FP/FN=25/19/1、P=0.5682、R=0.9615、F1=0.7143和理由覆盖13/1
 同时保留银标局限；报告PDF已重新生成并逐页渲染检查。复现目录附Flask BSD-3-Clause
 许可证，新增候选成品打包工具拒绝私有测试目录并使用准确干净提交。
 
-该阶段放行Windows CI、正式抽取汇总与候选工程包验收，不表示P6下游A/B或完整课程
-材料已经完成。原job仍保持ready，禁止重新resume、采集或抽取。
+该记录描述当时的阶段放行状态；P6下游A/B、全池核验、第二仓库和完整课程材料的期末
+结果已由本文件末尾“期末统稿最终验收”更新。原job仍保持ready，禁止重新resume、
+采集或抽取。
+
+## 期末统稿最终验收（2026-10-30）
+
+独立工作树为`relore-agents/p1`，分支`feat/p1`。已普通合并主集成分支
+`feat/p1-report-candidate`当前提交`2150aa6`，保留历史并形成合并提交`f0077ae`；
+未reset/rebase，未在主共享目录执行checkout、commit或reset。本轮只修改：
+
+- `reports/technical_report.md`
+- `reports/build_pdf.py`
+- `output/pdf/historykg_technical_report.pdf`
+- `README.md`
+- `00_总规划与组长使用说明.md`
+- `coordination/STATUS_P1.md`
+- `deliveries/P1/2026-10-30/handoff.md`
+
+报告口径已经统一为最终事实：Flask全池首轮6个失败位置经一次格式恢复重试后6/6成功，
+最终92/92；6道候选均完成两遍完整核验，确认证据不足0，正确弃答率N/A仅因合格分母0。
+P3只读增量为18 Developer、384 Function、20 Authored、4 Merged、384 Defines及508条
+证据；固定链核对至PR #6096（lkk7→davidism）→`05e9c6b`→`src/flask/testing.py`→
+`flask.testing._get_werkzeug_version`，没有Developer→Commit。第二仓库
+`pallets/itsdangerous`作业`ebfd8c8dae5e4bcf998a79fef35de981`形成347来源、30完整讨论、
+17文件快照、82实体、78关系、180证据；validate/graph/retrieval ready，job因真实采集
+缺口保持partial；依赖查询50路径、25证据、5 claims，出处、逐字引文和SHA校验通过。
+共享账本未重置：approved=20、effective cap=19.84，保守累计9.465795，其中known
+7.771385、unknown upper 1.694410，余10.374205。P5期末材料统一为
+`demo/final/期末汇报_20261030最终版.pptx`，共10页；期中五页版只作历史材料。成员
+姓名、学号、贡献确认与互评均保留“待本人填写/待本人补充”，没有虚构。
+
+PDF使用指定Codex primary runtime的`python3 reports/build_pdf.py`重新生成。结果为
+`output/pdf/historykg_technical_report.pdf`，13页、345655 bytes、PDF文本抽取19806字符、
+其中汉字10621字；SHA-256为
+`86ae7707157ce38e7062b7204bdb0f54952e391567950094945dfb4802752b4d`。九类指定旧
+状态词的扫描计数均为0，覆盖过期全池分母、过期第二库缺口、过期核验状态、过期正式
+PPT页数、过期发布状态及过期阶段名称。最终指标、P3固定链、
+第二仓库/依赖查询、预算、10页期末PPT和人员待补标记的文本提取检查全部PASS。
+
+PDF共7个URI annotation，对应6个唯一外部URL；逐一实际请求均返回HTTP 200。pdfplumber
+检出5个表格，边界全部位于页面可打印区域，无裁切；第7、11、12、13页另行渲染目视复核，
+抽取结果表、A/B表、六角色表、成员表、互评表及参考文献显示正常，成员信息表未跨页拆行。
+
+实际检查命令与结果：
+
+~~~text
+指定runtime python3 reports/build_pdf.py
+  成功生成13页PDF
+
+指定runtime python3 tools/check_planning.py
+  passed=true；68份Markdown、246个本地链接；P1-P6均为done；errors=[]
+
+指定runtime python3 tools/test_check_planning.py
+  7 tests passed
+
+P4独立工作树.venv/bin/ruff check reports/build_pdf.py
+  All checks passed!
+
+git diff --check
+  通过
+~~~
+
+指定runtime自身未安装ruff（`No module named ruff`），因此Ruff使用另一独立工作树
+已有的可执行环境运行，未安装包、未调用模型。规划测试及Markdown本地链接检查均使用
+指定runtime完成。
+
+仍需人工或P5处理的最终项：P5最终PPTX原件当前尚未随本工作树提交，`demo/final/`
+当前只有`材料说明.md`，最终打包前必须由P5补齐并确认被待打包提交跟踪；六名成员须
+本人填写真实姓名、学号、职责确认和互评，不能用Git作者名或AI结果代填；最终PPT须在
+Windows/PowerPoint原生环境复核并完成课堂彩排；最终审计时Neo4j live bolt/HTTP未保持
+在线，打包前需复验服务可用性。本轮未读取`evaluation/private_test`，未调用付费模型，
+未修改P2代码、P5 PPT或`tools/package_submission.py`。
