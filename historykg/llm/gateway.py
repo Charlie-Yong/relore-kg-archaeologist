@@ -16,6 +16,7 @@ from typing import Any
 import httpx
 
 from .budget import BudgetBlocked, BudgetLedger
+from .pricing import quote_usage
 
 TASKS = {"extract", "answer", "reference", "judge"}
 RATES = {"deepseek-flash": (2, 8), "deepseek-v4-pro": (9, 27)}
@@ -353,6 +354,7 @@ def _run_locked(
             {**request, "body": attempt_body, "attempt_id": attempt_id},
         )
         actual_cost = None
+        settlement = None
         retryable = True
         result["new_requests"] += 1
         try:
@@ -394,10 +396,6 @@ def _run_locked(
                     isinstance(usage.get(k), int) and usage[k] >= 0
                     for k in ("prompt_tokens", "completion_tokens")
                 ):
-                    # Always peak cache-miss rates, even if hit/idle pricing is cheaper.
-                    actual_cost = (
-                        usage["prompt_tokens"] * in_rate + usage["completion_tokens"] * out_rate
-                    )
                     result["usage"]["known_usage_attempts"] += 1
                     for key in ("prompt_tokens", "completion_tokens"):
                         result["usage"][key] += usage[key]
@@ -419,7 +417,17 @@ def _run_locked(
             record["error"] = str(exc)[:500] if isinstance(exc, ValueError) else type(exc).__name__
         finally:
             record["finished_at"] = now()
-            ledger.settle(attempt_id, actual_cost, canonical(record["usage"]))
+            settlement = quote_usage(
+                request["body"]["model"],
+                record["usage"],
+                started_at=record["started_at"],
+                finished_at=record["finished_at"],
+            )
+            actual_cost = settlement["charged_micro_cny"] if settlement else None
+            ledger.settle(
+                attempt_id, actual_cost, canonical(record["usage"]), settlement=settlement
+            )
+            record["settlement"] = settlement
             record["charged_micro_cny"] = attempt_upper if actual_cost is None else actual_cost
             current_charge += record["charged_micro_cny"]
             save_json(attempt_dir / "record.json", record)
