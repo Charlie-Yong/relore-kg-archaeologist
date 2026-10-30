@@ -83,7 +83,9 @@ def prepare_query(request, *, config: dict | None = None) -> dict:
             supported = False
             gaps.append("当前冻结窗口缺少可定位事件时间")
         expansion = graph_sources(package, paths)
-        candidates = context_candidates(package, retrieved, expansion)
+        candidates = context_candidates(
+            package, retrieved, expansion, question=req.question
+        )
     relation_by_id = {r["id"]: r for r in package["relations"]}
     evidence_by_id = {e["evidence_id"]: e for e in package["evidence"]}
     source_by_id = {s["source_id"]: s for s in package["sources"]}

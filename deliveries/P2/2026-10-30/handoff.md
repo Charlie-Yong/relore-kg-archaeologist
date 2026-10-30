@@ -82,3 +82,23 @@ Flask同ID数据集，待独立参考先行完成、主代理唯一恢复生产�
 修复提交0209e47。主代理按依赖顺序合并其他角色后，PR祖先差异自然收窄；不重写长期分支。
 新增[报告方法草稿与核验引用](method_notes.md)、[期中片段口径](midterm_notes.md)，
 均只使用已有实际实现/工程结果，不填写待运行Flask实答或正式实验数字。
+
+## 公开dev-01空回答定位（同日）
+
+P5真实冻结回放的dev-01返回empty，模型gap说明最终上下文只含issue正文，未含维护者评论。
+只读复跑候选池确认issue正文与三条关键维护者评论都已被检索，但图扩展和通用API/代码
+候选把正文与评论挤出12000码点。这是候选排序缺陷，不是主体未解析或来源缺失。
+
+`relore_common_rrf_graph_v2`对A/B使用同一直接范围排序：问题明确指向Issue/PR且没有
+代码路径/SHA时优先issue_body、comment、review、pr_body，降低通用API元数据；问题明确
+给出路径或提交SHA时优先origin_key匹配的code快照。图扩展只作为同一直接相关层的次级
+排序。修订后对原Flask冻结数据集无付费复跑`prepare_query`与共享`render_context`：
+候选状态ok，最终5个片段均为issue正文/评论，包含“They should be calling `close` on
+the iterator”及“server's control at that point”；未调用回答模型，不据此声称新回答正确。
+机器可读记录见[dev01_context_fix.json](dev01_context_fix.json)。
+
+P6若已在旧`relore_common_rrf_graph_v1`协议下开始正式答题，应保留原冻结结果并披露本次
+修复为后置；后续正式运行须重新冻结v2方法哈希，不能把两版上下文混在同一实验。
+
+实际回归：`tests/test_graph_query.py`在真实PostgreSQL/Neo4j上18 passed；ruff通过。
+新增用例覆盖“Issue讨论优先于高分通用API/代码”和“显式路径/SHA的代码快照优先”。
