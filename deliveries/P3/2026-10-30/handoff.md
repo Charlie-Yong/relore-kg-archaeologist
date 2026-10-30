@@ -86,3 +86,36 @@ Windows 实机、正式来源冻结、独立工程复核、课程实验与最终
 不能指向随后会扩充的全局 sources.jsonl。读取的实际来源属于 input_hash，resume 沿用相同阶段输入。
 
 本批按 C3.3 已运行受影响检查，待接收方的阶段集成及独立工程复核；没有新建付费审核。
+
+## 真实 Flask URL 闭环核验（2026-10-30）
+
+P1 原job `b61942bf06b742e48860d064dffe6df2` 已用同一 URL 自动作业完成 `code` 阶段，
+dataset 为 `dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c`。
+这不是 fixture 回放：job 的 `stage_statuses.code` 为 `ok`，P3 分片包含 94 个来源，
+其中 24 个为 `code` 原文来源；共有 4 个 Commit、24 个 File 快照、3 个 Release、
+25 条 Imports、8 条 Touches、8 条 ChangesTo、3 条 HasRelease 和 104 条证据。
+24 个 Python 文件全部解析成功，模型请求为 0。
+
+复核使用主仓库公共 CLI 校验整个 dataset，结果为 `status=ok`、零错误；随后逐项检查：
+
+- 94/94 来源文本的 UTF-8 SHA-256 与 `text_sha256` 一致；
+- 104/104 证据的 Unicode 区间与原文 quote 一致；
+- 24/24 File 均可定位到同 repo、同 SHA、同 path 的 `code` 来源，且 `plan.file_selections`
+  与实体集合完全一致；
+- 44/44 关系的端点存在；25 条 Imports 均连接同 SHA File，证据来自源文件原文；
+- entities/evidence/gaps/plan/relations/sources 六个分片哈希全部与 manifest 一致。
+
+真实架构题“提交 `514fc6b3…` 的 `src/flask/testing.py` 中
+`FlaskClient.session_transaction` 承担什么职责”返回 6 条 claims，全部证据均可定位到该
+冻结路径与 SHA，Unicode 区间和来源哈希均通过。该结果验证源码证据链和职责回答素材，
+不冒充独立语义准确率实验。冻结重放中的旧 `trace` 题仍保留原 `empty`，不把 P2 后来的
+v2 排序修复回写成原响应。
+
+机器记录见 [platform_validation.json](platform_validation.json)。P3 分片的明确限制为：
+12 个 PR/tag 因深度 64 浅历史而可达性 unknown；181 个内部 import 目标不在 24 文件预算；
+5,309,480 码点全池中其余外部/未解析 import 也保留在 gaps。静态 AST 和 git diff 不代表
+运行目标代码、完整调用图或未采依赖完整性。
+
+本轮恢复检查实际为 `tests/test_code.py` 7 passed；P3 页面汇报接续前的当前主线全量测试为
+**125 passed、28 skipped**，P3模块Ruff、规划检查（225个本地链接）和`git diff --check`
+全部通过。没有新增 DeepSeek 或GitHub网络请求。

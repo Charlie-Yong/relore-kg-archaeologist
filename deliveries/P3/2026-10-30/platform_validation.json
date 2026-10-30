@@ -1,0 +1,476 @@
+{
+  "checked_at": "2026-10-30T14:47:27+08:00",
+  "scope": "P3 public frozen code/evolution shard and downstream architecture evidence; no private test content; no new model requests",
+  "environment": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "python": "3.11.15",
+    "git": "git version 2.54.0 (Apple Git-157)"
+  },
+  "job": {
+    "job_id": "b61942bf06b742e48860d064dffe6df2",
+    "status": "ready",
+    "stage_statuses": {
+      "code": "ok",
+      "collect": "ok",
+      "discover": "ok",
+      "extract": "ok",
+      "index_graph": "ok",
+      "validate": "ok"
+    },
+    "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+    "fingerprint_reference": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe"
+  },
+  "counts": {
+    "sources": 94,
+    "source_kinds": {
+      "git_output": 62,
+      "code": 24,
+      "release_note": 3,
+      "commit_message": 4,
+      "api_response": 1
+    },
+    "entities": 31,
+    "relation_counts": {
+      "Imports": 25,
+      "ChangesTo": 8,
+      "Touches": 8,
+      "HasRelease": 3
+    },
+    "evidence": 104,
+    "file_snapshots": 24,
+    "ast_parsed": 24,
+    "commits": 4,
+    "releases": 3
+  },
+  "checks": {
+    "full_dataset_validator": {
+      "status": "ok",
+      "errors": 0
+    },
+    "source_text_sha256": {
+      "checked": 94,
+      "failures": []
+    },
+    "evidence_spans": {
+      "checked": 104,
+      "failures": []
+    },
+    "file_snapshot_locators": {
+      "checked": 24,
+      "failures": [],
+      "ok": true
+    },
+    "plan_file_selection_match": {
+      "expected": 24,
+      "actual": 24,
+      "ok": true
+    },
+    "relations": {
+      "checked": 44,
+      "failures": [],
+      "ok": true
+    },
+    "manifest_hashes": {
+      "entities": {
+        "actual": "e86e256634e82a727c52b1fa052e5649f872a8cf78bffed32bb08d29b13e9e53",
+        "manifest": "e86e256634e82a727c52b1fa052e5649f872a8cf78bffed32bb08d29b13e9e53",
+        "ok": true
+      },
+      "evidence": {
+        "actual": "2cc1a31e6bcd15af4c6a93323cc95e52a3f252723e6eaee895c7bbad21f874b0",
+        "manifest": "2cc1a31e6bcd15af4c6a93323cc95e52a3f252723e6eaee895c7bbad21f874b0",
+        "ok": true
+      },
+      "gaps": {
+        "actual": "1bb3367a850d8bc009dfc51c40fcfc87dbd4aa058c8887d4b4609cacecdd0146",
+        "manifest": "1bb3367a850d8bc009dfc51c40fcfc87dbd4aa058c8887d4b4609cacecdd0146",
+        "ok": true
+      },
+      "plan": {
+        "actual": "1bbb66790584a278c7afaa652c436b1a36acb93e6a7c5cc6885fe78f05066561",
+        "manifest": "1bbb66790584a278c7afaa652c436b1a36acb93e6a7c5cc6885fe78f05066561",
+        "ok": true
+      },
+      "relations": {
+        "actual": "a9c6075c937f599fdbce37d75f68f889397e8d8d4603e426921545c3043ea71d",
+        "manifest": "a9c6075c937f599fdbce37d75f68f889397e8d8d4603e426921545c3043ea71d",
+        "ok": true
+      },
+      "sources": {
+        "actual": "11744b1edfe5626c4ea751b0f4204034eb1dae4e61d559e75e57c9749b64c7a2",
+        "manifest": "11744b1edfe5626c4ea751b0f4204034eb1dae4e61d559e75e57c9749b64c7a2",
+        "ok": true
+      }
+    },
+    "architecture_question": {
+      "question": "在提交514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b的src/flask/testing.py中，FlaskClient.session_transaction承担什么职责？请结合这个版本的实现说明它怎样处理会话与Cookie，并引用源码。",
+      "status": "ok",
+      "claims": 6,
+      "claims_with_all_evidence_locatable": 6,
+      "all_claims_valid": true,
+      "claim_evidence": [
+        {
+          "text": "FlaskClient.session_transaction 是一个上下文管理器，用于打开会话事务，以便修改测试客户端使用的会话；离开 with 块后会话被存回。",
+          "evidence_ids": [
+            "Evidence:ab25dc32a9cc041b08c0989cc1c4aabdf6799e25fd677dcc18d77b67bfec94da"
+          ],
+          "evidence_count": 1,
+          "all_code_sources": true,
+          "spans_valid": true,
+          "origins": [
+            {
+              "source_id": "SourceDocument:c06330ce6a19734de73f2c0c300f79de7c3512599c1a57823e4fc38edad37a43",
+              "url": "https://github.com/pallets/flask/blob/514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b/src/flask/testing.py",
+              "kind": "code",
+              "origin_key": "code:514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b:src/flask/testing.py"
+            }
+          ]
+        },
+        {
+          "text": "实现上，它通过临时测试请求上下文完成：先创建 test_request_context，再把 Cookie 加入该请求的 WSGI environ，然后在该上下文中调用 session_interface.open_session 打开会话。",
+          "evidence_ids": [
+            "Evidence:a50a007dff6f828b5474340653a3c3cf0db94b3246f333828842e51d311961e5"
+          ],
+          "evidence_count": 1,
+          "all_code_sources": true,
+          "spans_valid": true,
+          "origins": [
+            {
+              "source_id": "SourceDocument:c06330ce6a19734de73f2c0c300f79de7c3512599c1a57823e4fc38edad37a43",
+              "url": "https://github.com/pallets/flask/blob/514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b/src/flask/testing.py",
+              "kind": "code",
+              "origin_key": "code:514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b:src/flask/testing.py"
+            }
+          ]
+        },
+        {
+          "text": "若会话后端未打开会话（返回 None），session_transaction 抛出 RuntimeError。",
+          "evidence_ids": [
+            "Evidence:24312e3e079cb5def5f8dd3b5f31a3aa0fc2b9bb87905cd70e196421db0bde6f"
+          ],
+          "evidence_count": 1,
+          "all_code_sources": true,
+          "spans_valid": true,
+          "origins": [
+            {
+              "source_id": "SourceDocument:c06330ce6a19734de73f2c0c300f79de7c3512599c1a57823e4fc38edad37a43",
+              "url": "https://github.com/pallets/flask/blob/514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b/src/flask/testing.py",
+              "kind": "code",
+              "origin_key": "code:514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b:src/flask/testing.py"
+            }
+          ]
+        },
+        {
+          "text": "在 yield 会话之后，若会话是 null session 则直接返回；否则在上下文中调用 session_interface.save_session 将会话保存到响应。",
+          "evidence_ids": [
+            "Evidence:d1dfa22e6d5a22aa36cc0dae6020f228ce86d718632d513fbbf7961a3b267b33"
+          ],
+          "evidence_count": 1,
+          "all_code_sources": true,
+          "spans_valid": true,
+          "origins": [
+            {
+              "source_id": "SourceDocument:c06330ce6a19734de73f2c0c300f79de7c3512599c1a57823e4fc38edad37a43",
+              "url": "https://github.com/pallets/flask/blob/514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b/src/flask/testing.py",
+              "kind": "code",
+              "origin_key": "code:514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b:src/flask/testing.py"
+            }
+          ]
+        },
+        {
+          "text": "保存后，它用响应中的 Set-Cookie 头更新客户端 Cookie，并以 ctx.request.host.partition(\":\")[0] 作为主机名。",
+          "evidence_ids": [
+            "Evidence:9b97ff75dc4a7e01deb6e6ba8dc30e3ce6964beb4d1ab6764b4e09bea367da67"
+          ],
+          "evidence_count": 1,
+          "all_code_sources": true,
+          "spans_valid": true,
+          "origins": [
+            {
+              "source_id": "SourceDocument:c06330ce6a19734de73f2c0c300f79de7c3512599c1a57823e4fc38edad37a43",
+              "url": "https://github.com/pallets/flask/blob/514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b/src/flask/testing.py",
+              "kind": "code",
+              "origin_key": "code:514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b:src/flask/testing.py"
+            }
+          ]
+        },
+        {
+          "text": "若客户端禁用了 Cookie（_cookies 为 None），session_transaction 抛出 TypeError。",
+          "evidence_ids": [
+            "Evidence:5d6c08591927c7330cfe21b170cbb3e62103ae84f36dcaf012345bff01519436"
+          ],
+          "evidence_count": 1,
+          "all_code_sources": true,
+          "spans_valid": true,
+          "origins": [
+            {
+              "source_id": "SourceDocument:c06330ce6a19734de73f2c0c300f79de7c3512599c1a57823e4fc38edad37a43",
+              "url": "https://github.com/pallets/flask/blob/514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b/src/flask/testing.py",
+              "kind": "code",
+              "origin_key": "code:514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b:src/flask/testing.py"
+            }
+          ]
+        }
+      ]
+    },
+    "frozen_old_trace_query": {
+      "status": "empty",
+      "claims": 0,
+      "note": "Preserved as the original v1 replay; P2 later identified ranking truncation and published relore_common_rrf_graph_v2 without rewriting this history."
+    },
+    "usage": {
+      "model_requests": 0,
+      "github_requests_total": 182,
+      "git_network_operations": 6
+    }
+  },
+  "file_snapshots": [
+    {
+      "path": "src/flask/app.py",
+      "commit_sha": "05e9c6bd630ecf4ec0ec884b1fc7901663737bc7",
+      "source_id": "SourceDocument:c37b548e1d9ba3c8bd34c0e46bba21f7977f0a75f48feeaee389eb9a62dae622",
+      "parse_status": "parsed",
+      "symbols": 4,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/testing.py",
+      "commit_sha": "05e9c6bd630ecf4ec0ec884b1fc7901663737bc7",
+      "source_id": "SourceDocument:b93498c7ca9700cf3492c8b2c03d5323d4d453afa2549d256c1ffd6cec1f2e56",
+      "parse_status": "parsed",
+      "symbols": 4,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/sansio/scaffold.py",
+      "commit_sha": "3596b1ab61cea85edb8970e83ff61daa073facf8",
+      "source_id": "SourceDocument:362f2ae54553d26fd531ea472aa2e6c784f662b76942828ef6993d95dc56736e",
+      "parse_status": "parsed",
+      "symbols": 5,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "tests/test_basic.py",
+      "commit_sha": "3596b1ab61cea85edb8970e83ff61daa073facf8",
+      "source_id": "SourceDocument:fd9bbbaa24aeccdca1e7469056aa4769b7d8b0a4a980ef5de224b8544ccd890a",
+      "parse_status": "parsed",
+      "symbols": 90,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/app.py",
+      "commit_sha": "514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b",
+      "source_id": "SourceDocument:79dbdf0fa3021a91704eaae7fab49631c8dc1e7da329d7a2f87801b306e303c1",
+      "parse_status": "parsed",
+      "symbols": 4,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/testing.py",
+      "commit_sha": "514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b",
+      "source_id": "SourceDocument:c06330ce6a19734de73f2c0c300f79de7c3512599c1a57823e4fc38edad37a43",
+      "parse_status": "parsed",
+      "symbols": 4,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "tests/conftest.py",
+      "commit_sha": "548994ea0c61465574cbfdd636a894a692f54b94",
+      "source_id": "SourceDocument:10fe0c59c13b6fc194a46443cce4f79b0695282f9ed0daafd606070169fc812b",
+      "parse_status": "parsed",
+      "symbols": 11,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "tests/test_cli.py",
+      "commit_sha": "548994ea0c61465574cbfdd636a894a692f54b94",
+      "source_id": "SourceDocument:2454a6595a4407f28c7c8aba01680ec039f3faa0499f9dfe98ff6980db4f0bbc",
+      "parse_status": "parsed",
+      "symbols": 31,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/cli.py",
+      "commit_sha": "728c5e440af704a786384159184f695cf04ecbe7",
+      "source_id": "SourceDocument:676a567c78387dd1f9b00556cf7e4adec55de6c6b7b2ebd154c8a0da1e5beab9",
+      "parse_status": "parsed",
+      "symbols": 26,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/helpers.py",
+      "commit_sha": "728c5e440af704a786384159184f695cf04ecbe7",
+      "source_id": "SourceDocument:98c9c76864136e40ee77ea1b8d8fe000957164e614c84238f773a7aa1bc0b3a0",
+      "parse_status": "parsed",
+      "symbols": 18,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "tests/conftest.py",
+      "commit_sha": "8285adf5a4f572dbf7a0a3b8f3a96ca0b19c50a4",
+      "source_id": "SourceDocument:a5a380a78b523c0e4f19a5ca43beedebeb1a1ad4567efb02f9229a0b04390a36",
+      "parse_status": "parsed",
+      "symbols": 12,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "tests/test_cli.py",
+      "commit_sha": "8285adf5a4f572dbf7a0a3b8f3a96ca0b19c50a4",
+      "source_id": "SourceDocument:6fecc05a55e4788416142a0866724ff78924347d3c4e5943da25a323ef95df3c",
+      "parse_status": "parsed",
+      "symbols": 31,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/__init__.py",
+      "commit_sha": "d086db856be187255b8ec61ef409357393020f32",
+      "source_id": "SourceDocument:28ffa58e568efc6fb895bfe44ae39a3fbd7633fbbe849245052fc129a18251bb",
+      "parse_status": "parsed",
+      "symbols": 0,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/app.py",
+      "commit_sha": "d086db856be187255b8ec61ef409357393020f32",
+      "source_id": "SourceDocument:47841c448bb75b998e511a7ab55c65bcd05d295dde3fe1494ed5db82dc1aef53",
+      "parse_status": "parsed",
+      "symbols": 4,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/blueprints.py",
+      "commit_sha": "d086db856be187255b8ec61ef409357393020f32",
+      "source_id": "SourceDocument:91eb3e653d09de4507a279254d8945b883345aec25aa87a983bc70efd573e5b6",
+      "parse_status": "parsed",
+      "symbols": 1,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/config.py",
+      "commit_sha": "d086db856be187255b8ec61ef409357393020f32",
+      "source_id": "SourceDocument:19b9b1217c5ee14180734315b61e3aa90963ea6557816e2ab06416308fcc6dee",
+      "parse_status": "parsed",
+      "symbols": 2,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/ctx.py",
+      "commit_sha": "d086db856be187255b8ec61ef409357393020f32",
+      "source_id": "SourceDocument:508e1679549f5760b0a34e59cc722dda278d34dc010daa24e450489e11f1dd2f",
+      "parse_status": "parsed",
+      "symbols": 7,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/globals.py",
+      "commit_sha": "d086db856be187255b8ec61ef409357393020f32",
+      "source_id": "SourceDocument:169cd5adee088e7365baa9320ac09d802b94d2b33824a84e1e4fb5156fc3e985",
+      "parse_status": "parsed",
+      "symbols": 1,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/helpers.py",
+      "commit_sha": "d086db856be187255b8ec61ef409357393020f32",
+      "source_id": "SourceDocument:329c126e29950970c97ae2b08a28d3cffa822692db588c84628d7ce056ee6aed",
+      "parse_status": "parsed",
+      "symbols": 18,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/json/__init__.py",
+      "commit_sha": "d086db856be187255b8ec61ef409357393020f32",
+      "source_id": "SourceDocument:34d3fe4486f3489f1fd16cfab28e576ebe3a84e80d9fcaa1364344bfd7fb5948",
+      "parse_status": "parsed",
+      "symbols": 5,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/cli.py",
+      "commit_sha": "d73fa1cdcbd8b1465c151db8924ba58b1dd14e35",
+      "source_id": "SourceDocument:e6924543d8f77c31bfa72f92d46995d646ac5829aea864d4ec017fe45381f83e",
+      "parse_status": "parsed",
+      "symbols": 26,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/helpers.py",
+      "commit_sha": "d73fa1cdcbd8b1465c151db8924ba58b1dd14e35",
+      "source_id": "SourceDocument:338dca25883c4be386fa382fc8f833c8fb9e3a8c64f105ed4a9619919c533e05",
+      "parse_status": "parsed",
+      "symbols": 18,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "src/flask/sansio/scaffold.py",
+      "commit_sha": "d8eaaba824655046958d1a97f11780de460c3271",
+      "source_id": "SourceDocument:53675277cd31269f2fb2e889faa22e8192e7f4c5e6a63538d99ab8c355ef390c",
+      "parse_status": "parsed",
+      "symbols": 5,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    },
+    {
+      "path": "tests/test_basic.py",
+      "commit_sha": "d8eaaba824655046958d1a97f11780de460c3271",
+      "source_id": "SourceDocument:35a01881dec14bc04ca8b33429efe91d902c5db2564b2ebf811bcff3deb35978",
+      "parse_status": "parsed",
+      "symbols": 90,
+      "text_hash_valid": true,
+      "source_locator_valid": true,
+      "ok": true
+    }
+  ],
+  "limitations": [
+    "Static AST imports are not runtime call graphs or target execution.",
+    "Release reachability remains unknown for 12 PR/tag pairs because the bounded depth-64 git object cache is shallow; no negative ReachableIn edge was invented.",
+    "181 internal import targets and 374 external/unresolved imports were not in the 24-file snapshot budget and are retained as gaps.",
+    "The architecture question verifies traceable source evidence and claims; it is not an independent semantic accuracy benchmark."
+  ],
+  "passed": true
+}

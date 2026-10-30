@@ -76,7 +76,11 @@ python -m ruff check historykg/code tests/test_code.py
 本地 git fixture 覆盖修改、删除、改名、语法失败、普通与相对 import、缺失与读取失败、
 Unicode 偏移、同提交不同 tag、可达、共享预算、缓存重放与冻结输入拒改。
 测试还实际调用 P1 的 merge_sources、build_subjects、validate_dataset 验证下游消费。
-平台与运行结果见 P3 handoff；尚未执行的 Flask URL 及 Windows 实机验证不计通过。
+默认真实 Flask URL job已完成本阶段的平台联调：4 个提交、24 个文件×SHA、3 个 Release、
+25 条 Imports、8 条 Touches、8 条 ChangesTo、3 条 HasRelease 和 104 条证据。
+全数据集 CLI 校验、94 个来源哈希、104 条证据区间、24 个文件和 44 条关系均通过复核。
+深度 64 浅历史造成的 12 个可达性 unknown 与未采 import 目标继续保留为 gaps。
+P3 的 Windows 兼容由 P1 跨平台 CI 单独记录；本模块仍不执行目标仓库代码。
 
 方法依据：[Git diff-tree](https://git-scm.com/docs/git-diff-tree)、
 [Python 3.11 AST](https://docs.python.org/3.11/library/ast.html)、
