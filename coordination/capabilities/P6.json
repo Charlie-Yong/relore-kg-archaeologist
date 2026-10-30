@@ -1,0 +1,19 @@
+{
+  "can_network": true,
+  "can_read": true,
+  "can_run": true,
+  "can_write": true,
+  "checked_at": "2026-10-30T05:27:39.077676+00:00",
+  "git": true,
+  "git_push": true,
+  "github_merge": null,
+  "github_pr": true,
+  "github_token_read": null,
+  "graph_access": true,
+  "model_access": true,
+  "note": "macOS actual run with the shared Python 3.11 environment and explicit local PYTHONPATH. Git push and PR7 creation succeeded. Neo4j snapshot accessible. Private tests remain ignored. Windows not yet verified.",
+  "os": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.11.15",
+  "role": "P6",
+  "shell": "zsh / exec"
+}
