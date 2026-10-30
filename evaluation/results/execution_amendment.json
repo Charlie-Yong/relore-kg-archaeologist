@@ -1,0 +1,54 @@
+{
+  "answers": {
+    "expected": 48,
+    "status_counts": {
+      "empty": 15,
+      "error": 1,
+      "ok": 32
+    }
+  },
+  "auth_failure_batch": {
+    "http_status": 401,
+    "positions": 24,
+    "records_retained": true,
+    "usage_tokens": 0
+  },
+  "budget_snapshot": {
+    "accounted_cny": 8.373512,
+    "approved_cny": 10.0,
+    "charged_upper_cny": 8.373512,
+    "effective_cap_cny": 9.84,
+    "known_usage_cny": 6.679102,
+    "remaining_cny": 1.466488,
+    "states": {
+      "settled": {
+        "attempts": 328,
+        "charged_micro_cny": 6679102
+      },
+      "uncertain": {
+        "attempts": 25,
+        "charged_micro_cny": 1694410
+      }
+    },
+    "unknown_upper_cny": 1.69441
+  },
+  "created_at": "2026-10-30T06:32:13.115116+00:00",
+  "judgments": {
+    "expected": 24,
+    "positions": 24,
+    "status_counts": {
+      "ok": 24
+    }
+  },
+  "limitations": [
+    "Provider balance is not a ledger replacement; the ledger keeps conservative reservations for transport failures.",
+    "The retry changed only the request-version identifier, not the judging prompt text.",
+    "Private questions, references, claims and raw judge responses remain under evaluation/private_test."
+  ],
+  "provider_balance_cny_at_validation": 3.21,
+  "qa_code_sha256": "140e269586cc79e4ec0955420535c6fe0ec20c798d5b12c2053f0b8c65c158e8",
+  "qa_prompt_sha256": "a316f13dacb37bec4d56369004e589a2d7f1172dfd9dfb16578e47643fafafe9",
+  "qa_prompt_version": "p6_blind_qa_judge_v1_20261030_auth_retry",
+  "reason": "The first QA-judge request batch authenticated with a stale local token and returned HTTP 401 before model inference. The same unchanged judging prompt was reissued under a new request-version identifier after credential validation.",
+  "statistics_code_sha256": "d6f2f0ddd2d6fd539f023e242a47e43a711648626272985e534fd3f69b0de51e"
+}
