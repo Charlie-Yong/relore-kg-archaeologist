@@ -52,4 +52,6 @@ if (-not $healthy) {
     Get-Content (Join-Path $logs 'neo4j.stderr.log') -Tail 80
     throw 'Neo4j did not become healthy'
 }
+& python -c "from neo4j import GraphDatabase; d=GraphDatabase.driver('bolt://127.0.0.1:17687', auth=None); d.verify_connectivity(); d.close()"
+if ($LASTEXITCODE -ne 0) { throw 'Neo4j Bolt connectivity failed' }
 Write-Output 'Native Windows PostgreSQL 16.4 and Neo4j 5.26.0 are healthy.'
