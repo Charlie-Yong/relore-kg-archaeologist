@@ -6,7 +6,7 @@ import pytest
 from pydantic import ValidationError
 
 from historykg.extract import run_extract_stage
-from historykg.extract.stage import Candidate
+from historykg.extract.stage import Candidate, Quote
 from historykg.ids import entity_id
 from historykg.io import make_source, read_jsonl, write_jsonl
 
@@ -113,6 +113,17 @@ def test_explicit_reason_cannot_be_null_and_no_reason_is_preserved(tmp_path):
         Candidate.model_validate(candidate)
     candidate["explicit_reason_present"] = False
     assert Candidate.model_validate(candidate).rationale is None
+
+
+@pytest.mark.parametrize("blank", ["", " ", "\n\t"])
+def test_extraction_rejects_blank_statement_rationale_and_evidence(tmp_path, blank):
+    _, candidate = extraction_input(tmp_path)
+    with pytest.raises(ValidationError, match="statement"):
+        Candidate.model_validate({**candidate, "statement": blank})
+    with pytest.raises(ValidationError, match="rationale"):
+        Candidate.model_validate({**candidate, "rationale": blank})
+    with pytest.raises(ValidationError, match="quote"):
+        Quote.model_validate({"source_id": "s", "quote": blank})
 
 
 def test_blocked_extraction_is_not_actual_llm_success(tmp_path, monkeypatch):

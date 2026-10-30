@@ -4,18 +4,22 @@
 
 状态：done。
 
-本轮交付分支：feat/p4-final-results；预算结算、同语义上下文二分裁剪和正式结果一致性均已核验，
-P4专项71项无费测试、主仓125项测试及Ruff通过；P1的Windows CI同时覆盖全仓151项测试。
+本轮最终回答链审计分支待推送/接收复核。
+
+本轮交付分支：feat/p4-final-audit-p4，基于公开main `2af7ea9`。已完成空白claim/gap/
+证据quote拒收、相同source/start/end不同quote冲突检测、Developer/Function/Authored/
+Defines路径元数据兼容测试；公开冻结Flask包无模型prepare/render检查通过。
 
 最新记录：[模型、采集器及预算核算交接](../deliveries/P4/2026-10-30/handoff.md)；
+[最终回答与渲染审计](../deliveries/P4/2026-10-30/final_answer_render_audit.json)；
 [最终机器验证](../deliveries/P4/2026-10-30/formal_validation.json)；
 [历史费用核算摘要](../deliveries/P4/2026-10-30/budget_reconciliation.json)。
 前期贡献继续引用[原记录](../deliveries/P4/2026-10-27/handoff.md)。
 
-最终账本快照：总cap10元、有效ceiling9.84元，保守入账8.373512元，余1.466488元；
-其中已知用量6.679102元、失败/未知结果上界1.694410元。历史3.780790元快照只用于说明
-13:28对账时点，不覆盖后续正式调用。P6正式测试抽取F1为0.714，理由覆盖0.867；
-A/B事实覆盖为0.600/0.740，配对差0.157且bootstrap区间跨零，正确弃答率为N/A。
+本轮检查：定向32项、全仓162项无费测试通过，Ruff通过；冻结Flask包指纹与共享图库一致，
+37候选/40路径，最终11972码点、6片段、32裁剪gap，新模型请求0，未读取private_test。
+追加预算后的本地审计文件为`.local/execution/budget_extension_20261030T072516Z.json`：
+approved=20元、effective cap=19.84元，历史费用未清零，当前余11.466488元。
 
 剩余限制：P4不把模型银标称为人工金标；全池核验6/92失败，正确弃答率保持N/A；
-课程现场彩排仍由真实成员完成。
+实际冻结数据尚未包含新增类型，新增类型仅由合成兼容测试覆盖；路径标签仍由P2/UI负责。
