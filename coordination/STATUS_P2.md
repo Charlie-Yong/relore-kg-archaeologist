@@ -2,7 +2,9 @@
 
 角色：P2｜更新：2026-10-30｜规划v1.4.1 / 契约1.4.2（兼容1.4.1）。
 
-状态：ready_for_integration（实现、真实服务回归、PR #6096四跳验收均完成）。
+状态：done。
+
+验收状态：实现、真实服务回归、PR #6096四跳验收均完成，已合并集成分支。
 
 实际进度：公共契约新增Developer、Function及Authored/Merged/Defines；Neo4j
 `HGDeveloper/HGFunction`约束、幂等导入、dataset隔离、端点校验和查询路径已接图。
