@@ -105,7 +105,12 @@ characters为实际送入prompt的context数组规范JSON的Python len，包含�
 2026-10-30最小真实请求返回model=`deepseek-flash`，thinking明确disabled，82输入/5输出。
 官方文档映射版本为DeepSeek-V4.1-Flash-1017；响应仅返回别名，不能声称响应给出了完整版本。
 开发旧试跑主题6133的新抽取与回答记录见[P4交接](../../deliveries/P4/2026-10-30/handoff.md)。
-缓存重放不发新请求；修改提示后的实际效果单独用新真实请求验证。课程正式指标未运行。
+缓存重放不发新请求；修改提示后的实际效果单独用新真实请求验证。P6正式冻结实验已完成：
+测试集抽取Precision/Recall/F1为0.568/0.962/0.714，理由覆盖13/15；A/B事实覆盖为
+0.600/0.740，配对差0.157，但bootstrap区间[-0.122,0.457]跨零。共享账本保守入账
+8.373512元，有效上限9.84元，余1.466488元。逐项分母、限制和复算入口见
+[正式汇总](../../evaluation/results/formal_summary.json)与
+[P4最终验证](../../deliveries/P4/2026-10-30/formal_validation.json)。
 
 核对的原始文档（2026-10-30）：
 
