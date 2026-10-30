@@ -133,9 +133,9 @@ P5调用P2时传pipeline.query_config(pipeline.load_config(...))，与CLI和pipe
 
 ## Windows、最新主线与候选包复核（2026-10-30）
 
-PR #4提交a238399的三项远端检查均已成功。Windows run
-41009562544（job 123912123544）在windows-2022上安装锁依赖并启动原生
-PostgreSQL 16.4和Neo4j 5.26.0；上传JUnit共138 tests、0 failures、0 errors、
+PR #4当前提交e107439的三项远端检查均已成功。Windows run
+41014535324（job 123927748027）在windows-2022上安装锁依赖并启动原生
+PostgreSQL 16.4和Neo4j 5.26.0；上传JUnit共150 tests、0 failures、0 errors、
 0 skipped。上传记录中toy_v1与Flask冻结包均首次加载ready，Flask重复加载幂等，
 369来源、40完整单元、133实体、183关系、333证据，指纹
 5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe，

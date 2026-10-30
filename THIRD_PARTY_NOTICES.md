@@ -21,9 +21,9 @@
 ## Flask frozen course sources
 
 - Original project: Pallets, https://github.com/pallets/flask .
-- Source code is BSD-3-Clause; the unmodified license is included at
-  [repro/licenses/Flask-LICENSE.txt](repro/licenses/Flask-LICENSE.txt), read from the
-  already collected architecture commit identified in the frozen P3 plan.
+- Source code is BSD-3-Clause; the unmodified license from commit
+  `548994ea0c61465574cbfdd636a894a692f54b94` is included at
+  [repro/licenses/Flask-LICENSE.txt](repro/licenses/Flask-LICENSE.txt).
 - The frozen course package preserves each source's original URL, author, time and hash.
   Discussion text remains attributable to its original authors; public visibility
   does not transfer ownership. Model-produced Decision records are distinguished

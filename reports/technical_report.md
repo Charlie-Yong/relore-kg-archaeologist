@@ -124,7 +124,7 @@ P6已发布全部61个生产预测的逐项评审及40单元的正式抽取汇�
 全池不足证据核验和下游A/B评分仍由P6执行，相关指标暂未发布；必须在48份答案及全部claims评审齐全后从公开原表重算。第二库、跨源实答和架构实答也分别要求真实运行记录，未获得记录的条目保持待验收。
 
 Windows验证使用GitHub托管windows-2022环境安装锁定Python依赖，并启动原生PostgreSQL16.4及Neo4j5.26.0，重建合成fixture和公开Flask冻结包。公开平台验证摘要
-`deliveries/P1/2026-10-30/platform_validation.json`所对应run的138项JUnit测试无失败、无跳过，Flask冻结包首次加载与幂等重复加载均ready，数据集指纹保持
+`deliveries/P1/2026-10-30/platform_validation.json`所对应run的150项JUnit测试无失败、无跳过，Flask冻结包首次加载与幂等重复加载均ready，数据集指纹保持
 `5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe`，新增模型请求为0。macOS最新主线全量150项通过。该流程不配置模型密钥，不是Windows在线抽取或同学本机实测，缓存与重放均显式标记。
 
 ## 6 原型系统与使用展示

@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-30T14:29:49+08:00",
+  "checked_at": "2026-10-30T14:37:17+08:00",
   "scope": "engineering validation only; no new model requests",
   "macos_local": {
     "application_base_commit": "c2aa0aa1deb1dbbe978b99f983c49fdeb25ac226",
@@ -15,22 +15,22 @@
   },
   "windows_ci": {
     "repository": "Charlie-Yong/relore-kg-archaeologist",
-    "head_sha": "a23839934de365177156481b93e0fa60269430f8",
-    "workflow_run_id": 41009562544,
-    "job_id": 123912123544,
-    "workflow_url": "https://github.com/Charlie-Yong/relore-kg-archaeologist/actions/runs/41009562544",
+    "head_sha": "e107439485a6d59f0baf5dde70445a13509a8a10",
+    "workflow_run_id": 41014535324,
+    "job_id": 123927748027,
+    "workflow_url": "https://github.com/Charlie-Yong/relore-kg-archaeologist/actions/runs/41014535324",
     "runner": "windows-2022",
     "conclusion": "success",
     "junit": {
-      "tests": 138,
+      "tests": 150,
       "failures": 0,
       "errors": 0,
       "skipped": 0,
-      "duration_seconds": 198.892
+      "duration_seconds": 188.645
     },
     "artifact": {
       "name": "windows-verification",
-      "artifact_id": 12957162389,
+      "artifact_id": 12959237188,
       "expired": false,
       "contains": [
         "flask.json",
