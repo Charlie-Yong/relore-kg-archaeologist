@@ -51,5 +51,21 @@
     "common rendering performance fix pending; any equivalent owner fix will be recorded before answer runs"
   ],
   "test_question_hash": "8ee093e72075edcacb8120ed7c6d2eb4e8ca7c8bcadc6dbeb0052f6bd82633c5",
-  "all_question_hash": "d12bfc856698e609b8d8e9e34eab2737b8e5cdf0df8246584f92517073a5ecb8"
+  "all_question_hash": "d12bfc856698e609b8d8e9e34eab2737b8e5cdf0df8246584f92517073a5ecb8",
+  "pre_execution_amendment": {
+    "reason": "before any formal scoring or QA: owner-equivalent renderer binary search, reconciled pricing ledger, complete reference excerpts for QA judging, and interrupted-cohort N/A aggregation",
+    "clean_owner_commit": "90668621fe457be8fe6700eb2d36d647439312a0",
+    "current_code_sha256": {
+      "historykg/evaluation/reference.py": "ee2f6d836757ab0e8d32ccf92ad532d713c316405beb0f3e1f8ce0bfc90ecc60",
+      "historykg/evaluation/extraction.py": "64cde46516e55086087c26c1a57220a2c9ac7aed4e52398b0301934174c426d1",
+      "historykg/evaluation/qa.py": "e8b8d8801ba40369ba5c112ed08e5d2d5b3d0ae6224d4cd045f9b482b527425a",
+      "historykg/evaluation/pool_check.py": "c3dca3809b5ca06fc777e94aeb81d5c3b71e00b65adab01166bd945f2cfbb740",
+      "historykg/evaluation/qa_run.py": "54e453c2aba46eeb2e651929203508be5a94466793796a1ba7bed4d6ac9cb09c",
+      "historykg/evaluation/metrics.py": "7f74cf3dcee7e3bfeb793234a7be67d4adde359b9736fb89ac080a064dd5e3b2",
+      "historykg/evaluation/statistics.py": "d6f2f0ddd2d6fd539f023e242a47e43a711648626272985e534fd3f69b0de51e",
+      "historykg/query/service.py": "9924e716e16672cb68c9da77e16959ad78a09e1ae217f61d7d08f9f02970995e",
+      "historykg/query/retrieval.py": "5853f51a5ec0ce3faa544b567e95ea363b3702ccb9c5075669e44e02f6e7cfd2",
+      "historykg/llm/answer.py": "0c689c2bd8c0717748b8cdddb17727b58b5353a9f0328043318b631e344c2c7b"
+    }
+  }
 }
