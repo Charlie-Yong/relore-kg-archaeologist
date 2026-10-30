@@ -10,7 +10,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from reportlab.platypus import KeepTogether, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 ROOT = Path(__file__).resolve().parents[1]
 pdfmetrics.registerFont(TTFont(
@@ -59,7 +59,7 @@ def page(canvas, doc):
     canvas.drawString(56, 802, "开源项目历史知识图谱 · Flask")
     canvas.drawRightString(539, 802, "技术报告 / 期末报告候选 2026.10.30")
     canvas.line(56, 45, 539, 45)
-    canvas.drawString(56, 31, "正式抽取与 A/B 结果；全池核验 86/92，正确弃答率 N/A")
+    canvas.drawString(56, 31, "正式抽取与 A/B 结果；全池 92/92，正确弃答率 N/A（分母 0）")
     canvas.drawRightString(539, 31, str(doc.page))
     canvas.restoreState()
 
@@ -111,7 +111,7 @@ def markdown_table(block):
         ("TOPPADDING", (0, 0), (-1, -1), 6),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
     ]))
-    return [table, Spacer(1, 10)]
+    return [KeepTogether([table, Spacer(1, 10)])]
 
 
 def main():

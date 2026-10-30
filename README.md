@@ -8,9 +8,9 @@
 
 本仓库已按用户授权公开，规划可直接阅读；提交和管理仍按实际授权。密钥、私有测试参考和个人材料不在公开仓库中保存。
 
-**当前交付（2026-10-30）：URL自动流水线、真实LLM抽取、Neo4j与同源检索、统一问答接口、Streamlit原型及正式实验汇总已接通。** 默认Flask URL作业已完成全部六阶段并发布ready，冻结369来源、40个完整讨论单元和24个源码快照，产出133个业务实体、183条关系、333份证据，其中61个Decision已包含在实体总数中。40个生产抽取run共42次实际尝试，含重试；旧manifest中P3阶段model_requests=0不代表全流程零调用，见[事后版本与用量核对](deliveries/P1/2026-10-30/production_provenance.json)。30个测试线程的抽取P/R/F1为0.568/0.962/0.714；24道题保存48个A/B答案并由24次匿名评审覆盖，测试事实覆盖A/B为0.600/0.740，配对差0.157但95%描述性bootstrap区间跨零；全池核验86/92，正确弃答率N/A。第二小库尚无公开完成记录，不作完成宣称。成员姓名、学号和互评保留为本人填写项。
+**当前交付（2026-10-30）：URL自动流水线、真实LLM抽取、Neo4j与同源检索、统一问答接口、Streamlit原型及正式实验汇总已接通。** 默认Flask URL作业已完成全部六阶段并发布ready，冻结369来源、40个完整讨论单元和24个源码快照，产出133个业务实体、183条关系、333份证据，其中61个Decision已包含在实体总数中。P3只读增量分片另生成18 Developer、384 Function、20 Authored、4 Merged、384 Defines及508条证据，并核对PR #6096到`flask.testing._get_werkzeug_version`的固定链。40个生产抽取run共42次实际尝试，含重试；30个测试线程的抽取P/R/F1为0.568/0.962/0.714。24道题保存48个A/B答案并由24次匿名评审覆盖，测试事实覆盖A/B为0.600/0.740，配对差0.157但95%描述性bootstrap区间跨零。全池首轮6个失败位置经一次格式恢复重试后为92/92，6道候选均完成两遍核验；确认证据不足0，正确弃答率N/A仅因合格分母0。第二仓库`pallets/itsdangerous`以同一入口生成347来源、30完整讨论、17文件快照、82实体、78关系、180证据，依赖查询返回50路径、25证据、5 claims且出处/SHA校验通过；job因真实采集缺口保持partial。最终共享账本保守累计9.465795元，approved=20、effective cap=19.84，余10.374205元。成员姓名、学号和互评保留为“待本人补充”。
 
-公共接口见[流水线与CLI](docs/public_interfaces.md)、[图与查询](docs/graph_query.md)、[模型与证据](docs/p4/models.md)；[公开冻结重建包](repro/README.md)可无网络回放来源并重建图和索引，不需要本组密钥。原型入口为`app/main.py`。[技术报告正文](reports/technical_report.md)为期末报告候选，正式PDF见`output/pdf/historykg_technical_report.pdf`。打包工具支持`--package-status final_candidate`；只有最终PPT存在且由待打包提交跟踪时才允许`final`，并继续排除私有测试、凭据、个人配置和完整clone。Windows真实验证及限制以[重建记录](repro/README.md)和对应CI结果为准，不把安装说明当作实测。
+公共接口见[流水线与CLI](docs/public_interfaces.md)、[图与查询](docs/graph_query.md)、[模型与证据](docs/p4/models.md)；[公开冻结重建包](repro/README.md)可无网络回放来源并重建图和索引，不需要本组密钥。原型入口为`app/main.py`。期末汇报使用`demo/final/期末汇报_20261030最终版.pptx`，共10页；期中五页版只作历史阶段材料。[技术报告正文](reports/technical_report.md)为期末统稿，正式PDF见`output/pdf/historykg_technical_report.pdf`。打包工具支持`--package-status final_candidate`；只有最终PPT存在且由待打包提交跟踪时才允许`final`，并继续排除私有测试、凭据、个人配置和完整clone。Windows真实验证及限制以[重建记录](repro/README.md)和对应CI结果为准，不把安装说明当作实测。
 
 **已完成的前期工作归属P4：** 项目起初调研、总体方案起草、多轮架构迭代、现有全部规划与规划协作框架、独立原型和期初小规模真实试跑，均由P4独立负责完成，计入其累计贡献。详见[P4前期工作与贡献记录](deliveries/P4/2026-10-27/handoff.md)，后续报告分工与展示引用该记录。
 
