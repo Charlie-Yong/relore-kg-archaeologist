@@ -75,3 +75,31 @@ A/B结果，并明确bootstrap区间跨零和正确弃答率N/A。五页逐页�
 版式几何、字体、页数、标题及精确重导入检查均通过。完整机器可读记录见
 [formal_results_validation.json](../../deliveries/P5/2026-10-30/formal_results_validation.json)。
 具体版本、任务与待验收项统一记录于[P5 handoff](../../deliveries/P5/2026-10-30/handoff.md)。
+
+## 期末汇报可提交版
+
+基于最终冻结数据和P6公开汇总制作了10页期末汇报：
+
+- `demo/final/期末汇报_20261030最终版.pptx`
+- `demo/final/讲稿.md`
+- `demo/final/演示步骤.md`
+- `demo/final/材料说明.md`
+- `demo/final/previews/slide-01.png`至`slide-10.png`
+- `deliveries/P5/2026-10-30/final_presentation_validation.json`
+
+第4页按新增契约1.4.2加入Developer/Function与Authored/Merged/Defines，并明确真实冻结只读重放
+为18 Developer、384 Function、20 Authored、4 Merged、384 Defines。该结果是新数据版本重放，
+不是旧1.4.1生产图原地补写；`Authored/Merged`方向为`Developer→PullRequest`，
+`Defines`方向为`File→Function`，不生成`Developer→Commit`。
+第6页使用固定链
+`PR #6096（lkk7→davidism）→05e9c6b→src/flask/testing.py→flask.testing._get_werkzeug_version`，
+并说明`class`不冒充Function。
+
+第9页保留唯一`p6-status-update`文本区，当前86/92、48个答案状态与1个生产失败明确标为
+“2026-10-30 P6收尾前快照，不是永久终稿”。正确弃答率仍为`N/A`；A/B的B-A为0.157，
+95%描述性bootstrap区间`[-0.122,0.457]`跨零，不宣称显著收益。
+
+最终PPTX已经Artifact Tool精确重导入、10页逐页渲染和目视检查；包结构、几何、字体、
+3个原生表格、1个原生图表、10份notes、页数与逐页inspect记录通过，未发现裁切或重叠。
+这不等同于Microsoft PowerPoint/WPS原生打开检查，也不替代P6收尾、Windows实机、
+成员姓名学号填写和正式课堂彩排。

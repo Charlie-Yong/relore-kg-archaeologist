@@ -19,6 +19,10 @@
 
 真实闭环节选为一个源码职责问题：同一版本`src/flask/testing.py`中的`FlaskClient.session_transaction`为何使用临时请求上下文，以及它如何处理会话与Cookie。页面返回6条claims，证据32至37逐条对应冻结源码；每条claim可跳到相应原文，证据组件同时显示Unicode位置、来源编号、原始链接和冻结数据版本。首次保存的真实重放包保留原查询运行ID、模型运行ID、响应哈希与保存时间；另有`empty`响应原样保留，不把证据不足改写为成功或错误。
 
+P3在P2新增契约1.4.2上完成了Developer/Function增量。新增实体和关系只来自原Flask作业已冻结的PR API JSON与24个文件×SHA源码：PR顶层`user`生成`Authored: Developer→PullRequest`，`merged_by`生成`Merged: Developer→PullRequest`，顶层函数AST生成`Defines: File→Function`。真实只读重放得到18 Developer、384 Function、20 Authored、4 Merged、384 Defines；PR→Commit仍沿用P1的`MergedAs`，没有生成Developer→Commit，也未从commit author推断PR作者。该结果是新数据版本重放，不是向旧1.4.1生产图原地补写。固定链
+`PR #6096（lkk7→davidism）→05e9c6b→src/flask/testing.py→flask.testing._get_werkzeug_version`
+的Authored/Merged、Defines证据和全部508条新增证据区间已核对；`FlaskClient`是ClassDef，不冒充Function。
+
 资料覆盖受自动profile限制，外部依赖、未采文件和版本可达性等缺口继续展示。
 正式实验在30个测试线程上得到抽取Precision/Recall/F1为0.568/0.962/0.714，
 参考理由覆盖13/15=0.867。20道测试题的A/B事实覆盖分别为0.600和0.740，
