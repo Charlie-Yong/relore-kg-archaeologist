@@ -1,5 +1,6 @@
 {
   "validated_at": "2026-10-30T14:32:00+08:00",
+  "superseded_for_presentation_by": "formal_results_validation.json",
   "job_id": "b61942bf06b742e48860d064dffe6df2",
   "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
   "job_status": "ready",

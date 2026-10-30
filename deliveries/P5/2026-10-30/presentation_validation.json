@@ -1,5 +1,6 @@
 {
   "checked_at": "2026-10-30T07:50:00+08:00",
+  "superseded_by": "formal_results_validation.json",
   "output": "demo/midterm/期中汇报_20261111_20261030进度版.pptx",
   "sha256": "0d6f78f63e8f7767fc0959dc2190590b9dc10e907926d6984b601eccfffee375",
   "byte_count": 38347,
