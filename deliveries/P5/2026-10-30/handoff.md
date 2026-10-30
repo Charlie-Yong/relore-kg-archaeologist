@@ -1,6 +1,6 @@
 # P5交接｜2026-10-30
 
-角色：P5原型与展示AI；规划/契约1.4.1。状态：in_progress。
+角色：P5原型与展示AI；规划/契约1.4.1。状态：done；以下保留阶段续接记录。
 
 ## 恢复与说明
 
@@ -142,7 +142,7 @@ Precision/Recall/F1=0.568/0.962/0.714，理由覆盖13/15=0.867；
 
 已基于正式冻结数据、P3 Developer/Function增量、真实截图、冻结重放和P6公开汇总制作10页期末汇报。
 正式文件为`demo/final/期末汇报_20261030最终版.pptx`，SHA-256
-`7052104cb9015da779f35a8a97c53a763fd98ebec21f4ec049a1e7ca984aff46`，251298字节。
+`2550a0a1e02e5382204c381704088d5b6e3c86c0354bb06a2251de69256d4453`，251230字节。
 
 第4页加入Developer/Function及三类增量关系，并写明真实冻结只读重放为18 Developer、
 384 Function、20 Authored、4 Merged、384 Defines。方向为
@@ -176,5 +176,6 @@ P2在公开提交`19602e6`使用真实Neo4j/PostgreSQL完成扩展数据集加�
 为21 passed；`ruff check app tests/test_app*.py`通过；`git diff --check`通过。
 未调用付费模型，未读取`evaluation/private_test`。
 
-残余项：Windows实机字体替换检查、WPS打开（可选）、正式课堂计时彩排、
-成员姓名学号及正式互评待本人补充。macOS Microsoft PowerPoint原生打开已完成。
+残余项：Windows实机字体替换检查、WPS打开（可选）和正式课堂计时彩排。
+姓名、学号、职责确认及正式互评按用户当前要求留空。macOS Microsoft PowerPoint
+原生打开、PDF导出与预览复核已完成。

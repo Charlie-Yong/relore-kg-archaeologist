@@ -1,9 +1,9 @@
 {
   "schema_version": "course_final_acceptance_v1",
-  "generated_at": "2026-10-30T16:49:25+08:00",
+  "generated_at": "2026-10-30T16:56:30+08:00",
   "course_topic": "选题3：GitHub 项目考古学家——开源项目历史与演化分析系统",
   "integration_branch": "final/course-2026",
-  "overall_status": "machine_acceptance_passed_human_signoff_pending",
+  "overall_status": "machine_acceptance_passed_user_deferred_fields",
   "machine_complete": true,
   "course_submission_ready_after_human_fields": true,
   "requirements": [
@@ -38,7 +38,7 @@
     {
       "id": "six_person_roles",
       "requirement": "六人小组与明确分工",
-      "status": "pending_human_identity",
+      "status": "deferred_by_user",
       "evidence": [
         "coordination/STATUS_P1.md",
         "coordination/STATUS_P2.md",
@@ -48,7 +48,7 @@
         "coordination/STATUS_P6.md",
         "reports/technical_report.md"
       ],
-      "note": "六个角色产物和贡献均可核对；真实姓名、学号仍待本人填写。"
+      "note": "六个角色产物和贡献均可核对；姓名、学号与职责确认按用户当前要求留空。"
     },
     {
       "id": "ontology_schema_rules",
@@ -127,10 +127,11 @@
       ],
       "measurements": {
         "pages": 14,
-        "extracted_characters": 21493,
-        "han_characters": 11310,
+        "bytes": 357531,
+        "extracted_characters": 21178,
+        "han_characters": 11053,
         "extraction_method": "pypdf plain text, newline joined",
-        "sha256": "2e52f7bcc2b0010bb7bbdd0eed5be9fef114084a2409abd665a27b83f7cb4c8f",
+        "sha256": "dd300be2dcc8d4a32b571a57a36f23248e78195e5d02dd70137508bb2dada2f1",
         "required_sections": {
           "摘要": true,
           "引言": true,
@@ -156,6 +157,7 @@
       ],
       "measurements": {
         "slides": 10,
+        "bytes": 251230,
         "notes_all": true,
         "native_tables": 3,
         "native_charts": 1,
@@ -174,7 +176,7 @@
           "six_roles": true,
           "project_evolution_timeline": true
         },
-        "sha256": "7052104cb9015da779f35a8a97c53a763fd98ebec21f4ec049a1e7ca984aff46"
+        "sha256": "2550a0a1e02e5382204c381704088d5b6e3c86c0354bb06a2251de69256d4453"
       },
       "note": "Microsoft PowerPoint 16.113.4（macOS）原生打开、10页PDF导出、2倍渲染与总览复核通过；Windows字体替换仍待实机检查。"
     },
@@ -205,21 +207,21 @@
     {
       "id": "personnel_work_plan",
       "requirement": "人员与工作安排",
-      "status": "pending_human_identity",
+      "status": "deferred_by_user",
       "evidence": [
         "reports/technical_report.md",
         "coordination/STATUS_P1.md"
       ],
-      "note": "六角色职责与可核验贡献已完整；真实姓名、学号待本人填写。"
+      "note": "六角色职责与可核验贡献已完整；姓名、学号与职责确认按用户当前要求留空。"
     },
     {
       "id": "peer_evaluation",
       "requirement": "组内互评",
-      "status": "pending_human_input",
+      "status": "deferred_by_user",
       "evidence": [
         "reports/technical_report.md"
       ],
-      "note": "表格与口径已准备，真实评分和说明必须由成员本人填写，不能由AI代填。"
+      "note": "表格与口径已准备并按要求留空；不能由AI生成评分、说明或代签。"
     },
     {
       "id": "classroom_presentation",
@@ -259,14 +261,16 @@
     },
     "pdf_tables": 6
   },
+  "deferred_by_user": [
+    "姓名、学号、职责确认与组内互评按用户当前要求留空"
+  ],
   "human_remaining": [
-    "六位成员真实姓名、学号、职责确认",
-    "六人组内互评真实分数、事实依据和改进建议",
+    "姓名、学号、职责确认与组内互评：如课程提交要求补齐，再由成员本人填写",
     "Windows字体替换检查（WPS可选）",
     "正式课堂计时彩排与现场展示"
   ],
   "notes": [
-    "本矩阵证明机器可验证的课程要求已经完成，不把空白人员信息或模型银标冒充人工验收。",
-    "最终提交包应保持final_candidate，直至人员信息和课堂核验完成；不得伪造互评。"
+    "本矩阵证明机器可验证的课程要求已经完成；个人字段和互评按用户当前要求留空，不把空白或模型银标冒充人工验收。",
+    "最终提交包保持final_candidate，直至Windows字体与课堂现场项完成；不得伪造姓名、学号、职责确认或互评。"
   ]
 }

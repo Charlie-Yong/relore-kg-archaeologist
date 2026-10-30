@@ -1,12 +1,12 @@
 {
   "schemaVersion": "p5.final-presentation-validation.v3",
-  "checkedAt": "2026-10-30T16:40:00+08:00",
+  "checkedAt": "2026-10-30T16:56:30+08:00",
   "status": "pass_with_declared_residuals",
   "presentation": {
     "absolutePath": "/Users/Exile/工作与学习/课程学习/知识图谱/relore-kg-archaeologist/demo/final/期末汇报_20261030最终版.pptx",
     "repositoryPath": "demo/final/期末汇报_20261030最终版.pptx",
-    "sha256": "7052104cb9015da779f35a8a97c53a763fd98ebec21f4ec049a1e7ca984aff46",
-    "byteCount": 251298,
+    "sha256": "2550a0a1e02e5382204c381704088d5b6e3c86c0354bb06a2251de69256d4453",
+    "byteCount": 251230,
     "slideCount": 10,
     "slideSizeInches": [
       13.3333,
@@ -29,7 +29,7 @@
     "observedFontFamilies": [
       "Songti SC"
     ],
-    "checkedTextScriptCount": 3850,
+    "checkedTextScriptCount": 3961,
     "exactReimport": false,
     "reimportShaMatchesFinal": false,
     "everySlideRendered": true,
@@ -55,8 +55,8 @@
         "slide": 1,
         "title": "知识图谱课程 · 期末汇报",
         "preview": "demo/final/previews/slide-01.png",
-        "previewSha256": "49349a579116affb766a7ebe1e0b3da96a48d1ca3d50e00b164d9ceecdfe1a8b",
-        "previewBytes": 235896,
+        "previewSha256": "843fa344e357e1e1470caef64548dcaa344293c457752a08a3a0a772536c7148",
+        "previewBytes": 200878,
         "renderScale": 2,
         "renderedSizePx": [
           2560,
@@ -73,8 +73,8 @@
         "slide": 2,
         "title": "研究问题：代码说明结果，历史解释为什么",
         "preview": "demo/final/previews/slide-02.png",
-        "previewSha256": "606ab56c7a1258e6a3828d9050119c44bee9b3953adfc12621433c4477b6a690",
-        "previewBytes": 362942,
+        "previewSha256": "2ca89841865fccf41c7123d65757ce2cb893eeb34d46c448b0715e384e2cfe89",
+        "previewBytes": 320731,
         "renderScale": 2,
         "renderedSizePx": [
           2560,
@@ -91,8 +91,8 @@
         "slide": 3,
         "title": "自动URL流程：一次输入，六阶段可恢复",
         "preview": "demo/final/previews/slide-03.png",
-        "previewSha256": "8ed0efd75c603ad2e40232937e782c19080c02e8a72ad73cdbbb71899ee6d243",
-        "previewBytes": 350592,
+        "previewSha256": "bbcc88c8134bcc0b809a2d0b433b13acdb84ce5c8fc0920c76af93b90dbbaa63",
+        "previewBytes": 306862,
         "renderScale": 2,
         "renderedSizePx": [
           2560,
@@ -109,8 +109,8 @@
         "slide": 4,
         "title": "Schema与证据：关系必须能回到原文",
         "preview": "demo/final/previews/slide-04.png",
-        "previewSha256": "0e2ab8982927ea42e2e190097e8fe96b05e07d85e2fc3645e4aac36862c38660",
-        "previewBytes": 424472,
+        "previewSha256": "bbbdbf471bef212752e09f7dcfefbd532908330c032eb89c5a1e05edabed2e2a",
+        "previewBytes": 354338,
         "renderScale": 2,
         "renderedSizePx": [
           2560,
@@ -127,8 +127,8 @@
         "slide": 5,
         "title": "真实数据集范围：369条来源，40个完整讨论",
         "preview": "demo/final/previews/slide-05.png",
-        "previewSha256": "50fef33e35f752dc16b144c2f8b443c73a5f69721436fa5fcf22a7dff34f1bb7",
-        "previewBytes": 456832,
+        "previewSha256": "5e52840f2a0f4e378c3145149fc2f254b1b167bde27a00c673ca2c72132a9d2d",
+        "previewBytes": 400083,
         "renderScale": 2,
         "renderedSizePx": [
           2560,
@@ -163,8 +163,8 @@
         "slide": 7,
         "title": "原型问答：6条claims逐条对应冻结源码",
         "preview": "demo/final/previews/slide-07.png",
-        "previewSha256": "01c0ebdd4103fe126b45559c52d0e75a9de1972991214f930bd238c64ce99e42",
-        "previewBytes": 473031,
+        "previewSha256": "e1a6d12c6f80450f04da0eb080381a08c7c303c0726000a838e925a5b9237498",
+        "previewBytes": 401932,
         "renderScale": 2,
         "renderedSizePx": [
           2560,
@@ -181,8 +181,8 @@
         "slide": 8,
         "title": "抽取实验：测试集高召回，但精度只有 0.568",
         "preview": "demo/final/previews/slide-08.png",
-        "previewSha256": "df939f479f69428da8cc5fa335124c251078eb495c06913544964dee80fde12f",
-        "previewBytes": 243329,
+        "previewSha256": "1ad59cab96a13125263c9f0cc0828ba2a4e8d58ae0255cfd885b120b441be7c6",
+        "previewBytes": 212661,
         "renderScale": 2,
         "renderedSizePx": [
           2560,
@@ -199,15 +199,15 @@
         "slide": 9,
         "title": "A/B对照：事实覆盖+0.157，但区间跨零",
         "preview": "demo/final/previews/slide-09.png",
-        "previewSha256": "18a52915b88ff042b7c1508cb5f7e3c5ccb2f50e94319a47915b704bbdde6eda",
-        "previewBytes": 427794,
+        "previewSha256": "855df74c77ff2f383b8a18c9ee9824c535d696201ba82c6b4d52ede9ad4c8776",
+        "previewBytes": 358289,
         "renderScale": 2,
         "renderedSizePx": [
           2560,
           1440
         ],
         "notesEmbedded": true,
-        "notesCharacters": 1057,
+        "notesCharacters": 1066,
         "inspectRecordCount": 19,
         "elementsOutsideSlideBounds": 0,
         "visualInspection": "pass",
@@ -217,15 +217,15 @@
         "slide": 10,
         "title": "复现、贡献与结论",
         "preview": "demo/final/previews/slide-10.png",
-        "previewSha256": "85c2206d4594c5341b9ab376a9f77cc9b013a13ed5c2d7d4252683f032025fe0",
-        "previewBytes": 429571,
+        "previewSha256": "e1425be52ab5ef6b5dae96d20253f437df63a08fe1826bed4c86823ef4f33a98",
+        "previewBytes": 338394,
         "renderScale": 2,
         "renderedSizePx": [
           2560,
           1440
         ],
         "notesEmbedded": true,
-        "notesCharacters": 797,
+        "notesCharacters": 806,
         "inspectRecordCount": 21,
         "elementsOutsideSlideBounds": 0,
         "visualInspection": "pass",
@@ -256,9 +256,11 @@
       "slide9_second_repo_readiness": true,
       "slide9_dependency_answer": true,
       "slide9_budget": true,
-      "slide10_member_names_pending": true,
+      "slide10_member_fields_blank": true,
       "slide10_completed_work_removed_from_next_steps": true,
       "slide10_real_residuals": true,
+      "slide10_powerpoint_native_passed": true,
+      "slide9_powerpoint_native_not_residual": true,
       "slide9_p2_live_neo4j_validation": true,
       "slide10_p2_live_neo4j_validation": true,
       "neo4j_production_graph_version_boundary": true
@@ -268,7 +270,9 @@
       "old_pool_count": true,
       "old_incomplete_review": true,
       "old_not_final_label": true,
-      "old_neo4j_reconnect_residual": true
+      "old_neo4j_reconnect_residual": true,
+      "member_placeholder_text": true,
+      "outdated_powerpoint_native_residual": true
     },
     "inspectionSource": "Microsoft PowerPoint native open/export plus PPTX shape and notes inspection",
     "p3Increment": {
@@ -329,7 +333,9 @@
     },
     "memberInformation": {
       "sixRoleResponsibilitiesPresent": true,
-      "namesAndStudentIds": "待本人补充",
+      "namesAndStudentIds": "left_blank_by_user",
+      "responsibilityConfirmation": "left_blank_by_user",
+      "formalPeerEvaluation": "left_blank_by_user",
       "inventedMemberInformation": false
     }
   },
@@ -445,7 +451,7 @@
     "The itsdangerous job is partial with recorded collection gaps; it does not establish arbitrary-repository completeness.",
     "macOS Microsoft PowerPoint 16.113.4 native open/export passed; Windows font substitution and WPS remain pending.",
     "Formal classroom live timing and member rehearsal are pending.",
-    "Member names, student IDs, and formal peer review remain to be filled by the members.",
+    "Member names, student IDs, responsibility confirmation, and formal peer review are left blank at the user's request; they are not represented as completed.",
     "The current production graph remains 1.4.1; Developer/Function entities come from the real replayed data version, not an in-place production write."
   ],
   "p2LiveGraphValidation": {

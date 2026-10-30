@@ -14,4 +14,4 @@
 
 恢复动作：原job `b61942bf06b742e48860d064dffe6df2`已发布，禁止重新resume/采集/抽取；第二仓库作业`ebfd8c8dae5e4bcf998a79fef35de981`保持partial，不得为提高状态删除缺口或补造证据。最终只做文档、打包、演示与人工核验，不重跑已成功付费阶段。
 
-待人工补充：成员真实姓名、学号和组内互评；最终PPTX已并入最终集成分支并纳入待打包提交，macOS Microsoft PowerPoint原生打开已完成，但仍需完成Windows字体替换检查；课堂彩排由成员完成。P2已在真实Neo4j与PostgreSQL服务上完成扩展分片四跳验收并清理临时namespace/schema，生产图仍保持旧1.4.1版本。不得由AI填写人员身份或互评。
+个人字段：姓名、学号、职责确认和组内互评按用户当前要求留空，不得由AI填写或猜测。最终PPTX已并入最终集成分支并纳入待打包提交，macOS Microsoft PowerPoint原生打开、PDF导出与预览复核已完成；仍需完成Windows字体替换检查和课堂彩排。P2已在真实Neo4j与PostgreSQL服务上完成扩展分片四跳验收并清理临时namespace/schema，生产图仍保持旧1.4.1版本。
