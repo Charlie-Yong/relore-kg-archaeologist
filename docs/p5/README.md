@@ -95,11 +95,16 @@ A/B结果，并明确bootstrap区间跨零和正确弃答率N/A。五页逐页�
 `PR #6096（lkk7→davidism）→05e9c6b→src/flask/testing.py→flask.testing._get_werkzeug_version`，
 并说明`class`不冒充Function。
 
-第9页保留唯一`p6-status-update`文本区，当前86/92、48个答案状态与1个生产失败明确标为
-“2026-10-30 P6收尾前快照，不是永久终稿”。正确弃答率仍为`N/A`；A/B的B-A为0.157，
-95%描述性bootstrap区间`[-0.122,0.457]`跨零，不宣称显著收益。
+第9页唯一`p6-status-update`文本区采用`feat/p6-formal-results`提交`78eaa07`的公开最终结果：
+全池92/92，6道候选题均两遍完整核验，确认证据不足0；正确弃答率为`N/A`仅因合格分母为0。
+48个答案保持32 ok / 15 empty / 1 error。第二小库`pallets/itsdangerous`得到
+347来源、30讨论、82实体、78关系和180证据；作业为partial并保留记录缺口，
+但validate/graph/retrieval ready，依赖查询返回50路径、25证据、5 claims且出处全部通过。
+共享账本累计9.465795元，剩余10.374205元。A/B的B-A为0.157，95%描述性bootstrap区间
+`[-0.122,0.457]`跨零，仍不宣称显著收益。
 
 最终PPTX已经Artifact Tool精确重导入、10页逐页渲染和目视检查；包结构、几何、字体、
 3个原生表格、1个原生图表、10份notes、页数与逐页inspect记录通过，未发现裁切或重叠。
-这不等同于Microsoft PowerPoint/WPS原生打开检查，也不替代P6收尾、Windows实机、
-成员姓名学号填写和正式课堂彩排。
+这不等同于Microsoft PowerPoint/WPS原生打开检查，也不替代Windows实机、
+成员姓名学号填写和正式课堂彩排。最终P6审计时Neo4j现场重连不可用，
+保留既有真实图与查询结果作为验收证据，但不宣称当前服务可现场重问。

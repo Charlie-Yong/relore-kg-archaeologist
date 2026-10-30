@@ -128,7 +128,8 @@ Precision/Recall/F1=0.568/0.962/0.714，理由覆盖13/15=0.867；
 20道测试题A/B事实覆盖=0.600/0.740，证据组召回=0.636/0.691，
 无依据断言率=0.026/0.043。B-A覆盖差0.157，但配对胜负B胜5、A胜4、平6，
 95%描述性bootstrap区间[-0.122, 0.457]跨零，因此明确写为不宣称显著收益。
-全池核验86/92，正确弃答率保持N/A。
+该五页期中版本已由期末最终版取代；P6最终公开结果为全池92/92，
+正确弃答率N/A仅因合格分母为0。
 
 新版PPT经Artifact Tool精确重导入、5页原生可编辑对象、13.3333×7.5英寸、
 包完整性、几何、字体、标题适配与逐页渲染检查，finding/warning均为0。
@@ -141,7 +142,7 @@ Precision/Recall/F1=0.568/0.962/0.714，理由覆盖13/15=0.867；
 
 已基于正式冻结数据、P3 Developer/Function增量、真实截图、冻结重放和P6公开汇总制作10页期末汇报。
 正式文件为`demo/final/期末汇报_20261030最终版.pptx`，SHA-256
-`571752922e82827f58c88bcb323c3614bbc091e63ab03c32d38abfa1aa44f974`，249100字节。
+`ed766becdd55530d953d4fc645eb3aff8356a18095f028f2ab87a90bb7516fae`，249863字节。
 
 第4页加入Developer/Function及三类增量关系，并写明真实冻结只读重放为18 Developer、
 384 Function、20 Authored、4 Merged、384 Defines。方向为
@@ -151,11 +152,13 @@ Precision/Recall/F1=0.568/0.962/0.714，理由覆盖13/15=0.867；
 `PR #6096（lkk7→davidism）→05e9c6b→src/flask/testing.py→flask.testing._get_werkzeug_version`，
 并说明FlaskClient是ClassDef，不冒充Function。
 
-第9页正式指标保留B-A=+0.157、95%描述性bootstrap区间`[-0.122,0.457]`跨零、
-正确弃答率N/A。唯一可替换P6状态文本框名为`p6-status-update`，当前明确标注
-“2026-10-30 P6收尾前快照，不是永久终稿”：全池86/92、已确认证据不足0、
-无题目完成两遍完整确认，48个答案中32 ok / 15 empty / 1 error，并保留1个生产失败。
-P6收尾后只替换该状态区并同步本交接、讲稿、材料说明和验证JSON。
+第9页正式指标保留B-A=+0.157、95%描述性bootstrap区间`[-0.122,0.457]`跨零。
+唯一P6状态文本框名为`p6-status-update`，采用`feat/p6-formal-results`提交`78eaa07`
+的最终公开结果：全池92/92；6道候选题均两遍完整核验；确认证据不足0；
+正确弃答率N/A仅因分子和合格分母均为0。48个答案保持32 ok / 15 empty / 1 error。
+第二小库`pallets/itsdangerous`得到347来源、30讨论、82实体、78关系、180证据；
+job为partial并保留记录缺口，但validate/graph/retrieval ready。依赖查询返回
+50路径、25证据、5 claims，全部出处校验通过。预算累计9.465795元，剩余10.374205元。
 
 交付还包含`demo/final/讲稿.md`、`demo/final/演示步骤.md`、`demo/final/材料说明.md`及
 `demo/final/previews/slide-01.png`至`slide-10.png`。最终PPTX已由Artifact Tool精确重导入，
@@ -169,5 +172,5 @@ P6收尾后只替换该状态区并同步本交接、讲稿、材料说明和验
 为21 passed；`ruff check app tests/test_app*.py`通过；`git diff --check`通过。
 未调用付费模型，未读取`evaluation/private_test`。
 
-残余项：P6第二小库与6个失败位置重试待收尾；Microsoft PowerPoint/WPS原生打开、
+残余项：最终审计时Neo4j现场重连不可用；Microsoft PowerPoint/WPS原生打开、
 Windows实机字体检查、正式课堂计时彩排、成员姓名学号及正式互评待本人补充。

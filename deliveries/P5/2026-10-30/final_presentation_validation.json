@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "p5.final-presentation-validation.v1",
-  "checkedAt": "2026-10-30T15:47:27+08:00",
+  "schemaVersion": "p5.final-presentation-validation.v2",
+  "checkedAt": "2026-10-30T15:57:09+08:00",
   "status": "pass_with_declared_residuals",
   "presentation": {
     "absolutePath": "/Users/Exile/工作与学习/课程学习/知识图谱/relore-agents/p5/demo/final/期末汇报_20261030最终版.pptx",
     "repositoryPath": "demo/final/期末汇报_20261030最终版.pptx",
-    "sha256": "571752922e82827f58c88bcb323c3614bbc091e63ab03c32d38abfa1aa44f974",
-    "byteCount": 249100,
+    "sha256": "ed766becdd55530d953d4fc645eb3aff8356a18095f028f2ab87a90bb7516fae",
+    "byteCount": 249863,
     "slideCount": 10,
     "slideSizeInches": [
       13.3333,
@@ -29,7 +29,7 @@
     "observedFontFamilies": [
       "Songti SC"
     ],
-    "checkedTextScriptCount": 353,
+    "checkedTextScriptCount": 358,
     "exactReimport": true,
     "reimportShaMatchesFinal": true,
     "everySlideRendered": true,
@@ -37,11 +37,12 @@
     "everySlideInspectRecordNonEmpty": true,
     "allElementsWithinSlideBounds": true,
     "nativeFontRenderingVerified": false,
-    "nativePowerPointOpenVerified": false
+    "nativePowerPointOpenVerified": false,
+    "tempChartDirectoriesPackaged": false
   },
   "visualReview": {
     "performed": true,
-    "method": "Artifact Tool 2x per-slide PNG review plus layout geometry inspection",
+    "method": "Artifact Tool 2x per-slide PNG review plus final montage and layout geometry inspection",
     "allTenSlidesReviewed": true,
     "allTenSlidesPass": true,
     "clippingFound": false,
@@ -195,15 +196,15 @@
         "slide": 9,
         "title": "A/B对照：事实覆盖+0.157，但区间跨零",
         "preview": "demo/final/previews/slide-09.png",
-        "previewSha256": "d83e1180fbe4fffd04036f3d6fda6253a4be9354bfdfd5f3189577d3d2b67689",
-        "previewBytes": 364366,
+        "previewSha256": "26357cad45729e70916ef344d3261096bec4bdc698026b614e3855dad2b41036",
+        "previewBytes": 402843,
         "renderScale": 2,
         "renderedSizePx": [
           2560,
           1440
         ],
         "notesEmbedded": true,
-        "notesCharacters": 526,
+        "notesCharacters": 820,
         "inspectRecordCount": 19,
         "elementsOutsideSlideBounds": 0,
         "visualInspection": "pass",
@@ -213,15 +214,15 @@
         "slide": 10,
         "title": "复现、贡献与结论",
         "preview": "demo/final/previews/slide-10.png",
-        "previewSha256": "ada3c5612b3eac5f2324e2ae2dc402b9309c400f2b082df3dc87f74760a97b5e",
-        "previewBytes": 390637,
+        "previewSha256": "22586b5d5b55ba5890b7cbab665568b9eb0ceb560cb28bb4d47262c78459f874",
+        "previewBytes": 400983,
         "renderScale": 2,
         "renderedSizePx": [
           2560,
           1440
         ],
         "notesEmbedded": true,
-        "notesCharacters": 348,
+        "notesCharacters": 564,
         "inspectRecordCount": 21,
         "elementsOutsideSlideBounds": 0,
         "visualInspection": "pass",
@@ -243,13 +244,29 @@
       "slide6_author_merger_boundary": true,
       "slide9_b_minus_a": true,
       "slide9_ci_crosses_zero": true,
-      "slide9_correct_abstention_na": true,
-      "slide9_p6_snapshot_not_permanent": true,
-      "slide10_member_names_pending": true
+      "slide9_correct_abstention_na_zero_denominator": true,
+      "slide9_full_pool_92_of_92": true,
+      "slide9_six_questions_two_passes": true,
+      "slide9_confirmed_insufficient_zero": true,
+      "slide9_answer_status_retained": true,
+      "slide9_second_repo_counts": true,
+      "slide9_second_repo_readiness": true,
+      "slide9_dependency_answer": true,
+      "slide9_budget": true,
+      "slide10_member_names_pending": true,
+      "slide10_completed_work_removed_from_next_steps": true,
+      "slide10_real_residuals": true
     },
+    "obsoletePhrasesAbsent": {
+      "old_snapshot_label": true,
+      "old_pool_count": true,
+      "old_incomplete_review": true,
+      "old_not_final_label": true
+    },
+    "inspectionSource": "Artifact Tool exact reimport of the final PPTX",
     "p3Increment": {
       "sourceCommit": "b6f4582a26084e1322e2609ec017c96ce0d70e97",
-      "sourceArtifact": "deliveries/P3/2026-10-30/developer_function_validation.json",
+      "sourceArtifact": "P3 commit b6f4582a26084e1322e2609ec017c96ce0d70e97: deliveries/P3/2026-10-30/developer_function_validation.json",
       "interpretation": "new-contract read-only replay on a new data version; not an in-place update of the old production graph",
       "entities": {
         "Developer": 18,
@@ -300,34 +317,107 @@
         "A": 4,
         "ties": 6
       },
-      "correctAbstentionRate": "N/A"
+      "correctAbstentionRate": "N/A",
+      "correctAbstentionDenominator": 0
     },
     "memberInformation": {
       "sixRoleResponsibilitiesPresent": true,
       "namesAndStudentIds": "待本人补充",
       "inventedMemberInformation": false
-    },
-    "inspectionSource": "Artifact Tool exact reimport of the final PPTX"
+    }
   },
   "p6StatusUpdate": {
+    "sourceCommit": "78eaa072c0dc2ecaf422c82667959c307bbe5547",
+    "sourceBranch": "feat/p6-formal-results",
     "slide": 9,
     "shapeName": "p6-status-update",
-    "text": "截至 2026-10-30 的 P6 收尾前快照：全池 86/92；已确认证据不足 0；无题目完成两遍完整确认。\n48 个答案：32 ok / 15 empty / 1 error；1 个生产失败保留在队列；不是永久终稿。",
-    "snapshotDate": "2026-10-30",
-    "permanentFinal": false,
-    "quickUpdateRegionUnique": true,
-    "wholePoolSnapshot": {
-      "ok": 86,
+    "text": "全池 92/92；6 题均两遍完整核验；确认证据不足 0；正确弃答率 N/A（分母 0）。\n48 答案：32 ok / 15 empty / 1 error · itsdangerous：347来源/30讨论/82实体/78关系/180证据。\nitsdangerous 为 partial（保留记录缺口），但 validate/graph/retrieval ready；依赖查询 50路径/25证据/5 claims，出处全通过。\n预算累计 9.465795 / 剩余 10.374205。",
+    "uniqueRegion": true,
+    "externalReceiverSignoff": false,
+    "wholePool": {
+      "ok": 92,
       "expected": 92,
-      "confirmedInsufficient": 0
+      "complete": true,
+      "questionsAssessed": 6,
+      "questionsWithTwoCompletePasses": 6,
+      "confirmedInsufficient": 0,
+      "retryOk": 6,
+      "retryFailed": 0
+    },
+    "correctAbstention": {
+      "status": "N/A",
+      "numerator": 0,
+      "denominator": 0,
+      "reason": "All 92 pool positions completed twice, but zero questions were confirmed insufficient; a correct-abstention rate has no eligible denominator."
     },
     "answerSnapshot": {
       "ok": 32,
       "empty": 15,
-      "error": 1,
-      "productionFailuresRetained": 1
+      "error": 1
     },
-    "caveat": "P6 second small library and six failed-position retries may change this snapshot; replace only this status region and rerun validation."
+    "secondRepository": {
+      "repo": "pallets/itsdangerous",
+      "jobStatus": "partial",
+      "validationStatus": "ok",
+      "graphReady": true,
+      "retrievalReady": true,
+      "counts": {
+        "complete_units": 30,
+        "entities": 82,
+        "evidence": 180,
+        "file_snapshots": 17,
+        "partial_units": 0,
+        "relations": 78,
+        "source_units": 30,
+        "sources": 347,
+        "subjects": 48
+      },
+      "gapCounts": {
+        "explicit_reference_not_collected": 147,
+        "external_or_unresolved": 78,
+        "fetch_failed": 10,
+        "import_target_not_collected": 74,
+        "release_reachability_unknown": 60
+      },
+      "verifiedQuery": {
+        "kind": "dependencies",
+        "question": "Which modules does src/itsdangerous/timed.py import or depend on?",
+        "status": "ok",
+        "path_count": 50,
+        "evidence_count": 25,
+        "claim_count": 5,
+        "claim_evidence_ids_resolve": true,
+        "all_cited_quotes_match_frozen_source": true,
+        "source_sha256_recomputed": true,
+        "example_source_url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/src/itsdangerous/timed.py"
+      }
+    },
+    "budget": {
+      "ledger_scope": "shared main deployment ledger for the whole project; not a provider account balance",
+      "approved_cny": 20,
+      "effective_cap_cny": 19.84,
+      "prior_snapshot_cny": 8.373512,
+      "new_charged_cny": 1.092283,
+      "accounted_conservative_cny": 9.465795,
+      "known_usage_cny": 7.771385,
+      "unknown_upper_cny": 1.69441,
+      "remaining_cny": 10.374205,
+      "attempts": 387,
+      "settled_attempts": 362,
+      "uncertain_attempts": 25,
+      "new_charge_breakdown": {
+        "second_repository_cny": 0.589461,
+        "whole_pool_retry_cny": 0.502822
+      },
+      "snapshot_checked_at": "2026-10-30T07:40:03+00:00",
+      "cost_rule": "The ledger charges settled usage and retains peak-price upper bounds for uncertain attempts; no additional ledger or budget reset was created."
+    }
+  },
+  "governance": {
+    "noModelCallsThisUpdate": true,
+    "privateTestRead": false,
+    "publicP6FilesOnly": true,
+    "tempChartDirectoriesPackaged": false
   },
   "regression": {
     "uiAndReplayTests": {
@@ -344,11 +434,12 @@
     }
   },
   "residualLimits": [
-    "P6 final whole-pool and second-small-library status is not yet permanent; slide 9 status textbox remains replaceable.",
+    "Correct-abstention rate is N/A because the numerator and eligible denominator are both zero after complete review; this is not an incomplete-review result.",
+    "The itsdangerous job is partial with recorded collection gaps; it does not establish arbitrary-repository completeness.",
+    "Neo4j could not be reconnected live during the final audit; saved real graph/query evidence is used instead.",
     "Microsoft PowerPoint/WPS native-open verification is not claimed.",
     "Windows real-machine font substitution check is pending.",
     "Formal classroom live timing and member rehearsal are pending.",
-    "Member names, student IDs, and formal peer review remain to be filled by the members.",
-    "Chart and package checks are structural/render checks, not native PowerPoint execution."
+    "Member names, student IDs, and formal peer review remain to be filled by the members."
   ]
 }
