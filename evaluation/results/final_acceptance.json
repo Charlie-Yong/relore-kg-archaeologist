@@ -1,0 +1,607 @@
+{
+  "schema_version": "p6_final_acceptance_v1",
+  "generated_at": "2026-10-30T07:46:30Z",
+  "role": "P6",
+  "planning_version": "v1.4.1",
+  "contract_version": "1.4.1",
+  "branch": "feat/p6-formal-results",
+  "overall_status": "ready_for_integration",
+  "verification_scope": "P6-owned executable checks and the course/contract items observable from their public outputs; this is not external receiver sign-off or a claim that the group-wide report, presentation and cross-platform package is complete.",
+  "status_legend": {
+    "pass": "The named requirement was checked against saved public evidence and passed.",
+    "pass_with_recorded_gaps": "The requirement passed, while named source, service or coverage gaps remain visible and are not represented as complete.",
+    "not_verified": "The item belongs to another owner, requires an integrated team deliverable, or has not been executed in the required environment.",
+    "blocked_external": "A real external condition prevented the check; no substitute result is claimed.",
+    "n/a_zero_denominator": "The metric is not applicable because its eligible denominator is zero after complete verification."
+  },
+  "primary_experiment": {
+    "repo": "pallets/flask",
+    "job_id": "b61942bf06b742e48860d064dffe6df2",
+    "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+    "profile_version": "course_small_v1",
+    "job_status": "ready",
+    "job_stage": "index_graph",
+    "source_pool_hash": "09ebc011e84b1717218fa60268c3b73b78b976e4def695ddae88d2e75faf7d45",
+    "counts": {
+      "sources": 369,
+      "source_units": 40,
+      "complete_units": 40,
+      "file_snapshots": 24,
+      "entities": 133,
+      "relations": 183,
+      "evidence": 333
+    },
+    "graph_ready": true,
+    "retrieval_ready": true,
+    "actual_llm_extraction": true,
+    "extraction_test": {
+      "tp": 25,
+      "fp": 19,
+      "fn": 1,
+      "precision": 0.5681818181818182,
+      "recall": 0.9615384615384616,
+      "f1": 0.7142857142857143,
+      "rationale_coverage": 0.8666666666666667
+    },
+    "qa_test": {
+      "answers": 48,
+      "answer_status_counts": {
+        "ok": 32,
+        "empty": 15,
+        "error": 1
+      },
+      "anonymous_claim_and_fact_judgments": 24,
+      "A": {
+        "fact_coverage": 0.6,
+        "evidence_group_recall": 0.6363636363636364,
+        "unsupported_rate": 0.02564102564102564
+      },
+      "B": {
+        "fact_coverage": 0.74,
+        "evidence_group_recall": 0.6909090909090909,
+        "unsupported_rate": 0.0425531914893617
+      },
+      "paired_fact_coverage_difference_B_minus_A": 0.15714285714285714,
+      "paired_bootstrap95": [
+        -0.12222222222222225,
+        0.45714285714285713
+      ],
+      "interpretation": "Descriptive association in one frozen Flask cohort; the interval crosses zero and does not establish a general causal gain."
+    }
+  },
+  "whole_pool": {
+    "expected_positions": 92,
+    "positions_ok": 92,
+    "original_status_counts": {
+      "ok": 86,
+      "failed": 6
+    },
+    "retry": {
+      "attempted": 6,
+      "ok": 6,
+      "failed": 0,
+      "blocked": 0,
+      "charged_cny": 0.502822,
+      "version": "p6_whole_pool_v1_20261030_retry1",
+      "positions": [
+        {
+          "pass": 0,
+          "batch": 2
+        },
+        {
+          "pass": 0,
+          "batch": 11
+        },
+        {
+          "pass": 0,
+          "batch": 21
+        },
+        {
+          "pass": 1,
+          "batch": 11
+        },
+        {
+          "pass": 1,
+          "batch": 12
+        },
+        {
+          "pass": 1,
+          "batch": 27
+        }
+      ]
+    },
+    "questions_assessed": 6,
+    "questions_with_two_complete_passes": 6,
+    "confirmed_insufficient": 0,
+    "correct_abstention": {
+      "status": "n/a_zero_denominator",
+      "numerator": 0,
+      "denominator": 0,
+      "value": null,
+      "reason": "All 92 positions completed twice, but no question was confirmed insufficient after whole-pool review; empty system answers are not relabeled as correct abstentions."
+    }
+  },
+  "second_repository": {
+    "repo": "pallets/itsdangerous",
+    "repo_url": "https://github.com/pallets/itsdangerous",
+    "job_id": "ebfd8c8dae5e4bcf998a79fef35de981",
+    "dataset_id": "dataset:d817eee2ee7ff9763526b36aeb4d918493d0e6902633771deffca4bb33d69888",
+    "entrypoint": "python -m historykg.cli build <repo_url>",
+    "profile_version": "course_small_v1",
+    "profile_sha256": "c553085aa5164c800be3c06b82b591f0ff53d55b913301a74aaa351ba37d3366",
+    "source_pool_hash": "60be0729a0aecf73795aba43075bce82e85a49f0a3cb598a764997915d007afd",
+    "graph_fingerprint": "12c370e99369a7bc2b1ea54c749fa464673c04b43515344f034404359aa2e682",
+    "job_status": "partial",
+    "manual_threads_or_shas": false,
+    "source_or_graph_edits_after_generation": false,
+    "validation_status": "ok",
+    "graph_ready": true,
+    "retrieval_ready": true,
+    "counts": {
+      "sources": 347,
+      "complete_units": 30,
+      "entities": 82,
+      "relations": 78,
+      "evidence": 180
+    },
+    "query_status_counts": {
+      "ok": 1,
+      "empty": 1
+    },
+    "verified_query": {
+      "kind": "dependencies",
+      "question": "Which modules does src/itsdangerous/timed.py import or depend on?",
+      "status": "ok",
+      "path_count": 50,
+      "evidence_count": 25,
+      "claim_count": 5,
+      "claim_evidence_ids_resolve": true,
+      "all_cited_quotes_match_frozen_source": true,
+      "source_sha256_recomputed": true,
+      "example_source_url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/src/itsdangerous/timed.py"
+    },
+    "gap_counts": {
+      "fetch_failed": 10,
+      "explicit_reference_not_collected": 147,
+      "external_or_unresolved": 78,
+      "import_target_not_collected": 74,
+      "release_reachability_unknown": 60
+    },
+    "total_cost_cny": 0.589461,
+    "interpretation": "A bounded no-code-change migration check with one source-verifiable answer; the partial collection state and gaps prevent claiming complete or universally portable extraction."
+  },
+  "budget": {
+    "ledger_scope": "shared main deployment ledger for the whole project; not a provider account balance",
+    "approved_cny": 20.0,
+    "effective_cap_cny": 19.84,
+    "prior_snapshot_cny": 8.373512,
+    "new_charged_cny": 1.092283,
+    "accounted_conservative_cny": 9.465795,
+    "known_usage_cny": 7.771385,
+    "unknown_upper_cny": 1.69441,
+    "remaining_cny": 10.374205,
+    "attempts": 387,
+    "settled_attempts": 362,
+    "uncertain_attempts": 25,
+    "new_charge_breakdown": {
+      "second_repository_cny": 0.589461,
+      "whole_pool_retry_cny": 0.502822
+    },
+    "snapshot_checked_at": "2026-10-30T07:40:03+00:00",
+    "cost_rule": "The ledger charges settled usage and retains peak-price upper bounds for uncertain attempts; no additional ledger or budget reset was created."
+  },
+  "test_evidence": {
+    "full_suite": {
+      "command": "PYTHONPATH=vendor/relore:. \"$PRIMARY_VENV/bin/python\" -m pytest -q",
+      "result": "116 passed, 28 skipped",
+      "status": "pass"
+    },
+    "evaluation_suite": {
+      "command": "PYTHONPATH=vendor/relore:. \"$PRIMARY_VENV/bin/python\" -m pytest -q tests/test_evaluation.py",
+      "result": "13 passed",
+      "status": "pass"
+    },
+    "ruff": {
+      "command": "PYTHONPATH=vendor/relore:. \"$PRIMARY_VENV/bin/python\" -m ruff check historykg tests",
+      "result": "All checks passed",
+      "status": "pass",
+      "scope_note": "The required P6/application scope passed. A whole-repository ruff run is not used as a P6 result because existing unrelated tools files are outside this role's writable scope."
+    },
+    "git_diff_check": {
+      "command": "git diff --check",
+      "result": "No whitespace errors",
+      "status": "pass"
+    }
+  },
+  "requirements": [
+    {
+      "id": "course.six_person_team",
+      "category": "course",
+      "requirement": "Six-person group and actual division of labor",
+      "status": "not_verified",
+      "evidence": [
+        "coordination/STATUS_P6.md"
+      ],
+      "note": "P6 can document its role and outputs but cannot independently establish the human team composition or another member's real contribution."
+    },
+    {
+      "id": "course.multisource_real_llm",
+      "category": "course",
+      "requirement": "Multi-source collection and real LLM knowledge extraction",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "evaluation/results/source_only_freeze.json"
+      ],
+      "note": "The primary job records 369 sources, actual LLM extraction, complete units, decisions and traceable evidence."
+    },
+    {
+      "id": "course.explicit_schema",
+      "category": "course",
+      "requirement": "Explicit ontology, rules and schema",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "docs/evaluation.md"
+      ],
+      "note": "P6 acceptance consumes the project's explicit typed evidence, claims, entities, relations and query contracts; it does not modify production schema."
+    },
+    {
+      "id": "course.knowledge_graph",
+      "category": "course",
+      "requirement": "Real knowledge graph and graph-backed retrieval",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "evaluation/results/second_repo_acceptance.json"
+      ],
+      "note": "Both the primary and second jobs record graph_ready and retrieval_ready with validation-ok artifacts."
+    },
+    {
+      "id": "course.downstream_tasks",
+      "category": "course",
+      "requirement": "Actual downstream evidence-backed question answering",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "evaluation/results/figures/qa_test.png"
+      ],
+      "note": "The frozen Flask cohort contains 48 anonymous A/B answers and 24 complete claim/fact judgment positions; the second repository adds a source-verifiable dependency answer."
+    },
+    {
+      "id": "course.extraction_experiment",
+      "category": "course",
+      "requirement": "Knowledge-extraction experiment with raw denominators and limitations",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "evaluation/results/figures/extraction_test.png"
+      ],
+      "note": "Test TP/FP/FN=25/19/1 and rationale coverage 13/15 are published with silver-reference limitations."
+    },
+    {
+      "id": "course.p6_chapter_draft",
+      "category": "course",
+      "requirement": "P6 experiment-method and results chapter draft",
+      "status": "pass",
+      "evidence": [
+        "deliveries/P6/2026-10-30/experiment_chapter_draft.md"
+      ],
+      "note": "The draft contains the frozen design, metrics, A/B interpretation, whole-pool result, second-repository result and cost limits."
+    },
+    {
+      "id": "course.integrated_report",
+      "category": "course",
+      "requirement": "Final integrated paper-style report of at least 5000 Chinese characters",
+      "status": "not_verified",
+      "evidence": [
+        "deliveries/P6/2026-10-30/experiment_chapter_draft.md"
+      ],
+      "note": "Only the P6-owned chapter draft is available for this audit; final integration, PDF rendering and whole-report length are not P6 outputs."
+    },
+    {
+      "id": "course.presentation_demo_package",
+      "category": "course",
+      "requirement": "Final PPT, demonstration and packaged course deliverables",
+      "status": "not_verified",
+      "evidence": [
+        "evaluation/results/figures/",
+        "deliveries/P6/2026-10-30/handoff.md"
+      ],
+      "note": "P6 supplies figures, code and handoff, but final PPT/demo packaging belongs to P5 and P1 integration."
+    },
+    {
+      "id": "course.references",
+      "category": "course",
+      "requirement": "Verifiable references and in-text source locations",
+      "status": "pass",
+      "evidence": [
+        "docs/evaluation.md"
+      ],
+      "note": "FActScore, KILT and FEVER official pages are cited for the specific evaluation design choices used by P6."
+    },
+    {
+      "id": "course.people_planning_review",
+      "category": "course",
+      "requirement": "Personnel/work plan and genuine inter-group review",
+      "status": "not_verified",
+      "evidence": [
+        "coordination/STATUS_P6.md"
+      ],
+      "note": "Genuine member contributions and reviews require the members; this file does not invent them."
+    },
+    {
+      "id": "course.cross_platform_minimum",
+      "category": "course",
+      "requirement": "Windows and macOS minimum-flow execution",
+      "status": "not_verified",
+      "evidence": [
+        "deliveries/P6/2026-10-30/handoff.md"
+      ],
+      "note": "The audited P6 execution platform is macOS; a native Windows end-to-end run remains unverified."
+    },
+    {
+      "id": "C0.explanation_record",
+      "category": "contract",
+      "requirement": "C0 project explanation before implementation",
+      "status": "pass",
+      "evidence": [
+        "deliveries/P6/2026-10-30/handoff.md"
+      ],
+      "note": "The handoff records the delivered eight-part explanation, its coordination path and the absence of a false claim that the member confirmed understanding."
+    },
+    {
+      "id": "C2.second_public_repository",
+      "category": "contract",
+      "requirement": "One unhardcoded small public Python repository, same entrypoint/profile, no code or source selection changes, at least one verifiable answer",
+      "status": "pass_with_recorded_gaps",
+      "evidence": [
+        "evaluation/results/second_repo_acceptance.json",
+        "evaluation/results/figures/second_repo_acceptance.png"
+      ],
+      "note": "pallets/itsdangerous passed the bounded migration check with one verified dependencies answer; the job remains partial because 10 HTTP 404s and 147 explicit references were not collected."
+    },
+    {
+      "id": "C2.architecture_minimum",
+      "category": "contract",
+      "requirement": "At least one source-backed file dependency or responsibility answer",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/second_repo_acceptance.json"
+      ],
+      "note": "The itsdangerous dependencies answer cites 25 evidence items for src/itsdangerous/timed.py; all quotes and source hashes were programmatically rechecked."
+    },
+    {
+      "id": "C2.1.url_default_profile",
+      "category": "contract",
+      "requirement": "URL-first automatic build with default course_small_v1 profile and no manually selected discussion or SHA",
+      "status": "pass_with_recorded_gaps",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "evaluation/results/second_repo_acceptance.json"
+      ],
+      "note": "Both primary and second jobs record the same profile and automatic source selection; the second job honestly retains collection gaps."
+    },
+    {
+      "id": "C2.1.job_stage_state",
+      "category": "contract",
+      "requirement": "Build stages, status, coverage, gaps and publishability remain distinguishable",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/second_repo_acceptance.json"
+      ],
+      "note": "The second job records discover/code/extract/validate/index_graph as ok, collect as partial, graph/retrieval ready and validation errors empty."
+    },
+    {
+      "id": "C5.provenance",
+      "category": "contract",
+      "requirement": "Frozen source IDs, hashes, offsets and quotes support every published evidence item",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/second_repo_acceptance.json",
+        "evaluation/results/formal_summary.json"
+      ],
+      "note": "The verified second-repository answer resolves all evidence IDs and matches every quote to frozen source text with recomputed SHA-256."
+    },
+    {
+      "id": "C6.graph_grounding",
+      "category": "contract",
+      "requirement": "Graph nodes and relations are grounded in the same frozen sources and dataset",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "evaluation/results/second_repo_acceptance.json"
+      ],
+      "note": "Graph fingerprints and dataset-scoped validation are saved; no source or graph edit after generation is claimed."
+    },
+    {
+      "id": "C7.query_contract",
+      "category": "contract",
+      "requirement": "Query statuses and claims/evidence fields remain distinct and traceable",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/second_repo_acceptance.json",
+        "evaluation/results/formal_summary.json"
+      ],
+      "note": "The second repository records one ok and one empty query; the ok answer exposes 5 claims, 25 evidence rows, 50 paths and resolvable evidence IDs."
+    },
+    {
+      "id": "C8.frozen_experiment",
+      "category": "contract",
+      "requirement": "Frozen 40 discussion units, 12 code snapshots and 24 QA questions with 10/30, 4/8 and 4/20 splits",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/protocol_freeze.json",
+        "evaluation/results/source_only_freeze.json",
+        "evaluation/results/formal_summary.json"
+      ],
+      "note": "The source-only and protocol artifacts preserve the planned splits without using test answers to select sources."
+    },
+    {
+      "id": "C8.reference_and_review",
+      "category": "contract",
+      "requirement": "Independent model reference and review for complete threads, code snapshots and QA",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "docs/evaluation.md"
+      ],
+      "note": "Coverage and complete judgment counts are published; private_test text is not copied into public results."
+    },
+    {
+      "id": "C8.extraction_metrics",
+      "category": "contract",
+      "requirement": "One-to-one TP/FP/FN, micro precision/recall/F1 and separate rationale coverage",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "tests/test_evaluation.py"
+      ],
+      "note": "The test split is TP/FP/FN=25/19/1; duplicate, missing, empty-rationale and N/A behavior have executable tests."
+    },
+    {
+      "id": "C8.code_snapshot_check",
+      "category": "contract",
+      "requirement": "Static verification for 12 frozen single-file snapshots with 4 dev and 8 test",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "evaluation/results/source_only_freeze.json"
+      ],
+      "note": "The finite claims cover parsing, top-level symbols, docstrings and emitted imports at the recorded SHAs; they are not generalized to complete dependency graphs."
+    },
+    {
+      "id": "C8.fair_ab",
+      "category": "contract",
+      "requirement": "Same source pool, model, prompt and context budget for A and B; all answers and claims retained",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "evaluation/results/figures/qa_test.png"
+      ],
+      "note": "All 48 positions remain in the ledger, including 15 empty results and 1 production error; all 24 judgment positions completed."
+    },
+    {
+      "id": "C8.whole_pool_check",
+      "category": "contract",
+      "requirement": "Evidence-insufficiency candidates are checked against every frozen pool source twice",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/formal_summary.json"
+      ],
+      "note": "Six failed positions were retried once along the original batches and cache; 92/92 positions are now ok, with all six assessment questions complete in both passes."
+    },
+    {
+      "id": "C8.correct_abstention",
+      "category": "contract",
+      "requirement": "Correct-abstention rate uses only questions confirmed insufficient after whole-pool verification",
+      "status": "n/a_zero_denominator",
+      "evidence": [
+        "evaluation/results/formal_summary.json"
+      ],
+      "note": "The numerator and eligible denominator are both zero because no candidate was confirmed insufficient; this is not an incomplete-review N/A."
+    },
+    {
+      "id": "C8.cost_accounting",
+      "category": "contract",
+      "requirement": "All paid requests, retries and unknown-usage upper bounds share one approved ledger",
+      "status": "pass_with_recorded_gaps",
+      "evidence": [
+        "evaluation/results/formal_summary.json"
+      ],
+      "note": "The final conservative charge is CNY 9.465795, including CNY 1.694410 unknown upper bound, under the CNY 19.84 effective cap. Provider account balance is not substituted for this internal audit."
+    },
+    {
+      "id": "C9.development_regressions",
+      "category": "contract",
+      "requirement": "Known development failures and scorer edge cases have executable regressions",
+      "status": "pass",
+      "evidence": [
+        "tests/test_evaluation.py",
+        "evaluation/dev/"
+      ],
+      "note": "The final targeted evaluation suite has 13 passing tests, including retry merge, unambiguous metadata recovery and zero-denominator behavior."
+    },
+    {
+      "id": "C9.flask_end_to_end",
+      "category": "contract",
+      "requirement": "Real URL-to-graph-to-answer Flask closure with evidence and run records",
+      "status": "pass",
+      "evidence": [
+        "evaluation/results/formal_summary.json",
+        "evaluation/results/protocol_freeze.json"
+      ],
+      "note": "The primary job is ready at index_graph, validation is ok, graph/retrieval are ready, and downstream A/B answers plus evidence judgments are saved."
+    },
+    {
+      "id": "C10.status_handoff_tests",
+      "category": "contract",
+      "requirement": "P6 status, detailed handoff, reproducible commands, tests and scoped commit",
+      "status": "pass",
+      "evidence": [
+        "coordination/STATUS_P6.md",
+        "deliveries/P6/2026-10-30/handoff.md",
+        "docs/evaluation.md"
+      ],
+      "note": "Final local checks are 116 passed/28 skipped, 13 targeted passed and scoped ruff passed; the final commit is the one containing this acceptance file."
+    },
+    {
+      "id": "C3.3.external_acceptance",
+      "category": "contract",
+      "requirement": "Independent receiver acceptance of the integrated submission",
+      "status": "not_verified",
+      "evidence": [
+        "deliveries/P6/2026-10-30/handoff.md"
+      ],
+      "note": "P6 status remains ready_for_integration; only a designated external receiver can record verified_real or done."
+    }
+  ],
+  "requirement_status_counts": {
+    "pass": 22,
+    "pass_with_recorded_gaps": 3,
+    "not_verified": 6,
+    "blocked_external": 0,
+    "n/a_zero_denominator": 1
+  },
+  "recorded_blockers_and_limits": [
+    {
+      "id": "live_neo4j_requery",
+      "status": "blocked_external",
+      "detail": "At the final audit, Neo4j bolt 127.0.0.1:17687 and HTTP 127.0.0.1:17474 refused connections. Per instruction, no database or Java process was started, stopped or restarted. Saved graph/query exports and validation records remain the acceptance evidence.",
+      "impact": "A new live graph query could not be repeated in the final audit; already-generated real results remain available and are not replaced with fixtures."
+    },
+    {
+      "id": "windows_runtime",
+      "status": "not_verified",
+      "detail": "The P6 audit ran on macOS. No native Windows minimum-flow execution was available.",
+      "impact": "The cross-platform course item remains open."
+    },
+    {
+      "id": "integrated_course_package",
+      "status": "not_verified",
+      "detail": "Final report PDF, PPT/demo packaging, personnel contribution statements and genuine peer review belong to P1/P5/members and were not completed in this P6 task.",
+      "impact": "P6 can supply experiment content and figures but cannot mark the overall course package done."
+    }
+  ],
+  "publication_safety": {
+    "private_test_content_read_for_publication": false,
+    "private_test_content_included": false,
+    "published_private_fields": "Only aggregate counts, statuses and public evidence metadata are included.",
+    "credentials_included": false
+  },
+  "artifacts": {
+    "formal_summary": "evaluation/results/formal_summary.json",
+    "second_repository_acceptance": "evaluation/results/second_repo_acceptance.json",
+    "protocol_freeze": "evaluation/results/protocol_freeze.json",
+    "source_only_freeze": "evaluation/results/source_only_freeze.json",
+    "figures": [
+      "evaluation/results/figures/extraction_test.png",
+      "evaluation/results/figures/qa_test.png",
+      "evaluation/results/figures/second_repo_acceptance.png"
+    ],
+    "documentation": "docs/evaluation.md",
+    "handoff": "deliveries/P6/2026-10-30/handoff.md",
+    "status": "coordination/STATUS_P6.md"
+  },
+  "final_note": "P6-owned executable work is complete and ready for independent integration review. The result does not claim external verification, a complete integrated course package, or universal behavior across arbitrary Python repositories."
+}
