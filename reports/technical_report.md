@@ -162,7 +162,7 @@ pallets/itsdangerous使用同一`python -m historykg.cli build <repo_url>`入口
 
 Windows验证使用GitHub托管windows-2022环境安装锁定Python依赖，并启动原生PostgreSQL16.4及Neo4j5.26.0，重建合成fixture和公开Flask冻结包。公开平台验证摘要
 `deliveries/P1/2026-10-30/platform_validation.json`所对应run的150项JUnit测试无失败、无跳过，Flask冻结包首次加载与幂等重复加载均ready，数据集指纹保持
-`5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe`，新增模型请求为0。macOS最新主线全量150项通过。该流程不配置模型密钥，不是Windows在线抽取或同学本机实测，缓存与重放均显式标记。
+`5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe`，新增模型请求为0。该平台快照当时的macOS主线150项测试全部通过；期末最终真实服务回归为181项通过。该流程不配置模型密钥，不是Windows在线抽取或同学本机实测，缓存与重放均显式标记。
 
 ## 6 原型系统与使用展示
 
@@ -208,7 +208,7 @@ queued、running、blocked、failed和unsupported均不开放问答，只有read
 
 | 角色 | 主要职责 | 可核验贡献 | 证据 |
 | --- | --- | --- | --- |
-| P1 数据与集成 | 公共数据契约、URL发现、唯一作业编排、冻结、总集成与报告统稿 | 实现来源与证据契约、稳定身份、可恢复流水线；完成Flask URL作业369来源、40完整讨论和24快照；组织150项跨平台测试并统稿候选报告 | historykg/pipeline.py；deliveries/P1/2026-10-30/handoff.md；platform_validation.json |
+| P1 数据与集成 | 公共数据契约、URL发现、唯一作业编排、冻结、总集成与报告统稿 | 实现来源与证据契约、稳定身份、可恢复流水线；完成Flask URL作业369来源、40完整讨论和24快照；组织该阶段150项跨平台验证并参与最终181项真实服务回归 | historykg/pipeline.py；deliveries/P1/2026-10-30/handoff.md；platform_validation.json |
 | P2 图谱与查询 | 图模式导入、Neo4j、同源检索隔离与公共查询 | 发布133实体、183关系、333证据；实现数据集过滤、查询服务、A/B共同检索与图扩展接口 | historykg/graph/store.py；historykg/query/；deliveries/P2/2026-10-30/handoff.md |
 | P3 代码与演化 | 提交、发布、文件和静态代码事实 | 自动定位24个文件乘SHA快照；只读增量生成18 Developer、384 Function、20 Authored、4 Merged、384 Defines及508条证据；核对PR #6096到函数定义的固定链 | historykg/code/；deliveries/P3/2026-10-30/developer_function_validation.json；deliveries/P3/2026-10-30/developer_function_handoff.md |
 | P4 开源移植与模型抽取 | relore移植、采集接口、模型通道、Decision抽取与统一回答 | 固定relore 0.3.19源码并保留许可证；完成40个生产抽取run和42次尝试；实现共享账本、理由抽取、回答器及费用对账 | vendor/relore/UPSTREAM.json；historykg/llm/；historykg/extract/；deliveries/P4/2026-10-30/formal_validation.json |

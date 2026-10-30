@@ -184,9 +184,9 @@ P3只读增量为18 Developer、384 Function、20 Authored、4 Merged、384 Defi
 姓名、学号、贡献确认与互评均保留“待本人填写/待本人补充”，没有虚构。
 
 PDF使用指定Codex primary runtime的`python3 reports/build_pdf.py`重新生成。结果为
-`output/pdf/historykg_technical_report.pdf`，14页、355203 bytes、PDF文本抽取21454字符、
-其中汉字11280字；SHA-256为
-`cb883b345ef7635db8e2c8e166239ae87295a3b7888341d64291179efed0ffe3`。九类指定旧
+`output/pdf/historykg_technical_report.pdf`，14页、355301 bytes、PDF文本抽取21493字符、
+其中汉字11310字；SHA-256为
+`2e52f7bcc2b0010bb7bbdd0eed5be9fef114084a2409abd665a27b83f7cb4c8f`。九类指定旧
 状态词的扫描计数均为0，覆盖过期全池分母、过期第二库缺口、过期核验状态、过期正式
 PPT页数、过期发布状态及过期阶段名称。最终指标、P3固定链、
 第二仓库/依赖查询、预算、10页期末PPT和人员待补标记的文本提取检查全部PASS。

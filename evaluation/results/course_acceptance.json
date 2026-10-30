@@ -1,6 +1,6 @@
 {
   "schema_version": "course_final_acceptance_v1",
-  "generated_at": "2026-10-30T16:46:44+08:00",
+  "generated_at": "2026-10-30T16:49:25+08:00",
   "course_topic": "选题3：GitHub 项目考古学家——开源项目历史与演化分析系统",
   "integration_branch": "final/course-2026",
   "overall_status": "machine_acceptance_passed_human_signoff_pending",
@@ -127,10 +127,10 @@
       ],
       "measurements": {
         "pages": 14,
-        "extracted_characters": 21454,
-        "han_characters": 11280,
+        "extracted_characters": 21493,
+        "han_characters": 11310,
         "extraction_method": "pypdf plain text, newline joined",
-        "sha256": "cb883b345ef7635db8e2c8e166239ae87295a3b7888341d64291179efed0ffe3",
+        "sha256": "2e52f7bcc2b0010bb7bbdd0eed5be9fef114084a2409abd665a27b83f7cb4c8f",
         "required_sections": {
           "摘要": true,
           "引言": true,

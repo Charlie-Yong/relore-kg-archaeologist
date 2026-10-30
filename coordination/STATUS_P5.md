@@ -16,16 +16,17 @@
 82实体/78关系/180证据，partial保留记录缺口但validate/graph/retrieval ready；
 依赖查询50路径/25证据/5 claims且出处全通过。预算累计9.465795，剩余10.374205。
 
-最终PPTX已精确重导入、10页逐页渲染并目视检查，10份notes、3个原生表格、1个原生图表、
-页面边界、字体和几何检查通过，未发现裁切或重叠。UI/归档21 passed，ruff与
+最终PPTX已由macOS Microsoft PowerPoint 16.113.4原生打开、导出10页PDF，并按2倍比例
+逐页渲染和总览复核；10份notes、3个原生表格、1个原生图表、页面边界、字体和几何检查
+通过，未发现裁切或重叠。UI/归档21 passed，ruff与
 `git diff --check`通过。机器记录见
 [final_presentation_validation.json](../deliveries/P5/2026-10-30/final_presentation_validation.json)。
 
 恢复动作：若P6发布更新的公开提交，只更新第9页`p6-status-update`、讲稿/材料说明与本状态；
 不读取`evaluation/private_test`，不把partial结果外推为任意仓库完整可运行。
 
-限制：Windows字体替换、WPS（可选）、
-Windows实机字体、正式课堂彩排、成员姓名学号与正式互评待本人补充。
+限制：Windows字体替换检查、WPS（可选）、正式课堂彩排、成员姓名学号与正式互评
+待本人补充。
 
 更新：主代理已恢复持久Neo4j服务。P2在公开提交`19602e6`使用真实Neo4j/PostgreSQL
 完成扩展数据集加载与PR #6096四跳验收，26 passed，两条方向路径均通过；
