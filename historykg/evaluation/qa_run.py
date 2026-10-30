@@ -139,7 +139,16 @@ def judge_answers(freeze, output_root, model_config, budget):
             visible[answer_id] = actual_context.get("fragments", [])
             if actual_context.get("characters", 0) > 12000:
                 raise ValueError("final actual prompt exceeds frozen 12000-codepoint budget")
-            for ev in cited_evidence:
+            reference_evidence = [
+                {
+                    **quote,
+                    "start": sources[quote["source_id"]]["text"].index(quote["quote"]),
+                    "end": sources[quote["source_id"]]["text"].index(quote["quote"])
+                    + len(quote["quote"]),
+                }
+                for fact in reference["facts"] for quote in fact["evidence"]
+            ]
+            for ev in [*cited_evidence, *reference_evidence]:
                 text = sources[ev["source_id"]]["text"]
                 start, end = max(0, ev["start"] - 800), min(len(text), ev["end"] + 800)
                 excerpts[(ev["source_id"], start, end)] = {

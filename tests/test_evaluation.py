@@ -122,3 +122,55 @@ def test_isolation_and_immutable_freeze(tmp_path):
         freeze_sources(root, path, dev_threads=[1])
         with pytest.raises(ValueError, match="differs"):
             freeze_sources(root, path, dev_threads=[999])
+
+
+def test_qa_judge_sees_reference_context_and_rejects_an_omitted_claim(tmp_path, monkeypatch):
+    from historykg.evaluation import qa_run
+    from historykg.io import write_json, write_jsonl
+
+    root, dataset = tmp_path / "private_test" / "run", tmp_path / "dataset"
+    write_json(root / "questions/all.json", {"questions": [{
+        "question_id": "q", "question": "why", "split": "dev", "category": "reason",
+    }]})
+    reference = {
+        "question_id": "q", "answerability": "answerable", "evidence_groups": [],
+        "facts": [{"fact_id": "f", "text": "reason", "evidence": [
+            {"source_id": "reference-source", "quote": "original reason"},
+        ]}],
+    }
+    write_json(root / "qa_references/all.json", {"references": [reference]})
+    write_json(root / "blind_mapping.json", [{"question_id": "q", "mapping": {"answer-0": "A"}}])
+    write_jsonl(dataset / "sources.jsonl", [{
+        "source_id": "reference-source", "text": "the original reason here",
+        "repo": "example/toy", "url": "https://example.invalid/source",
+    }])
+    write_json(root / "answers/q/A.json", {"result": {
+        "status": "ok", "claims": [
+            {"text": "one", "evidence_ids": []}, {"text": "two", "evidence_ids": []},
+        ], "evidence": [],
+    }})
+
+    def prepare(**kwargs):
+        payload = kwargs["payload"]
+        assert "system" not in payload["answers"][0]
+        assert payload["original_context"][0]["text"] == "the original reason here"
+        return {"run_id": "synthetic-judge"}
+
+    def run(request, *, budget, validator):
+        incomplete = {"answers": [{
+            "answer_id": "answer-0", "claims": [
+                {"claim_id": "claim-0", "support": "supported", "explanation": "ok"},
+            ], "facts": [{"fact_id": "f", "covered": False, "explanation": "absent"}],
+        }]}
+        with pytest.raises(ValueError, match="omitted/duplicated claims"):
+            validator(incomplete)
+        incomplete["answers"][0]["claims"].append({
+            "claim_id": "claim-1", "support": "unsupported", "explanation": "no evidence",
+        })
+        validator(incomplete)
+        return {"status": "ok", "run_id": request["run_id"], "parsed": incomplete}
+
+    monkeypatch.setattr(qa_run, "prepare_request", prepare)
+    monkeypatch.setattr(qa_run, "run_request", run)
+    result = qa_run.judge_answers({"dataset_dir": str(dataset), "dataset_id": "toy"}, root, {}, {})
+    assert result == {"answers_scored": 1, "questions_reviewed": 1, "judgment_failures": 0}

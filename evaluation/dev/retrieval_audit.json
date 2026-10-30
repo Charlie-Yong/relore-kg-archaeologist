@@ -1,0 +1,101 @@
+{
+  "provenance": "actual public-query prepare_query; rendering pending owner performance fix; no answer model called",
+  "rows": [
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": null,
+      "final_fragments": null,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 0,
+      "question_id": "dev-01",
+      "status": "ok",
+      "system": "A",
+      "final_render_status": "pending_owner_performance_fix"
+    },
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": null,
+      "final_fragments": null,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 46,
+      "question_id": "dev-01",
+      "status": "ok",
+      "system": "B",
+      "final_render_status": "pending_owner_performance_fix"
+    },
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": null,
+      "final_fragments": null,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 0,
+      "question_id": "dev-02",
+      "status": "ok",
+      "system": "A",
+      "final_render_status": "pending_owner_performance_fix"
+    },
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": null,
+      "final_fragments": null,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 47,
+      "question_id": "dev-02",
+      "status": "ok",
+      "system": "B",
+      "final_render_status": "pending_owner_performance_fix"
+    },
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": null,
+      "final_fragments": null,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 0,
+      "question_id": "dev-03",
+      "status": "ok",
+      "system": "A",
+      "final_render_status": "pending_owner_performance_fix"
+    },
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": null,
+      "final_fragments": null,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 47,
+      "question_id": "dev-03",
+      "status": "ok",
+      "system": "B",
+      "final_render_status": "pending_owner_performance_fix"
+    },
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": null,
+      "final_fragments": null,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 0,
+      "question_id": "dev-04",
+      "status": "ok",
+      "system": "A",
+      "final_render_status": "pending_owner_performance_fix"
+    },
+    {
+      "candidate_count": 40,
+      "dataset_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "final_characters": null,
+      "final_fragments": null,
+      "method_version": "relore_common_rrf_graph_v1",
+      "path_count": 37,
+      "question_id": "dev-04",
+      "status": "ok",
+      "system": "B",
+      "final_render_status": "pending_owner_performance_fix"
+    }
+  ]
+}

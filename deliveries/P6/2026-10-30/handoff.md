@@ -95,3 +95,25 @@ FEVER官方论文页面摘要，向P2提供其适用位置；不照搬其数据�
 恢复自检实际结果：tests/test_evaluation.py 9 passed；ruff模块检查通过；planning checks
 通过（只代表文档检查）。公共模块/清单/dev结果先提交feat/p6供主代理工程复核。费用值
 等待P4对账后更新，历史峰值上界保留为审计而不冒充账户实扣。
+
+## 公开交付与无费联调（2026-10-30 13:35）
+
+公共实现已提交4dcfc76并普通merge main，push成功、PR #7已创建：
+https://github.com/Charlie-Yong/relore-kg-archaeologist/pull/7 。Planning远端通过，collector仍待检查。
+进一步检查发现QA评审上下文原先只包含答案引文，现同时包含参考事实引文的原始邻近上下文，
+供独立判断事实覆盖；尚未运行正式QA judge，未重做既有请求。新增无费集成测试验证漏一条
+claim会拒绝且评审可见参考原文；evaluation+contracts共22 passed，ruff通过。
+
+真实4道开发题×A/B prepare_query全部ok，同dataset fingerprint为
+5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe；A无图路径，
+B路径37–47条。此为检索接入检查，不是正确率或问答完成。原始候选私有保存，公开计数见
+evaluation/dev/retrieval_audit.json。首题共同render_context耗时超过130秒且CPU100%，
+停止本人无费检查后trace定位answer.py:84反向逐边界canonical长片段，已交P4所有者修复，
+正式answers需等待等价性能修复；最终片段/字符计数当前均N/A。
+
+evaluation/results/protocol_freeze.json记录方法文件哈希、模型配置及运行前状态；已复算
+24题all_question_hash=d12bfc856698e609b8d8e9e34eab2737b8e5cdf0df8246584f92517073a5ecb8；
+20道test_question_hash=8ee093e72075edcacb8120ed7c6d2eb4e8ca7c8bcadc6dbeb0052f6bd82633c5。
+两者是不同范围，不混用。公开期中材料见midterm_experiment.md；正式实验结果仍未发布。
+本地.local/evaluation/run_experiments.py已准备extraction/answers/judge/statistics逐阶段恢复，
+不自动启动；费用修复需先普通merge主main，以避免旧版网关写入不兼容的结算列。
