@@ -1,18 +1,20 @@
 # P3 实施状态
 
-角色：P3｜更新：2026-10-30｜规划v1.4.1 / 契约1.4.1。
+角色：P3｜更新：2026-10-30｜规划v1.4.1；旧记录1.4.1 / 新记录1.4.2。
 
 状态：done。
 
-实际进度：代码/版本自动模块、P1公共消费及七项开发检查已交付。默认Flask URL原job已完成
-`code`阶段，真实产出4提交、24文件快照、3 Release、44条P3关系和104条证据；全数据校验、
-逐来源哈希、逐证据区间、关系端点、冻结文件选择和源码职责问答均已复核。深度64的浅git
-历史使12个PR/tag可达性保持unknown，181个内部import目标未采，均作为明确gaps保留。
+实际进度：Developer/Function增量已提交`7031c0c`。从冻结PR JSON生成Developer及
+Authored/Merged（不生成Developer→Commit）；从已采24文件×SHA的顶层AST生成Function及
+Defines，Function键保留`start_line`以区分同文件重复定义。真实Flask冻结只读重放得到
+18 Developer、384 Function、20 Authored、4 Merged、384 Defines；目标链#6096→
+`05e9c6b`→`src/flask/testing.py`→`_get_werkzeug_version`及全部508条证据区间已核对。
 
-最新记录：[2026-10-30交接](../deliveries/P3/2026-10-30/handoff.md)。
+最新记录：
+[Developer/Function交接](../deliveries/P3/2026-10-30/developer_function_handoff.md)；
+[只读验证JSON](../deliveries/P3/2026-10-30/developer_function_validation.json)。
 
-恢复动作：真实URL数据已由原job冻结，禁止重采或手改。后续只复核候选复现包中P3分片、
-浅历史缺口说明及最终材料引用；保持固定快照与全局预算，不手选Flask SHA代替验收。
+恢复动作：P2合并1.4.2并按`Developer.key=identity_key`、Function含`start_line`的真实形状
+接图；P1用新job/dataset跑端到端。旧1.4.1冻结数据继续只读，不重采、不原地补写。
 
-阻塞：当前没有需本人接管的事项。Windows原生支持由P1跨平台CI另行验证；P3不据此声称
-目标仓库代码已执行。图路径与正式实验分别由P2/P6验收。
+阻塞：等待P2契约与图加载合并、P1新数据版本端到端。无本人接管事项；不读取private_test。
