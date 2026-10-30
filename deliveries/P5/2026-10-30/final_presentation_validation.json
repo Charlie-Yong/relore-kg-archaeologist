@@ -1,12 +1,12 @@
 {
   "schemaVersion": "p5.final-presentation-validation.v2",
-  "checkedAt": "2026-10-30T15:57:09+08:00",
+  "checkedAt": "2026-10-30T16:04:09+08:00",
   "status": "pass_with_declared_residuals",
   "presentation": {
     "absolutePath": "/Users/Exile/工作与学习/课程学习/知识图谱/relore-agents/p5/demo/final/期末汇报_20261030最终版.pptx",
     "repositoryPath": "demo/final/期末汇报_20261030最终版.pptx",
-    "sha256": "ed766becdd55530d953d4fc645eb3aff8356a18095f028f2ab87a90bb7516fae",
-    "byteCount": 249863,
+    "sha256": "3742e6dc6ff593c922ed6182e9f64eb2ccea11663e8844ec54347fe0cd947479",
+    "byteCount": 250639,
     "slideCount": 10,
     "slideSizeInches": [
       13.3333,
@@ -29,7 +29,7 @@
     "observedFontFamilies": [
       "Songti SC"
     ],
-    "checkedTextScriptCount": 358,
+    "checkedTextScriptCount": 362,
     "exactReimport": true,
     "reimportShaMatchesFinal": true,
     "everySlideRendered": true,
@@ -196,15 +196,15 @@
         "slide": 9,
         "title": "A/B对照：事实覆盖+0.157，但区间跨零",
         "preview": "demo/final/previews/slide-09.png",
-        "previewSha256": "26357cad45729e70916ef344d3261096bec4bdc698026b614e3855dad2b41036",
-        "previewBytes": 402843,
+        "previewSha256": "18a52915b88ff042b7c1508cb5f7e3c5ccb2f50e94319a47915b704bbdde6eda",
+        "previewBytes": 427794,
         "renderScale": 2,
         "renderedSizePx": [
           2560,
           1440
         ],
         "notesEmbedded": true,
-        "notesCharacters": 820,
+        "notesCharacters": 1057,
         "inspectRecordCount": 19,
         "elementsOutsideSlideBounds": 0,
         "visualInspection": "pass",
@@ -214,15 +214,15 @@
         "slide": 10,
         "title": "复现、贡献与结论",
         "preview": "demo/final/previews/slide-10.png",
-        "previewSha256": "22586b5d5b55ba5890b7cbab665568b9eb0ceb560cb28bb4d47262c78459f874",
-        "previewBytes": 400983,
+        "previewSha256": "85c2206d4594c5341b9ab376a9f77cc9b013a13ed5c2d7d4252683f032025fe0",
+        "previewBytes": 429571,
         "renderScale": 2,
         "renderedSizePx": [
           2560,
           1440
         ],
         "notesEmbedded": true,
-        "notesCharacters": 564,
+        "notesCharacters": 797,
         "inspectRecordCount": 21,
         "elementsOutsideSlideBounds": 0,
         "visualInspection": "pass",
@@ -255,13 +255,17 @@
       "slide9_budget": true,
       "slide10_member_names_pending": true,
       "slide10_completed_work_removed_from_next_steps": true,
-      "slide10_real_residuals": true
+      "slide10_real_residuals": true,
+      "slide9_p2_live_neo4j_validation": true,
+      "slide10_p2_live_neo4j_validation": true,
+      "neo4j_production_graph_version_boundary": true
     },
     "obsoletePhrasesAbsent": {
       "old_snapshot_label": true,
       "old_pool_count": true,
       "old_incomplete_review": true,
-      "old_not_final_label": true
+      "old_not_final_label": true,
+      "old_neo4j_reconnect_residual": true
     },
     "inspectionSource": "Artifact Tool exact reimport of the final PPTX",
     "p3Increment": {
@@ -436,10 +440,23 @@
   "residualLimits": [
     "Correct-abstention rate is N/A because the numerator and eligible denominator are both zero after complete review; this is not an incomplete-review result.",
     "The itsdangerous job is partial with recorded collection gaps; it does not establish arbitrary-repository completeness.",
-    "Neo4j could not be reconnected live during the final audit; saved real graph/query evidence is used instead.",
     "Microsoft PowerPoint/WPS native-open verification is not claimed.",
     "Windows real-machine font substitution check is pending.",
     "Formal classroom live timing and member rehearsal are pending.",
-    "Member names, student IDs, and formal peer review remain to be filled by the members."
-  ]
+    "Member names, student IDs, and formal peer review remain to be filled by the members.",
+    "The current production graph remains 1.4.1; Developer/Function entities come from the real replayed data version, not an in-place production write."
+  ],
+  "p2LiveGraphValidation": {
+    "sourceCommit": "19602e6ca45b253f8c0a95070c2d95c957be36b3",
+    "sourceArtifact": "P2 commit 19602e6ca45b253f8c0a95070c2d95c957be36b3: evaluation/results/cross_source_chain.json; deliveries/P2/2026-10-30/handoff.md; coordination/STATUS_P2.md",
+    "service": "persistent Neo4j restored by the main agent; real Neo4j and PostgreSQL used by P2",
+    "validation": "extended dataset load and PR #6096 four-hop acceptance on the real P1+P3 replay shard; 26 real-service tests passed",
+    "directions": [
+      "author-to-function",
+      "function-to-merger"
+    ],
+    "productionGraphVersion": "1.4.1",
+    "productionGraphHasDeveloperOrFunction": false,
+    "newEntitySource": "real new-data-version replay; not an in-place write to the legacy production graph"
+  }
 }
