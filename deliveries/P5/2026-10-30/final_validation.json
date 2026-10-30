@@ -1,0 +1,68 @@
+{
+  "validated_at": "2026-10-30T14:32:00+08:00",
+  "job_id": "b61942bf06b742e48860d064dffe6df2",
+  "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+  "job_status": "ready",
+  "job_stage": "index_graph",
+  "coverage": {
+    "sources": 369,
+    "complete_units": 40,
+    "file_snapshots": 24,
+    "entities": 133,
+    "relations": 183,
+    "evidence": 333
+  },
+  "replay": {
+    "path": "demo/replay/flask-public-20261030.json",
+    "sha256": "b34e8b2731b42258f54aeb6cb143af34c16e5ee1915794f2dcc8506432123942",
+    "mode": "real_public_query",
+    "recorded_at": "2026-10-30T05:38:55+00:00",
+    "responses": [
+      {
+        "run_id": "query-c512954595154e2b857b03b1aecf5995",
+        "status": "empty",
+        "claims": 0,
+        "evidence": 27,
+        "source_sha256": "8ad3d9b3845eff3405057af133ad029371e19ed6eb0a94d64f9a4f208758501f"
+      },
+      {
+        "run_id": "query-ca7f133ad0bf4da3a4b5ea4d2a007554",
+        "status": "ok",
+        "claims": 6,
+        "evidence": 37,
+        "source_sha256": "93a74c1e74263fdd109907471c9b861bbf038ba1e44f0d83ff003fc0f23bd5a2"
+      }
+    ]
+  },
+  "ui_validation": {
+    "tests": "21 passed",
+    "ruff": "pass",
+    "live_ready_app_test": "pass",
+    "live_http_health": "ok",
+    "replay_app_test": "pass",
+    "online_calls_during_replay": 0
+  },
+  "presentation": {
+    "path": "demo/midterm/期中汇报_20261111_20261030真实闭环版.pptx",
+    "sha256": "8b6451763eac021768ea7527f0bc5eb920c777ed8b2cacb1426b5b46e8b9e749",
+    "slides": 5,
+    "size_inches": [
+      13.3333,
+      7.5
+    ],
+    "rendered_slides": 5,
+    "package_integrity": "pass",
+    "layout_geometry": "pass",
+    "heading_findings": 0,
+    "heading_warnings": 0
+  },
+  "screenshots": {
+    "claims_sha256": "9a31625357ec7e31b68321a674549d7b98fb6049cc652c12fe727d3074380b12",
+    "source_sha256": "0498833365d04b3cc951e7286bdcffaadd6b2847f4cbee09d9938670ddac695b"
+  },
+  "limitations": [
+    "真实开发问答不替代P6正式F1、A/B增益或正确弃答率。",
+    "Windows实机与原生PowerPoint客户端检查未在本轮执行。",
+    "正式课堂排演由成员现场完成。"
+  ]
+}

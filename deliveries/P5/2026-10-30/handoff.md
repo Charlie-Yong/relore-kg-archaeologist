@@ -13,6 +13,10 @@ P4前期独立调研、总体方案、架构、规划框架、试跑和采集器
 ## 输入、版本与所有权
 
 工作副本为feat/p5；保护原文件后普通merge main f3e2a71、P1 c9c54fb、P2 d972d08、P4 776e556。
+随后普通merge P1 7dba6c5，查询配置沿用P1 query_config，不在页面自行映射模型或预算。
+已普通merge P2 0209e47（冻结检索、path.entities与默认回答输出）及a6604fa（方法/期中素材），
+UI/归档20项在0209e47后实际复跑通过。P5产物提交75ab915、6833b01、e757dfa；
+草稿[PR #6](https://github.com/Charlie-Yong/relore-kg-archaeologist/pull/6)已创建并推送feat/p5。
 未切换主仓库分支。P5新增app/、tests/test_app.py、docs/p5/和本人交接。
 依赖由P1统一锁定并安装Streamlit1.66.1，P5不改公共锁文件。
 
@@ -25,6 +29,17 @@ P4前期独立调研、总体方案、架构、规划框架、试跑和采集器
 - 同一解释器`python -m ruff check app tests/test_app.py`：通过。
 - AppTest实际加载P1配置并get同一真实job：异常0、输入仅仓库URL、状态blocked/extract、没有提问框；
   import定位为本P5副本historykg/pipeline.py。CUA/IAB实际页面核对并保存截图。
+- [完整覆盖截图](../../../docs/p5/screenshots/flask-coverage-paused-20261030.png)：实际滚动位置，369/40/24完整可见。
+- [五页期中PPTX](../../../demo/midterm/期中汇报_20261111_20261030进度版.pptx)、
+  [讲稿](../../../demo/midterm/讲稿.md)、[演示步骤](../../../demo/midterm/演示步骤.md)、
+  [报告章节素材](report_section.md)均已交本地文件；[最终PPT逐页渲染](../../../demo/midterm/previews/slide-1.png)。
+- 期中PPT按presentations技能标记后用Artifact Tool生成，最终文件再导入并逐页渲染/目视核验；
+  原生可编辑架构图、连接箭头和分工表，5页notes包含引用与讲述节奏。
+  包结构、几何、字体、5页数、原生表格及精确PPTX再导入均通过，见[presentation_validation.json](presentation_validation.json)。
+- 已直接读取两份原课程PDF（课程选题-1.pdf共5页、课程选题_更新.pdf共3页）的课程要求和选题文本；
+  期中/期末展示、至少5000字正文及最终PDF报告/数据/代码要求一致。正式报告由P1统稿，未以PPT代替。
+- 新增只读冻结响应归档工具app/replay.py，保存同次响应哈希/运行ID/保存时间，拒收未就绪或跨数据集。
+  `pytest tests/test_app.py tests/test_app_replay.py -q`：20 passed（其中UI15项、归档5项）；ruff通过。
 
 真实任务：`b61942bf06b742e48860d064dffe6df2`；数据版本：
 `dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c`。
@@ -36,8 +51,70 @@ P5只展示P1返回值，没有自行重算采集或运行阶段。
 15项测试使用合成响应验证UI逻辑，不是Neo4j、真实LLM或URL自动闭环通过。
 真实页面本轮只完成任务状态/覆盖接入；P1同一job完成extract/validate/index_graph后，
 继续接公共自由提问、真实claims/出处/跨源路径并保存冻结备份。缺口不替换成固定答案。
-下一步制作五页本地期中PPTX、讲稿和演示步骤；真实联调后更新可展示案例。
+五页本地期中PPTX、讲稿和演示步骤已完成进度版；真实联调后更新可展示案例。
+主代理要求等待P6参考先行期间不触发全40抽取或生产测试，P5未点继续、未调用新模型。
+随后主代理通知P6已放行，根上下文唯一恢复原作业；P5仍不触发第二worker。
 未读取evaluation/private_test，未独立API调用，未复制凭据，未重复采集。
 
 按C3.3日常实现无需新增独立审核；阶段集成由主代理/P1或另一独立上下文核验本提交与冻结输入。
 完整Flask闭环、第二库、Windows实机、正式质量实验、真实课堂彩排及录屏仍待实际执行。
+
+## 本批暂交与继续位置
+
+按主代理指令，本批UI、期中进度版及报告素材阶段交付，整体仍为in_progress，后续由同一P5上下文更新。
+只读观察服务保留于`http://127.0.0.1:18501`，统一命令通道session_id=75303；
+使用P1配置和HISTORYKG_DEMO_JOB_ID观察原job，没有启动或恢复worker。
+后续真实问答前重启页面服务以加载最终接口代码与后端已有凭据，不复制凭据到页面/文件。
+最终PPT渲染预览位于`demo/midterm/previews/slide-1.png`至`slide-5.png`，
+私有构建/完整验证回执在`.local/p5-presentation/`，不入Git。
+接收方P1/主代理继续跨平台CI、统稿；P5后续收到真实同次query响应后补完成态截图、
+冻结真实重放包及期中更新，期末材料待正式P6汇总再写，不接触私有参考。
+
+## 续接：真实完成态与多响应证据定位
+
+2026-10-30 13:40（Asia/Shanghai），P5按现有讲解记录恢复，沿用成果和同一job，未重新开工。
+普通merge根本地main 6d1c514后，再普通merge已获根验收的P4清洁提交90668621。
+未合入含私人历史的8b98ce4。未读取P6私有测试/参考；等待根共享公共dev响应以免重复收费。
+
+同一BuildJob实际读取得到ready/index_graph，graph_ready、retrieval_ready、actual_llm_extraction均true。
+369来源、40完整讨论、24文件快照，133实体、183关系、333证据（其中61 Decision）。
+CUA/IAB已实际核对完成态、覆盖/缺口与自然语言提问入口，新增`docs/p5/screenshots/flask-ready*.png`。
+原暂停截图与原五页进度PPT保留。原PID88284与18501监听均已结束，核实后重启同端口18501，
+当前命令会话session_id=92211，仍使用根`.local/project.json`及P1原任务/数据目录。
+凭据由进程内读取已授权的本机配置，未输出、落盘或写Git；未start/resume，也未发出模型查询。
+
+真实ready AppTest：异常0、显示两个输入/369–40–24，连续重绘后start/resume/ask调用均0。
+多响应重放原会复用`evidence-1`锚点，本次给每条响应的引用和证据组件加入相同唯一前缀，
+防止第二条答案跳到第一条原文。新增双响应引用验证；UI/归档合计21 passed，ruff通过。
+报告原型章节已改为真实就绪稿，附三张可用图；公共问答、完成态证据截图、真实重放与两次PPT继续进行。
+本批日常小修按C3.3无需新增独立模型审核；根/P1后续集中接收。
+
+## 最终真实闭环版（2026-10-30 14:30）
+
+沿用同一`ready/index_graph`作业和公共响应，不新增DeepSeek调用。真实源码职责问题返回
+6条claims、37条证据；证据32至37逐条回到冻结`src/flask/testing.py`，页面并展示
+Unicode位置、来源编号、原始链接和dataset版本。另保留`dev-01`原始`empty`状态。
+冻结重放包为`demo/replay/flask-public-20261030.json`，其两份响应哈希分别与P1公开查询文件
+`8ad3d9...501f`、`93a74c...bd5a2`一致，原记录时间和运行ID未改写。
+
+在线只读页面实际读取到`pallets/flask · 已就绪`、369来源、40完整讨论、24文件快照，
+同时显示覆盖缺口和自然语言输入；AppTest无异常，健康端点返回`ok`，没有start/resume/新ask。
+同一冻结包另以AppTest验收：页面明确显示冻结真实结果重放，包含`ok`与`empty`两项响应，
+无构建或查询按钮及输入框，发生0次在线调用。UI/归档回归21 passed，ruff通过。
+
+最终期中材料：
+
+- `demo/midterm/期中汇报_20261111_20261030真实闭环版.pptx`
+- `demo/midterm/讲稿.md`
+- `demo/midterm/演示步骤.md`
+- `demo/midterm/previews/slide-1.png`至`slide-5.png`
+- `docs/p5/screenshots/flask-architecture-claims-20261030.png`
+- `docs/p5/screenshots/flask-architecture-source-20261030.png`
+
+原进度版PPT保留不改；最终版另存并保持五页及原字体、配色和原生架构图。第4页用真实
+claims截图替换暂停进度表；第1、2、5页及相应notes同步到真实闭环。五页逐页渲染后目视检查，
+未发现裁切、重叠或错误结论；PPTX包完整性`pass`，13.3333×7.5英寸、5页、
+heading fit/punctuation均0 finding。机器可读汇总见`final_validation.json`。
+
+限制不变：真实开发问答不替代P6正式F1、A/B增益或正确弃答率；Windows实机、正式课堂
+彩排和原PowerPoint客户端检查不在本轮已完成证据范围。P5本轮交付为done。
