@@ -1,49 +1,73 @@
 {
   "costs": {
+    "by_dataset": {
+      "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c": {
+        "accounted_cny": 8.837512,
+        "attempts": 351
+      },
+      "dataset:d817eee2ee7ff9763526b36aeb4d918493d0e6902633771deffca4bb33d69888": {
+        "accounted_cny": 0.589461,
+        "attempts": 28
+      },
+      "p4_connectivity_dev_20261030": {
+        "accounted_cny": 0.00996,
+        "attempts": 2
+      },
+      "p4_dev_6133_20261030": {
+        "accounted_cny": 0.028862,
+        "attempts": 6
+      }
+    },
     "by_task": {
       "answer": {
-        "accounted_cny": 0.229443,
-        "attempts": 56,
+        "accounted_cny": 0.249043,
+        "attempts": 58,
         "states": {
-          "settled": 56
+          "settled": 58
         }
       },
       "extract": {
-        "accounted_cny": 0.683191,
-        "attempts": 46,
+        "accounted_cny": 1.253052,
+        "attempts": 72,
         "states": {
-          "settled": 45,
+          "settled": 71,
           "uncertain": 1
         }
       },
       "judge": {
-        "accounted_cny": 5.040232,
-        "attempts": 163,
+        "accounted_cny": 5.28721,
+        "attempts": 166,
         "states": {
-          "settled": 139,
+          "settled": 142,
           "uncertain": 24
         }
       },
       "reference": {
-        "accounted_cny": 2.420646,
-        "attempts": 88,
+        "accounted_cny": 2.67649,
+        "attempts": 91,
         "states": {
-          "settled": 88
+          "settled": 91
         }
       }
     },
-    "scope": "shared ledger includes all development, reference, production, retries and root demonstrations so far; not provider balance debit",
+    "new_since_prior_snapshot": {
+      "second_repository_cny": 0.589461,
+      "total_cny": 1.092283,
+      "whole_pool_retry_cny": 0.502822
+    },
+    "prior_snapshot_cny": 8.373512,
+    "scope": "shared ledger includes all development, reference, production, retries, second-repository migration and root demonstrations; not provider account balance",
     "snapshot": {
-      "accounted_cny": 8.373512,
-      "approved_cny": 10.0,
-      "charged_upper_cny": 8.373512,
-      "effective_cap_cny": 9.84,
-      "known_usage_cny": 6.679102,
-      "remaining_cny": 1.466488,
+      "accounted_cny": 9.465795,
+      "approved_cny": 20.0,
+      "charged_upper_cny": 9.465795,
+      "effective_cap_cny": 19.84,
+      "known_usage_cny": 7.771385,
+      "remaining_cny": 10.374205,
       "states": {
         "settled": {
-          "attempts": 328,
-          "charged_micro_cny": 6679102
+          "attempts": 362,
+          "charged_micro_cny": 7771385
         },
         "uncertain": {
           "attempts": 25,
@@ -51,7 +75,8 @@
         }
       },
       "unknown_upper_cny": 1.69441
-    }
+    },
+    "snapshot_checked_at": "2026-10-30T07:40:03+00:00"
   },
   "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
   "extraction": {
@@ -107,11 +132,17 @@
     }
   },
   "limitations": [
-    "No test question, reference answer, claim text or raw judge request is published here.",
+    "No test question, reference answer, answer claim text or raw judge request is published here.",
     "Silver omissions and empty-rationale unclear labels observed on development negatives are retained.",
-    "Whole-pool failures retain unclear answerability and cannot count as confirmed correct abstention.",
-    "One test-system answer failed at production time and remains a system failure rather than being removed from its cohort."
+    "All 92 whole-pool positions completed twice after six targeted retries; zero candidates were confirmed insufficient, so correct-abstention rate is N/A because its denominator is zero, not because verification is incomplete.",
+    "One test-system answer failed at production time and remains a system failure rather than being removed from its cohort.",
+    "The second-repository run is a bounded migration check, not evidence that every Python repository or history works."
   ],
+  "overall_acceptance": {
+    "artifact": "evaluation/results/final_acceptance.json",
+    "note": "P6-owned executable checks complete; external receiver sign-off remains separate under contract C3.3/C10.",
+    "status": "ready_for_integration"
+  },
   "qa": {
     "dev": {
       "A": {
@@ -315,14 +346,97 @@
     }
   },
   "scope": "frozen Flask course cohort; model silver references; no human gold claim",
+  "second_repository": {
+    "acceptance_artifact": "evaluation/results/second_repo_acceptance.json",
+    "at_least_one_verifiable_answer": true,
+    "dataset_id": "dataset:d817eee2ee7ff9763526b36aeb4d918493d0e6902633771deffca4bb33d69888",
+    "graph_ready": true,
+    "job_id": "ebfd8c8dae5e4bcf998a79fef35de981",
+    "profile_sha256": "c553085aa5164c800be3c06b82b591f0ff53d55b913301a74aaa351ba37d3366",
+    "profile_version": "course_small_v1",
+    "query_status_counts": {
+      "empty": 1,
+      "ok": 1
+    },
+    "repo": "pallets/itsdangerous",
+    "retrieval_ready": true,
+    "status": "pass_with_recorded_collection_gaps",
+    "total_cost_cny": 0.589461
+  },
   "source_pool_hash": "09ebc011e84b1717218fa60268c3b73b78b976e4def695ddae88d2e75faf7d45",
   "whole_pool": {
+    "complete": true,
     "confirmed_insufficient": 0,
+    "correct_abstention": {
+      "denominator": 0,
+      "numerator": 0,
+      "rate": null,
+      "reason": "All 92 pool positions completed twice, but zero questions were confirmed insufficient; a correct-abstention rate has no eligible denominator.",
+      "status": "N/A"
+    },
     "expected": 92,
-    "positions": 92,
-    "status_counts": {
+    "original_status_counts_before_retry": {
       "failed": 6,
       "ok": 86
+    },
+    "positions": 92,
+    "questions_assessed": 6,
+    "questions_with_two_complete_passes": 6,
+    "retry": {
+      "attempted": 6,
+      "blocked": 0,
+      "charged_cny": 0.502822,
+      "failed": 0,
+      "ok": 6,
+      "original_failed_records_preserved": true,
+      "positions": [
+        {
+          "batch": 2,
+          "pass": 0,
+          "retry_of": "2b38f98ec919384fdc205c59ec2b0ec0c49d083f7b6fb375cecb537d4cbceaec",
+          "run_id": "d4b2f0626aa037684959c1208697adb3b94d118f47af7df6a579cf2b93c8390b",
+          "status": "ok"
+        },
+        {
+          "batch": 11,
+          "pass": 0,
+          "retry_of": "b7540b0908017ae0b5442cd3a63e1b008f9de92705dde7ea9cf6c108b9f87b2b",
+          "run_id": "9487e688f4db327e4b49e164e9902330c76091449bda9a3a98a645cc323e7a16",
+          "status": "ok"
+        },
+        {
+          "batch": 21,
+          "pass": 0,
+          "retry_of": "7e2f1901709dc8c17e7850fb96f2258976f2c39fdcab1b2e2660b35571cf9ce6",
+          "run_id": "bff346abe91034b8112d8e14706f7ee0eefd5e3a4bf0a23c409918386dcefe2f",
+          "status": "ok"
+        },
+        {
+          "batch": 11,
+          "pass": 1,
+          "retry_of": "13fd75622c560834b50a5c7a5e34df186131072162307420ed222d394f073657",
+          "run_id": "59fd292cd48ddc3ad57d77e8305c58fecc95ce89a35814b0e4e1a39ba961985b",
+          "status": "ok"
+        },
+        {
+          "batch": 12,
+          "pass": 1,
+          "retry_of": "51bfc520a12e133b0a79268503b000883f57ec8ee1e530121638c76f9b8ccfe2",
+          "run_id": "2b2271f8afbf786d2efa8d4eacc8c27b5ccb2d18428dda9629f0d553d07452ea",
+          "status": "ok"
+        },
+        {
+          "batch": 27,
+          "pass": 1,
+          "retry_of": "683e7bec7a94d7fa3a29cd3138cfef087ce01ba6cbb6f1ce7ab6d4b5ebfe765c",
+          "run_id": "347d1b63bd1605fddfea6e7c1da0597ca3a374a1e23b98c38e1b40e2f5c313bc",
+          "status": "ok"
+        }
+      ],
+      "version": "p6_whole_pool_v1_20261030_retry1"
+    },
+    "status_counts": {
+      "ok": 92
     }
   }
 }

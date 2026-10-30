@@ -192,3 +192,74 @@ def test_partial_question_cohort_never_reports_a_complete_overall_score():
     assert summarize_qa([], split="test")["A"]["claim_judgment_complete"] is False
     with pytest.raises(ValueError, match="duplicate question/system"):
         summarize_qa([row, row])
+
+
+def test_whole_pool_retry_normalizes_only_unambiguous_piece_metadata():
+    from historykg.evaluation.pool_check import normalize_retry_output
+
+    batch = [
+        {
+            "piece_id": "piece-a",
+            "source_id": "source-a",
+            "start": 0,
+            "end": 20,
+            "text": "the exact visible sentence",
+        },
+        {
+            "piece_id": "piece-b",
+            "source_id": "source-b",
+            "start": 0,
+            "end": 20,
+            "text": "unrelated text",
+        },
+    ]
+    value = {
+        "extra": "ignored format field",
+        "judgments": [
+            {
+                "question_id": "q",
+                "assessment": "partial",
+                "hits": [
+                    {
+                        "piece_id": "wrong-piece",
+                        "source_id": "source-a",
+                        "quote": "exact visible",
+                        "extra": "ignored hit field",
+                    }
+                ],
+                "explanation": "one requested link",
+            }
+        ],
+    }
+    normalized = normalize_retry_output(value, batch, {"q"})
+    assert normalized["judgments"][0]["hits"][0]["piece_id"] == "piece-a"
+    assert "extra" not in normalized["judgments"][0]
+    with pytest.raises(ValueError, match="outside"):
+        value["judgments"][0]["hits"][0]["quote"] = "not in source"
+        normalize_retry_output(value, batch, {"q"})
+
+
+def test_whole_pool_retry_keeps_original_successes_and_replaces_failures():
+    from historykg.evaluation.pool_check import merge_pool_results
+
+    original = [
+        {"pass": 0, "batch": 0, "status": "ok", "run_id": "old-ok", "parsed": {"x": 1}},
+        {"pass": 0, "batch": 1, "status": "failed", "run_id": "old-failed"},
+        {"pass": 1, "batch": 0, "status": "ok", "run_id": "old-ok-2", "parsed": {"x": 2}},
+        {"pass": 1, "batch": 1, "status": "failed", "run_id": "old-failed-2"},
+    ]
+    retry = [
+        {
+            "pass": 0,
+            "batch": 1,
+            "status": "ok",
+            "run_id": "new-ok",
+            "parsed": {"x": 3},
+        }
+    ]
+    merged = merge_pool_results(original, retry, batches_per_pass=2)
+    assert merged[0] == original[0]
+    assert merged[2] == original[2]
+    assert merged[1]["run_id"] == "new-ok"
+    assert merged[1]["retry_of"] == "old-failed"
+    assert merged[3]["status"] == "failed"
