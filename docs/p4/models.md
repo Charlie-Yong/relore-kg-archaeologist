@@ -27,10 +27,29 @@ answer = answer_question(
 配置中的上限非空检查不能代替此共享账本。本机路径由主代理私有运行配置提供，
 不写入公开样例。数据库以整数微元记账，`BEGIN IMMEDIATE`先保留请求上界，再发送。
 输入用完整消息UTF-8字节数加4096聊天封装余量作为保守token上界，输出用`max_tokens`；
-重试反馈也增加预留。Flash按输入cache miss 2元/百万、输出8元/百万的高峰费率结算，
-不使用缓存/空闲优惠扩大预算。`charged_upper_cny`是保守费用，不冒充实际账单。
-未知HTTP用量继续占用该次上界；所有失败和最多2次重试均留账。已固定上限不能通过
-新实例提高；`lower_ceiling()`只允许降低有效上限。本轮另按已读账户余额降至9.84元。
+重试反馈也增加预留。发送前仍用Flash输入cache miss 2元/百万、输出8元/百万的高峰
+费率预留。收到完整usage后，按服务报告的缓存命中/未命中与实际请求起止时间结算：
+Flash高峰命中0.04、未命中2、输出8元/百万token；空闲分别0.02、1、4元/百万token。
+北京时间周一至周五9–12、14–18为高峰，其余空闲；未额外假设法定节假日优惠。
+跨时段或起止不明用高峰；缓存字段缺失/不一致把输入全计未命中；必要用量不全与未知
+HTTP结果继续占原预留。金额用Decimal逐attempt向上取整到微元。所有失败与重试均留账。
+`attempts.settlement_json`保存价格、时段、token细分和官方依据，不参与run_id或请求身份。
+已固定上限不能通过
+新实例提高；`lower_ceiling()`只允许降低有效上限。本轮已固定有效ceiling为9.84元。
+
+2026-10-30已对165次历史尝试做一次原子对账：164次有usage且时间证据完整覆盖北京时间
+00:59–08:01，按空闲及缓存细分核算3.770932元；1次401仍占未知上界0.009858元，
+累计3.780790元，原10元授权/9.84元ceiling均不变，余6.059210元（此为对账时快照）。
+精确token费率金额为3.77085592元，逐attempt向上取微元后为3.770932元；账户余额的
+精度核对仅留本地审计。原账本SQLite backup、逐attempt old/new与价格依据保留在主部署私有
+`.local/execution/`和账本的`budget_reconciliation_items/budget_reconciliations`中；
+公共[核算摘要](../../deliveries/P4/2026-10-30/budget_reconciliation.json)仅含token/费用元数据。
+
+费用报告以共享账本`attempts.charged`为当前核算额；可按task/state或明确的attempt_id聚合。
+`snapshot()`另给`accounted_cny/known_usage_cny/unknown_upper_cny`。既有不可变缓存中的
+`charged_upper_cny/charged_micro_cny`保留原高峰上界作历史说明，不代表对账后当前核算额，
+不能把缓存旧费用相加当provider账单。新调用结果中的同名字段反映本次核算且仍含未知上界；
+缓存回放`new_charge_upper_cny=0`，不新增费用。公开报告分列已知核算与未知上界；私人账户余额变化只留本地审计。
 
 网关记录四种task：extract/answer/reference/judge。`prepare_request`参数为
 `task,dataset_id,payload,config,prompt,prompt_version,output_schema,output_root,repeat_index`，
@@ -92,4 +111,4 @@ characters为实际送入prompt的context数组规范JSON的Python len，包含�
 
 - [Chat Completions](https://api-docs.deepseek.com/zh-cn/api/create-chat-completion/)：POST /chat/completions、JSON模式、max_tokens、finish_reason。
 - [思考模式](https://api-docs.deepseek.com/zh-cn/guides/thinking_mode/)：thinking.type=disabled/enabled，默认开启，因此实际请求显式关闭。
-- [模型与价格](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/)：型号映射及高峰计价。
+- [模型与价格](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/)：型号映射、缓存命中/未命中与北京时间峰闲计价。

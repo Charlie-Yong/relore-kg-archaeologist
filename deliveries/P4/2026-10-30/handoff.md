@@ -45,7 +45,7 @@ P1接收首批后指出末尾写capture无法恢复进程中断。已补每次�
 
 所有原始记录在P4工作副本`.local/p4/`，开发数据根`.local/p4/dev_regression_6133`，模型文件清单哈希及真实调用明细见model_validation.json。随后删除API环境变量运行相同抽取与回答，均缓存回放成功、新请求0；这不是第二次在线验证。
 
-本轮截至交接：8次真实尝试（7次有usage、1次401未知），7次按高峰保守估算0.070722元，未知上界0.009858元，账本累计0.080580元，非实际账单。授权10元、按已见账户余额持久降低effective cap至9.84元，余9.759420元。所有后续角色以同一实时ledger为准。余额前/后快照与凭据来源元数据仅在主部署`.local/execution/`，没有密钥。全部费用含失败及3次失败回答，不能只报成功请求。
+本轮截至交接：8次真实尝试（7次有usage、1次401未知），7次按高峰保守估算0.070722元，未知上界0.009858元，账本累计0.080580元，非实际账单。授权10元、已固定effective cap为9.84元，余9.759420元。所有后续角色以同一实时ledger为准。余额前/后快照与凭据来源元数据仅在主部署`.local/execution/`，没有密钥。全部费用含失败及3次失败回答，不能只报成功请求。
 
 ## 检查与接收恢复
 
@@ -58,3 +58,59 @@ P2：直接导入answer_question与render_context(context, *,max_characters=1200
 P6：只在自己的private_test根使用reference/judge；同一ledger，不直连、不拆分每人10元。该主题明确dev，不能计入正式盲测；完整正式参考、评审和质量指标仍未执行。本轮合成回放与工程测试不替代独立模型参考。
 
 阶段为ready_for_integration，接收方实际流水线与独立工程复核待完成，P4整体角色未done。按C3.3本轮日常实现自检不新开独立付费审查；主代理负责集成阶段复核。P4下一恢复点是已有job的extract/answer联调失败，不扩大为其他角色模块。
+
+
+## 预算核算接缝修复与一次历史对账（2026-10-30 13:28 北京时间）
+
+沿用本记录已有C0讲解发送记录；恢复后读取AGENTS、handoff与实际预算/网关代码，先向
+主代理说明修复责任，再普通merge本地main至6d1c514。仅修复计费结算与审计；模型、提示、
+温度、输出上限、重试、run_id/请求身份及缓存不变。未读取P6私有提示、参考、预测或原始响应，
+只用共享SQLite token用量、公开model_id与各角色提供的非敏感完成时间证据；本轮新模型请求0。
+
+故障是将全部已报告usage按高峰cache miss结算，过早占满账本。发送前仍用相同峰值未命中
+上界预留；新结算按官方cache hit/miss与完整调用区间选费率，跨时段/时间不明选高峰，缓存
+字段不完整按全部miss，必要用量不明仍保留预留。金额Decimal逐attempt向上取micro。
+`settlement_json`保存依据；SQLite并发预留/结算仍以BEGIN IMMEDIATE事务串行。
+
+历史对账持有写锁先用SQLite backup留原账本，再一次事务更新已知费用并留165条old/new、
+原reserved及价格依据。164条已知usage统一被实际完成时间上界2026-10-30T00:01:11Z覆盖，
+均明确空闲；1条401未知0.009858元保持原账。核对元数据逐字段不变、账本integrity_check=ok，
+cap=10000000与ceiling=9840000微元均不变。对账前9.566638元，对账后3.780790元
+（known=3.770932、unknown upper=0.009858），释放原预算未用部分5.785848元，余6.059210元。
+精确token金额3.77085592元，逐attempt向上取整加0.00007608元；私人账户余额与
+精度核对仅留主部署本地审计，不纳入公共报告。
+公共数据详见[核算摘要](budget_reconciliation.json)；原备份和完整本地审计位于主部署
+`.local/execution/deepseek_budget_before_reconciliation_20261030T052804Z.sqlite3`及
+`.local/execution/budget_reconciliation_20261030T052804Z.json`。
+
+旧缓存费用字段继续表示历史高峰上界，公共报告分列共享账本当前核算与unknown upper；
+私人账户余额变化只留本地审计。P1/P6按明确attempt_id读取`attempts.charged/settlement_json`聚合，
+不要用旧result/record费用覆盖或推导账本。所有调用方需先merge本次新代码，再恢复请求；
+本轮不重打模型、不重抽取来源。该次历史修正幂等，重复执行只返回已存审计摘要。
+
+验证：`ruff check historykg/llm tests/test_llm.py tests/test_pricing.py`通过；
+`pytest tests/test_llm.py tests/test_pricing.py tests/test_extract.py`34项通过（无付费请求），
+覆盖cache hit/miss、Decimal取整、峰闲/周末/午间/跨边界/未知时段、缺字段保守、网关保留
+原预留但按新策略结算、备份/old-new/幂等、unknown不降低、原cap不变及活跃请求禁止历史对账。
+额外运行graph_query测试时15项因未提供外部数据库配置跳过，不冒称该集成通过。
+
+Planning checks通过（文档及本地链接），不代表正式实验完成。
+
+
+## 同语义上下文裁剪性能修复
+
+P6与主代理在公开dev检索后独立复现：大API JSON进入render_context后，原算法对大量
+句/行边界反向逐一canonical序列化，CPU满载且超过130秒。根授权P4修复这个具体接缝。
+现在利用JSON前缀长度单调性，对相同的合法边界二分寻找最长可容纳前缀；排序、去重、
+完整句/行边界、quote/end、gaps与12000码点计数均保留，prompt/config/run_id未变。
+
+实际公开dev-01/A共40候选、最大quote 1,811,025码点，新算法耗时0.056秒，得到11983
+码点、4 fragments、38 gaps；只读取正常开发检索候选，不含private_test内容。
+500组含Unicode、JSON转义、重复span、排序及不同预算的小样对照旧算法，完整输出
+canonical逐字相同，摘要见[无费回归](render_context_regression.json)。单元测试另约束
+大JSON的序列化次数为边界数对数级，并核验下一个完整边界确实超预算。
+
+最终相关检查：Ruff通过；pytest llm/pricing/render_context/extract共41项通过。
+本轮仍无模型请求。公共资料仅保留实验费用与预算上限；账户余额前后值及精度核对仅在
+主部署本地审计中。当前公开交付分支为feat/p4-budget-render-public，基于已共享main前缀
+生成清洁提交，不包含本地含私有余额的预算草稿提交祖先；本地私有ref保留原审计历史。
