@@ -130,3 +130,22 @@ evaluation/results/protocol_freeze.json记录方法文件哈希、模型配置�
 完整对照；重复question/system拒绝。新增覆盖回归后11个evaluation测试通过、ruff通过。
 本次为尚未正式计分前的聚合缺口修复，不修改生产提示或题目。完整方法章节草稿已交P1，
 后续以真实结果替换阶段段落，不将方法稿标为正式实验完成。
+
+## GLM高推理恢复与正式结果（2026-10-30 14:25）
+
+恢复成员先只读交接、公开控制文件和私有目录状态，不打开测试题、参考答案或评审正文。
+答案阶段核验为24题×A/B=48条：32条ok、15条empty、1条error；无费回放未新增请求。
+首次评审运行使用cc-switch中已失效的DeepSeek token，24题均在模型调用前返回HTTP 401；
+24条失败记录、请求哈希和保守预留全部保留，未覆盖或删除。随后用模型目录探测找到本机
+另一条仍有效凭据，只在运行时环境注入，不写入仓库或日志；恢复脚本改为优先使用显式凭据。
+修订只改变请求版本标识，评审提示正文未改：`p6_blind_qa_judge_v1_20261030_auth_retry`。
+
+修复后24次匿名评审全部ok，48个答案的全部claims和参考事实均完成逐项判断。测试集A/B
+事实覆盖为30/50与37/50，证据组召回为35/55与38/55，无依据断言率为1/39与2/47；
+B中位延迟2688毫秒、A为2285毫秒。配对事实覆盖差0.157，胜负B/A=5/4、6题持平，
+固定种子95%描述性bootstrap区间[-0.122,0.457]跨零，结论不称显著。
+
+公开汇总见[evaluation/results/formal_summary.json](../../../evaluation/results/formal_summary.json)，
+测试抽取图见[extraction_test.png](../../../evaluation/results/figures/extraction_test.png)，
+QA图见[qa_test.png](../../../evaluation/results/figures/qa_test.png)。图中文字和底部注脚
+已逐张目视检查后修正排版。测试、lint与全池限制在最终核验段落更新。

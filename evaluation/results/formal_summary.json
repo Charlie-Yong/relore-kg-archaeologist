@@ -1,0 +1,328 @@
+{
+  "costs": {
+    "by_task": {
+      "answer": {
+        "accounted_cny": 0.229443,
+        "attempts": 56,
+        "states": {
+          "settled": 56
+        }
+      },
+      "extract": {
+        "accounted_cny": 0.683191,
+        "attempts": 46,
+        "states": {
+          "settled": 45,
+          "uncertain": 1
+        }
+      },
+      "judge": {
+        "accounted_cny": 5.040232,
+        "attempts": 163,
+        "states": {
+          "settled": 139,
+          "uncertain": 24
+        }
+      },
+      "reference": {
+        "accounted_cny": 2.420646,
+        "attempts": 88,
+        "states": {
+          "settled": 88
+        }
+      }
+    },
+    "scope": "shared ledger includes all development, reference, production, retries and root demonstrations so far; not provider balance debit",
+    "snapshot": {
+      "accounted_cny": 8.373512,
+      "approved_cny": 10.0,
+      "charged_upper_cny": 8.373512,
+      "effective_cap_cny": 9.84,
+      "known_usage_cny": 6.679102,
+      "remaining_cny": 1.466488,
+      "states": {
+        "settled": {
+          "attempts": 328,
+          "charged_micro_cny": 6679102
+        },
+        "uncertain": {
+          "attempts": 25,
+          "charged_micro_cny": 1694410
+        }
+      },
+      "unknown_upper_cny": 1.69441
+    }
+  },
+  "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+  "extraction": {
+    "dev": {
+      "complete_source_units": 10,
+      "f1": 0.6896551724137931,
+      "fn": 2,
+      "fp": 7,
+      "judgment_complete": true,
+      "judgment_coverage": 1.0,
+      "precision": 0.5882352941176471,
+      "rationale": {
+        "coverage": 0.8181818181818182,
+        "covered": 9,
+        "eligible": 11,
+        "empty_count": 0,
+        "incomplete_or_unsupported_count": 0,
+        "judgment_complete": true,
+        "missing_decision_count": 2,
+        "status_error_count": 0
+      },
+      "recall": 0.8333333333333334,
+      "reference_complete": true,
+      "tp": 10,
+      "unclear": 0,
+      "unjudged_prediction_count": 0,
+      "unresolved_reference_count": 0
+    },
+    "test": {
+      "complete_source_units": 30,
+      "f1": 0.7142857142857143,
+      "fn": 1,
+      "fp": 19,
+      "judgment_complete": true,
+      "judgment_coverage": 1.0,
+      "precision": 0.5681818181818182,
+      "rationale": {
+        "coverage": 0.8666666666666667,
+        "covered": 13,
+        "eligible": 15,
+        "empty_count": 1,
+        "incomplete_or_unsupported_count": 0,
+        "judgment_complete": true,
+        "missing_decision_count": 1,
+        "status_error_count": 1
+      },
+      "recall": 0.9615384615384616,
+      "reference_complete": true,
+      "tp": 25,
+      "unclear": 0,
+      "unjudged_prediction_count": 0,
+      "unresolved_reference_count": 0
+    }
+  },
+  "limitations": [
+    "No test question, reference answer, claim text or raw judge request is published here.",
+    "Silver omissions and empty-rationale unclear labels observed on development negatives are retained.",
+    "Whole-pool failures retain unclear answerability and cannot count as confirmed correct abstention.",
+    "One test-system answer failed at production time and remains a system failure rather than being removed from its cohort."
+  ],
+  "qa": {
+    "dev": {
+      "A": {
+        "accounted_cny": 0.013799999999999998,
+        "answerable_questions": 3,
+        "charged_upper_cny": 0.013799999999999998,
+        "claim_count": 0,
+        "claim_judgment_complete": true,
+        "completion_tokens": 445,
+        "correct_abstention_rate": null,
+        "correct_abstentions": 0,
+        "evaluated_subset": {
+          "answers_with_complete_claim_judgments": 4,
+          "fact_coverage": 0.0,
+          "questions_with_fact_scores": 3,
+          "unsupported_rate": null
+        },
+        "evidence_group_recall": 0.0,
+        "evidence_groups_hit": 0,
+        "evidence_groups_total": 9,
+        "expected_questions": 4,
+        "fact_coverage": 0.0,
+        "fact_judgment_complete": true,
+        "facts_hit": 0,
+        "facts_total": 8,
+        "known_settled_cny": 0.013799999999999998,
+        "latency_samples": 4,
+        "median_latency_ms": 1812.1185,
+        "new_charge_upper_cny": 0.013799999999999998,
+        "production_failures": 0,
+        "prompt_tokens": 16533,
+        "question_coverage": 1.0,
+        "question_set_complete": true,
+        "questions": 4,
+        "unclear_claims": 0,
+        "unknown_or_reserved_upper_cny": 0.0,
+        "unsupported_claims": 0,
+        "unsupported_rate": null,
+        "verified_insufficient_questions": 0
+      },
+      "B": {
+        "accounted_cny": 0.017402,
+        "answerable_questions": 3,
+        "charged_upper_cny": 0.017402,
+        "claim_count": 2,
+        "claim_judgment_complete": true,
+        "completion_tokens": 681,
+        "correct_abstention_rate": null,
+        "correct_abstentions": 0,
+        "evaluated_subset": {
+          "answers_with_complete_claim_judgments": 4,
+          "fact_coverage": 0.0,
+          "questions_with_fact_scores": 3,
+          "unsupported_rate": 0.0
+        },
+        "evidence_group_recall": 0.1111111111111111,
+        "evidence_groups_hit": 1,
+        "evidence_groups_total": 9,
+        "expected_questions": 4,
+        "fact_coverage": 0.0,
+        "fact_judgment_complete": true,
+        "facts_hit": 0,
+        "facts_total": 8,
+        "known_settled_cny": 0.017402,
+        "latency_samples": 4,
+        "median_latency_ms": 1942.9855,
+        "new_charge_upper_cny": 0.0134,
+        "production_failures": 0,
+        "prompt_tokens": 16055,
+        "question_coverage": 1.0,
+        "question_set_complete": true,
+        "questions": 4,
+        "unclear_claims": 0,
+        "unknown_or_reserved_upper_cny": 0.0,
+        "unsupported_claims": 0,
+        "unsupported_rate": 0.0,
+        "verified_insufficient_questions": 0
+      },
+      "paired_fact_coverage": {
+        "bootstrap95": [
+          0.0,
+          0.0
+        ],
+        "bootstrap_seed": 20261030,
+        "interpretation": "descriptive paired question bootstrap within this frozen small cohort; not independent-theme population inference",
+        "mean_difference_B_minus_A": 0.0,
+        "pairs": 3,
+        "ties": 3,
+        "wins_A": 0,
+        "wins_B": 0
+      }
+    },
+    "test": {
+      "A": {
+        "accounted_cny": 0.082701,
+        "answerable_questions": 15,
+        "charged_upper_cny": 0.082701,
+        "claim_count": 39,
+        "claim_judgment_complete": true,
+        "completion_tokens": 5684,
+        "correct_abstention_rate": null,
+        "correct_abstentions": 0,
+        "evaluated_subset": {
+          "answers_with_complete_claim_judgments": 20,
+          "fact_coverage": 0.6,
+          "questions_with_fact_scores": 15,
+          "unsupported_rate": 0.02564102564102564
+        },
+        "evidence_group_recall": 0.6363636363636364,
+        "evidence_groups_hit": 35,
+        "evidence_groups_total": 55,
+        "expected_questions": 20,
+        "fact_coverage": 0.6,
+        "fact_judgment_complete": true,
+        "facts_hit": 30,
+        "facts_total": 50,
+        "known_settled_cny": 0.082701,
+        "latency_samples": 20,
+        "median_latency_ms": 2284.8199999999997,
+        "new_charge_upper_cny": 0.082701,
+        "production_failures": 0,
+        "prompt_tokens": 80401,
+        "question_coverage": 1.0,
+        "question_set_complete": true,
+        "questions": 20,
+        "unclear_claims": 0,
+        "unknown_or_reserved_upper_cny": 0.0,
+        "unsupported_claims": 1,
+        "unsupported_rate": 0.02564102564102564,
+        "verified_insufficient_questions": 0
+      },
+      "B": {
+        "accounted_cny": 0.09613,
+        "answerable_questions": 15,
+        "charged_upper_cny": 0.09613,
+        "claim_count": 47,
+        "claim_judgment_complete": true,
+        "completion_tokens": 8861,
+        "correct_abstention_rate": null,
+        "correct_abstentions": 0,
+        "evaluated_subset": {
+          "answers_with_complete_claim_judgments": 20,
+          "fact_coverage": 0.74,
+          "questions_with_fact_scores": 15,
+          "unsupported_rate": 0.0425531914893617
+        },
+        "evidence_group_recall": 0.6909090909090909,
+        "evidence_groups_hit": 38,
+        "evidence_groups_total": 55,
+        "expected_questions": 20,
+        "fact_coverage": 0.74,
+        "fact_judgment_complete": true,
+        "facts_hit": 37,
+        "facts_total": 50,
+        "known_settled_cny": 0.09613,
+        "latency_samples": 20,
+        "median_latency_ms": 2687.5895,
+        "new_charge_upper_cny": 0.09613,
+        "production_failures": 1,
+        "prompt_tokens": 92658,
+        "question_coverage": 1.0,
+        "question_set_complete": true,
+        "questions": 20,
+        "unclear_claims": 0,
+        "unknown_or_reserved_upper_cny": 0.0,
+        "unsupported_claims": 2,
+        "unsupported_rate": 0.0425531914893617,
+        "verified_insufficient_questions": 0
+      },
+      "paired_fact_coverage": {
+        "bootstrap95": [
+          -0.12222222222222225,
+          0.45714285714285713
+        ],
+        "bootstrap_seed": 20261030,
+        "interpretation": "descriptive paired question bootstrap within this frozen small cohort; not independent-theme population inference",
+        "mean_difference_B_minus_A": 0.15714285714285714,
+        "pairs": 15,
+        "ties": 6,
+        "wins_A": 4,
+        "wins_B": 5
+      }
+    }
+  },
+  "qa_execution": {
+    "answers": {
+      "expected": 48,
+      "positions": 48,
+      "status_counts": {
+        "empty": 15,
+        "error": 1,
+        "ok": 32
+      }
+    },
+    "judgments": {
+      "expected": 24,
+      "positions": 24,
+      "status_counts": {
+        "ok": 24
+      }
+    }
+  },
+  "scope": "frozen Flask course cohort; model silver references; no human gold claim",
+  "source_pool_hash": "09ebc011e84b1717218fa60268c3b73b78b976e4def695ddae88d2e75faf7d45",
+  "whole_pool": {
+    "confirmed_insufficient": 0,
+    "expected": 92,
+    "positions": 92,
+    "status_counts": {
+      "failed": 6,
+      "ok": 86
+    }
+  }
+}
