@@ -1,0 +1,55 @@
+{
+  "all_passed": false,
+  "cases": [
+    {
+      "case": "external_as_local",
+      "expected": [
+        "unsupported",
+        "unsupported"
+      ],
+      "explanation": "The prediction attributes the new `client.query` method to Flask, but the PR body explicitly says it was added in the Werkzeug PR (pallets/werkzeug#3219). This is an external dependency change, not a local Flask change; the only Flask-side change is the `app.query` route decorator. The sole reference is a different proposal (HTTP QUERY method / `app.query` decorator) and does not match this statement. No rationale was provided.",
+      "observed": [
+        "unsupported",
+        "unclear"
+      ],
+      "passed": false
+    },
+    {
+      "case": "empty_explicit_reason",
+      "expected": [
+        "supported",
+        "unsupported"
+      ],
+      "explanation": "The PR body states 'Adjusted the test here to account for Werkzeug not being released yet,' which supports the conclusion that Flask tests were adjusted for compatibility with `client.query`. However, the only reference is the `app.query` decorator proposal, which is not semantically equivalent to adjusting tests, so no reference matches. No separate rationale was supplied (rationale_status not_stated), so rationale_support is unclear.",
+      "observed": [
+        "supported",
+        "unclear"
+      ],
+      "passed": false
+    },
+    {
+      "case": "declaration_as_behavior_fix",
+      "expected": [
+        "unsupported",
+        "unsupported"
+      ],
+      "explanation": "The PR body contains 'closes #3193', which is a closure declaration, not evidence that the described software behavior of Issue #3193 (session variable not available in threads) was actually fixed. The PR adds an `app.query` route decorator and adjusts tests; nothing indicates a fix of the thread/session behavior. The reference is an unrelated proposal and does not match. No rationale provided.",
+      "observed": [
+        "unsupported",
+        "unclear"
+      ],
+      "passed": false
+    }
+  ],
+  "provenance": "synthetic negative predictions over real complete development thread #6133; not formal scores",
+  "run_id": "e3dbed1a11122f1ca5484ee981d233feabc18a51ef39386d9cb87d9c810a1108",
+  "status": "ok",
+  "usage": {
+    "actual_requests": 1,
+    "charged_upper_cny": 0.03276,
+    "completion_tokens": 365,
+    "known_usage_attempts": 1,
+    "new_charge_upper_cny": 0.03276,
+    "prompt_tokens": 14920
+  }
+}

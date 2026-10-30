@@ -1,0 +1,22 @@
+{
+  "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+  "purpose": "Public development questions only; no test question or reference included",
+  "questions": [
+    {
+      "question_id": "dev-01",
+      "question": "关于 Flask 中 `stream_with_context` 在客户端中途断开时导致应用上下文残留在工作线程上的问题（issue #6123），维护者 davidism 最终把根因归到哪里？他要求报告者向谁反馈，以及他给出的判断依据是什么（例如服务器是否应调用迭代器的 `close`）？"
+    },
+    {
+      "question_id": "dev-02",
+      "question": "在 PR #6096（修复对潜在 IPv6 地址使用 `.partition(\":\")`）中，作者 lkk7 解释为什么把 `sn_port` 改成 int/None 类型，以及为什么在构造 URL 时加入 `\"//\"`？另外，维护者 davidism 对 \"Development Versions\" 测试失败给出了什么原因说明？"
+    },
+    {
+      "question_id": "dev-03",
+      "question": "在提交 514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b 的 `src/flask/testing.py` 中，`FlaskClient.session_transaction` 在保存会话后调用 `_update_cookies_from_response` 时，第一个参数是如何从请求中取得主机名的？而在提交 05e9c6bd630ecf4ec0ec884b1fc7901663737bc7 的同一文件中，这一处改成了什么写法？请结合这两个版本说明该参数取值方式的变化。"
+    },
+    {
+      "question_id": "dev-04",
+      "question": "在 PR #6096 合并前，维护者 davidism 是否明确说明该修复会被 backport 到哪个具体的 bug fix 发布版本（例如 3.1.x 的某个补丁版本号）？如果有，请给出该版本号；如果没有，请说明讨论中关于目标分支的实际表述。"
+    }
+  ]
+}
