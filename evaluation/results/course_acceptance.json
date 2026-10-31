@@ -115,7 +115,7 @@
         "evaluation/results/formal_summary.json",
         "evaluation/results/figures/qa_test.png"
       ],
-      "note": "B-A事实覆盖+0.157，95%区间[-0.122,0.457]跨零，不宣称显著收益。"
+      "note": "15道配对题平均事实覆盖差+0.157，95%区间[-0.122,0.457]跨零；总体事实覆盖0.600/0.740的差为0.140，不宣称显著收益。"
     },
     {
       "id": "technical_report",
@@ -127,11 +127,11 @@
       ],
       "measurements": {
         "pages": 14,
-        "bytes": 357531,
-        "extracted_characters": 21178,
-        "han_characters": 11053,
+        "bytes": 357553,
+        "extracted_characters": 21356,
+        "han_characters": 11151,
         "extraction_method": "pypdf plain text, newline joined",
-        "sha256": "dd300be2dcc8d4a32b571a57a36f23248e78195e5d02dd70137508bb2dada2f1",
+        "sha256": "71dd632690d5aa978b902530f30bcc59c982929bba0c9421a1610a7e44bed4ce",
         "required_sections": {
           "摘要": true,
           "引言": true,
@@ -157,7 +157,7 @@
       ],
       "measurements": {
         "slides": 10,
-        "bytes": 251230,
+        "bytes": 251360,
         "notes_all": true,
         "native_tables": 3,
         "native_charts": 1,
@@ -176,7 +176,7 @@
           "six_roles": true,
           "project_evolution_timeline": true
         },
-        "sha256": "2550a0a1e02e5382204c381704088d5b6e3c86c0354bb06a2251de69256d4453"
+        "sha256": "9b7f52c1615913afb611599f0b6c6529ddf68daeb89f7397147306a1b509de52"
       },
       "note": "Microsoft PowerPoint 16.113.4（macOS）原生打开、10页PDF导出、2倍渲染与总览复核通过；Windows字体替换仍待实机检查。"
     },
@@ -237,9 +237,9 @@
   ],
   "machine_checks": {
     "full_pytest": {
-      "result": "181 passed",
+      "result": "187 passed",
       "skipped": 0,
-      "scope": "including real PostgreSQL/Neo4j and reconstructed P1+P3 merged-shard acceptance"
+      "scope": "2026-10-31 rerun with actual isolated PostgreSQL/Neo4j, including real P1+P3 four-hop shard and new query/UI regressions"
     },
     "graph_query_real": {
       "result": "26 passed",
@@ -249,7 +249,7 @@
     "ruff": "All checks passed",
     "planning_check": {
       "passed": true,
-      "markdown_files": 70,
+      "markdown_files": 71,
       "local_links_checked": 250,
       "all_six_roles_done": true
     },
@@ -259,7 +259,20 @@
       "unique_urls": 6,
       "all_http_200": true
     },
-    "pdf_tables": 6
+    "pdf_tables": 6,
+    "vendor_relore": {
+      "result": "1344 passed, 4 skipped, 2 xfailed",
+      "scope": "SQLite and isolated PostgreSQL; upstream optional skips and expected failures retained"
+    },
+    "frozen_rebuild": {
+      "datasets": [
+        "toy_v1",
+        "Flask public frozen package"
+      ],
+      "loads_each": 2,
+      "query_context_verified": true,
+      "new_model_requests": 0
+    }
   },
   "deferred_by_user": [
     "姓名、学号、职责确认与组内互评按用户当前要求留空"
@@ -271,6 +284,9 @@
   ],
   "notes": [
     "本矩阵证明机器可验证的课程要求已经完成；个人字段和互评按用户当前要求留空，不把空白或模型银标冒充人工验收。",
-    "最终提交包保持final_candidate，直至Windows字体与课堂现场项完成；不得伪造姓名、学号、职责确认或互评。"
-  ]
+    "最终提交包保持final_candidate，直至Windows字体与课堂现场项完成；不得伪造姓名、学号、职责确认或互评。",
+    "2026-10-31修复查询范围、任务链接切换与时间线呈现，并澄清46批×2=92及A/B统计口径；正式冻结实验数值保留。后续查询方法版本为p2_query_v1.4.2_20261031_scopefix。"
+  ],
+  "last_rechecked_at": "2026-10-31T16:56:22+08:00",
+  "latest_review": "deliveries/review/2026-10-31.md"
 }

@@ -134,7 +134,7 @@
   "limitations": [
     "No test question, reference answer, answer claim text or raw judge request is published here.",
     "Silver omissions and empty-rationale unclear labels observed on development negatives are retained.",
-    "All 92 whole-pool positions completed twice after six targeted retries; zero candidates were confirmed insufficient, so correct-abstention rate is N/A because its denominator is zero, not because verification is incomplete.",
+    "All 46 whole-pool batches completed both passes (92 request positions) after six targeted retries; zero candidates were confirmed insufficient, so correct-abstention rate is N/A because its denominator is zero, not because verification is incomplete.",
     "One test-system answer failed at production time and remains a system failure rather than being removed from its cohort.",
     "The second-repository run is a bounded migration check, not evidence that every Python repository or history works."
   ],

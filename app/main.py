@@ -123,6 +123,27 @@ def show_result(result):
     show_gaps(value["gaps"])
     if value["error"]:
         st.write("请稍后重试，或由安装者检查检索、图数据库和模型配置。")
+    timeline = value.get("timeline", [])
+    if timeline:
+        st.subheader("项目演化时间线")
+        st.caption("事件按时间排序；关闭声明、合并和发布关系保留各自含义。")
+        entities = {e["id"]: e for path in value["paths"] for e in path.get("entities", [])}
+
+        def event_label(identity):
+            entity = entities.get(identity, {})
+            props = entity.get("properties", {})
+            return (props.get("title") or props.get("qualified_name") or props.get("path")
+                    or entity.get("display_name")
+                    or (f"{entity['type']} {entity.get('key', '')}" if entity else identity))
+
+        st.table([{
+            "时间": event["occurred_at"],
+            "事件类型": event["type"],
+            "起点": event_label(event["from_id"]),
+            "终点": event_label(event["to_id"]),
+            "证据": "、".join(str(evidence_index[eid]) for eid in event["evidence_ids"]
+                            if eid in evidence_index),
+        } for event in timeline])
     show_evidence(value["evidence"], anchor_prefix=anchor_prefix)
     show_paths(value["paths"], value["evidence"], anchor_prefix=anchor_prefix)
     with st.expander("本次查询详情"):
@@ -242,10 +263,12 @@ def main():
         except (KeyError, ValueError, OSError, ValidationError):
             st.error("冻结结果文件无法核验，请由安装者检查备份。")
         return
-    if "job_id" not in st.session_state:
-        existing = st.query_params.get("job") or os.environ.get("HISTORYKG_DEMO_JOB_ID")
-        if existing:
-            st.session_state["job_id"] = existing
+    existing = st.query_params.get("job")
+    if not existing and "job_id" not in st.session_state:
+        existing = os.environ.get("HISTORYKG_DEMO_JOB_ID")
+    if existing and existing != st.session_state.get("job_id"):
+        st.session_state["job_id"] = existing
+        st.session_state.pop("answer", None)
     with st.form("repository_form"):
         url = st.text_input("仓库链接", placeholder="https://github.com/owner/repository")
         submitted = st.form_submit_button("开始整理")

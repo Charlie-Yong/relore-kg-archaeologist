@@ -149,6 +149,8 @@ def add_extended_graph_records(root):
 def sample(tmp_path):
     root = tmp_path / "dataset"
     shutil.copytree(FIXTURE, root)
+    # Exported replay artifacts carry their original dataset id; rebuild them per test copy.
+    shutil.rmtree(root / "exports", ignore_errors=True)
     dataset = "p2_test_" + uuid.uuid4().hex
     for file in root.rglob("*.jsonl"):
         rows = read_jsonl(file)
@@ -193,6 +195,53 @@ def loaded(sample, graph_config):
     result = load_dataset(root, config=graph_config)
     assert result["status"] == "ok", result
     return root, dataset
+
+
+def add_disconnected_timeline_event(root, dataset, repo):
+    entities_path = root / "p1/entities.jsonl"
+    relations_path = root / "p1/relations.jsonl"
+    entities, relations = read_jsonl(entities_path), read_jsonl(relations_path)
+    pull_request = next(e for e in entities if e["type"] == "PullRequest")
+    release = next(e for e in entities if e["type"] == "Release")
+    template = next(r for r in relations if r["type"] == "MentionsPR")
+    pull_request_id = entity_id("PullRequest", repo, 999)
+    release_id = entity_id("Release", repo, "v9.9")
+    event = {
+        **template,
+        "dataset_id": dataset,
+        "id": relation_id(repo, "MentionsPR", release_id, pull_request_id),
+        "from_id": release_id,
+        "to_id": pull_request_id,
+        "occurred_at": "2030-01-01T00:00:00Z",
+    }
+    write_jsonl(entities_path, [
+        *entities,
+        {
+            **pull_request,
+            "dataset_id": dataset,
+            "id": pull_request_id,
+            "key": 999,
+            "properties": {
+                **pull_request["properties"],
+                "number": 999,
+                "title": "Disconnected release event",
+            },
+        },
+        {
+            **release,
+            "dataset_id": dataset,
+            "id": release_id,
+            "key": "v9.9",
+            "properties": {
+                **release["properties"],
+                "tag": "v9.9",
+                "published_at": "2030-01-01T00:00:00Z",
+            },
+        },
+    ])
+    write_jsonl(relations_path, [*relations, event])
+    refresh(root)
+    return event
 
 
 def synthetic_answerer(**kwargs):
@@ -259,7 +308,7 @@ def test_extended_entities_import_and_developer_to_function_path(sample, graph_c
         config=graph_config,
     )
     assert author["id"] in default_prepared["seed_ids"]
-    assert default_prepared["method_version"] == "relore_common_rrf_graph_v2"
+    assert default_prepared["method_version"] == "p2_query_v1.4.2_20261031_scopefix"
     expected = [
         author["id"],
         pull_request["id"],
@@ -674,11 +723,113 @@ def test_citation_outside_visible_context_is_rejected(sample, graph_config):
     assert result.status == "error" and not result.claims
 
 
+def test_external_reference_blocks_retrieval_and_answer(sample, graph_config, monkeypatch):
+    _, dataset = loaded(sample, graph_config)
+
+    def forbidden(*_args, **_kwargs):
+        pytest.fail("外库问题不得进入本库检索或回答器")
+
+    monkeypatch.setattr("historykg.query.service.verify_index", forbidden)
+    monkeypatch.setattr("historykg.query.service.retrieve", forbidden)
+    for question in (
+        "https://github.com/other/repo/issues/1",
+        "https://github.com/other/repo/issues/1为什么与本库有关？",
+    ):
+        request = {"dataset_id": dataset, "question": question}
+        prepared = prepare_query(request, config=graph_config)
+        assert prepared["status"] == "unsupported"
+        assert prepared["candidates"] == []
+        assert prepared["paths"] == [] and prepared["timeline"] == []
+        assert prepared["retrieval"]["raw_relore"]["status"] == "skipped"
+        assert any(isinstance(gap, dict) and gap.get("reason") == "external_project"
+                   for gap in prepared["gaps"])
+
+        result = query(request, config={**graph_config, "answerer": forbidden})
+        assert result.status == "unsupported"
+        assert result.claims == [] and result.evidence == []
+
+
+def test_timeline_scopes_to_related_path_and_keeps_event_evidence(
+        sample, graph_config, monkeypatch):
+    root, dataset = sample
+    event = add_disconnected_timeline_event(root, dataset, "example/toy")
+    source_seed = entity_id("PullRequest", "example/toy", 2)
+    monkeypatch.setattr(
+        "historykg.query.service.seed_from_sources",
+        lambda *_args, **_kwargs: [source_seed],
+    )
+    monkeypatch.setattr(
+        "historykg.query.service.context_candidates",
+        lambda *_args, **_kwargs: [],
+    )
+    loaded(sample, graph_config)
+    request = {"dataset_id": dataset, "question": "#999 timeline", "kind": "timeline"}
+    prepared = prepare_query(request, config=graph_config)
+    assert prepared["status"] == "ok"
+    assert prepared["timeline_scope"] == "related"
+    assert prepared["method_version"] == "p2_query_v1.4.2_20261031_scopefix"
+    assert prepared["timeline_subject_ids"] == [event["to_id"]]
+    assert source_seed in prepared["seed_ids"]
+    assert prepared["candidates"] == []
+    assert [item["id"] for item in prepared["timeline"]] == [event["id"]]
+    assert prepared["timeline"][0] == event
+
+    result = query(request, config={
+        **graph_config,
+        "answerer": lambda **_kwargs: pytest.fail(
+            "已有结构化时间线时不应调用回答器"
+        ),
+    })
+    assert result.status == "ok"
+    assert result.claims == []
+    assert result.model_extra["timeline_scope"] == "related"
+    assert result.model_extra["timeline"] == [event]
+    returned = {item["evidence_id"] for item in result.evidence}
+    assert set(event["evidence_ids"]) <= returned
+
+
+def test_timeline_without_explicit_subject_uses_retrieval_seeds(sample, graph_config):
+    _, dataset = loaded(sample, graph_config)
+    request = {"dataset_id": dataset, "question": "cache timeout", "kind": "timeline"}
+    prepared = prepare_query(request, config=graph_config)
+    assert prepared["status"] == "ok"
+    assert prepared["timeline_scope"] == "related"
+    assert prepared["timeline_subject_ids"] == prepared["seed_ids"]
+    assert prepared["timeline"]
+
+
+def test_explicit_repository_timeline_returns_all_events_and_evidence(sample, graph_config):
+    _, dataset = loaded(sample, graph_config)
+    with GraphStore(graph_config) as store:
+        all_events = sorted(
+            (relation for relation in store.snapshot(dataset)["relations"]
+             if relation.get("occurred_at")),
+            key=lambda relation: (relation["occurred_at"], relation["id"]),
+        )
+    request = {"dataset_id": dataset, "question": "全仓时间线", "kind": "timeline"}
+    prepared = prepare_query(request, config=graph_config)
+    assert prepared["status"] == "ok"
+    assert prepared["timeline_scope"] == "repository"
+    assert prepared["timeline"] == all_events
+
+    result = query(request, config={**graph_config, "answerer": synthetic_answerer})
+    assert result.model_extra["timeline"] == all_events
+    returned = {item["evidence_id"] for item in result.evidence}
+    event_evidence = {eid for relation in all_events
+                      for eid in relation.get("evidence_ids", [])}
+    assert event_evidence <= returned
+
+
 def test_external_issue_number_is_not_resolved_into_local_subject():
     from historykg.graph.store import read_package
     package = read_package(FIXTURE)
     seeds, gaps = resolve_seeds("https://github.com/other/repo/issues/1", package, [])
     assert not seeds and gaps
+    assert gaps[0]["reason"] == "external_project"
+    seeds, gaps = resolve_seeds(
+        "https://github.com/other/repo/issues/1为什么", package, []
+    )
+    assert not seeds and gaps[0]["reason"] == "external_project"
 
 
 def test_candidate_priority_prefers_scoped_discussion_over_generic_sources():

@@ -81,6 +81,41 @@ def test_resume_is_explicit_and_does_not_start():
         start.assert_not_called()
 
 
+def test_task_link_switches_existing_session_and_clears_answer():
+    other = {**JOB, "job_id": "b" * 32, "dataset_id": "other_dataset", "repo": "other/repo"}
+    with patch("app.backend.get", side_effect=lambda jid: {JOB["job_id"]: JOB,
+              other["job_id"]: other}[jid]) as get, patch("app.backend.start") as start:
+        test = observed(JOB).run()
+        test.session_state["answer"] = (JOB["dataset_id"], result())
+        test.query_params["job"] = other["job_id"]
+        test.run()
+        assert not test.exception
+        get.assert_called_with(other["job_id"])
+        assert test.session_state["job_id"] == other["job_id"]
+        assert "answer" not in test.session_state
+        assert any(other["repo"] in x.value for x in test.subheader)
+        assert not any("合成结论一" in x.value for x in test.markdown)
+        start.assert_not_called()
+
+
+def test_timeline_events_are_visible_with_evidence_numbers():
+    response = result()
+    response["timeline"] = [{"id": "event", "occurred_at": "2026-10-30T00:00:00Z",
+                             "type": "MergedAs", "from_id": "pr", "to_id": "commit",
+                             "evidence_ids": ["toy-evidence"]}]
+    with patch("app.backend.get", return_value=JOB), \
+         patch("app.backend.ask", return_value=response):
+        test = observed(JOB).run()
+        test.text_input[1].set_value("项目演化")
+        test.selectbox[0].set_value("timeline")
+        next(b for b in test.button if b.label == "查询").click().run()
+        assert not test.exception
+        rows = test.table[0].value
+        assert rows.iloc[0]["事件类型"] == "MergedAs"
+        assert rows.iloc[0]["时间"] == "2026-10-30T00:00:00Z"
+        assert rows.iloc[0]["证据"] == "1"
+
+
 @pytest.mark.parametrize("status, message", [
     ("ok", "查询已返回"), ("empty", "本次数据范围未返回可支持答案的记录"),
     ("unsupported", "当前资料或功能暂不支持这次请求"), ("error", "查询服务失败")])

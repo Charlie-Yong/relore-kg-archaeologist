@@ -73,4 +73,4 @@ queued/running，2为unsupported/failed/error。未接入模块会明确blocked�
 
 `fixtures/toy_v1`全为合成来源，含3条Decision、声明与关闭事件、同commit不同原样tag、
 两份File、普通评论/review/inline回复及分页缺失。它只验证程序约定，不代表真实LLM或项目事实。
-当前实际平台为macOS，Windows命令待实机验证。
+macOS已实际运行；Windows CI的原生数据库冻结重建记录见repro/README.md，不等于成员电脑在线采集或字体检查。

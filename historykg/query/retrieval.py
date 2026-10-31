@@ -10,7 +10,7 @@ from collections import defaultdict
 from historykg import collector
 from historykg.ids import evidence_id
 
-METHOD_VERSION = "relore_common_rrf_graph_v2"
+METHOD_VERSION = "p2_query_v1.4.2_20261031_scopefix"
 STOPWORDS = set("a an the is are was were to of for in on and or with what why how does did "
                 "this that it which when where please tell explain".split())
 CODE_KINDS = {"code"}
@@ -27,6 +27,12 @@ NUMBER_PATTERN = re.compile(
     r"(?:#\s*(\d+)\b|\b(?:issue|pull\s+request|pr)\s*#?\s*(\d+)\b)",
     re.IGNORECASE,
 )
+GITHUB_OBJECT_PATTERN = re.compile(
+    r"https://github\.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)/"
+    r"(issues|pull)/([0-9]+)"
+    r"(?=$|[/?#\s)\].,;:，。；：！？、（）【】《》\u3400-\u9fff])",
+    re.IGNORECASE,
+)
 EXTENDED_SUBJECT_TYPES = {"Developer", "Function"}
 
 
@@ -35,6 +41,30 @@ def tokens(text: str) -> set[str]:
     for run in re.findall(r"[\u3400-\u9fff]+", text):
         words.update(run[i:i + 2] for i in range(max(1, len(run) - 1)))
     return words
+
+
+def github_object_references(text: str) -> list[dict]:
+    """Return explicit GitHub issue/PR references without treating bare numbers as URLs."""
+    references, seen = [], set()
+    for owner, name, kind, number in GITHUB_OBJECT_PATTERN.findall(text):
+        repo = f"{owner}/{name}".casefold()
+        identity = (repo, kind.casefold(), int(number))
+        if identity in seen:
+            continue
+        seen.add(identity)
+        references.append({
+            "repo": repo,
+            "kind": kind.casefold(),
+            "number": int(number),
+            "url": f"https://github.com/{owner}/{name}/{kind.lower()}/{int(number)}",
+        })
+    return references
+
+
+def external_github_references(text: str, repo: str) -> list[dict]:
+    expected = repo.casefold()
+    return [reference for reference in github_object_references(text)
+            if reference["repo"] != expected]
 
 
 def lexical_score(question: str, source: dict) -> float:
@@ -146,13 +176,18 @@ def resolve_seeds(question: str, package: dict, supplied: list[str]) -> tuple[li
     repo = package["manifest"]["repo"]
     gaps, seeds = [], set()
     local_numbers = {int(n) for n in re.findall(r"(?<![\w/])#(\d+)\b", question)}
-    for owner, name, number in re.findall(
-        r"https://github\.com/([^/\s]+)/([^/\s]+)/(?:issues|pull)/(\d+)", question
-    ):
-        if (owner + "/" + name).lower() == repo:
-            local_numbers.add(int(number))
+    for reference in github_object_references(question):
+        if reference["repo"] == repo.casefold():
+            local_numbers.add(reference["number"])
         else:
-            gaps.append("问题提及仓库外对象，本数据集不包含该仓库的事实")
+            gaps.append({
+                "reason": "external_project",
+                "message": (
+                    "问题明确引用仓库外对象；"
+                    "本数据集不包含该仓库的事实"
+                ),
+                "references": [reference["url"]],
+            })
     for entity in entities.values():
         if entity["type"] in {"Issue", "PullRequest"} and int(
             entity["properties"].get("number", entity["key"])
@@ -171,7 +206,10 @@ def resolve_seeds(question: str, package: dict, supplied: list[str]) -> tuple[li
         matched = sorted(identity for score, identity in ranked if score == best)
         seeds.update(matched[:8])
         if len(matched) > 1:
-            gaps.append("主体匹配多个已采记录，返回候选范围；未声称主体已唯一确定")
+            gaps.append(
+                "主体匹配多个已采记录，返回候选范围；"
+                "未声称主体已唯一确定"
+            )
     return sorted(seeds), gaps
 
 

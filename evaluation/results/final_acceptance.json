@@ -603,5 +603,7 @@
     "handoff": "deliveries/P6/2026-10-30/handoff.md",
     "status": "coordination/STATUS_P6.md"
   },
-  "final_note": "P6-owned executable work is complete and ready for independent integration review. The result does not claim external verification, a complete integrated course package, or universal behavior across arbitrary Python repositories."
+  "final_note": "P6-owned executable work is complete and ready for independent integration review. The result does not claim external verification, a complete integrated course package, or universal behavior across arbitrary Python repositories.",
+  "snapshot_scope": "P6 pre-integration snapshot; test and service observations below are historical, not the current integrated course acceptance.",
+  "superseded_by": "evaluation/results/course_acceptance.json"
 }
