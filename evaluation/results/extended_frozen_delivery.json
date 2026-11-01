@@ -1,0 +1,92 @@
+{
+  "schema_version": "extended_frozen_delivery_validation_v1",
+  "checked_at": "2026-10-31T09:22:54.398672+00:00",
+  "status": "ok",
+  "archive": "repro/flask_extended.tar.gz",
+  "archive_sha256": "ca29b75815a884f52e57b5692f70ae183f5fd40818041f75e4c7c8ed8c74d132",
+  "archive_members": 22,
+  "original_acceptance": "evaluation/results/cross_source_chain.json",
+  "original_manifest_sha256": "9c2e966369560b206c3f6d433c8475bdd16cec069ddecf8454e818918e6ba724",
+  "validation": {
+    "status": "ok",
+    "dataset_id": "p2_p3_real_014e28d89e1f",
+    "counts": {
+      "sources": 370,
+      "source_units": 40,
+      "evidence": 741,
+      "entities": 535,
+      "relations": 591,
+      "subjects": 65
+    },
+    "errors": []
+  },
+  "rebuilds": {
+    "extended": {
+      "dataset_id": "p2_p3_real_014e28d89e1f",
+      "loads": 2,
+      "counts": {
+        "entities": 535,
+        "evidence": 741,
+        "relations": 591,
+        "source_units": 40,
+        "sources": 370,
+        "subjects": 65
+      },
+      "fingerprint": "d0c1be456f70acdf354776e2fbee24ee5d6614e94437add2a3e90239a48539dd",
+      "graph_ready": true,
+      "retrieval_ready": true,
+      "query_context_status": "ok"
+    },
+    "legacy": {
+      "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+      "loads": 2,
+      "counts": {
+        "entities": 133,
+        "evidence": 333,
+        "relations": 183,
+        "source_units": 40,
+        "sources": 369,
+        "subjects": 65
+      },
+      "fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+      "graph_ready": true,
+      "retrieval_ready": true,
+      "query_context_status": "ok"
+    }
+  },
+  "four_hop": {
+    "test": "tests/test_graph_query.py::test_real_p3_merged_shard_loads_and_returns_four_hop_path",
+    "input": "extracted repro/flask_extended.tar.gz",
+    "result": "passed",
+    "paths": [
+      "Developer - Authored -> PullRequest - MergedAs -> Commit - Touches -> File - Defines -> Function",
+      "Developer - Merged -> PullRequest - MergedAs -> Commit - Touches -> File - Defines -> Function"
+    ]
+  },
+  "shared_validation_regression": {
+    "test": "tests/test_code.py::test_code_git_facts_and_unicode_evidence",
+    "before_fix": "fails with missing unit_id when the full actual local-git P3 output is retained",
+    "after_fix": "passed; complete Developer/Function output accepted by public validation and pipeline freeze stage",
+    "change": "Moved existing strict Developer/Function identity and Defines endpoint rules into historykg.io validation shared by pipeline, CLI, graph and packaging."
+  },
+  "checks": {
+    "project_tests": "187 passed, 0 skipped",
+    "ruff": "passed",
+    "planning": "passed",
+    "planning_tool_tests": "7 passed",
+    "git_diff_check": "passed"
+  },
+  "platform": "macOS; real isolated PostgreSQL and Neo4j",
+  "new_model_requests": 0,
+  "limits": [
+    "Independent extension dataset; old production graph and formal A/B scores are unchanged.",
+    "Rebuilds stored graph and index from frozen records; does not rerun online collection or AST extraction.",
+    "Windows presentation fonts, member identity/peer evaluation and classroom presentation still require members."
+  ],
+  "independent_review": {
+    "model": "auto/deepseek-v4.1-flash",
+    "checked_at": "2026-11-01T03:53:40.076556+00:00",
+    "status": "passed",
+    "scope": "Shared validator diff, archive hashes/fingerprint and actual four-hop records, documented rebuild commands and course-readiness boundaries; no repeat database/model runs."
+  }
+}

@@ -252,6 +252,69 @@ def build_subjects(root: str | Path) -> list[dict]:
 
 def expected_entity_id(entity: dict) -> str:
     kind, repo, props, key = entity["type"], entity["repo"], entity["properties"], entity["key"]
+    if kind == "Developer":
+        login = props.get("login")
+        if not isinstance(login, str) or not login.strip():
+            raise ValueError("Developer缺login")
+        if isinstance(key, list):
+            if len(key) != 1:
+                raise ValueError("Developer.key须为identity_key或单元素[identity_key]")
+            identity_key = key[0]
+        elif isinstance(key, str):
+            # P3's current replay emits the scalar; accept the earlier list wrapper too.
+            identity_key = key
+        else:
+            raise ValueError("Developer.key须为identity_key或单元素[identity_key]")
+        if not isinstance(identity_key, str) or not identity_key:
+            raise ValueError("Developer.identity_key不能为空")
+        github_user_id = props.get("github_user_id", props.get("github_id"))
+        github_match = re.fullmatch(r"github:([1-9][0-9]*)", identity_key)
+        if github_match:
+            if (
+                not isinstance(github_user_id, int)
+                or isinstance(github_user_id, bool)
+                or github_user_id != int(github_match.group(1))
+            ):
+                raise ValueError("Developer.key与github_user_id不一致")
+        elif identity_key.startswith("login:"):
+            expected = "login:" + login.casefold()
+            if identity_key != expected:
+                raise ValueError("Developer.key须为login:<casefold(login)>")
+            if github_user_id is not None:
+                raise ValueError("有github_user_id时Developer.key须使用github:<id>")
+        else:
+            raise ValueError("Developer.identity_key须为github:<id>或login:<casefold(login)>")
+        return entity_id(kind, repo, identity_key)
+    if kind == "Function":
+        if not isinstance(key, list) or len(key) != 4:
+            raise ValueError("Function.key须为[sha,path,qualified_name,start_line]")
+        sha, path, qualified_name, start_line = key
+        if (
+            not isinstance(sha, str)
+            or len(sha) != 40
+            or any(c not in "0123456789abcdef" for c in sha)
+        ):
+            raise ValueError("Function.commit_sha必须完整40位小写SHA")
+        if not isinstance(path, str) or not path or not isinstance(qualified_name, str):
+            raise ValueError("Function缺path或qualified_name")
+        if not qualified_name.strip():
+            raise ValueError("Function.qualified_name不能为空")
+        if (
+            not isinstance(start_line, int)
+            or isinstance(start_line, bool)
+            or start_line < 1
+        ):
+            raise ValueError("Function.start_line必须为正整数")
+        expected_properties = {
+            "commit_sha": sha,
+            "path": path,
+            "qualified_name": qualified_name,
+            "start_line": start_line,
+        }
+        for field, value in expected_properties.items():
+            if props.get(field) != value:
+                raise ValueError(f"Function.key与properties.{field}不一致")
+        return entity_id(kind, repo, sha, path, qualified_name, start_line)
     if kind == "Project":
         return entity_id(kind, repo)
     if kind == "File":
@@ -484,6 +547,19 @@ def validate_dataset(root: str | Path, *, check_manifest: bool = True) -> dict:
                     errors.append(f"relations:{identity}: 稳定ID不匹配")
                 if kind not in {"ABOUT", "EVIDENCED_BY"} and not record["evidence_ids"]:
                     errors.append(f"relations:{identity}: 事实关系缺证据")
+                if kind == "Defines":
+                    file, function = left or {}, right or {}
+                    if (
+                        file.get("type") != "File"
+                        or function.get("type") != "Function"
+                        or file.get("properties", {}).get("commit_sha")
+                        != function.get("properties", {}).get("commit_sha")
+                        or file.get("properties", {}).get("path")
+                        != function.get("properties", {}).get("path")
+                    ):
+                        errors.append(
+                            f"relations:{identity}: Defines必须连接同SHA同路径的File/Function"
+                        )
                 if kind in {"Closes", "MergedAs"}:
                     refs = [evidence[e] for e in record["evidence_ids"] if e in evidence]
                     try:

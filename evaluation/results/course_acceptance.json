@@ -74,19 +74,21 @@
       "requirement": "使用真实LLM抽取实体、关系、Decision及理由",
       "status": "pass",
       "evidence": [
-        "deliveries/P4/2026-10-30/production_provenance.json",
+        "deliveries/P1/2026-10-30/production_provenance.json",
         "evaluation/results/extraction_summary.json"
       ]
     },
     {
       "id": "knowledge_graph",
       "requirement": "构建可查询的真实知识图谱并支持跨来源路径",
-      "status": "pass_with_versioned_gap",
+      "status": "pass",
       "evidence": [
         "evaluation/results/cross_source_chain.json",
-        "evaluation/results/final_acceptance.json"
+        "evaluation/results/final_acceptance.json",
+        "repro/flask_extended.tar.gz",
+        "evaluation/results/extended_frozen_delivery.json"
       ],
-      "note": "旧生产图保持1.4.1；P1+P3合并分片真实验收Developer/Function四跳，未冒充生产图更新。"
+      "note": "旧生产图保持1.4.1；P1+P3扩展图以独立1.4.2冻结包交付。从归档解压的实际数据通过公共校验、双次导入和Developer/Function四跳验收；两版本统计不混用。"
     },
     {
       "id": "downstream_application",
@@ -221,7 +223,7 @@
       "evidence": [
         "reports/technical_report.md"
       ],
-      "note": "表格与口径已准备并按要求留空；不能由AI生成评分、说明或代签。"
+      "note": "表格按用户要求暂留空；课程原文明列组内互评，正式提交前须由成员本人完成，不能由AI生成评分或代签。"
     },
     {
       "id": "classroom_presentation",
@@ -239,7 +241,7 @@
     "full_pytest": {
       "result": "187 passed",
       "skipped": 0,
-      "scope": "2026-10-31 rerun with actual isolated PostgreSQL/Neo4j, including real P1+P3 four-hop shard and new query/UI regressions"
+      "scope": "2026-10-31 rerun after shared 1.4.2 validation fix with isolated PostgreSQL/Neo4j; includes unfiltered real local-git P3 output through pipeline validation and the packaged real Flask four-hop dataset"
     },
     "graph_query_real": {
       "result": "26 passed",
@@ -249,7 +251,7 @@
     "ruff": "All checks passed",
     "planning_check": {
       "passed": true,
-      "markdown_files": 71,
+      "markdown_files": 72,
       "local_links_checked": 250,
       "all_six_roles_done": true
     },
@@ -272,21 +274,23 @@
       "loads_each": 2,
       "query_context_verified": true,
       "new_model_requests": 0
-    }
+    },
+    "extended_frozen_rebuild": "evaluation/results/extended_frozen_delivery.json"
   },
   "deferred_by_user": [
     "姓名、学号、职责确认与组内互评按用户当前要求留空"
   ],
   "human_remaining": [
-    "姓名、学号、职责确认与组内互评：如课程提交要求补齐，再由成员本人填写",
+    "姓名、学号与职责确认按用户要求暂留空；正式提交前须由成员本人补齐人员信息和课程要求的真实互评。",
     "Windows字体替换检查（WPS可选）",
     "正式课堂计时彩排与现场展示"
   ],
   "notes": [
     "本矩阵证明机器可验证的课程要求已经完成；个人字段和互评按用户当前要求留空，不把空白或模型银标冒充人工验收。",
     "最终提交包保持final_candidate，直至Windows字体与课堂现场项完成；不得伪造姓名、学号、职责确认或互评。",
-    "2026-10-31修复查询范围、任务链接切换与时间线呈现，并澄清46批×2=92及A/B统计口径；正式冻结实验数值保留。后续查询方法版本为p2_query_v1.4.2_20261031_scopefix。"
+    "2026-10-31修复查询范围、任务链接切换与时间线呈现，并澄清46批×2=92及A/B统计口径；正式冻结实验数值保留。后续查询方法版本为p2_query_v1.4.2_20261031_scopefix。",
+    "2026-10-31完成度复核补交Developer/Function独立冻结包；修复公共校验仍把新增实体当Decision的问题，移除测试中的类型过滤并验证完整P3输出。成员暂缓填写不等于课程豁免。"
   ],
-  "last_rechecked_at": "2026-10-31T16:56:22+08:00",
-  "latest_review": "deliveries/review/2026-10-31.md"
+  "last_rechecked_at": "2026-11-01T03:53:40.076556+00:00",
+  "latest_review": "deliveries/review/2026-10-31-course-readiness.md"
 }

@@ -224,6 +224,8 @@ def main(argv=None):
             " --out .local/rebuild.json --question 'stream context'\n"
             "   ```\n\n"
             "   原始模型日志用于审计，不会自动再次调用。\n"
+            "   Developer/Function四跳的独立扩展数据包在source/repro/flask_extended.tar.gz；\n"
+            "   解压、双次导入和四跳验证步骤见source/repro/README.md，不与原生产图统计混用。\n"
             "2. 实验重算：只使用source/evaluation/results中P6已公开的汇总与统计入口；\n"
             "   未发布的私有参考不在本包；留空的互评字段不能替代课程要求的正式互评。\n"
             "3. 外部模型重跑：配置自己的账号、密钥、数据库和批准预算，按source/README.md\n"

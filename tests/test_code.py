@@ -9,6 +9,7 @@ from pathlib import Path
 import httpx
 import pytest
 
+from historykg import pipeline
 from historykg.code import collect_code
 from historykg.code.ast_analysis import analyze_python
 from historykg.contracts import Entity, Evidence, Relation, SourceDocument
@@ -339,20 +340,29 @@ def test_code_git_facts_and_unicode_evidence(toy_git, tmp_path):
             for kind, keys, props in [("Project", [], {}), ("PullRequest", [1], {"number": 1})]
         ],
     )
-    write_jsonl(
-        dataset / "p3/entities.jsonl",
-        [e for e in entities.values() if e["type"] in LEGACY_ENTITY_TYPES],
-    )
-    write_jsonl(
-        dataset / "p3/relations.jsonl",
-        [r for r in relations if r["type"] in LEGACY_RELATION_TYPES],
-    )
+    # Keep the complete current P3 output, as the URL pipeline does. Filtering
+    # additive records here would hide a public-validator integration failure.
     merge_sources(dataset)
     subjects = build_subjects(dataset)
     assert any("handle" in s["aliases"] for s in subjects)
-    write_json(dataset / "manifest.json", {"dataset_id": "toy_v1", "repo": "example/toy"})
+    write_json(dataset / "manifest.json", {
+        "dataset_id": "toy_v1", "repo": "example/toy", "profile_version": "course_small_v1",
+    })
     checked = validate_dataset(dataset)
     assert checked["status"] == "ok", checked["errors"]
+    # The public pipeline must also freeze the full current P3 output.
+    settings = pipeline.load_config({"data_root": str(tmp_path / "data")})
+    validated = pipeline._stage(
+        {
+            "stage": "validate", "job_id": "p3_integration_regression",
+            "artifacts": {"dataset_dir": str(dataset)},
+            "usage": {}, "gaps": [], "coverage": {},
+        },
+        tmp_path / "job",
+        settings,
+    )
+    assert validated["status"] == "ok", validated["errors"]
+    assert validated["counts"]["entities"] == checked["counts"]["entities"]
 
 
 def test_developers_cover_multiple_authors_missing_author_and_login_fallback(toy_git, tmp_path):

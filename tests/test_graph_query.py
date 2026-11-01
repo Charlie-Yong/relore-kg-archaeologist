@@ -463,7 +463,7 @@ def test_p3_developer_function_key_and_id_validation(sample, fault, message):
 
 
 def test_p3_real_flask_identity_shape_matches_known_ids():
-    from historykg.graph.store import _extended_entity_id
+    from historykg.io import expected_entity_id as _extended_entity_id
 
     repo = "pallets/flask"
     sha = "05e9c6bd630ecf4ec0ec884b1fc7901663737bc7"

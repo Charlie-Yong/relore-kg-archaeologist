@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 from pathlib import Path
 from typing import Any
 
@@ -12,18 +11,8 @@ from neo4j import GraphDatabase
 
 from historykg import collector
 from historykg.contracts import RELATION_ENDPOINTS
-from historykg.ids import canonical_json, entity_id, text_hash
+from historykg.ids import canonical_json, text_hash
 from historykg.io import collect_records, merge_records, read_json, validate_dataset
-
-EXTENDED_ENTITY_TYPES = {"Developer", "Function"}
-LEGACY_ID_FALLBACK_ERRORS = (
-    "Stable ID mismatch",
-    "'unit_id'",
-    "'subject_id'",
-    "'action'",
-    "'status'",
-    "'statement'",
-)
 
 
 def settings(config: dict | None) -> dict:
@@ -244,139 +233,9 @@ def read_package(dataset_dir: str | Path) -> dict:
     return result
 
 
-def _extended_entity_id(entity: dict) -> str:
-    """Stable IDs for additive entity types not handled by the 1.4.1 validator."""
-    kind, repo, props, key = (
-        entity["type"],
-        entity["repo"],
-        entity["properties"],
-        entity["key"],
-    )
-    if kind == "Developer":
-        login = props.get("login")
-        if not isinstance(login, str) or not login.strip():
-            raise ValueError("Developer缺login")
-        if isinstance(key, list):
-            if len(key) != 1:
-                raise ValueError("Developer.key须为identity_key或单元素[identity_key]")
-            identity_key = key[0]
-        elif isinstance(key, str):
-            # P3's current replay emits the scalar; accept the earlier list wrapper too.
-            identity_key = key
-        else:
-            raise ValueError("Developer.key须为identity_key或单元素[identity_key]")
-        if not isinstance(identity_key, str) or not identity_key:
-            raise ValueError("Developer.identity_key不能为空")
-        github_user_id = props.get("github_user_id", props.get("github_id"))
-        github_match = re.fullmatch(r"github:([1-9][0-9]*)", identity_key)
-        if github_match:
-            if (
-                not isinstance(github_user_id, int)
-                or isinstance(github_user_id, bool)
-                or github_user_id != int(github_match.group(1))
-            ):
-                raise ValueError("Developer.key与github_user_id不一致")
-        elif identity_key.startswith("login:"):
-            expected = "login:" + login.casefold()
-            if identity_key != expected:
-                raise ValueError("Developer.key须为login:<casefold(login)>")
-            if github_user_id is not None:
-                raise ValueError("有github_user_id时Developer.key须使用github:<id>")
-        else:
-            raise ValueError("Developer.identity_key须为github:<id>或login:<casefold(login)>")
-        return entity_id(kind, repo, identity_key)
-    if kind == "Function":
-        if not isinstance(key, list) or len(key) != 4:
-            raise ValueError("Function.key须为[sha,path,qualified_name,start_line]")
-        sha, path, qualified_name, start_line = key
-        if (
-            not isinstance(sha, str)
-            or len(sha) != 40
-            or any(c not in "0123456789abcdef" for c in sha)
-        ):
-            raise ValueError("Function.commit_sha必须完整40位小写SHA")
-        if not isinstance(path, str) or not path or not isinstance(qualified_name, str):
-            raise ValueError("Function缺path或qualified_name")
-        if not qualified_name.strip():
-            raise ValueError("Function.qualified_name不能为空")
-        if (
-            not isinstance(start_line, int)
-            or isinstance(start_line, bool)
-            or start_line < 1
-        ):
-            raise ValueError("Function.start_line必须为正整数")
-        expected_properties = {
-            "commit_sha": sha,
-            "path": path,
-            "qualified_name": qualified_name,
-            "start_line": start_line,
-        }
-        for field, value in expected_properties.items():
-            if props.get(field) != value:
-                raise ValueError(f"Function.key与properties.{field}不一致")
-        return entity_id(kind, repo, sha, path, qualified_name, start_line)
-    raise ValueError("不是1.4.2新增实体")
-
-
 def validate_extended_dataset(dataset_dir: str | Path) -> dict:
-    """Extend P1 validation without changing its 1.4.1-owned implementation."""
-    report = validate_dataset(dataset_dir)
-    if report["status"] == "ok":
-        return report
-    try:
-        package = read_package(dataset_dir)
-    except (OSError, ValueError, KeyError, TypeError):
-        return report
-    extended = [e for e in package["entities"] if e["type"] in EXTENDED_ENTITY_TYPES]
-    if not extended:
-        return report
-
-    errors, valid_ids = [], set()
-    for entity in extended:
-        try:
-            expected = _extended_entity_id(entity)
-            if entity["id"] != expected:
-                raise ValueError("稳定ID不匹配")
-            valid_ids.add(entity["id"])
-        except (KeyError, ValueError, TypeError) as exc:
-            errors.append(f"entities:{entity.get('id')}: {exc}")
-
-    entities = {e["id"]: e for e in package["entities"]}
-    for relation in package["relations"]:
-        if relation["type"] != "Defines":
-            continue
-        file = entities.get(relation["from_id"], {})
-        function = entities.get(relation["to_id"], {})
-        if (
-            file.get("type") != "File"
-            or function.get("type") != "Function"
-            or file.get("properties", {}).get("commit_sha")
-            != function.get("properties", {}).get("commit_sha")
-            or file.get("properties", {}).get("path")
-            != function.get("properties", {}).get("path")
-        ):
-            errors.append(f"relations:{relation['id']}: Defines必须连接同SHA同路径的File/Function")
-
-    # io.expected_entity_id has no 1.4.2 dispatch and therefore reports only its
-    # Decision fallback for valid new entities. All other 1.4.1 checks still run.
-    filtered = []
-    for error in report["errors"]:
-        legacy = next(
-            (
-                identity
-                for identity in valid_ids
-                if error
-                in {
-                    f"entities:{identity}: {reason}"
-                    for reason in LEGACY_ID_FALLBACK_ERRORS
-                }
-            ),
-            None,
-        )
-        if legacy is None:
-            filtered.append(error)
-    filtered.extend(errors)
-    return {**report, "status": "ok" if not filtered else "error", "errors": filtered}
+    """Compatibility entry point; all producers now use the shared 1.4.2 validator."""
+    return validate_dataset(dataset_dir)
 
 
 def load_dataset(dataset_dir: str | Path, *, config: dict | None = None, **_kwargs: Any) -> dict:
