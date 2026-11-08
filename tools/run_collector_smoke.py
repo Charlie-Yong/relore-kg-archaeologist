@@ -44,7 +44,7 @@ def main():
         assert all(hit["repo"] == collected["repo"] for hit in searched["hits"])
         assert search_history("example/not-this-repo", query, database_url=url)["status"] == "empty"
         origin = doctor(url)
-        assert origin["source"]["bundled"], origin
+        assert origin["source"]["implementation"] == "historykg", origin
         results[name] = {
             "status": "passed",
             "counts": first["counts"],
@@ -67,8 +67,7 @@ def main():
         "profile": collected["profile_version"],
         "platform": platform.system(),
         "python": platform.python_version(),
-        "relore_version": "0.3.19",
-        "relore_commit": capture["relore_commit"],
+        "collector_version": capture["collector_version"],
         "retrieved_at": capture["retrieved_at"],
         "github_requests": collected["github_requests"],
         "authenticated": collected["authenticated"],

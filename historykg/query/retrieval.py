@@ -2,15 +2,15 @@
 
 from __future__ import annotations
 
-import datetime as dt
-import json
 import re
 from collections import defaultdict
 
 from historykg import collector
 from historykg.ids import evidence_id
+from historykg.ingest.github import discussion_mapping
+from historykg.ingest.index import SEARCH_BACKEND, SEARCH_METHOD
 
-METHOD_VERSION = "p2_query_v1.4.2_20261031_scopefix"
+METHOD_VERSION = "p2_query_v1.4.2_historykg_discussion_v1"
 STOPWORDS = set("a an the is are was were to of for in on and or with what why how does did "
                 "this that it which when where please tell explain".split())
 CODE_KINDS = {"code"}
@@ -218,17 +218,11 @@ def retrieve(question: str, package: dict, *, database_url: str | None,
     sources = {s["source_id"]: s for s in package["sources"]}
     raw = collector.search_history(package["manifest"]["repo"], question,
                                    database_url=database_url, limit=10)
-    # Public collector hits retain datetime values; audits use explicit ISO strings.
-    def json_date(value):
-        if isinstance(value, (dt.datetime, dt.date)):
-            return value.isoformat()
-        raise TypeError(type(value).__name__)
-    raw = json.loads(json.dumps(raw, ensure_ascii=False, default=json_date))
     if raw["status"] not in {"ok", "empty"}:
-        raise RuntimeError("relore检索失败，不能当作成功空结果")
+        raise RuntimeError("讨论检索失败，不能当作成功空结果")
     mapping = defaultdict(list)
     for source in sources.values():
-        m = source.get("relore_mapping")
+        m = discussion_mapping(source)
         if m:
             mapping[(int(m["number"]), m["source_type"], str(m["source_id"]))].append(
                 source["source_id"]
@@ -237,13 +231,11 @@ def retrieve(question: str, package: dict, *, database_url: str | None,
     mapped_hits = []
     for rank, hit in enumerate(raw.get("hits", []), 1):
         if hit.get("repo") != package["manifest"]["repo"]:
-            raise ValueError("relore返回了跨仓库命中")
+            raise ValueError("讨论检索返回了跨仓库命中")
         kind = hit["source_type"]
-        # Titles are visible metadata of the frozen body, not separately invented evidence.
-        kind = "body" if kind == "title" else kind
         for sid in mapping.get((int(hit["number"]), kind, str(hit["source_id"])), []):
             ranks[sid] += 1 / (60 + rank)
-            origins[sid].add("relore")
+            origins[sid].add("discussion_keywords")
             mapped_hits.append({"rank": rank, "source_id": sid, "hit": hit})
     lexical = sorted(
         ((lexical_score(question, s), sid) for sid, s in sources.items()),
@@ -255,8 +247,9 @@ def retrieve(question: str, package: dict, *, database_url: str | None,
     ordered = sorted(ranks, key=lambda sid: (-ranks[sid], sid))[:limit]
     return {"source_ids": ordered, "scores": dict(ranks),
             "origins": {k: sorted(v) for k, v in origins.items()},
-            "raw_relore": raw, "mapped_hits": mapped_hits,
-            "backend": {"discussion": "relore.search_history", "adapter": "fixed_lexical_rrf_v1",
+            "raw_discussion": raw, "mapped_hits": mapped_hits,
+            "backend": {"discussion": SEARCH_BACKEND, "discussion_method": SEARCH_METHOD,
+                        "adapter": "fixed_lexical_rrf_v1",
                         "visible_source_ids": sorted(sources)}}
 
 

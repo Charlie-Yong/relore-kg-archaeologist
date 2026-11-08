@@ -1,4 +1,4 @@
-"""Bounded URL discovery. Network/retries use the P4 collector's relore client."""
+"""Bounded URL discovery, using the same GitHub client as thread collection."""
 
 from __future__ import annotations
 
@@ -88,9 +88,7 @@ class SnapshotClient:
             transport=transport,
             event_hooks={"request": [self.before], "response": [self.after]},
         )
-        self.client = collector.GitHubClient(
-            self.token, client=self.http, max_retries=2, sleep=collector._retry_wait
-        )
+        self.client = collector.GitHubClient(self.http, sleep=collector._retry_wait)
 
     def before(self, request):
         if self.state["github_requests"] >= self.limit:

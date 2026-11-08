@@ -51,7 +51,7 @@ def load_config(config: dict | None = None) -> dict:
         "jobs_root": str(ROOT / ".local/jobs"),
         "data_root": str(ROOT / "data"),
         "profile": PROFILE,
-        "database_url": os.getenv("RELORE_DATABASE_URL"),
+        "database_url": os.getenv("HISTORYKG_DATABASE_URL") or os.getenv("RELORE_DATABASE_URL"),
         "extract_module": "historykg.extract",
         "load_module": "historykg.graph",
         "model": {},
@@ -274,12 +274,6 @@ def _stage(job, directory, config):
         snapshot = read_json(snapshot_dir / "snapshot.json")
         initial = read_json(snapshot_dir / "discovery_http.json")
         capture_path = directory / "collection/capture.json"
-        import inspect
-
-        if "selected" not in inspect.signature(collector.collect_repo).parameters:
-            raise StageBlocked(
-                "等待P4 collector selected/resume_capture扩展，不能以smoke替代正式profile"
-            )
         result = collector.collect_repo(
             "https://github.com/" + job["repo"],
             database_url=config.get("database_url"),
@@ -308,7 +302,7 @@ def _stage(job, directory, config):
                     endpoint = f"repos/{job['repo']}/issues/{payload['number']}/timeline"
                     try:
                         # All event pages, with the same GET retry/request boundary.
-                        list(metadata.client.paginate(endpoint))
+                        list(metadata.client.pages(endpoint))
                     except (collector.CollectionBlocked, collector.GitHubError) as exc:
                         metadata_gaps.append(
                             {

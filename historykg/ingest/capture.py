@@ -10,6 +10,7 @@ from urllib.parse import parse_qsl, urlsplit
 from historykg.contracts import CONTRACT_VERSION
 from historykg.ids import entity_id, relation_id, stable_id
 from historykg.ingest.discovery import parse_references
+from historykg.ingest.github import ThreadPayload
 from historykg.io import (
     api_closer_matches,
     build_subjects,
@@ -105,37 +106,28 @@ def map_capture(
         )
         thread_sources = []
         # Title stays metadata; body text remains byte-for-byte apart from LF.
-        records = [
-            (body_kind, thread, "body", str(number)),
-            *[
-                ("comment", x, "issue_comment", str(x["id"]))
-                for x in payload.get("issue_comments", [])
-            ],
-            *[("review", x, "review", str(x["id"])) for x in payload.get("reviews", [])],
-            *[
-                ("review_comment", x, "review_comment", str(x["id"]))
-                for x in payload.get("review_comments", [])
-            ],
-        ]
+        source_kinds = {"body": body_kind, "issue_comment": "comment", "review": "review",
+                        "review_comment": "review_comment"}
         body_source = None
-        for source_kind, record, relore_kind, origin in records:
+        for origin_kind, origin, record in ThreadPayload.from_capture(payload).objects():
+            source_kind = source_kinds[origin_kind]
             item = make_source(
                 dataset_id=dataset_id,
                 repo=repo,
                 kind=source_kind,
                 url=record.get("html_url") or base_url,
                 text=record.get("body") or "",
-                origin_key=f"{repo}:{relore_kind}:{origin}",
+                origin_key=f"{repo}:{origin_kind}:{origin}",
                 retrieved_at=now,
                 occurred_at=record.get("submitted_at") or record.get("created_at"),
                 author=(record.get("user") or {}).get("login"),
                 trust_tier="authoritative"
                 if record.get("author_association") in {"OWNER", "MEMBER", "COLLABORATOR"}
                 else "reported",
-                relore_mapping={
+                discussion_mapping={
                     "repo": repo,
                     "number": number,
-                    "source_type": relore_kind,
+                    "source_type": origin_kind,
                     "source_id": origin,
                 },
                 title=thread.get("title", ""),
@@ -246,13 +238,17 @@ def map_capture(
         for r in references
         if r["resolution"] not in {"collected", "out_of_scope"}
     ]
+    if "collector_version" in capture:
+        provenance = {"collector_version": capture["collector_version"]}
+    elif capture.get("relore_commit"):
+        provenance = {"relore_version": "0.3.19", "relore_commit": capture["relore_commit"]}
+    else:
+        provenance = {}
     write_manifest(
         root,
         dataset_id=dataset_id,
         repo=repo,
         profile_version=snapshot.get("profile", {}).get("profile_version", "collector_smoke_v1"),
-        relore_version="0.3.19",
-        relore_commit=capture.get("relore_commit"),
         retrieved_at=now,
         synthetic=False,
         frozen=False,
@@ -263,6 +259,7 @@ def map_capture(
             "capture_path": str(capture_path),
             "github_requests": capture.get("result", {}).get("github_requests"),
         },
+        **provenance,
     )
     incomplete = capture.get("result", {}).get("status") == "partial" or any(
         g.get("severity", "warning") != "coverage" for g in gaps

@@ -1,196 +1,82 @@
-# 项目历史采集器｜安装、调用与交接
+# 项目历史采集器
 
-项目内模块，由P4负责源码移植、适配、基础数据接口及维护；基于开源relore二次开发。
-固定版本为0.3.19 / `06a1c99c4653e9db899a18e96d8ff0ee6b419815`，源码在
-[vendor/relore](../vendor/relore)，许可和来源见[第三方说明](../THIRD_PARTY_NOTICES.md)。
-上游原始文档描述其自己的部署；本项目以本页命令为准。
+采集器负责从公开 GitHub Python 仓库取得有限范围的原文和出处。成品使用同一条流程：
 
-## 1. 安装仓库内版本
+**仓库链接 → 自动选取讨论 → 分页采集并冻结原文 → 抽取实体和关系 → 建图 → 有出处的问答。**
 
-以下命令都从本仓库根目录运行，要求Python 3.11和Git。下载第三方Python依赖需要网络。
-运行时使用本机数据库，不连接relore原项目的默认服务。无需Neo4j或模型API。
+[发现模块](../historykg/ingest/discovery.py)选取候选讨论，[GitHub 读取模块](../historykg/ingest/github.py)
+读取 Issue、PR 正文、评论、评审和行内评论，按 [GitHub REST 分页规则](https://docs.github.com/en/rest/using-the-rest-api/using-pagination-in-the-rest-api)
+读取后续页面。采集入口保存 HTTP 响应和已用请求数，记录未读部分，并把统一的讨论记录交给
+[来源映射](../historykg/ingest/capture.py)。文件、提交和发布仍由代码与版本模块补充。
+[讨论索引](../historykg/ingest/index.py)以仓库、线程和来源编号保存记录，按标题和正文关键词排序，返回原文和链接。
+冻结后，问答只使用当前数据集的来源。早期原型来源和许可证见[第三方说明](../THIRD_PARTY_NOTICES.md)。
 
-Windows PowerShell：
+## 安装与试采
+
+在仓库根目录使用 Python 3.11 安装锁定依赖。Windows PowerShell：
 
 ~~~powershell
-git clone https://github.com/Charlie-Yong/relore-kg-archaeologist.git
-cd relore-kg-archaeologist
 py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m historykg.collector doctor
+.venv\Scripts\python -m pip install -r requirements.txt
+.venv\Scripts\python -m historykg.collector doctor
+.venv\Scripts\python -m historykg.collector ingest https://github.com/pallets/flask
+.venv\Scripts\python -m historykg.collector search "Flask" --repo pallets/flask
 ~~~
 
-macOS：
+macOS 或 Linux：
 
 ~~~sh
-git clone https://github.com/Charlie-Yong/relore-kg-archaeologist.git
-cd relore-kg-archaeologist
 python3.11 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python -m historykg.collector doctor
-~~~
-
-`doctor`应返回`source.bundled=true`、`version=0.3.19`，源码路径指向本仓库的
-`vendor/relore/relore/__init__.py`。未初始化时`schema_ready=false`，首次`ingest`会建表。
-安装文件精确锁定第三方依赖，并将relore指向本仓库的可编辑源码；其版本和原始来源另行保留。
-
-## 2. SQLite轻量开发示例
-
-未设置`RELORE_DATABASE_URL`时，自动使用`.local/collector/index.sqlite3`。
-若已设置数据库变量，可在PowerShell执行`Remove-Item Env:RELORE_DATABASE_URL`，
-在macOS执行`unset RELORE_DATABASE_URL`恢复此默认值。
-
-Windows PowerShell：
-
-~~~powershell
-.\.venv\Scripts\python.exe -m historykg.collector ingest https://github.com/pallets/flask
-.\.venv\Scripts\python.exe -m historykg.collector search "Flask" --repo pallets/flask
-~~~
-
-macOS：
-
-~~~sh
-.venv/bin/python -m historykg.collector ingest https://github.com/pallets/flask
-.venv/bin/python -m historykg.collector search "Flask" --repo pallets/flask
-~~~
-
-默认`collector_smoke_v1`从最近更新的候选中最多选一个PR和一个Issue，各类候选最多100条，
-每次最多60次GitHub请求。Issue候选过滤PR，线程正文、普通评论、review与inline回复复用
-relore的实际分页抓取；某类不存在、未读完或请求失败按实际结果记录。它是开发小样配置，
-不是正式`course_small_v1`的40讨论单元流程。
-
-可选参数为`--max-issues`、`--max-prs`、`--max-requests`、`--out`。讨论总量范围1–40，
-请求上限1–300；上限覆盖分页、失败尝试和重试。一次请求最多重试2次，要求等待超过10秒时
-保存阻塞状态，由调用方稍后重新执行。重复导入相同内容不增加文档数。
-
-查询使用两个或三个有辨识度的关键词。以上示例可能查无结果；从实际采集的标题中选词
-可核对已入库来源。空结果返回`empty`，不表示全仓库没有相关事实。
-
-## 3. PostgreSQL正式主线
-
-提供[本地Compose配置](../compose.collector.yml)，固定PostgreSQL 16.4，监听本机16432端口。
-若已安装原生PostgreSQL，可直接使用已有服务上的专用数据库，不要求安装Docker。
-
-~~~text
-docker compose -f compose.collector.yml up -d --wait
-~~~
-
-PowerShell设置：
-
-~~~powershell
-$env:RELORE_DATABASE_URL="postgresql://collector:collector_dev@127.0.0.1:16432/historykg_collector"
-.\.venv\Scripts\python.exe -m historykg.collector ingest https://github.com/pallets/flask
-.\.venv\Scripts\python.exe -m historykg.collector search "Flask" --repo pallets/flask
-~~~
-
-macOS设置：
-
-~~~sh
-export RELORE_DATABASE_URL='postgresql://collector:collector_dev@127.0.0.1:16432/historykg_collector'
 .venv/bin/python -m historykg.collector ingest https://github.com/pallets/flask
 .venv/bin/python -m historykg.collector search 'Flask' --repo pallets/flask
 ~~~
 
-`collector_dev`是Compose本地开发默认密码，可通过`COLLECTOR_POSTGRES_PASSWORD`调整。
-原生安装使用同样的数据库URL形式，账户须可在专用库建表及创建`pg_trgm`扩展。
-连接样例在[环境变量示例](../config/collector.env.example)；程序读取环境变量，不自动加载该文件。
+`doctor`显示`source.implementation=historykg`、数据库类型和索引状态。`ingest`会自动建表；
+默认 SQLite 路径为`.local/collector/index.sqlite3`。测试采集默认最多一个 PR、一个 Issue，
+各看最近更新的 100 条候选，预算 60 次 GitHub 请求。正式构建仍用`course_small_v1`，
+由流水线按采集计划交给采集器，最多 40 个讨论和 300 次 GitHub 请求。分页和重试都计入上限。
 
-公开仓库的小样允许匿名访问。若配置GitHub令牌，使用`GITHUB_TOKEN`，或已有`GH_TOKEN`；
-仅需实际读取目标公开仓库的权限。令牌不写进命令参数、输出或Git。
-网络代理沿用HTTPX支持的环境变量，安装依赖已包括SOCKS支持。
+匿名访问适合小样；正式构建可用`GITHUB_TOKEN`或`GH_TOKEN`配置 GitHub 只读凭据。
+设置`HISTORYKG_DATABASE_URL`可使用 PostgreSQL，例如
+`postgresql://collector:collector_dev@127.0.0.1:16432/historykg_collector`。
+本机服务可用`docker compose -f compose.collector.yml up -d --wait`启动，也支持已装的 PostgreSQL。
+账户需能在专用库建表，正式冻结索引还需能建 schema。环境变量示例见[配置样例](../config/collector.env.example)。
 
-## 4. P1/P2可调用的数据接口
+## 数据接口
 
-入口为[historykg.collector](../historykg/collector.py)，所有返回均为字典，
-`interface_version=collector_v1`。这些是P4维护的基础数据接口；C2/C7的正式
-`BuildJob_v1`、`QueryResult_v1`及统一来源ID由原所属角色在其上接入。
+[historykg.collector](../historykg/collector.py)保持`collector_v1`接口。返回值为字典。
 
-| 接口 | 输入 | 主要结果与职责 |
+| 接口 | 作用 |
+|---|---|
+| `initialize_database(database_url=None)`、`doctor(database_url=None)` | 初始化或检查索引。 |
+| `collect_repo(repo_url, **options)` | 发现并采集讨论，返回覆盖、缺口、实际请求数和`capture_path`。 |
+| `index_threads(payloads, *, database_url=None)` | 从同一仓库的`ThreadPayload`写入索引；同一内容重复导入不增加文档。 |
+| `replay_capture(path, *, database_url=None)` | 无网络回放，保留原采集状态与缺口。 |
+| `search_history(repo, query, *, database_url=None, limit=5)` | 从指定仓库返回命中及来源 URL；`limit`为 1–10。 |
+
+`collect_repo`接受`selected`作为发现阶段冻结的讨论清单，并通过`initial_requests`、
+`initial_http_responses`接续同一预算。`resume_capture`沿用同仓库、同清单和已用额度；
+已完成线程、带分页信息的成功响应直接重用。每次请求前保存次数、收到响应后保存原文，
+因此中断时已发出的请求仍计数。`capture.json`保留`historykg.collector.capture.v1`结构，
+新采集附`collector_version`。原始响应存于`http_responses`，不包含认证请求头。
+
+| 状态 | 含义 | CLI 退出码 |
 |---|---|---|
-| `initialize_database(database_url=None)` | 可选连接串，缺省读取环境配置 | 幂等迁移、后端名称、线程和文档计数 |
-| `doctor(database_url=None)` | 同上 | 实际源码位置/版本、是否仓库内版本、数据库可用性和建表状态 |
-| `collect_repo(repo_url, *, database_url=None, max_issues=1, max_prs=1, max_requests=60, output_dir=None, token=None, transport=None)` | 公开GitHub Python仓库URL；可注入HTTPX transport用于冻结测试 | 自动发现、抓取、入库，返回选择清单、实际计数、请求量、覆盖缺口及capture路径；供P1调用 |
-| `index_threads(payloads, *, database_url=None)` | 同仓库的relore `ThreadPayload`列表 | 将同一冻结原文写入目标索引，返回写入量和实际计数；支持复算和后端验证 |
-| `replay_capture(path, *, database_url=None)` | 本模块生成的capture文件 | 无网络回放，保留原采集状态及缺口；不把回放称为新采集 |
-| `search_history(repo, query, *, database_url=None, limit=5)` | 明确仓库、关键词；limit为1–10 | 复用relore排序，返回hits及扩展说明；供P2接入共同检索基线 |
+| `ok`、`empty` | 完成，或没有候选/命中 | 0 |
+| `partial`、`blocked` | 有缺口的可用结果，或额度/限流阻塞 | 3 |
+| `unsupported`、`error` | 不在支持范围，或请求/存储失败 | 2 |
 
-Python示例：
+## 已有数据和验证
 
-~~~python
-from historykg.collector import collect_repo, search_history
+现有采集快照可用`replay_capture`导入新索引；已建图的数据集使用
+`python -m historykg.cli load <dataset_dir>`重新导入讨论索引。两者都从保存的数据读取。
+旧的数据库连接环境变量继续兼容，优先使用`HISTORYKG_DATABASE_URL`。
+[公开冻结包](../repro/README.md)可在无网络和模型密钥时重建。旧版实验及答案保持各自的原版本，
+当前检索方法的新运行不能沿用旧实验分数。
 
-result = collect_repo("https://github.com/pallets/flask")
-print(result["status"], result.get("capture_path"))
-hits = search_history("pallets/flask", "Flask")
-print(hits["status"], hits.get("hits", []))
-~~~
-
-采集结果包含`status,repo,profile_version,selected,indexed_threads,counts,gaps,
-github_requests,max_requests,authenticated,capture_path`。`counts`是该库内指定仓库的当前计数，
-`indexed_threads`是本轮实际处理数。capture保存来源时间、源码提交、实际HTTP响应、
-`ThreadPayload`及运行结果，格式为`historykg.collector.capture.v1`。
-capture是开发接口的冻结输入，不冒充正式C5统一来源包；P1后续负责映射及冻结。
-`replay_capture`读取损坏、非本模块格式或跨仓库混用的文件时抛出ValueError/OSError，
-调用方应将其作为输入故障处理；有效文件的数据库故障通过结果status报告。
-
-2026-10-30增加P1自动发现的接入参数（原调用兼容）：`selected=[{"kind":"pr",
-"number":2}]`可直接使用P1冻结的至多40条线程，不在底层重新选案例；
-`initial_requests`和`initial_http_responses`接收发现阶段已经耗用的请求量与响应，
-总量仍受`max_requests<=300`约束。响应使用`url/status/body/retrieved_at/headers`，
-headers只保留分页所需`link`与`content-type`，不能传认证信息。
-`profile_version`标明实际profile，底层不会因此自动扩大范围。
-
-`resume_capture=Path(...)`沿用冻结的仓库、selected清单、成功分页与已用请求数；
-完整线程直接复用，未完成线程重读时成功冻结页走本地回放，仅缺失页消耗新请求。
-每次网络请求发出前先原子保存已耗请求数，收到每个响应及完成每个线程后再更新capture；
-进程中断可从最后checkpoint继续，未收到响应的在途请求也保留耗用。checkpoint里的
-`interrupted_or_running`明确表示尚未结束，不能当成完整采集结果。
-保留原始capture，并指定新的`output_dir`保存续作。换仓库或换selected会被拒绝。
-旧capture没有分页headers时不用于网络页缓存，以免把缺Link误作最后一页；
-完整线程仍可直接复用。`replay_capture`仍表示纯离线导入，不是续采。
-
-检索hit包含`repo,number,thread_type,title,source_type,source_id,url,author,trust,snippet`
-等relore字段。`source_id`是relore来源标识，不是C5的SHA-256 SourceDocument ID。
-原文片段和链接用于核对，检索不生成模型答案或新的修复结论。
-
-| 状态 | 含义 | CLI退出码 |
-|---|---|---|
-| `ok` | 本轮选中部分完成，或查询有命中 | 0 |
-| `empty` | 成功执行但候选或命中为空 | 0 |
-| `partial` | 已入库的可用前缀存在，同时有未读/失败/超限；必须展示gaps | 3 |
-| `blocked` | 尚无本轮可用产物，受到请求预算或外部限流阻塞 | 3 |
-| `unsupported` | 输入或仓库不在本入口支持范围 | 2 |
-| `error` | 网络、存储或运行错误，不包装成空结果 | 2 |
-
-## 5. 验证与恢复
-
-基础测试使用合成讨论，不联网：
-
-~~~text
-python -m pytest tests -q
-~~~
-
-PostgreSQL测试必须使用独立、库名以`_test`结尾的测试库。测试会清理该库中的relore表，
-不使用业务库或旧试跑库。Compose用户可先创建：
-
-~~~text
-docker compose -f compose.collector.yml exec postgres createdb -U collector historykg_collector_test
-~~~
-
-将`RELORE_TEST_POSTGRES_URL`设为该测试库连接串，再运行上述测试；未配置时PostgreSQL部分
-明确显示skip。原包相关测试可从`vendor/relore`运行`python -m pytest tests -q`。
-
-真实小样验证工具为`tools/run_collector_smoke.py`：
-
-~~~text
-python tools/run_collector_smoke.py --postgres-url postgresql://collector:collector_dev@127.0.0.1:16432/historykg_collector_test
-~~~
-
-该工具真实抓取一次Flask，再将同一capture回放到SQLite和给定PostgreSQL库，验证检索及
-重复导入；报告保存在`.local/collector/validation/report.json`。它不调用模型。
-
-常见问题：`bundled=false`时重新从根目录安装；断库时检查服务和连接串；限流或预算停止时
-查看capture内的gaps，额度恢复后重跑；未建表时运行`ingest`或调用`initialize_database`。
-`search`不自动建库，断库/缺表返回error。SQLite用于开发，正式实验继续使用PostgreSQL。
-
-当前实测平台是macOS；Windows命令已提供，Windows实机流程按既定里程碑由相应成员补验。
+`python -m pytest tests -q`验证分页、续采、回放、覆盖和同源查询。PostgreSQL 测试使用
+`HISTORYKG_TEST_POSTGRES_URL`指向的专用`_test`库。需要在线验证采集时，可运行
+`python tools/run_collector_smoke.py --postgres-url <测试库URL>`，用同一份真实采集结果核对
+SQLite 和 PostgreSQL 中的检索、回放及重复写入。

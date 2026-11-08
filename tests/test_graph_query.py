@@ -171,7 +171,7 @@ def graph_config(tmp_path):
     if not uri:
         pytest.skip("P2_TEST_NEO4J_URI enables actual namespace-scoped Neo4j integration")
     database = os.environ.get("P2_TEST_DATABASE_URL") or (
-        "sqlite:///" + (tmp_path / "relore.sqlite3").as_posix()
+        "sqlite:///" + (tmp_path / "discussion.sqlite3").as_posix()
     )
     assert collector.initialize_database(database)["status"] == "ok"
     config = {"neo4j_uri": uri, "database_url": database,
@@ -308,7 +308,7 @@ def test_extended_entities_import_and_developer_to_function_path(sample, graph_c
         config=graph_config,
     )
     assert author["id"] in default_prepared["seed_ids"]
-    assert default_prepared["method_version"] == "p2_query_v1.4.2_20261031_scopefix"
+    assert default_prepared["method_version"] == "p2_query_v1.4.2_historykg_discussion_v1"
     expected = [
         author["id"],
         pull_request["id"],
@@ -668,7 +668,7 @@ def test_ab_share_seeds_sources_and_adapter_code_visibility(sample, graph_config
     b = prepare_query(request, config={**graph_config, "system": "B"})
     assert a["seed_ids"] == b["seed_ids"]
     assert a["retrieval"] == b["retrieval"]
-    assert a["retrieval"]["backend"]["discussion"] == "relore.search_history"
+    assert a["retrieval"]["backend"]["discussion"] == "historykg.collector.search_history"
     assert a["paths"] == [] and b["paths"]
     assert any(a["source_by_id"][c["source_id"]]["kind"] == "code" for c in a["candidates"])
     assert a["retrieval"]["backend"]["visible_source_ids"] == sorted(a["source_by_id"])
@@ -740,7 +740,7 @@ def test_external_reference_blocks_retrieval_and_answer(sample, graph_config, mo
         assert prepared["status"] == "unsupported"
         assert prepared["candidates"] == []
         assert prepared["paths"] == [] and prepared["timeline"] == []
-        assert prepared["retrieval"]["raw_relore"]["status"] == "skipped"
+        assert prepared["retrieval"]["raw_discussion"]["status"] == "skipped"
         assert any(isinstance(gap, dict) and gap.get("reason") == "external_project"
                    for gap in prepared["gaps"])
 
@@ -767,7 +767,7 @@ def test_timeline_scopes_to_related_path_and_keeps_event_evidence(
     prepared = prepare_query(request, config=graph_config)
     assert prepared["status"] == "ok"
     assert prepared["timeline_scope"] == "related"
-    assert prepared["method_version"] == "p2_query_v1.4.2_20261031_scopefix"
+    assert prepared["method_version"] == "p2_query_v1.4.2_historykg_discussion_v1"
     assert prepared["timeline_subject_ids"] == [event["to_id"]]
     assert source_seed in prepared["seed_ids"]
     assert prepared["candidates"] == []
@@ -894,16 +894,14 @@ def test_candidate_priority_keeps_explicit_code_snapshot_first():
     assert ordered[0]["source_id"] == "code"
 
 
-def test_same_repo_mutation_does_not_change_frozen_relore_hits(tmp_path, graph_config):
-    from fake_github import FakeGitHub
-    from relore.github.fetch_thread import ThreadPayload
-
+def test_same_repo_mutation_does_not_change_frozen_discussion_hits(tmp_path, graph_config):
     from historykg.ingest.capture import map_capture
+    from historykg.ingest.github import ThreadPayload
 
     repo = "example/p2-frozen-" + uuid.uuid4().hex[:10]
-    fake = FakeGitHub(repo)
-    old = fake.add_issue(1, title="Frozen cache protocol", body="sentinel_old cache protocol")
-    payload = ThreadPayload(repo=repo, number=1, thread_type="issue", thread=old.payload)
+    payload = ThreadPayload(repo=repo, number=1, thread_type="issue", thread={
+        "number": 1, "title": "Frozen cache protocol", "body": "sentinel_old cache protocol",
+    })
 
     def freeze_version(name, thread):
         dataset = "p2_test_" + uuid.uuid4().hex
@@ -911,7 +909,7 @@ def test_same_repo_mutation_does_not_change_frozen_relore_hits(tmp_path, graph_c
         root.mkdir()
         capture = root / "capture.json"
         write = {"format": collector.CAPTURE, "repo": repo,
-                 "retrieved_at": "2026-10-30T00:00:00Z", "relore_commit": collector.COMMIT,
+                 "retrieved_at": "2026-10-30T00:00:00Z", "collector_version": collector.VERSION,
                  "result": {"status": "ok", "gaps": []}, "http_responses": [],
                  "payloads": [{**asdict(thread), "unread": []}]}
         capture.write_text(json.dumps(write), encoding="utf-8")
@@ -926,7 +924,7 @@ def test_same_repo_mutation_does_not_change_frozen_relore_hits(tmp_path, graph_c
     first = freeze_version("old", payload)
     request = {"dataset_id": first, "question": "cache protocol"}
     before = prepare_query(request, config={**graph_config, "system": "A"})
-    assert before["retrieval"]["raw_relore"]["hits"]
+    assert before["retrieval"]["raw_discussion"]["hits"]
     payload.thread = {**payload.thread, "body": "sentinel_new changed cache protocol"}
     assert collector.index_threads([payload], database_url=graph_config["database_url"])[
         "status"] == "ok"
@@ -938,9 +936,9 @@ def test_same_repo_mutation_does_not_change_frozen_relore_hits(tmp_path, graph_c
     newer = prepare_query({**request, "dataset_id": second}, config=graph_config)
     assert before["retrieval"] == after["retrieval"]
     assert before["candidates"] == after["candidates"]
-    assert "sentinel_old" in json.dumps(after["retrieval"]["raw_relore"])
-    assert "sentinel_new" not in json.dumps(after["retrieval"]["raw_relore"])
-    assert "sentinel_new" in json.dumps(newer["retrieval"]["raw_relore"])
+    assert "sentinel_old" in json.dumps(after["retrieval"]["raw_discussion"])
+    assert "sentinel_new" not in json.dumps(after["retrieval"]["raw_discussion"])
+    assert "sentinel_new" in json.dumps(newer["retrieval"]["raw_discussion"])
     result = query(request, config={**graph_config, "answerer": synthetic_answerer})
     assert result.status == "ok" and Path(result.model_extra["artifacts"]["query_run"]).exists()
 

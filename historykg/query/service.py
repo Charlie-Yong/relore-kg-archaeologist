@@ -55,7 +55,7 @@ def _blocked_external_retrieval(references: list[dict]) -> dict:
         "source_ids": [],
         "scores": {},
         "origins": {},
-        "raw_relore": {
+        "raw_discussion": {
             "status": "skipped",
             "hits": [],
             "reason": "external_project",
@@ -127,7 +127,7 @@ def prepare_query(request, *, config: dict | None = None) -> dict:
             supported = False
         else:
             if not package.get("retrieval_index"):
-                raise ValueError("数据集缺少冻结relore索引，请从冻结包重新load")
+                raise ValueError("数据集缺少冻结讨论索引，请从冻结包重新导入（load）。")
             scoped_url = verify_index(
                 cfg.get("database_url"), package["retrieval_index"], req.dataset_id
             )

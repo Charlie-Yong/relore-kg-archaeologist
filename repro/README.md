@@ -1,7 +1,7 @@
 # 冻结公开数据重建
 
-`flask_frozen.tar.gz` 保存原 URL 作业生成的公开 Flask 来源、已验图记录和 relore 无网络回放输入。
-不是新采集、在线模型测试或正式实验参考。无密钥、个人配置、完整 clone 或 P6 私有材料。
+`flask_frozen.tar.gz` 保存原 URL 作业生成的公开 Flask 来源、已验图记录和讨论回放输入。现行 HistoryKG 可直接重建图和讨论索引。
+重建使用已冻结的输入；原答案和实验指标对应旧版检索。无密钥、个人配置、完整 clone 或 P6 私有材料。
 
 - 原 job：`b61942bf06b742e48860d064dffe6df2`
 - dataset：`dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c`
@@ -9,9 +9,9 @@
 - 包内 manifest 的来源和文件哈希保持原样；其历史 capture_path 只是出处记录，重建不访问该路径。
 - 第三方文本保留作者、原 URL 和来源时间；Flask 为 BSD-3-Clause，提交
   `548994ea0c61465574cbfdd636a894a692f54b94` 的原许可证随包附于
-  licenses/Flask-LICENSE.txt，relore 许可证见仓库 THIRD_PARTY_NOTICES.md。
+  licenses/Flask-LICENSE.txt；采集原型的来源与许可见 [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md)。
 
-Windows Actions 在 `windows-2022` 安装锁定依赖，从 EDB / Neo4j 官方分发站取得
+原 Windows 验证在 `windows-2022` 安装锁定依赖，从 EDB / Neo4j 官方分发站取得
 PostgreSQL 16.4 和 Neo4j Community 5.26.0，记录下载哈希，监听 loopback，运行全部工程检查，
 再分别重建 toy 和本包。每包导入两次并核验相同计数、图与检索就绪及实际查询上下文。
 不配置 DeepSeek 密钥，不请求外部模型。CI 记录上传到对应 run 的 windows-verification artifact。

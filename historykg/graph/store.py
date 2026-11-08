@@ -12,6 +12,7 @@ from neo4j import GraphDatabase
 from historykg import collector
 from historykg.contracts import RELATION_ENDPOINTS
 from historykg.ids import canonical_json, text_hash
+from historykg.ingest.index import SEARCH_BACKEND, SEARCH_METHOD
 from historykg.io import collect_records, merge_records, read_json, validate_dataset
 
 
@@ -250,7 +251,7 @@ def load_dataset(dataset_dir: str | Path, *, config: dict | None = None, **_kwar
             result["error"] = {"code": "invalid_dataset", "message": "数据校验未通过"}
             return result
         package = read_package(dataset_dir)
-        # Doctor validates the real relore backend; supplementary texts share the frozen pool.
+        # The discussion index and supplementary texts use the same frozen source pool.
         cfg = settings(config)
         retrieval = collector.doctor(database_url=cfg.get("database_url"))
         if retrieval.get("status") != "ok":
@@ -266,7 +267,8 @@ def load_dataset(dataset_dir: str | Path, *, config: dict | None = None, **_kwar
         result.update(status="ok", graph_ready=True, retrieval_ready=True,
                       fingerprint=package["fingerprint"],
                       retrieval_index=package["retrieval_index"],
-                      retrieval_backend={"discussion": "relore.search_history",
+                      retrieval_backend={"discussion": SEARCH_BACKEND,
+                                         "discussion_method": SEARCH_METHOD,
                                          "common_sources": "fixed_lexical_rrf_v1",
                                          "visible_source_ids": [s["source_id"]
                                                                 for s in package["sources"]]})

@@ -13,7 +13,7 @@ from pathlib import Path
 from historykg.io import read_json, validate_dataset
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_FINAL_PPT = Path("demo/final/期末汇报_20261030最终版.pptx")
+DEFAULT_FINAL_PPT = Path("demo/五分钟汇报_课程采集版.pptx")
 DEFAULT_REPORT_PDF = Path("output/pdf/historykg_technical_report.pdf")
 PACKAGE_STATUSES = ("stage_candidate", "final_candidate", "final")
 FORBIDDEN_PARTS = {".local", "clones", "private_test", "submission"}

@@ -1,6 +1,6 @@
 # 图谱导入与公共查询（P2）
 
-接口契约1.4.2；兼容1.4.1冻结记录。本实现基于P4移植的relore和P1/P3/P4统一冻结记录。
+接口契约1.4.2；兼容1.4.1冻结记录。讨论索引和图谱读取同一套冻结来源。
 Neo4j存储实体/关系与冻结来源、证据；本模块不采集、不推断新事实。
 
 ```python
@@ -31,7 +31,7 @@ print(result.model_dump(mode="json"))
 `graph_ready/retrieval_ready`、`counts/rejected/error`、冻结指纹和可见来源清单。
 先调用P1的`validate_dataset`核验偏移/哈希/身份/端点/关系类型/跨库记录和API事实，
 再核对manifest完整来源表。校验失败时整批拒收，不悄悄丢弃坏记录。
-实际relore数据库必须可读；load为每个数据集建立冻结检索空间，
+讨论索引数据库必须可读；load为每个数据集建立冻结检索空间，
 Neo4j写完后读回所有记录并复算指纹。
 
 ### 1.4.2增量模式
@@ -81,30 +81,34 @@ Developer按login/display_name/github_user_id等标量属性，Function按
 qualified_name/name/path及`path::qualified_name`解析；不从`key`拼接别名。
 返回路径仍使用已存实体，不创建临时图节点。
 
-固定方法版本`relore_common_rrf_graph_v2`：先真实调用P4 `search_history`（10命中），
-按P1 `relore_mapping`映射到本数据集来源；再对完整共同来源池使用固定词法适配，
+现行方法版本`p2_query_v1.4.2_historykg_discussion_v1`：调用`historykg.collector.search_history`
+对标题、正文和显式讨论编号排序（最多10命中），按`discussion_mapping`映射到本数据集来源；
+再对完整共同来源池使用固定词法适配，
 包括讨论、code、release_note、commit_message、git_output、api_response。
 词法为英语/标识符与中文二元词，标题加权，按得分降序、source_id升序；
 两种排名通过`1/(60+rank)`合并。候选再按问题显式范围排序：Issue/PR编号且没有
 代码路径或提交SHA时，优先issue_body、comment、review与pr_body，并降低通用API元数据；
 问题明确给出代码路径或SHA时，优先origin_key同时匹配的code快照。该排序对A/B一致，
 图扩展只用于同一直接相关层内的次级排序。来源原文始终取当前冻结包，不取其他数据集文本。
-底座命中、映射及可见来源清单保留在查询日志，不能把适配检索称为纯relore原生排序。
+讨论命中、映射及可见来源清单保留在查询日志。
 
-讨论检索不会访问随后可变的全局repo索引。load从P1 manifest所指的P4 capture
+讨论检索不会访问随后可变的全局repo索引。load从manifest所指的capture
 回放ThreadPayload，对每个body/comment/review/review_comment按映射逐条核对C5冻结正文，
 多出/遗漏原对象或文本不一致整批拒收。原始回放输入保存为
-`exports/relore_input.json`，迁移/复现须随冻结数据包保留，可脱离旧capture绝对路径重建。
+`exports/discussion_input.json`，可脱离capture绝对路径重建；也兼容旧包的
+`exports/relore_input.json`和`relore_mapping`。
 正式Postgres使用同实例中按dataset_id哈希生成的独立schema；SQLite开发模式使用
-本数据集exports/relore_index.sqlite3。schema与源码层的真实relore仍保持不变。
+本数据集的`exports/discussion_index.sqlite3`。升级后对已导入的旧数据集执行
+`python -m historykg.cli load <dataset_dir>`即可重建讨论索引，无需联网或重新抽取。
 图中只保存无凭据的索引描述符，query按该描述符访问且核验冻结输入指纹。
-后续同repo构建更新全局index_payload不会改变旧dataset的命中、排序或文本。
-无讨论映射的toy/纯代码包在空relore索引上使用共同来源适配，不冒称讨论命中。
+后续同仓库的采集不会改变旧数据集的命中、排序或文本。
+没有讨论来源的纯代码包只走共同来源检索。
 
 `config['system']='A'`关闭图扩展，`B`为默认；两组共用问题解析、初始种子、
-来源池和词法/relore排名。B仅沿当前数据集的真实关系扩展，不从图引入新原文。
+来源池和词法排名。B仅沿当前数据集的真实关系扩展，不从图引入新原文。
 当前界限：8个种子、默认3跳无重复节点路径、最多50路径、40上下文来源；按稳定ID打破
-同分。已发布`relore_common_rrf_graph_v2`正式A/B仍固定按3跳。需要展示完整
+同分。已发布`relore_common_rrf_graph_v2`正式A/B使用旧版讨论排序并固定按3跳，
+其结果按历史版本引用。需要展示完整
 Developer→PullRequest→Commit→File→Function时，调用方必须显式传
 `graph_depth=4`；分支较多时还可显式把`graph_path_limit`从默认50提高至最多100。
 若问答已经显式给出完整主体种子，验收还可设`graph_expand_seeds=false`，只从问题
