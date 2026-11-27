@@ -338,21 +338,29 @@ def question_form(job):
     ]
     with st.form("question_form"):
         question = st.text_input("想了解这个项目的哪段历史？", placeholder="用自然语言提问")
-        with st.expander("查看已有时间线、依赖或版本关系"):
-            kind = st.selectbox("查询方式",
-                                ["search", "trace", "timeline", "dependencies", "compare"],
-                                format_func=lambda k: {"search": "问答", "trace": "关系追溯",
-                                "timeline": "时间线", "dependencies": "文件依赖",
-                                "compare": "已采版本比较"}[k])
-            answer_mode = st.radio(
-                "回答模式",
-                ["fast", "deep"],
-                format_func=lambda m: (
-                    "快速实证（推荐 · 秒级）" if m == "fast" else "深度思考（慢速复杂推理）"
-                ),
-                horizontal=True,
-            )
         submitted = st.form_submit_button("查询")
+    with st.expander("查看已有时间线、依赖或版本关系"):
+        kind = st.selectbox(
+            "查询方式",
+            ["search", "trace", "timeline", "dependencies", "compare"],
+            format_func=lambda k: {
+                "search": "问答",
+                "trace": "关系追溯",
+                "timeline": "时间线",
+                "dependencies": "文件依赖",
+                "compare": "已采版本比较",
+            }[k],
+            key=f"{job['dataset_id']}-query-kind",
+        )
+        answer_mode = st.radio(
+            "回答模式",
+            ["fast", "deep"],
+            format_func=lambda m: (
+                "快速实证（推荐 · 秒级）" if m == "fast" else "深度思考（慢速复杂推理）"
+            ),
+            horizontal=True,
+            key=f"{job['dataset_id']}-answer-mode",
+        )
     chosen_question = None
     if submitted and question.strip():
         chosen_question = question.strip()

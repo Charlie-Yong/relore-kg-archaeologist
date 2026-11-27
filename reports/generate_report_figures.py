@@ -57,7 +57,18 @@ def _box(ax, x, y, w, h, title, body, fc="#EFF6FF", ec="#2563EB", title_color="#
             fontsize=8.6, color="#334155", linespacing=1.32)
 
 
-def draw_fig1_architecture() -> None:
+def draw_fig1_architecture(data: dict) -> None:
+    sc10 = data["scaling"]["scales"]["10x"]
+    inc3 = data["incremental"]["stages"]["T3_delta"]
+    bl = data["blinker"]
+    b_ents = sum(bl["entity_counts"].values())
+    b_rels = sum(bl["relation_counts"].values())
+    b_qa = bl["qa_results"]["B_v2_fast"]
+    b_acc = b_qa["score"] / b_qa["max"] * 100
+    u_fast = data["unseen"]["results"]["B_v2_fast"]
+    u_a = data["unseen"]["results"]["A_v2"]
+    u_diff = (u_fast["score"] / u_fast["max"] - u_a["score"] / u_a["max"]) * 100
+
     fig, ax = plt.subplots(figsize=(13.2, 6.2), dpi=220)
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
@@ -76,7 +87,7 @@ def draw_fig1_architecture() -> None:
          "• Pydantic 1.4.2 严格双层校验\n• Neo4j 5.26 显式图谱\n  (分批事务提交 + 范围索引)\n• apply_delta 增量演化\n• SQLite FTS5 trigram 全文/SHA索引",
          fc="#ECFEFF", ec="#0891B2", title_color="#164E63")
     _box(ax, 0.52, 0.50, 0.22, 0.36, "3. Cypher 按需子图检索引擎",
-         "• 5 类问题意图识别\n• targeted_cypher_paths 定向遍历\n• 迭代加深 paths(hop=1..3)\n• IDF 权重 + 1-hop 决策扩展\n• 讨论 7500B / 总窗 12000B 配额",
+         "• 5 类问题意图识别\n• targeted_cypher_paths 定向遍历\n• 迭代加深 paths(hop=1..3)\n• IDF 权重 + 1-hop 决策扩展\n• 讨论 7500字 / 总窗 12000字 配额",
          fc="#F0FDF4", ec="#16A34A", title_color="#14532D")
     _box(ax, 0.77, 0.50, 0.21, 0.36, "4. 可追溯生成与双模式 UI",
          "• PROMPT_V2 去噪抽取(0 bot 误报)\n• reasoning_effort=none 快速直答\n  (中位 3.40s / 17/17 满分)\n• 偏移校验逐句[1][2]原文证据\n• 假前提诚实拒答 + 4项遥测条",
@@ -89,9 +100,9 @@ def draw_fig1_architecture() -> None:
 
     # Bottom cross-cutting validation band
     _box(ax, 0.02, 0.12, 0.96, 0.30, "横向工程保障、统计审计与端到端闭环指标（2026-11-26 实测）",
-         "• 扩展性优化：10x 图谱（40,670 实体 / 116,740 关系）按需子图检索较全量快照提速 7.80x（P50: 23.52s -> 3.02s）\n"
-         "• 增量演化与等价性：T1→T2→T3 增量 apply_delta 耗时 1.68s（对比全量重建 2.66s 提速 1.59x），指纹与数量 100% 一致\n"
-         "• 泛化与公平对照：无硬编码改造一键迁移 pallets-eco/blinker（Closes=5, 12/13=92.3%）；Codex E 诚实双口径对照 + 8道未见题盲测（+27.3pp）",
+         f"• 扩展性优化：10x 图谱（{sc10['counts']['entities']:,} 实体 / {sc10['counts']['relations']:,} 关系）按需子图检索较全量快照提速 {sc10['speedup_p50']:.2f}x（P50: {sc10['snapshot']['overall_p50_ms']/1000:.2f}s -> {sc10['cypher_subgraph']['overall_p50_ms']/1000:.2f}s）\n"
+         f"• 增量演化与等价性：T1→T2→T3 增量 apply_delta 耗时 {inc3['delta_ms']/1000:.2f}s（对比全量重建 {inc3['full_rebuild_ms']/1000:.2f}s 提速 {inc3['speedup_vs_full_rebuild']:.2f}x），指纹与数量 100% 一致\n"
+         f"• 泛化与公平对照：零硬编码迁移 pallets-eco/blinker（{b_ents:,} 实体 / {b_rels:,} 关系, Closes={bl['closes_edges']}, {b_qa['score']}/{b_qa['max']}={b_acc:.1f}%）；Codex E 双口径 + 8未见题（+{u_diff:.1f}pp）",
          fc="#F8FAFC", ec="#475569", title_color="#0F172A")
 
     ax.annotate("", xy=(0.38, 0.495), xytext=(0.38, 0.43),
@@ -283,23 +294,28 @@ def draw_fig4_qa_pareto_and_unseen(data: dict) -> None:
     fb = pareto["frozen_baselines"]
     vp = pareto["v2_pareto_arms"]
     e_valid = pareto["codex_e_audit"]["valid_prose_4"]
+    e_all = pareto["codex_e_audit"]["all_6"]
+
+    def _pct(arm: dict) -> float:
+        return arm["score"] / arm["max"] * 100
 
     points = [
-        ("O 纯大模型", fb["O"]["median_seconds"], fb["O"]["accuracy"] * 100, "#94A3B8", "o", (8, -4)),
-        ("A_v1 纯文本", fb["A"]["median_seconds"], fb["A"]["accuracy"] * 100, "#64748B", "s", (8, -6)),
-        ("B_v1 深度思考", fb["B"]["median_seconds"], fb["B"]["accuracy"] * 100, "#38BDF8", "o", (-68, -22)),
-        ("C 双检索", fb["C"]["median_seconds"], fb["C"]["accuracy"] * 100, "#818CF8", "^", (-30, 12)),
-        ("D 双证据极重", fb["D"]["median_seconds"], fb["D"]["accuracy"] * 100, "#4F46E5", "D", (-88, -22)),
-        ("Codex E (全部6题)", fb["E"]["median_seconds"], fb["E"]["accuracy"] * 100, "#F97316", "X", (-92, 12)),
-        ("Codex E (仅有效4题)", e_valid["median_seconds"], e_valid["accuracy"] * 100, "#EA580C", "P", (-96, -34)),
-        ("B_v2_low 低思考", vp["B_v2_fast_low"]["median_seconds"], vp["B_v2_fast_low"]["accuracy"] * 100, "#059669", "s", (4, 10)),
-        ("B_v2_fast (无思考最优)", vp["B_v2_fast_nothink"]["median_seconds"], vp["B_v2_fast_nothink"]["accuracy"] * 100, "#DC2626", "*", (-12, -28)),
+        ("O 纯大模型", fb["O"]["median_seconds"], _pct(fb["O"]), "#94A3B8", "o", (10, -4)),
+        ("A_v1 纯文本", fb["A"]["median_seconds"], _pct(fb["A"]), "#64748B", "s", (10, -6)),
+        ("B_v1 深度思考", fb["B"]["median_seconds"], _pct(fb["B"]), "#38BDF8", "o", (-14, -28)),
+        ("C 双检索", fb["C"]["median_seconds"], _pct(fb["C"]), "#818CF8", "^", (-54, 12)),
+        ("D 双证据极重", fb["D"]["median_seconds"], _pct(fb["D"]), "#4F46E5", "D", (-88, 10)),
+        ("Codex E (全部6题)", fb["E"]["median_seconds"], _pct(e_all), "#F97316", "X", (-98, 12)),
+        ("Codex E (仅有效4题)", e_valid["median_seconds"], _pct(e_valid), "#EA580C", "P", (-104, -28)),
+        ("B_v2_low 低思考", vp["B_v2_fast_low"]["median_seconds"], _pct(vp["B_v2_fast_low"]), "#059669", "s", (4, 10)),
+        ("B_v2_fast (无思考最优)", vp["B_v2_fast_nothink"]["median_seconds"], _pct(vp["B_v2_fast_nothink"]), "#DC2626", "*", (-12, -30)),
     ]
     for name, lat, acc, col, marker, offset in points:
         sz = 230 if marker == "*" else 85
+        lat_str = f"{lat:.2f}s" if lat < 10 else f"{lat:.1f}s"
         ax1.scatter([lat], [acc], color=col, marker=marker, s=sz, zorder=5, edgecolors="white", linewidth=0.9)
         ax1.annotate(
-            f"{name}\n({acc:.1f}%, {lat:.1f}s)",
+            f"{name}\n({acc:.1f}%, {lat_str})",
             xy=(lat, acc), xytext=offset, textcoords="offset points",
             fontsize=7.6, fontweight="bold" if "B_v2_fast" in name else "normal",
             color="#991B1B" if "B_v2_fast" in name else "#1E293B",
@@ -326,9 +342,9 @@ def draw_fig4_qa_pareto_and_unseen(data: dict) -> None:
     x = list(range(len(qids)))
     w = 0.26
     for idx, (arm_key, lbl, col) in enumerate([
-        ("A_v2", f"A_v2 纯文本 ({u_arms['A_v2']['accuracy']*100:.1f}%, {u_arms['A_v2']['median_seconds']}s)", "#94A3B8"),
-        ("B_v2_fast", f"B_v2_fast 图谱+子图 ({u_arms['B_v2_fast']['accuracy']*100:.1f}%, {u_arms['B_v2_fast']['median_seconds']}s)", "#2563EB"),
-        ("B_v2_deep", f"B_v2_deep 深度思考 ({u_arms['B_v2_deep']['accuracy']*100:.1f}%, {u_arms['B_v2_deep']['median_seconds']}s)", "#0F766E"),
+        ("A_v2", f"A_v2 纯文本 ({_pct(u_arms['A_v2']):.1f}%, {u_arms['A_v2']['median_seconds']}s)", "#94A3B8"),
+        ("B_v2_fast", f"B_v2_fast 图谱+子图 ({_pct(u_arms['B_v2_fast']):.1f}%, {u_arms['B_v2_fast']['median_seconds']}s)", "#2563EB"),
+        ("B_v2_deep", f"B_v2_deep 深度思考 ({_pct(u_arms['B_v2_deep']):.1f}%, {u_arms['B_v2_deep']['median_seconds']}s)", "#0F766E"),
     ]):
         pcts = [r["score"] / r["max"] * 100 for r in u_arms[arm_key]["per_question"]]
         ax2.bar([i + (idx - 1) * w for i in x], pcts, w, label=lbl, color=col)
@@ -362,12 +378,19 @@ def draw_fig5_scaling_incremental_blinker(data: dict) -> None:
     ax1.plot(x, snap_p50, "-o", color="#DC2626", lw=2.2, ms=7, label="全量 snapshot")
     ax1.plot(x, cyp_p50, "-s", color="#2563EB", lw=2.2, ms=7, label="按需 cypher_subgraph")
     for i, (sv, cv, k) in enumerate(zip(snap_p50, cyp_p50, ("1x", "5x", "10x"))):
-        ax1.text(i, sv + 1.0, f"{sv:.2f}s", ha="center", fontsize=8.2, color="#991B1B", fontweight="bold")
+        if i == 1:
+            ax1.annotate(
+                f"{sv:.2f}s", xy=(i, sv), xytext=(-10, 8),
+                textcoords="offset points", ha="right", va="bottom",
+                fontsize=8.2, color="#991B1B", fontweight="bold",
+            )
+        else:
+            ax1.text(i, sv + 1.0, f"{sv:.2f}s", ha="center", fontsize=8.2, color="#991B1B", fontweight="bold")
         if i == 0:
-            ax1.text(0.05, cv - 0.8, f"{cv:.2f}s ({sc[k]['speedup_p50']}x)",
+            ax1.text(0.05, cv - 0.8, f"{cv:.2f}s ({sc[k]['speedup_p50']:.2f}x)",
                      ha="left", va="top", fontsize=8.0, color="#1E40AF", fontweight="bold")
         else:
-            ax1.text(i, cv + 0.8, f"{cv:.2f}s ({sc[k]['speedup_p50']}x)",
+            ax1.text(i, cv + 0.8, f"{cv:.2f}s ({sc[k]['speedup_p50']:.2f}x)",
                      ha="center", fontsize=8.0, color="#1E40AF", fontweight="bold")
     ax1.set_xticks(x)
     ax1.set_xticklabels(labels, fontsize=9)
@@ -406,8 +429,10 @@ def draw_fig5_scaling_incremental_blinker(data: dict) -> None:
     bx = list(range(len(bl_qids)))
     a_pct = [r["score"] / r["max"] * 100 for r in bl["A_v2"]["per_question"]]
     b_pct = [r["score"] / r["max"] * 100 for r in bl["B_v2_fast"]["per_question"]]
-    ax3.bar([i - 0.18 for i in bx], a_pct, 0.35, label=f"A_v2 ({bl['A_v2']['accuracy']*100:.1f}%, {bl['A_v2']['median_seconds']}s)", color="#94A3B8")
-    ax3.bar([i + 0.18 for i in bx], b_pct, 0.35, label=f"B_v2_fast ({bl['B_v2_fast']['accuracy']*100:.1f}%, {bl['B_v2_fast']['median_seconds']}s)", color="#16A34A")
+    a_acc_bl = bl["A_v2"]["score"] / bl["A_v2"]["max"] * 100
+    b_acc_bl = bl["B_v2_fast"]["score"] / bl["B_v2_fast"]["max"] * 100
+    ax3.bar([i - 0.18 for i in bx], a_pct, 0.35, label=f"A_v2 ({a_acc_bl:.1f}%, {bl['A_v2']['median_seconds']:.2f}s)", color="#94A3B8")
+    ax3.bar([i + 0.18 for i in bx], b_pct, 0.35, label=f"B_v2_fast ({b_acc_bl:.1f}%, {bl['B_v2_fast']['median_seconds']:.2f}s)", color="#16A34A")
     ax3.set_xticks(bx)
     ax3.set_xticklabels(["BL1\n发布日", "BL2\nCloses链", "BL3\n版本", "BL4\nSignal源码", "BL5\n决定原因", "BL6\n假前提"], fontsize=8.0)
     ax3.set_ylim(0, 134)
@@ -425,7 +450,7 @@ def main() -> None:
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     setup_fonts()
     data = load_data()
-    draw_fig1_architecture()
+    draw_fig1_architecture(data)
     draw_fig2_schema_and_evidence(data)
     draw_fig3_extraction(data)
     draw_fig4_qa_pareto_and_unseen(data)

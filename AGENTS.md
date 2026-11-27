@@ -1,17 +1,17 @@
 # AI 执行入口
 
-## 现行期末主线（2026-11-26 ItsDangerous v2 增强版 / v7 复核候选）
+## 现行期末主线（2026-11-27 ItsDangerous v2 增强版 / v8 复核候选与课程实名提交版）
 
 本仓库为复旦《知识图谱概念与技术》课程项目 **HistoryKG**（选题三：GitHub 项目考古学家）。现行采集器在 `historykg/` 中维护，直接读取公开 GitHub 仓库（只读 REST/GraphQL 与 Git 裸仓 + Python AST 静态解析，零目标代码执行）并冻结原文与出处。
 
-- **现行期末交付口径**：期末报告、12 页 PPT、双数据集 `PROMPT_V2` 决定抽取评测、Pareto 问答对比（`B_v2_fast_nothink`）、Codex CLI `E` 组双口径审计、8 道未见盲测、`1x–10x` 规模压测、`T1→T3` 时序增量演进、`pallets-eco/blinker` 零代码跨仓迁移验证及便携冷启动包（`v7`）已统一基于 `pallets/itsdangerous`（冻结于 `2026-11-16 06:31:18 UTC`，默认分支提交 `672971d66a2ef9f85151e53283113f33d642dabd`）完成并核验。动手前优先核对：
+- **现行期末交付口径**：期末报告、12 页 PPT、双数据集 `PROMPT_V2` 决定抽取评测、Pareto 问答对比（`B_v2_fast_nothink`）、Codex CLI `E` 组双口径审计、8 道未见盲测、`1x–10x` 规模压测、零未来泄漏 `T1→T3` 时序增量演进（`2.60s vs 3.09s`, `1.19x`）、`pallets-eco/blinker` 零代码跨仓迁移验证（3,396 实体 / 5,958 关系）及便携冷启动包（公开候选 `v8`；本地受 `.gitignore` 保护的 `*_实名提交版.*` 与 `课程实名提交版.zip`）已统一基于 `pallets/itsdangerous`（冻结于 `2026-11-16 06:31:18 UTC`，默认分支提交 `672971d66a2ef9f85151e53283113f33d642dabd`）完成并核验。动手前优先核对：
   - 项目说明总览：[README.md](README.md)
-  - 课程要求与改进清单（含 11-26 落实回执）：[课程要求与期末改进清单](deliveries/review/2026-11-20-课程要求与期末改进清单.md)
+  - 课程要求与改进清单（含 11-27 落实回执）：[课程要求与期末改进清单](deliveries/review/2026-11-20-课程要求与期末改进清单.md)
   - 便携启动、演示与 5 分钟讲稿：[ItsDangerous 操作与讲稿](demo/final/ItsDangerous-操作与讲稿.md) · [答辩追问 10 题小抄](demo/final/答辩追问应答小抄.md)
-  - 期末技术报告与 PPT：[ItsDangerous 期末报告](reports/itsdangerous_final.md) · [ItsDangerous 技术报告 PDF（16 页）](output/pdf/ItsDangerous-技术报告.pdf) · [ItsDangerous 期末汇报 PPT（12 页）](demo/final/ItsDangerous-期末汇报.pptx)
-  - v2 增强实证评测与脚本：[v2 实验汇总索引](evaluation/itsdangerous-v2-20261126/README.md)（8 份 JSON 收据含 `portable-rehearsal-v7.json` 与 6 份脚本）；上一版基线保留于 `evaluation/itsdangerous-final-20261121/`（[qa-summary.json](evaluation/itsdangerous-final-20261121/qa-summary.json)）
+  - 期末技术报告与 PPT：[ItsDangerous 期末报告](reports/itsdangerous_final.md) · [ItsDangerous 技术报告 PDF（20 页）](output/pdf/ItsDangerous-技术报告.pdf) · [ItsDangerous 期末汇报 PPT（12 页）](demo/final/ItsDangerous-期末汇报.pptx)
+  - v2 增强实证评测与脚本：[v2 实验汇总索引](evaluation/itsdangerous-v2-20261126/README.md)（8 份 JSON 收据与 6 份脚本）；上一版基线保留于 `evaluation/itsdangerous-final-20261121/`（[qa-summary.json](evaluation/itsdangerous-final-20261121/qa-summary.json)）
   - 便携服务、打包与公开脱敏工具：`tools/serve_frozen.py`、`tools/package_itsdangerous_course.py`、`tools/check_public_privacy.py`
-- **三版本严格隔离**：`2026-10-30` Flask 正式包（[reports/technical_report.md](reports/technical_report.md)、`evaluation/results/`、[demo/final/期末汇报_20261030最终版.pptx](demo/final/期末汇报_20261030最终版.pptx)）、`2026-11-21` ItsDangerous v1/v6 基线、与 `2026-11-26` ItsDangerous v2/v7 + `pallets-eco/blinker` 验证为独立冻结口径，实体数、关系数与评测分数严禁混写或跨版相加。
+- **三版本严格隔离**：`2026-10-30` Flask 正式包（[reports/technical_report.md](reports/technical_report.md)、`evaluation/results/`、[demo/final/期末汇报_20261030最终版.pptx](demo/final/期末汇报_20261030最终版.pptx)）、`2026-11-21` ItsDangerous v1/v6 基线、与 `2026-11-26/27` ItsDangerous v2/v8 + `pallets-eco/blinker` 验证为独立冻结口径，实体数、关系数与评测分数严禁混写或跨版相加。
 
 ## 协作、讲解与质量准则
 

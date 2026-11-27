@@ -72,7 +72,7 @@ def _bind_cjk_punctuation(html):
 
 
 def inline_markup(text):
-    html = escape(text).replace("`", "")
+    html = escape(text.replace("\u2013", "-")).replace("`", "")
     html = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", html)
     html = URL_RE.sub(
         lambda match: f'<link href="{match.group(0)}" color="#1f5f75">{match.group(0)}</link>',
@@ -83,7 +83,7 @@ def inline_markup(text):
 
 def _cell_display_len(text):
     clean = text.replace("**", "").replace("`", "")
-    return sum(2 if "\u4e00" <= ch <= "\u9fff" else 1 for ch in clean)
+    return sum(2 if ord(ch) > 127 else 1 for ch in clean)
 
 
 def table_widths(rows, available=483):
@@ -91,9 +91,25 @@ def table_widths(rows, available=483):
     weights = []
     for index in range(columns):
         longest = max(_cell_display_len(row[index]) for row in rows)
-        weights.append(max(14, min(longest + 2, 44)))
+        weights.append(max(12, min(longest + 4, 56)))
     total = sum(weights)
-    return [available * weight / total for weight in weights]
+    widths = [available * weight / total for weight in weights]
+    # Ensure narrow numeric ID / short label columns (e.g. 11-digit student IDs) don't wrap unnecessarily.
+    for index in range(columns):
+        header = rows[0][index].strip()
+        if "学号" in header and widths[index] < 64:
+            deficit = 64 - widths[index]
+            widest = max(range(columns), key=lambda i: widths[i])
+            if widest != index and widths[widest] - deficit > 140:
+                widths[index] += deficit
+                widths[widest] -= deficit
+        elif ("互评" in header or "权重" in header) and widths[index] < 54:
+            deficit = 54 - widths[index]
+            widest = max(range(columns), key=lambda i: widths[i])
+            if widest != index and widths[widest] - deficit > 140:
+                widths[index] += deficit
+                widths[widest] -= deficit
+    return widths
 
 
 def markdown_table(block):
@@ -154,6 +170,11 @@ def render(source, output, project):
                 image, Spacer(1, 5), Paragraph(inline_markup(match[1]), STYLES["small"]), Spacer(1, 12)
             ]))
             continue
+        if references and all(re.match(r"(?:[-*]|\d+\.|\[\d+\]) ", line) for line in block.splitlines()):
+            lines = [Paragraph(inline_markup(line), STYLES["ref"]) for line in block.splitlines()]
+            emit(lines[0])
+            flow.extend(lines[1:])
+            continue
         if all(re.match(r"(?:[-*]|\d+\.) ", line) for line in block.splitlines()):
             lines = [Paragraph(inline_markup(line), STYLES["body"]) for line in block.splitlines()]
             emit(lines[0])
@@ -175,15 +196,15 @@ def render(source, output, project):
         elif block.startswith("## "):
             text = block[3:]
             kind = "subtitle" if text.startswith("以 ") else "h1"
-            if "参考文献" in text:
-                references = True
+            references = "参考文献" in text
         elif block.startswith("> "):
             text = " ".join(line.lstrip("> ").strip() for line in block.splitlines())
             kind = "note"
         else:
             text = block.replace("\n", " ")
-            kind = "ref" if references else "note" if text.startswith(
-                ("2026年", "说明：", "关键词：", "隐私保护提示：", "口径透明度说明：", "全套 Phase 2")
+            plain_prefix = re.sub(r"^\*\*(.+?)\*\*", r"\1", text)
+            kind = "ref" if references else "note" if plain_prefix.startswith(
+                ("2026年", "说明：", "关键词：", "关键词:", "隐私保护提示：", "课程实名提交确认：", "口径透明度说明：")
             ) else "body"
         html = inline_markup(text)
         para = Paragraph(html, STYLES[kind])

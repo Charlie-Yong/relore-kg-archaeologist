@@ -235,3 +235,42 @@ def test_chain_edge_direction_comes_from_fact_not_traversal():
     assert edges[0]["direction"] == "triangle-up"
     assert edges[0]["from"] == "source" and edges[0]["to"] == "target"
     assert chain_chart(path).to_dict()["layer"]
+
+
+def test_quick_demo_buttons_respect_answer_mode_and_kind(tmp_path, monkeypatch):
+    manifest = {
+        "dataset_id": JOB["dataset_id"],
+        "repo": "pallets/itsdangerous",
+        "profile_version": "full_history_v1",
+        "sources": ["one"],
+        "retrieved_at": "2026-11-16T06:31:18Z",
+    }
+    (tmp_path / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    monkeypatch.setenv("HISTORYKG_DEMO_DATASET_DIR", str(tmp_path))
+    monkeypatch.delenv("HISTORYKG_REPLAY_FILE", raising=False)
+    with patch("app.backend.ask", return_value=result()) as ask:
+        test = AppTest.from_file(APP).run()
+        assert not test.exception
+
+        # Default fast mode + quick demo button
+        next(b for b in test.button if b.label == "决策原因").click().run()
+        assert not test.exception
+        ask.assert_called_with(JOB["dataset_id"], "为什么去掉 simplejson？", "search")
+
+        # Switch radio to deep without submitting the form, then click quick demo button
+        test.radio[0].set_value("deep").run()
+        next(b for b in test.button if b.label == "改动追溯").click().run()
+        assert not test.exception
+        ask.assert_called_with(
+            JOB["dataset_id"],
+            "PR #372 改了哪些文件？哪个正式版包含？",
+            "search",
+            answer_mode="deep",
+        )
+
+        # Switch back to fast and change kind without submitting the form
+        test.radio[0].set_value("fast").run()
+        test.selectbox[0].set_value("trace").run()
+        next(b for b in test.button if b.label == "版本发布").click().run()
+        assert not test.exception
+        ask.assert_called_with(JOB["dataset_id"], "2.0.1 是哪天出的？", "trace")

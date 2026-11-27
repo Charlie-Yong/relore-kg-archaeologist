@@ -4,11 +4,15 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
+from datetime import UTC, datetime
 from pathlib import Path
+from urllib.parse import unquote
 
 from historykg import collector
 from historykg.graph.store import GraphStore, fingerprint, read_package
+from historykg.ids import text_hash
 from historykg.ingest.github import discussion_mapping
 from historykg.io import read_json, write_json
 from historykg.query.frozen_index import VERSION as INDEX_VERSION, drop_index, freeze_index
@@ -33,6 +37,16 @@ EVOLUTION_QUERIES = [
 ]
 
 
+def _instant(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    try:
+        dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
+
+
 def slice_package(base_pkg: dict, base_payloads: list[dict], dataset_id: str, cutoff_iso: str | None, ds_dir: Path) -> dict:
     ds_dir.mkdir(parents=True, exist_ok=True)
     exports_dir = ds_dir / "exports"
@@ -54,35 +68,179 @@ def slice_package(base_pkg: dict, base_payloads: list[dict], dataset_id: str, cu
         pkg["fingerprint"] = fingerprint(pkg)
         return pkg
 
+    cutoff_dt = _instant(cutoff_iso)
+    assert cutoff_dt is not None
+    repo = base_pkg["manifest"]["repo"]
     src_by_id = {s["source_id"]: s for s in base_pkg["sources"]}
     ev_by_id = {e["evidence_id"]: e for e in base_pkg["evidence"]}
 
-    def src_ok(sid: str) -> bool:
-        s = src_by_id.get(sid)
-        if not s:
-            return False
-        occ = s.get("occurred_at")
-        return not occ or occ <= cutoff_iso
+    # Build authoritative temporal lookups for entities/sources lacking occurred_at.
+    sha_date: dict[str, datetime] = {}
+    num_created: dict[int, datetime] = {}
+    for e in base_pkg["entities"]:
+        props = e.get("properties") or {}
+        if e["type"] == "Commit":
+            dt = _instant(props.get("committed_at"))
+            sha = props.get("sha") or e["key"]
+            if dt and sha:
+                sha_date[sha] = dt
+        elif e["type"] in {"Issue", "PullRequest"}:
+            dt = _instant(props.get("created_at"))
+            num = props.get("number")
+            if dt and num is not None:
+                num_created[int(num)] = dt
+
+    release_date: dict[str, datetime] = {}
+    for e in base_pkg["entities"]:
+        if e["type"] == "Release":
+            props = e.get("properties") or {}
+            tag = props.get("tag") or e["key"]
+            dt = _instant(props.get("published_at")) or sha_date.get(props.get("commit_sha") or "")
+            if dt and tag:
+                release_date[tag] = dt
+
+    def slice_source(s: dict) -> tuple[dict | None, bool]:
+        """Return (sliced_source_or_None, text_modified_flag) respecting cutoff_dt."""
+        occ = _instant(s.get("occurred_at"))
+        if s.get("occurred_at"):
+            return ({**s, "dataset_id": dataset_id}, False) if (occ and occ <= cutoff_dt) else (None, False)
+
+        kind = s.get("kind")
+        url = s.get("url") or ""
+        if kind == "code":
+            m = re.search(r"/blob/([0-9a-f]{40})/", url) or re.match(
+                r"^code:([0-9a-f]{40}):", s.get("origin_key") or ""
+            )
+            dt = sha_date.get(m.group(1)) if m else None
+            return ({**s, "dataset_id": dataset_id}, False) if (dt and dt <= cutoff_dt) else (None, False)
+
+        if kind == "git_output":
+            cmd = (s.get("git_metadata") or {}).get("command", [])
+            dt = None
+            for arg in cmd:
+                tm = re.fullmatch(r"refs/tags/(.+)\^\{commit\}", str(arg))
+                if tm:
+                    dt = release_date.get(tm.group(1))
+                    break
+                sm = re.match(r"^([0-9a-f]{40})(?::|\^\{|$)", str(arg))
+                if sm:
+                    dt = sha_date.get(sm.group(1))
+                    break
+            return ({**s, "dataset_id": dataset_id}, False) if (dt and dt <= cutoff_dt) else (None, False)
+
+        if kind == "release_note":
+            if "/releases/tag/" in url:
+                tag = unquote(url.rsplit("/releases/tag/", 1)[-1])
+                dt = release_date.get(tag)
+                if dt and dt <= cutoff_dt:
+                    return ({**s, "dataset_id": dataset_id}, False)
+            return (None, False)
+
+        if kind == "api_response":
+            m = re.search(r"/(?:issues|pulls)/(\d+)(?:/|$)", url)
+            if m:
+                dt = num_created.get(int(m.group(1)))
+                return ({**s, "dataset_id": dataset_id}, False) if (dt and dt <= cutoff_dt) else (None, False)
+
+            if url.startswith(f"https://api.github.com/repos/{repo}/git/ref/heads/"):
+                try:
+                    head_sha = json.loads(s["text"])["object"]["sha"]
+                except (ValueError, KeyError, TypeError):
+                    head_sha = None
+                dt = sha_date.get(head_sha or "")
+                return ({**s, "dataset_id": dataset_id}, False) if (dt and dt <= cutoff_dt) else (None, False)
+
+            if url == f"https://api.github.com/repos/{repo}/releases":
+                items = json.loads(s["text"])
+                kept_items = [
+                    item
+                    for item in items
+                    if isinstance(item, dict)
+                    and (dt := _instant(item.get("published_at") or item.get("created_at")))
+                    and dt <= cutoff_dt
+                ]
+                if not kept_items:
+                    return (None, False)
+                if len(kept_items) == len(items):
+                    return ({**s, "dataset_id": dataset_id}, False)
+                new_text = json.dumps(kept_items, ensure_ascii=False, indent=2)
+                return ({**s, "dataset_id": dataset_id, "text": new_text, "text_sha256": text_hash(new_text)}, True)
+
+            if url == f"https://api.github.com/repos/{repo}/tags":
+                items = json.loads(s["text"])
+                kept_items = [
+                    item
+                    for item in items
+                    if isinstance(item, dict)
+                    and (dt := release_date.get(item.get("name") or ""))
+                    and dt <= cutoff_dt
+                ]
+                if not kept_items:
+                    return (None, False)
+                if len(kept_items) == len(items):
+                    return ({**s, "dataset_id": dataset_id}, False)
+                new_text = json.dumps(kept_items, ensure_ascii=False, indent=2)
+                return ({**s, "dataset_id": dataset_id, "text": new_text, "text_sha256": text_hash(new_text)}, True)
+
+            if url.endswith(("/pulls", "/issues")):
+                items = json.loads(s["text"])
+                kept_items = [
+                    item
+                    for item in items
+                    if isinstance(item, dict)
+                    and (dt := _instant(item.get("created_at")))
+                    and dt <= cutoff_dt
+                ]
+                if not kept_items:
+                    return (None, False)
+                if len(kept_items) == len(items):
+                    return ({**s, "dataset_id": dataset_id}, False)
+                new_text = json.dumps(kept_items, ensure_ascii=False, indent=2)
+                return ({**s, "dataset_id": dataset_id, "text": new_text, "text_sha256": text_hash(new_text)}, True)
+
+            if url == f"https://api.github.com/repos/{repo}":
+                try:
+                    dt = _instant(json.loads(s["text"]).get("created_at"))
+                except (ValueError, TypeError):
+                    dt = None
+                return ({**s, "dataset_id": dataset_id}, False) if (dt and dt <= cutoff_dt) else (None, False)
+
+            return (None, False)
+
+        return (None, False)
+
+    kept_sources: dict[str, dict] = {}
+    modified_source_ids: set[str] = set()
+    for s in base_pkg["sources"]:
+        sliced, modified = slice_source(s)
+        if sliced is not None:
+            kept_sources[s["source_id"]] = sliced
+            if modified:
+                modified_source_ids.add(s["source_id"])
 
     kept_commits = set()
     kept_entities = []
     temp_ents = {}
+    deferred_developers = []
     for e in base_pkg["entities"]:
         etype = e["type"]
         props = e.get("properties") or {}
-        if etype in {"Project", "Developer"}:
+        if etype == "Project":
             temp_ents[e["id"]] = e
+        elif etype == "Developer":
+            deferred_developers.append(e)
         elif etype == "Release":
-            pub = props.get("published_at")
-            if pub and pub <= cutoff_iso:
+            tag = props.get("tag") or e["key"]
+            dt = release_date.get(tag)
+            if dt and dt <= cutoff_dt:
                 temp_ents[e["id"]] = e
         elif etype in {"Issue", "PullRequest"}:
-            crt = props.get("created_at")
-            if crt and crt <= cutoff_iso:
+            dt = _instant(props.get("created_at"))
+            if dt and dt <= cutoff_dt:
                 temp_ents[e["id"]] = e
         elif etype == "Commit":
-            cat = props.get("committed_at")
-            if cat and cat <= cutoff_iso:
+            dt = _instant(props.get("committed_at"))
+            if dt and dt <= cutoff_dt:
                 temp_ents[e["id"]] = e
                 kept_commits.add(props.get("sha") or e["key"])
 
@@ -97,30 +255,42 @@ def slice_package(base_pkg: dict, base_payloads: list[dict], dataset_id: str, cu
             if p.get("subject_id") not in temp_ents:
                 continue
             st_evs = [ev_by_id[eid] for eid in p.get("statement_evidence_ids", []) if eid in ev_by_id]
-            if st_evs and all(src_ok(ev["source_id"]) for ev in st_evs):
+            if st_evs and all(ev["source_id"] in kept_sources for ev in st_evs):
                 temp_ents[e["id"]] = e
 
-    kept_entity_ids = set(temp_ents)
-    kept_sources = {
-        s["source_id"]: {**s, "dataset_id": dataset_id}
-        for s in base_pkg["sources"]
-        if src_ok(s["source_id"])
+    # Keep only Developers active in kept relations or kept evidence.
+    active_dev_ids = {
+        r["from_id"]
+        for r in base_pkg["relations"]
+        if r["from_id"].startswith("Developer:")
+        and r["to_id"] in temp_ents
+        and (not r.get("occurred_at") or ((dt := _instant(r["occurred_at"])) and dt <= cutoff_dt))
     }
-    for e in temp_ents.values():
-        for eid in e.get("evidence_ids", []):
-            ev = ev_by_id.get(eid)
-            if ev and ev["source_id"] in src_by_id:
-                s = src_by_id[ev["source_id"]]
-                kept_sources[s["source_id"]] = {**s, "dataset_id": dataset_id}
+    for e in deferred_developers:
+        has_kept_ev = any(
+            (ev := ev_by_id.get(eid)) and ev["source_id"] in kept_sources
+            for eid in e.get("evidence_ids", [])
+        )
+        if e["id"] in active_dev_ids or has_kept_ev:
+            temp_ents[e["id"]] = e
+
+    kept_entity_ids = set(temp_ents)
 
     kept_relations = []
     for r in base_pkg["relations"]:
-        occ = r.get("occurred_at")
-        if occ and occ > cutoff_iso:
-            continue
+        occ_raw = r.get("occurred_at")
+        if occ_raw:
+            occ_dt = _instant(occ_raw)
+            if not occ_dt or occ_dt > cutoff_dt:
+                continue
         if r["from_id"] in kept_entity_ids and (
             r["to_id"] in kept_entity_ids or r["to_id"] in kept_sources
         ):
+            ev_ids = r.get("evidence_ids", [])
+            if ev_ids and not any(
+                (ev := ev_by_id.get(eid)) and ev["source_id"] in kept_sources for eid in ev_ids
+            ):
+                continue
             kept_relations.append({**r, "dataset_id": dataset_id})
 
     needed_ev_ids = set()
@@ -132,15 +302,44 @@ def slice_package(base_pkg: dict, base_payloads: list[dict], dataset_id: str, cu
     for r in kept_relations:
         needed_ev_ids.update(r.get("evidence_ids", []))
 
-    kept_evidence = [
-        {**ev_by_id[eid], "dataset_id": dataset_id}
-        for eid in sorted(needed_ev_ids)
-        if eid in ev_by_id and ev_by_id[eid]["source_id"] in kept_sources
-    ]
+    kept_evidence = []
+    for eid in sorted(needed_ev_ids):
+        ev = ev_by_id.get(eid)
+        if not ev or ev["source_id"] not in kept_sources:
+            continue
+        sid = ev["source_id"]
+        if sid in modified_source_ids:
+            sliced_text = kept_sources[sid]["text"]
+            orig_len = len(src_by_id[sid]["text"])
+            if ev.get("start") == 0 and ev.get("end") == orig_len:
+                kept_evidence.append(
+                    {
+                        **ev,
+                        "dataset_id": dataset_id,
+                        "start": 0,
+                        "end": len(sliced_text),
+                        "quote": sliced_text,
+                    }
+                )
+            continue
+        kept_evidence.append({**ev, "dataset_id": dataset_id})
+
     valid_ev_ids = {e["evidence_id"] for e in kept_evidence}
     for e in temp_ents.values():
         ev_filtered = [eid for eid in e.get("evidence_ids", []) if eid in valid_ev_ids]
-        kept_entities.append({**e, "dataset_id": dataset_id, "evidence_ids": ev_filtered})
+        if e["type"] == "Decision":
+            props = {
+                **e["properties"],
+                "statement_evidence_ids": [
+                    eid for eid in e["properties"].get("statement_evidence_ids", []) if eid in valid_ev_ids
+                ],
+                "rationale_evidence_ids": [
+                    eid for eid in e["properties"].get("rationale_evidence_ids", []) if eid in valid_ev_ids
+                ],
+            }
+            kept_entities.append({**e, "dataset_id": dataset_id, "properties": props, "evidence_ids": ev_filtered})
+        else:
+            kept_entities.append({**e, "dataset_id": dataset_id, "evidence_ids": ev_filtered})
     final_relations = [
         {**r, "evidence_ids": [eid for eid in r.get("evidence_ids", []) if eid in valid_ev_ids]}
         for r in kept_relations

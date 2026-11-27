@@ -4,13 +4,13 @@
 
 ---
 
-## 现行期末主线：HistoryKG v2（2026-11-26 ItsDangerous 增强版 / v7 复核候选）
+## 现行期末主线：HistoryKG v2（2026-11-27 ItsDangerous 增强版 / v8 复核候选）
 
-为全面落实课程要求并直接回应 11 月 11 日期中课堂追问，期末交付已统一基于 **`pallets/itsdangerous`**（冻结于 `2026-11-16T06:31:18Z`，默认分支提交 `672971d66a2ef9f85151e53283113f33d642dabd`，`dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2`）完成 v2 工程升级与独立跨仓盲测，形成可离线冷启动复核的 **`v7` 课程候选提交包**（位于 `submission/HistoryKG-ItsDangerous-期末复核候选-v7.zip`，30 MB，174 项已校验成员，通过隐私与零绝对路径检查）。
+为全面落实课程要求并直接回应 11 月 11 日期中课堂追问，期末交付已统一基于 **`pallets/itsdangerous`**（冻结于 `2026-11-16T06:31:18Z`，默认分支提交 `672971d66a2ef9f85151e53283113f33d642dabd`，`dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2`）完成 v2 工程升级与独立跨仓盲测，形成可离线冷启动复核的 **`v8` 公开复核候选包**（位于 `submission/HistoryKG-ItsDangerous-期末复核候选-v8.zip`，通过隐私与零绝对路径检查；本地另有受 `.gitignore` 保护的课程实名交付包 `submission/HistoryKG-ItsDangerous-课程实名提交版.zip`）。
 
 ### 交付文档与答辩入口
 
-- **技术报告**：[期末技术报告 (Markdown)](reports/itsdangerous_final.md)（8,482 纯中文正文） · [期末技术报告 (PDF，16 页)](output/pdf/ItsDangerous-技术报告.pdf)
+- **技术报告**：[期末技术报告 (Markdown)](reports/itsdangerous_final.md)（11,626 纯中文正文不含参考文献） · [期末技术报告 (PDF，20 页)](output/pdf/ItsDangerous-技术报告.pdf)
 - **答辩与现场演示**：[12 页期末汇报 PPT](demo/final/ItsDangerous-期末汇报.pptx) · [演示操作与 5 分钟讲稿](demo/final/ItsDangerous-操作与讲稿.md) · [答辩追问 10 题应答小抄](demo/final/答辩追问应答小抄.md) · [便携演示配置](demo/final/itsdangerous.example.json) · [无编号问题 A/B 原文对照](demo/final/decision-ab-samples.md)
 - **v2 评测与模块文档**：[v2 实验汇总索引](evaluation/itsdangerous-v2-20261126/README.md) · [图谱存储与按需查询](docs/graph_query.md) · [模型通道与抽取规范](docs/p4/models.md) · [工作台原型与回放说明](docs/p5/README.md) · [课程要求与改进核对](deliveries/review/2026-11-20-课程要求与期末改进清单.md)
 
@@ -21,10 +21,10 @@
 | **问答准确率与延迟 Pareto 前沿** | 默认 `B_v2_fast_nothink`（`cypher_subgraph` + `reasoning_effort="none"`）公共 6 题 **`17/17`（100%）**，中位 **`3.40s`**，271 条引文 100% 逐字匹配 | 比原版 `B_v1`（`41.7s` / 82.4%）快 **12.3x**，比双证据重推理 `D` 组（`154.6s` / 100%）快 **45.5x** |
 | **通用 Coding Agent（Codex CLI `E` 组）双口径审计** | 全部 6 题端到端 `10.5/17`（61.8%，中位 `230.1s`）；有效自然语言 4 题 **`10.5/11`（95.5%）**，中位 **`262.6s`**，单题 **`1.50M–4.43M` 输入词元** | 不贬低强通用 Agent 的正常作答精度，但指出其高延迟、百万级 token 开销及工具封装/网页超时风险使其难以胜任课堂 3 秒级追问 |
 | **8 道全新密封未见题（`U1–U8`，满分 22）** | 同模型纯文本 `A_v2` `14.0/22`（63.6%，`2.71s`，14 引文）vs 图谱快问 `B_v2_fast` **`20.0/22`（90.9%，+27.3pp，`2.98s`，370 引文）** | `U2` 拒收决定与替代建议 `B_v2_fast` 3/3 vs `A_v2` 0/3；`U6` 因 `2.1.x` 分支标签与 `2.2.0` 正式 Release 区分边界双方仅得 1/3–1.5/3 |
-| **决定抽取 `PROMPT_V1 → PROMPT_V2`（双数据集）** | `orig30`（18 金标）：P `40.0% → 66.7%`、F1 `0.4651 → 0.6061`、理由覆盖 `29.4% → 52.9%`、**Bot `8 → 0`**；不相交 `heldout20`（14 已解析*）：条件 P `52.9% → 75.0%`、理由 `3/8 → 5/8`、**Bot `6 → 0`** | `heldout20` 含 1 条未决跨仓参考（`reference_complete=False`），总表严格保留 `null` 不凑整；如实承认 FN（8 与 5）召回天花板与小样本区间重叠 |
-| **1x → 10x 图谱扩展性与时序增量** | `10x`（40,670 实体 / 116,740 关系 / 74,170 来源）：`cypher_subgraph` `3.02s` vs `snapshot` `23.52s`（P50 提速 **7.80x**）；`T1→T2→T3` `apply_delta` `1.68s` vs 全量重建 `2.66s`（**1.59x**） | `1x` 6/6 路径数严格一致，`T3` 全库指纹 `fingerprint_equal=true`；同期诚实记录 `/releases` 聚合接口缺少单条目时间过滤字段 |
+| **决定抽取 `PROMPT_V1 → PROMPT_V2`（双数据集）** | `orig30`（18 金标）：P `40.0% → 66.7%`、F1 `0.4651 → 0.6061`、理由覆盖 `29.4% → 52.9%`、**Bot `8 → 0`**；不相交 `heldout20`（14 已解析*）：条件 P `52.9% → 75.0%`、理由 `3/8 → 5/8`、**Bot `6 → 0`** | `heldout20` 含 1 条未决跨仓参考（`reference_complete=False`），总表严格保留 `null` 不凑整，并审计出 `pre-commit autoupdate` 银标过保留现象；如实承认 FN（8 与 5）召回天花板与小样本区间重叠 |
+| **1x → 10x 图谱扩展性与时序增量** | `10x`（40,670 实体 / 116,740 关系 / 74,170 来源）：`cypher_subgraph` `3.02s` vs `snapshot` `23.52s`（P50 提速 **7.80x**）；`T1→T2→T3` `apply_delta` `2.60s` vs 全量重建 `3.09s`（**1.19x**） | `1x` 6/6 路径数严格一致，`T3` 全库指纹 `fingerprint_equal=true`；`slice_package` 已实现 `/releases` 单条目裁剪，三阶段探针实现零未来时间泄漏 |
 | **第二仓库零代码改造迁移（`pallets-eco/blinker`）** | 一行源码不改产出 **3,396 实体 / 5,958 关系**，首次真实捕获 GraphQL **`Closes=5`**；`B_v2_fast` 跨仓问答 **`12/13`（92.3%，中位 `1.48s`）** vs `A_v2` `9/13`（69.2%） | 已清除 `historykg/` 全部 `simplejson` 硬编码；`BL2` 拿满分 3/3（纯文本 0/3），`BL3` 复现与 `U6` 一致的跨版本标签边界（1/2） |
-| **便携冷启动实机复演与全库检验** | 干净 Neo4j 导入 `7.143s`、离线回放 6/6 逐字通过、6 题实时快问中位 **`3.385s`**、`pytest` `178 passed` + Neo4j `41 passed` + 回归 `39 passed`、规划/隐私 `0` 错 | 全部 Phase 2（435 次调用，`7.2612 元`）加冷启动复演（`0.0558 元`）合计支出 **`7.3171 元`**（远低于 15.0 元预算上限） |
+| **便携冷启动实机复演与全库检验** | 干净 Neo4j 导入 `7.143s`、离线回放 6/6 逐字通过、6 题实时快问中位 **`3.385s`**；`app/main.py` 修复表单外快速实证/深度模式开关同步；规划/隐私 `0` 错 | 全部第二阶段（v2）实证（435 次调用，`7.2612 元`）加冷启动复演（`0.0558 元`）合计支出 **`7.3171 元`**（远低于 15.0 元预算上限） |
 
 ### 快速启动（便携实机演示 / 离线兜底 / 新建任意公开仓库）
 
@@ -75,7 +75,7 @@ HISTORYKG_REPLAY_FILE=materials/itsdangerous-replay.json \
 
 **已完成的前期工作归属P4：** 项目起初调研、总体方案起草、多轮架构迭代、现有全部规划与规划协作框架、独立原型和期初小规模真实试跑，均由P4独立负责完成，计入其累计贡献。详见[P4前期工作与贡献记录](deliveries/P4/2026-10-27/handoff.md)，后续报告分工与展示引用该记录。
 
-**2026-11-21 v1 期末基线说明（已由上文 v2/v7 增强并保留原汇总）**：此前第一版统一 `ItsDangerous` 冻结主线的实验汇总保留于 `evaluation/itsdangerous-final-20261121/`（[qa-summary.json](evaluation/itsdangerous-final-20261121/qa-summary.json)、[extraction-summary.json](evaluation/itsdangerous-final-20261121/extraction-summary.json)、[summarize.py](evaluation/itsdangerous-final-20261121/summarize.py)），仍可在解包目录下用 `tools.summarize` 复核。
+**2026-11-21 v1 期末基线说明（已由上文 v2/v8 增强并保留原汇总）**：此前第一版统一 `ItsDangerous` 冻结主线的实验汇总保留于 `evaluation/itsdangerous-final-20261121/`（[qa-summary.json](evaluation/itsdangerous-final-20261121/qa-summary.json)、[extraction-summary.json](evaluation/itsdangerous-final-20261121/extraction-summary.json)、[summarize.py](evaluation/itsdangerous-final-20261121/summarize.py)），仍可在解包目录下用 `tools.summarize` 复核。
 
 ## 完整系统：安装与运行
 

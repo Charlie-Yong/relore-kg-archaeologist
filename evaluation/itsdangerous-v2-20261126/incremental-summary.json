@@ -2,32 +2,39 @@
   "evolution_queries": {
     "T1": {
       "q_pr372": {
-        "candidates": 47,
+        "candidates": 40,
         "has_220_release": false,
         "has_pr152": false,
-        "has_pr372": true,
+        "has_pr372": false,
         "paths": 44,
         "search_intent": "membership",
         "top_urls": [
-          "/pulls/372",
-          "/releases",
-          "/releases",
-          "/releases",
-          "/releases",
-          "/releases",
-          "/releases",
-          "/"
+          "/",
+          "/",
+          "/",
+          "/",
+          "/pull/72",
+          "/pull/27#issuecomment-209084591",
+          "/issues/69",
+          "/issues/30#issuecomment-205273501"
         ]
       },
       "q_release_220": {
-        "candidates": 1,
-        "has_220_release": true,
+        "candidates": 10,
+        "has_220_release": false,
         "has_pr152": false,
         "has_pr372": false,
         "paths": 0,
         "search_intent": "release",
         "top_urls": [
-          "/releases"
+          "/issues/109",
+          "/issues/93",
+          "/issues/118",
+          "/issues/112",
+          "/pull/95#issuecomment-347792781",
+          "/issues/116",
+          "/issues/108",
+          "/issues/90"
         ]
       },
       "q_simplejson_pr152": {
@@ -51,31 +58,32 @@
     },
     "T2": {
       "q_pr372": {
-        "candidates": 46,
+        "candidates": 42,
         "has_220_release": false,
         "has_pr152": false,
-        "has_pr372": true,
+        "has_pr372": false,
         "paths": 50,
         "search_intent": "membership",
         "top_urls": [
-          "/pulls/372",
           "/releases",
           "/releases",
-          "/releases",
-          "/releases",
-          "/releases",
-          "/releases",
-          "/"
+          "/",
+          "/",
+          "/",
+          "/",
+          "/pull/164",
+          "/pull/200"
         ]
       },
       "q_release_220": {
-        "candidates": 1,
-        "has_220_release": true,
+        "candidates": 2,
+        "has_220_release": false,
         "has_pr152": false,
         "has_pr372": false,
         "paths": 0,
         "search_intent": "release",
         "top_urls": [
+          "/releases",
           "/releases"
         ]
       },
@@ -151,28 +159,28 @@
   "stages": {
     "T1_initial": {
       "cutoff": "2018-10-31T23:59:59Z",
-      "entities": 1771,
-      "relations": 1951,
-      "sources": 6280,
-      "write_ms": 2035.84
+      "entities": 1741,
+      "relations": 3375,
+      "sources": 2528,
+      "write_ms": 4532.38
     },
     "T2_delta": {
       "cutoff": "2021-05-31T23:59:59Z",
-      "delta_ms": 1035.9,
-      "entities": 2874,
-      "entities_upserted": 1103,
-      "evidence_upserted": 3323,
-      "fingerprint": "8df2be4e70fdb7ee1894c2a789758de18e0ea19ce07a301322ca5da588fa00c7",
-      "relations": 4856,
-      "relations_upserted": 2905,
-      "sources": 6777,
-      "sources_upserted": 497
+      "delta_ms": 1721.71,
+      "entities": 2861,
+      "entities_upserted": 1122,
+      "evidence_upserted": 4286,
+      "fingerprint": "4c8dbfc7e8e72fafb35beaad1502b7174c3bfc43257717d286cfdc34c5d94ab9",
+      "relations": 7053,
+      "relations_upserted": 3678,
+      "sources": 4807,
+      "sources_upserted": 2286
     },
     "T3_delta": {
       "cutoff": "2026-11-16T06:31:18Z",
-      "delta_ms": 1679.73,
+      "delta_ms": 2604.35,
       "entities": 4067,
-      "entities_upserted": 1193,
+      "entities_upserted": 1209,
       "equivalence": {
         "entity_count_equal": true,
         "evidence_count_equal": true,
@@ -180,14 +188,14 @@
         "relation_count_equal": true,
         "source_count_equal": true
       },
-      "evidence_upserted": 8527,
+      "evidence_upserted": 6768,
       "fingerprint": "928512f3dea7c5b3a804acd72c8f65a25903bfc6677fd3ab86ae00ddaae9f19a",
-      "full_rebuild_ms": 2664.45,
+      "full_rebuild_ms": 3088.0,
       "relations": 11674,
-      "relations_upserted": 6818,
+      "relations_upserted": 4621,
       "sources": 7417,
-      "sources_upserted": 640,
-      "speedup_vs_full_rebuild": 1.59
+      "sources_upserted": 2614,
+      "speedup_vs_full_rebuild": 1.19
     }
   }
 }

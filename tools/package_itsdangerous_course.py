@@ -8,8 +8,8 @@ from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 from historykg.io import read_json, validate_dataset
+from tools.check_public_privacy import load_roster, scan, scan_zip
 from tools.package_submission import assert_public_member
-from tools.check_public_privacy import load_roster, scan_zip
 
 ROOT = Path(__file__).resolve().parents[1]
 FINAL = ROOT / "demo/final"
@@ -25,15 +25,71 @@ ACTIVE_FIGURES = (
 )
 CANDIDATE = "course_candidate_pending_member_reviews"
 REHEARSAL = "course_rehearsal"
+REALNAME_COURSE = "course_final_realname_submission"
+REALNAME_MATERIAL_MEMBERS = {
+    "materials/ItsDangerous-期末汇报.pptx",
+    "materials/ItsDangerous-技术报告.pdf",
+    "materials/ItsDangerous-技术报告.md",
+}
+
+
+def _scan_realname_archive(archive_path: Path, roster: list[dict]) -> dict:
+    """Verify source/frozen/other files stay privacy-clean while 3 materials include all 6 real members."""
+    from tools.check_public_privacy import _texts
+
+    with ZipFile(archive_path) as archive:
+        sources = {}
+        for name in ("frozen/sources.jsonl", "frozen/p3/sources.jsonl"):
+            if name in archive.namelist():
+                for line in archive.read(name).splitlines():
+                    row = json.loads(line)
+                    sources[row["source_id"]] = row
+        clean_items = []
+        realname_items = []
+        for info in archive.infolist():
+            data = archive.read(info)
+            if info.filename in REALNAME_MATERIAL_MEMBERS:
+                realname_items.append((info.filename, data))
+            else:
+                clean_items.append((info.filename, data))
+    clean_scan = scan(clean_items, roster=roster, frozen_sources=sources)
+    material_scan = scan(realname_items, roster=None, frozen_sources=sources)
+    errors = [*clean_scan["errors"], *material_scan["errors"]]
+    for filename, data in realname_items:
+        joined = "\n".join(body for _, body in _texts(filename, data))
+        missing = [
+            f"{m['name']}({m['student_id']})"
+            for m in roster
+            if m["name"] not in joined or m["student_id"] not in joined
+        ]
+        if missing:
+            errors.append({"file": filename, "reason": f"missing_realname_members:{','.join(missing)}"})
+    return {
+        "passed": not errors,
+        "member_roster_checked": True,
+        "errors": errors,
+        "review": [*clean_scan["review"], *material_scan["review"]],
+    }
 
 
 def build(dataset, out, replay, *, report_md=None, report_pdf=None, deck=None,
-          require_roster=False, package_status=CANDIDATE):
-    if package_status not in {CANDIDATE, REHEARSAL}:
+          require_roster=True, package_status=CANDIDATE, realname_course=False):
+    if realname_course:
+        package_status = REALNAME_COURSE
+        require_roster = True
+    if package_status not in {CANDIDATE, REHEARSAL, REALNAME_COURSE}:
         raise ValueError("Choose a supported package status")
-    roster = load_roster(ROOT / ".local/member-privacy-roster.json")
+    if package_status == REALNAME_COURSE and not realname_course:
+        realname_course = True
+        require_roster = True
+    roster_path = ROOT / ".local/member-privacy-roster.json"
+    roster = load_roster(roster_path)
+    roster_raw = read_json(roster_path) if roster_path.is_file() else {}
     if require_roster and roster is None:
         raise ValueError("成员信息未核验（未加载私有名单）")
+    if realname_course:
+        if not isinstance(roster_raw, dict) or not roster_raw.get("confirmed_for_course_submission"):
+            raise ValueError("课程实名提交版要求 .local/member-privacy-roster.json 中 confirmed_for_course_submission=true")
     validated = validate_dataset(dataset)
     if validated["status"] != "ok":
         raise ValueError("Frozen dataset validation failed")
@@ -44,11 +100,14 @@ def build(dataset, out, replay, *, report_md=None, report_pdf=None, deck=None,
                      "portable-rehearsal.json", "retrieval-recheck.json"):
         if not (EXPERIMENT / filename).is_file():
             raise ValueError(f"Missing accepted experiment receipt: {filename}")
+    default_deck = FINAL / ("ItsDangerous-期末汇报_实名提交版.pptx" if realname_course else "ItsDangerous-期末汇报.pptx")
+    default_pdf = ROOT / ("output/pdf/ItsDangerous-技术报告_实名提交版.pdf" if realname_course else "output/pdf/ItsDangerous-技术报告.pdf")
+    default_md = ROOT / ("reports/itsdangerous_final_实名提交版.md" if realname_course else "reports/itsdangerous_final.md")
     public = {
         "README.md": FINAL / "ItsDangerous-操作与讲稿.md",
-        "materials/ItsDangerous-期末汇报.pptx": deck or FINAL / "ItsDangerous-期末汇报.pptx",
-        "materials/ItsDangerous-技术报告.pdf": report_pdf or ROOT / "output/pdf/ItsDangerous-技术报告.pdf",
-        "materials/ItsDangerous-技术报告.md": report_md or ROOT / "reports/itsdangerous_final.md",
+        "materials/ItsDangerous-期末汇报.pptx": deck or default_deck,
+        "materials/ItsDangerous-技术报告.pdf": report_pdf or default_pdf,
+        "materials/ItsDangerous-技术报告.md": report_md or default_md,
         "materials/itsdangerous.example.json": FINAL / "itsdangerous.example.json",
         "materials/itsdangerous-replay.json": replay,
         "materials/答辩追问应答小抄.md": FINAL / "答辩追问应答小抄.md",
@@ -79,8 +138,9 @@ def build(dataset, out, replay, *, report_md=None, report_pdf=None, deck=None,
         if not source.resolve().is_relative_to(dataset.resolve()):
             raise ValueError("Frozen file outside dataset")
         public[f"frozen/{member}"] = source
-    if not all(f.is_file() and not f.is_symlink() for f in public.values()):
-        raise ValueError("A required package file is missing")
+    missing_files = [k for k, f in public.items() if not (f.is_file() and not f.is_symlink())]
+    if missing_files:
+        raise ValueError(f"Missing required package files: {missing_files}")
     license_text = subprocess.check_output([
         "git", f"--git-dir={dataset / 'p3/history.git'}", "show",
         "672971d66a2ef9f85151e53283113f33d642dabd:LICENSE.txt",
@@ -107,7 +167,11 @@ def build(dataset, out, replay, *, report_md=None, report_pdf=None, deck=None,
         source_snapshot = [item for item in sorted(hashes.items()) if item[0].startswith("source/")]
         write("PACKAGE.json", json.dumps({
             "package_status": package_status,
+            "local_course_submission_only": realname_course,
             "member_roster_checked": roster is not None,
+            "member_roster_confirmed": bool(
+                isinstance(roster_raw, dict) and roster_raw.get("confirmed_for_course_submission")
+            ),
             "dataset_id": manifest["dataset_id"], "repo": manifest["repo"],
             "source_snapshot_sha256": hashlib.sha256(
                 json.dumps(source_snapshot, separators=(",", ":")).encode()).hexdigest(),
@@ -118,13 +182,14 @@ def build(dataset, out, replay, *, report_md=None, report_pdf=None, deck=None,
             hashlib.sha256(archive.read(name)).hexdigest() != h for name, h in hashes.items()
         ):
             raise ValueError("Package digest verification failed")
-    scan = scan_zip(temporary, roster=roster)
-    if not scan["passed"]:
-        raise ValueError(json.dumps(scan["errors"], ensure_ascii=False))
-    if not scan["member_roster_checked"]:
+    scan_result = _scan_realname_archive(temporary, roster) if realname_course else scan_zip(temporary, roster=roster)
+    if not scan_result["passed"]:
+        raise ValueError(json.dumps(scan_result["errors"], ensure_ascii=False))
+    if not scan_result["member_roster_checked"]:
         print("成员信息未核验（未加载私有名单）")
     temporary.replace(out)
-    print(json.dumps({"out": str(out), "verified_members": len(hashes),
+    print(json.dumps({"out": str(out), "package_status": package_status,
+                      "verified_members": len(hashes),
                       "sha256": hashlib.sha256(out.read_bytes()).hexdigest()}, ensure_ascii=False))
 
 
@@ -136,12 +201,16 @@ def main():
     parser.add_argument("--report-md", type=Path)
     parser.add_argument("--report-pdf", type=Path)
     parser.add_argument("--deck", type=Path)
-    parser.add_argument("--package-status", choices=(CANDIDATE, REHEARSAL), default=CANDIDATE)
-    parser.add_argument("--require-roster", action="store_true")
+    parser.add_argument("--package-status", choices=(CANDIDATE, REHEARSAL, REALNAME_COURSE), default=CANDIDATE)
+    parser.add_argument("--realname-course", action="store_true",
+                        help="Build local-only real-name course submission package (must stay outside public git).")
+    parser.add_argument("--require-roster", action="store_true", default=True)
+    parser.add_argument("--allow-missing-roster", action="store_true")
     args = parser.parse_args()
     build(args.dataset.resolve(strict=True), args.out, args.replay.resolve(strict=True),
           report_md=args.report_md, report_pdf=args.report_pdf, deck=args.deck,
-          require_roster=args.require_roster, package_status=args.package_status)
+          require_roster=args.require_roster and not args.allow_missing_roster,
+          package_status=args.package_status, realname_course=args.realname_course)
 
 
 if __name__ == "__main__":
