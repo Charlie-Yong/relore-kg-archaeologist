@@ -1,0 +1,96 @@
+{
+  "arm": "A",
+  "question": "仓库 pallets/itsdangerous，截止时间 2026-11-16T06:31:18Z，冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd。2.1.0 是哪天出的？请给出正式 GitHub Release 的 UTC 日期和出处。",
+  "status": "ok",
+  "error": null,
+  "seconds": 12.897,
+  "method": "p2_query_v1.4.2_historykg_discussion_v1_full_focal_v2",
+  "max_output_tokens": 32768,
+  "timeout_seconds": 240,
+  "claims": [
+    {
+      "text": "GitHub Releases 中 tag_name 为 2.1.0 的 pallets/itsdangerous Release 记录显示，published_at 为 2022-02-18T03:45:57Z，因此其 UTC 日期是 2022-02-18。",
+      "evidence_ids": [
+        "Evidence:5c8e387054ae0cd85d3edd1a8d5419b2d9a4a0dad67b186953773e42d4a43c55"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "Evidence:5c8e387054ae0cd85d3edd1a8d5419b2d9a4a0dad67b186953773e42d4a43c55",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 16094,
+      "end": 16157,
+      "quote": "\"published_at\": \"2022-02-18T03:45:57Z\",\n    \"tag_name\": \"2.1.0\"",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null,
+      "text_sha256": "373fe2b61c84992e215da55d9a470a5185bb181b001a98161fb928fe29a20895",
+      "detail_url": "https://github.com/pallets/itsdangerous/releases/tag/2.1.0",
+      "context_note": "2.1.0 · https://github.com/pallets/itsdangerous/releases/tag/2.1.0 · draft=False, prerelease=False"
+    }
+  ],
+  "gaps": [],
+  "context_characters": 11740,
+  "context_sha256": "a673ac7f6c5c0932b1bde25c7c0f49f7942488c010af2de6d565295b1d778765",
+  "visible": [
+    {
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 16090,
+      "end": 16157,
+      "title": "2.1.0 · https://github.com/pallets/itsdangerous/releases/tag/2.1.0 · draft=False, prerelease=False",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:33bc4abab91543b6cdbb1e6e99b1d86960b456f3e159285bcfdc4368e82409d1",
+      "start": 0,
+      "end": 6108,
+      "title": "Bump pallets-sphinx-themes from 2.0.1 to 2.0.2",
+      "url": "https://github.com/pallets/itsdangerous/pull/276",
+      "author": "dependabot[bot]",
+      "time": "2021-12-01T08:05:12Z"
+    },
+    {
+      "source_id": "SourceDocument:88b413c1a84b7123b540bd5be2876fdabeffa3407b70c7d77cc31fb13c7328f3",
+      "start": 0,
+      "end": 78,
+      "title": "Bump actions/cache from 3.0.11 to 3.2.2",
+      "url": "https://github.com/pallets/itsdangerous/pull/323",
+      "author": "dependabot[bot]",
+      "time": "2023-01-01T16:01:03Z"
+    },
+    {
+      "source_id": "SourceDocument:779170b978f15b20e350b83f98c315fd662b557a3008941d1a7021e3b9c10a5c",
+      "start": 0,
+      "end": 4009,
+      "title": "Bump pre-commit from 2.13.0 to 2.14.1",
+      "url": "https://github.com/pallets/itsdangerous/pull/260",
+      "author": "dependabot[bot]",
+      "time": "2021-09-01T08:03:18Z"
+    }
+  ],
+  "graph_edges": [],
+  "responses": [
+    {
+      "status": 200,
+      "usage": {
+        "completion_tokens": 1939,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1776
+        },
+        "prompt_tokens": 4701,
+        "prompt_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 256
+        },
+        "total_tokens": 6640
+      },
+      "answer": "{\"claims\":[{\"text\":\"GitHub Releases 中 tag_name 为 2.1.0 的 pallets/itsdangerous Release 记录显示，published_at 为 2022-02-18T03:45:57Z，因此其 UTC 日期是 2022-02-18。\",\"evidence\":[{\"source_id\":\"SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d\",\"quote\":\"\\\"published_at\\\": \\\"2022-02-18T03:45:57Z\\\",\\n    \\\"tag_name\\\": \\\"2.1.0\\\"\"}]}],\"gaps\":[]}",
+      "reason": "stop",
+      "provider_error": null
+    }
+  ]
+}

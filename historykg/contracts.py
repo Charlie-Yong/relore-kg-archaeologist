@@ -1,4 +1,9 @@
-"""Public contract 1.4.1; record validation is completed by historykg.io."""
+"""Public contract 1.4.2; record validation is completed by historykg.io.
+
+Version 1.4.1 records remain valid. The additive 1.4.2 schema introduces
+Developer and Function entities without changing existing entity or relation
+semantics.
+"""
 
 from __future__ import annotations
 
@@ -8,15 +13,29 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from .ids import normalize_repo, source_id, text_hash
 
-CONTRACT_VERSION = "1.4.1"
+CONTRACT_VERSION = "1.4.2"
+SUPPORTED_CONTRACT_VERSIONS = ("1.4.1", "1.4.2")
 STAGES = ("discover", "collect", "code", "extract", "validate", "index_graph")
-ENTITY_TYPES = ("Project", "Release", "Issue", "PullRequest", "Commit", "File", "Decision")
+ENTITY_TYPES = (
+    "Project",
+    "Release",
+    "Issue",
+    "PullRequest",
+    "Commit",
+    "File",
+    "Function",
+    "Developer",
+    "Decision",
+)
 RELATION_ENDPOINTS = {
     "HasRelease": ({"Project"}, {"Release"}),
     "ClaimsToClose": ({"PullRequest"}, {"Issue"}),
     "Closes": ({"PullRequest"}, {"Issue"}),
     "MergedAs": ({"PullRequest"}, {"Commit"}),
+    "Authored": ({"Developer"}, {"PullRequest"}),
+    "Merged": ({"Developer"}, {"PullRequest"}),
     "Touches": ({"Commit"}, {"File"}),
+    "Defines": ({"File"}, {"Function"}),
     "ReachableIn": ({"Commit"}, {"Release"}),
     "MentionsPR": ({"Release"}, {"PullRequest"}),
     "ChangesTo": ({"File"}, {"File"}),
@@ -31,7 +50,7 @@ class Record(BaseModel):
 
 
 class VersionedRecord(Record):
-    contract_version: Literal["1.4.1"] = CONTRACT_VERSION
+    contract_version: Literal["1.4.1", "1.4.2"] = CONTRACT_VERSION
 
 
 class SourceDocument(VersionedRecord):
@@ -72,8 +91,16 @@ class SourceDocument(VersionedRecord):
             metadata = self.api_metadata or {}
             if not {"method", "endpoint", "params", "response_status"} <= metadata.keys():
                 raise ValueError("api_response缺少api_metadata")
-            if metadata["method"] != "GET":
-                raise ValueError("api_response只能保存官方只读GET元数据")
+            endpoint = str(metadata.get("endpoint", ""))
+            query_text = str((metadata.get("params") or {}).get("query", ""))
+            is_readonly_graphql = (
+                metadata["method"] == "POST"
+                and endpoint == "https://api.github.com/graphql"
+                and bool(query_text.strip())
+                and not query_text.lstrip().lower().startswith("mutation")
+            )
+            if metadata["method"] != "GET" and not is_readonly_graphql:
+                raise ValueError("api_response只能保存官方只读GET或只读GraphQL元数据")
         return self
 
 
@@ -106,7 +133,17 @@ class Entity(VersionedRecord):
     dataset_id: str
     id: str
     repo: str
-    type: Literal["Project", "Release", "Issue", "PullRequest", "Commit", "File", "Decision"]
+    type: Literal[
+        "Project",
+        "Release",
+        "Issue",
+        "PullRequest",
+        "Commit",
+        "File",
+        "Function",
+        "Developer",
+        "Decision",
+    ]
     key: Any
     properties: dict[str, Any]
     evidence_ids: list[str]
@@ -120,7 +157,10 @@ class Relation(VersionedRecord):
         "ClaimsToClose",
         "Closes",
         "MergedAs",
+        "Authored",
+        "Merged",
         "Touches",
+        "Defines",
         "ReachableIn",
         "MentionsPR",
         "ChangesTo",
@@ -140,7 +180,7 @@ class Relation(VersionedRecord):
 class Subject(Record):
     subject_id: str
     repo: str
-    entity_type: Literal["Project", "Issue", "PullRequest", "File"]
+    entity_type: Literal["Project", "Issue", "PullRequest", "File", "Function", "Developer"]
     display_name: str
     aliases: list[str]
     source_ids: list[str]

@@ -1,0 +1,58 @@
+{
+  "arm": "O",
+  "question": "仓库 pallets/itsdangerous，截止时间 2026-11-16T06:31:18Z，冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd。2.1.0 是哪天出的？请给出正式 GitHub Release 的 UTC 日期和出处。",
+  "status": "empty",
+  "error": null,
+  "seconds": 10.126,
+  "method": "p2_query_v1.4.2_historykg_discussion_v1_full_focal_v1",
+  "max_output_tokens": 32768,
+  "timeout_seconds": 240,
+  "claims": [],
+  "evidence": [],
+  "gaps": [
+    "提供的上下文仅包含测试文件与 serializer.py 的部分源码，没有 GitHub Release 元数据、版本标签、变更日志或发布日期信息，因此无法确定 itsdangerous 2.1.0 正式 GitHub Release 的 UTC 日期及出处。"
+  ],
+  "context_characters": 11988,
+  "context_sha256": "0ea1f24144576e96c19a21125ebeaf511473a58fa7413c02257f8ce961474b55",
+  "visible": [
+    {
+      "source_id": "SourceDocument:80fd484ea2b107d7f6f28c884415e75089c8d0fb278da21f2fbbc5eed0422756",
+      "start": 0,
+      "end": 3807,
+      "title": null,
+      "url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/tests/test_itsdangerous/test_timed.py",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:b47e8504b2108c159342f14267bbc26c8f99972a3739ca814a167f34d52e14ab",
+      "start": 0,
+      "end": 7234,
+      "title": null,
+      "url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/src/itsdangerous/serializer.py",
+      "author": null,
+      "time": null
+    }
+  ],
+  "graph_edges": [],
+  "responses": [
+    {
+      "status": 200,
+      "usage": {
+        "completion_tokens": 221,
+        "completion_tokens_details": {
+          "reasoning_tokens": 155
+        },
+        "prompt_tokens": 3989,
+        "prompt_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 256
+        },
+        "total_tokens": 4210
+      },
+      "answer": "{\"claims\":[],\"gaps\":[\"提供的上下文仅包含测试文件与 serializer.py 的部分源码，没有 GitHub Release 元数据、版本标签、变更日志或发布日期信息，因此无法确定 itsdangerous 2.1.0 正式 GitHub Release 的 UTC 日期及出处。\"]}",
+      "reason": "stop",
+      "provider_error": null
+    }
+  ]
+}

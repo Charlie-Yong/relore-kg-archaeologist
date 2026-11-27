@@ -1,6 +1,6 @@
 # 图模式与可追溯查询：报告方法草稿
 
-写作口径：2026-10-30实际实现；公共契约1.4.1。真实Flask问答、正式实验结果和Windows
+写作口径：2026-10-30实际实现；公共契约1.4.2并兼容1.4.1。真实Flask问答、正式实验结果和Windows
 验证尚待统一流程运行，本稿描述已实现方法及当前工程证据，不填写预期实验数字。
 
 ## 可直接并入方法章节的正文
@@ -12,7 +12,11 @@
 并提供与代码资料结合的入口[1]；本项目的贡献在于课程任务所需的冻结数据契约、
 实体关系组织、证据约束及受控对照，不将上游能力计为自行发明。
 
-图的业务实体限定为Project、Issue、PullRequest、Commit、File、Release和Decision。
+图的业务实体在Project、Issue、PullRequest、Commit、File、Release和Decision上增量加入
+Developer与Function。Developer只由冻结PR JSON的`user`/`merged_by`建立，身份键优先使用
+GitHub数字ID，缺ID时使用大小写折叠login；Function表示特定提交SHA下由源码AST确认的
+顶层函数，键与稳定ID都包含`start_line`，以区分同文件同名重复定义。Feature不新增，
+功能与模块映射边界由Decision/File保留，不从名称猜测。
 其中File表示完整提交SHA下的单个文件快照；同一路径不同SHA保存为不同实体。
 Release身份由仓库与原样tag确定，因此同一提交上的不同tag不会合并。讨论评论和
 API响应保存在来源表，不为每条评论额外建立业务实体。Decision通过ABOUT连接已有主体，
@@ -25,6 +29,8 @@ closed事件中的commit_id存在时表示通过关闭语法关闭该Issue的提
 与普通提及均不能替代该历史事件。MergedAs、Touches分别表达合并提交与受影响文件，
 MentionsPR只表示发布说明提及，ReachableIn只表示提交对tag可达。程序与回答提示均
 保留这些区别，不把关闭、合并或notes提及直接写成功能修复或首次发布。
+增量关系`Authored`/`Merged`都从Developer指向PullRequest；冻结数据没有commit author，
+因此不建立Developer→Commit。`Defines`从同SHA同路径的File指向Function。
 
 导入前统一检查来源哈希、Unicode码点偏移、稳定ID、端点、关系方向和数据集归属。
 每条事实关系必须有可复算证据，错误记录导致整批拒收。Neo4j使用(dataset_id,id)组合
@@ -40,6 +46,10 @@ MentionsPR只表示发布说明提及，ReachableIn只表示提交对tag可达�
 
 公共查询入口接收自然语言问题，按主体目录、当前仓库编号或URL及检索命中的证据
 解析共同种子。A组使用共同检索，B组在相同种子上增加最多三跳的真实图路径扩展；
+已发布`relore_common_rrf_graph_v2`的正式A/B保持默认3跳。仅用于展示或验收完整
+Developer→PullRequest→Commit→File→Function链时才显式传`graph_depth=4`；多分支验收
+可同时显式提高`graph_path_limit`并关闭来源种子追加，正式A/B仍使用默认3跳/50条
+路径与来源种子扩展。
 两组始终使用同一个冻结来源池、回答器、模型参数和提示。B只改变证据选择，不增加
 A不可见的原文。两组最终均调用P4的同一渲染函数，以Python len计算12000 Unicode
 码点上限，来源标题和结构同时计入。长片段按句或行裁剪，并同步end与quote。
@@ -63,6 +73,8 @@ A不可见的原文。两组最终均调用P4的同一渲染函数，以Python l
 
 ```mermaid
 flowchart LR
+  DevAuthor[Developer：PR作者] -->|Authored| PR
+  DevMerger[Developer：PR合并者] -->|Merged| PR
   Project -->|HasRelease| Release
   PR[PullRequest] -->|ClaimsToClose：文本声明| Issue
   PR -->|Closes：官方历史事件| Issue
@@ -72,6 +84,7 @@ flowchart LR
   Release -->|MentionsPR| PR
   FileOld[File：另一SHA+path] -->|ChangesTo| FileNew
   FileNew -->|Imports：同SHA| FileDep[File：同SHA目标]
+  FileNew -->|Defines| Function[Function：SHA+path+qualified_name+start_line]
   Decision -->|ABOUT| PR
   Decision -->|EVIDENCED_BY| Source[冻结来源]
 ```

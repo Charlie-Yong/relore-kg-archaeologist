@@ -1,0 +1,587 @@
+{
+  "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+  "draft_model": "bailian/deepseek-v4.1-flash-1017",
+  "heldout20": {
+    "disjoint_from_orig30": true,
+    "seed": "itsdangerous-v2-heldout20-20261126",
+    "units": 20,
+    "unresolved_references": 1,
+    "v1": {
+      "f1": null,
+      "fn": 5,
+      "fp": 8,
+      "precision": null,
+      "precision_ci95": [
+        0.3096,
+        0.7383
+      ],
+      "predictions": 17,
+      "rationale_ci95": [
+        0.1368,
+        0.6943
+      ],
+      "rationale_coverage": null,
+      "rationale_covered": 3,
+      "rationale_eligible": 8,
+      "recall": null,
+      "recall_ci95": [
+        0.3876,
+        0.8366
+      ],
+      "references": 14,
+      "tp": 9
+    },
+    "v1_errors": {
+      "fn_breakdown": {
+        "missed_proposal_or_change": 3,
+        "missed_rejection_or_keep": 2
+      },
+      "fn_items": [
+        {
+          "action": "keep",
+          "category": "missed_rejection_or_keep",
+          "reference_id": "81f66d261bde6ae925b27461aab20cd2094852bc2454ded8c6ab16e74e73af44",
+          "statement": "Close the issue without changing behavior, treating the base64 transport-format variation as not a security problem.",
+          "status": "proposed"
+        },
+        {
+          "action": "fix",
+          "category": "missed_proposal_or_change",
+          "reference_id": "e28faad98bcc52e3e9f56b81a37087cbd715d7bd7d572aac674303808d9139a3",
+          "statement": "Fix TimestampSigner so a separator character appearing in the base64 signature or timestamp does not cause wrong parsing.",
+          "status": "accepted"
+        },
+        {
+          "action": "keep",
+          "category": "missed_rejection_or_keep",
+          "reference_id": "f98c79db2223da8f15ea9a6d906598432c3c7047665d0a207dcfddc6a87aa1f8",
+          "statement": "Do not treat the fix as API breakage.",
+          "status": "accepted"
+        },
+        {
+          "action": "add",
+          "category": "missed_proposal_or_change",
+          "reference_id": "21f061145c27264bed9c0337987a8e38cb7f66e76d6cf4a8a7a95c6ce40531e5",
+          "statement": "Defer adding Python 3.9 to CI until the actions virtual-environments issue is closed.",
+          "status": "proposed"
+        },
+        {
+          "action": "change",
+          "category": "missed_proposal_or_change",
+          "reference_id": "0493441020cefc1271b861936333154ea81ad4de4b669b76870b2aedfda38987",
+          "statement": "Automated pre-commit autoupdate proposing version bumps for pyupgrade, flake8, pip-compile-multi, and pre-commit-hooks in the pre-commit configuration.",
+          "status": "proposed"
+        }
+      ],
+      "fp_breakdown": {
+        "bot_bump": 6,
+        "other_fp": 0,
+        "plain_bug_or_nondecision": 1,
+        "status_mismatch": 1
+      },
+      "fp_items": [
+        {
+          "category": "bot_bump",
+          "prediction_id": "Decision:15d9d20ea5bedcba83b91ba0bd9636fd53060a52894b57cb9c57bf923e19088b",
+          "statement": "Bump actions/setup-python from 4.6.1 to 4.7.0 in pallets/itsdangerous.",
+          "status": "proposed"
+        },
+        {
+          "category": "bot_bump",
+          "prediction_id": "Decision:554e6d8219786dc0d93565441886c30fe0b766f3ab9ad7bdf26bb52f4215958a",
+          "statement": "Bump the slsa-framework/slsa-github-generator GitHub Actions dependency from 1.5.0 to 1.6.0.",
+          "status": "proposed"
+        },
+        {
+          "category": "bot_bump",
+          "prediction_id": "Decision:30195cb896e9ab01b140e0e381ee2db8efa294b2fa7bd3a5b3d5c428b351b509",
+          "statement": "Bump the actions/cache GitHub Action dependency from 3.0.2 to 3.0.3.",
+          "status": "proposed"
+        },
+        {
+          "category": "bot_bump",
+          "prediction_id": "Decision:b0d23dd1d85bab68951e2b737c9e711d54142007cad647f758a9252b4ab25577",
+          "statement": "actions/checkout is proposed to be bumped from version 2 to version 3 in pallets/itsdangerous.",
+          "status": "proposed"
+        },
+        {
+          "category": "bot_bump",
+          "prediction_id": "Decision:d0380a38ae920a7dd2bd96ad061e6f95919a4176a5622223ab045b3cf638ee8b",
+          "statement": "Bump sphinx from 3.4.1 to 3.4.3.",
+          "status": "proposed"
+        },
+        {
+          "category": "bot_bump",
+          "prediction_id": "Decision:01ea07e07874ed49bdf7bad99dd8ad50b66e02d9bf6aef0ddb85b98d6e5de425",
+          "statement": "Update the Sphinx dependency from 3.1.2 to 3.2.0.",
+          "status": "proposed"
+        },
+        {
+          "category": "status_mismatch",
+          "prediction_id": "Decision:fcbc67292c6ea6c00b573da7ce84819025202d8b6f9cd38e55a05f55424c39e7",
+          "statement": "Use the same signed-cookie implementation in both itsdangerous and Django.",
+          "status": "proposed"
+        },
+        {
+          "category": "plain_bug_or_nondecision",
+          "prediction_id": "Decision:7bd45cf78b02984b5058448d2629702020d6c831d0b58ed00fee15502570ec05",
+          "statement": "A proposal was made to add lower time resolution and monotonic time to token timestamps.",
+          "status": "proposed"
+        }
+      ],
+      "rationale_breakdown": {
+        "covered": 3,
+        "eligible": 8,
+        "empty": 0,
+        "missed_decision": 4,
+        "partial_or_unsupported": 1,
+        "status_error": 0
+      }
+    },
+    "v2": {
+      "f1": null,
+      "fn": 5,
+      "fp": 3,
+      "precision": null,
+      "precision_ci95": [
+        0.4677,
+        0.9111
+      ],
+      "predictions": 12,
+      "rationale_ci95": [
+        0.3057,
+        0.8632
+      ],
+      "rationale_coverage": null,
+      "rationale_covered": 5,
+      "rationale_eligible": 8,
+      "recall": null,
+      "recall_ci95": [
+        0.3876,
+        0.8366
+      ],
+      "references": 14,
+      "tp": 9
+    },
+    "v2_errors": {
+      "fn_breakdown": {
+        "missed_proposal_or_change": 3,
+        "missed_rejection_or_keep": 2
+      },
+      "fn_items": [
+        {
+          "action": "fix",
+          "category": "missed_proposal_or_change",
+          "reference_id": "dfb99a604116a58a47af165c314b6699858b7e5a5cf371526e5867220244d733",
+          "statement": "The missing TimedJSONWebSignatureSerializer documentation will be handled in the next release.",
+          "status": "accepted"
+        },
+        {
+          "action": "keep",
+          "category": "missed_rejection_or_keep",
+          "reference_id": "81f66d261bde6ae925b27461aab20cd2094852bc2454ded8c6ab16e74e73af44",
+          "statement": "Close the issue without changing behavior, treating the base64 transport-format variation as not a security problem.",
+          "status": "proposed"
+        },
+        {
+          "action": "keep",
+          "category": "missed_rejection_or_keep",
+          "reference_id": "f98c79db2223da8f15ea9a6d906598432c3c7047665d0a207dcfddc6a87aa1f8",
+          "statement": "Do not treat the fix as API breakage.",
+          "status": "accepted"
+        },
+        {
+          "action": "add",
+          "category": "missed_proposal_or_change",
+          "reference_id": "21f061145c27264bed9c0337987a8e38cb7f66e76d6cf4a8a7a95c6ce40531e5",
+          "statement": "Defer adding Python 3.9 to CI until the actions virtual-environments issue is closed.",
+          "status": "proposed"
+        },
+        {
+          "action": "change",
+          "category": "missed_proposal_or_change",
+          "reference_id": "0493441020cefc1271b861936333154ea81ad4de4b669b76870b2aedfda38987",
+          "statement": "Automated pre-commit autoupdate proposing version bumps for pyupgrade, flake8, pip-compile-multi, and pre-commit-hooks in the pre-commit configuration.",
+          "status": "proposed"
+        }
+      ],
+      "fp_breakdown": {
+        "bot_bump": 0,
+        "other_fp": 0,
+        "plain_bug_or_nondecision": 2,
+        "status_mismatch": 1
+      },
+      "fp_items": [
+        {
+          "category": "plain_bug_or_nondecision",
+          "prediction_id": "Decision:da231dcf0415917012acdc2848455d25c6bbf0798e937130f40bd76138a492e1",
+          "statement": "Maintainer declined to make itsdangerous able to unsign Django-signed cookies (Django uses a double-colon separator), stating the signing formats are simply incompatible and recommending using itsdangerous in both applications instead.",
+          "status": "rejected"
+        },
+        {
+          "category": "plain_bug_or_nondecision",
+          "prediction_id": "Decision:e393af8f5a3bbcadd4ffbf10b4840aa5c87f16a5dd116cb450f9f1186557ea66",
+          "statement": "Keep itsdangerous on a narrowly-scoped subset of JWS with HMAC-SHA1 as the fixed signing algorithm, rather than changing the signing scheme in response to critiques of the JWT standard.",
+          "status": "accepted"
+        },
+        {
+          "category": "status_mismatch",
+          "prediction_id": "Decision:5c2f2bfcfe4f4963e08e68322c36491f9a777d454daf6a9af5c2082447532cf3",
+          "statement": "The missing API documentation for TimedJSONWebSignatureSerializer will be handled in the next release.",
+          "status": "proposed"
+        }
+      ],
+      "rationale_breakdown": {
+        "covered": 5,
+        "eligible": 8,
+        "empty": 0,
+        "missed_decision": 3,
+        "partial_or_unsupported": 0,
+        "status_error": 0
+      }
+    }
+  },
+  "judge_model": "bailian/glm-5.3",
+  "orig30": {
+    "units": 30,
+    "v1": {
+      "f1": 0.4651,
+      "fn": 8,
+      "fp": 15,
+      "precision": 0.4,
+      "precision_ci95": [
+        0.234,
+        0.5926
+      ],
+      "predictions": 25,
+      "rationale_ci95": [
+        0.1328,
+        0.5313
+      ],
+      "rationale_coverage": 0.2941,
+      "rationale_covered": 5,
+      "rationale_eligible": 17,
+      "recall": 0.5556,
+      "recall_ci95": [
+        0.3372,
+        0.7544
+      ],
+      "references": 18,
+      "tp": 10
+    },
+    "v1_errors": {
+      "fn_breakdown": {
+        "missed_proposal_or_change": 5,
+        "missed_rejection_or_keep": 3
+      },
+      "fn_items": [
+        {
+          "action": "add",
+          "category": "missed_proposal_or_change",
+          "reference_id": "ae749df93002d6bce3ca3e32e43d8126b158ae41cc43d4772f6b46e504632611",
+          "statement": "Maintainer states intent to finish a pre-existing draft for the website documenting versioning, independent of this issue.",
+          "status": "proposed"
+        },
+        {
+          "action": "change",
+          "category": "missed_proposal_or_change",
+          "reference_id": "fada7db97d195707ce0f351caae9e8e4971cffddaee09c2ded1d25919528fe1f",
+          "statement": "If the default digest is changed, allow SHA1 as a fallback so existing sessions are not invalidated by default.",
+          "status": "proposed"
+        },
+        {
+          "action": "keep",
+          "category": "missed_rejection_or_keep",
+          "reference_id": "5a30703b04a8f73483da9210ea501ab8e2085454791f704019397b9440ba38ef",
+          "statement": "Do not implement and support JWT in itsdangerous; users can plug a JWT library into a Serializer subclass.",
+          "status": "rejected"
+        },
+        {
+          "action": "change",
+          "category": "missed_proposal_or_change",
+          "reference_id": "f1b7ab6b6227c7ac9d2ea7b31db82036015dd7bdcc0eb5610debcd52bc3e16e1",
+          "statement": "Cut a new release with the change moving exp/iat (per PR #19), accepting that it would invalidate all Flask sessions.",
+          "status": "proposed"
+        },
+        {
+          "action": "keep",
+          "category": "missed_rejection_or_keep",
+          "reference_id": "aa4a65b5a531573a2aba2b2287974ee50aca57c377d0244c556866856d070f6a",
+          "statement": "Maintainers keep the existing lazy SHA-1 default behavior; users on FIPS systems are directed to pass a compatible digest_method argument instead of the default being changed.",
+          "status": "accepted"
+        },
+        {
+          "action": "keep",
+          "category": "missed_rejection_or_keep",
+          "reference_id": "9e75dced5828f08899c49ad2d580add37406eac8b8d0957077bf54d1f6aeef23",
+          "statement": "Maintainer keeps the existing signature comparison behavior; the interchangeable trailing characters of base64 signatures are not treated as a bug in itsdangerous.",
+          "status": "accepted"
+        },
+        {
+          "action": "remove",
+          "category": "missed_proposal_or_change",
+          "reference_id": "d9e4fd24fd6ed997c45370c7997f60cbca5cd5a2b0489d5db9f76a53d3266655",
+          "statement": "Remove the per-project contributing guide files so they don't have to be kept in sync.",
+          "status": "proposed"
+        },
+        {
+          "action": "add",
+          "category": "missed_proposal_or_change",
+          "reference_id": "a6e2f39dbd33a91b6f632335cd4df3dcd6ec8e674b441e5c22f12deb2d3e460a",
+          "statement": "Add a section about the contributing guide to the readme.",
+          "status": "proposed"
+        }
+      ],
+      "fp_breakdown": {
+        "bot_bump": 8,
+        "other_fp": 0,
+        "plain_bug_or_nondecision": 4,
+        "status_mismatch": 3
+      },
+      "fp_items": [
+        {
+          "category": "status_mismatch",
+          "prediction_id": "Decision:f46bd82203dd83ca0a68c084a295a706552a106a37e10f7b3d2f27807f46b15d",
+          "statement": "Remove the per-project files so they don't have to be kept in sync.",
+          "status": "accepted"
+        },
+        {
+          "category": "status_mismatch",
+          "prediction_id": "Decision:995a25947ffe2f09e56b7929715b9e8ed0d5fdcf5cddf78d8a7567e800ab889a",
+          "statement": "Add a section about the contributing guide to the readme because GitHub's UI links to everything except the contributing guide.",
+          "status": "accepted"
+        },
+        {
+          "category": "bot_bump",
+          "prediction_id": "Decision:fdc5ca13b4018fb3a11fb545e3026f1fde185556f1e6c6c9740be6fcde52ab56",
+          "statement": "Bump the github-actions group with 2 updates: actions/checkout from 4.1.3 to 4.1.4 and actions/download-artifact from 4.1.6 to 4.1.7.",
+          "status": "proposed"
+        },
+        {
+          "category": "bot_bump",
+          "prediction_id": "Decision:90fb8918026f4359e13e7501603d3d10a57049a06c4dba38a350a70c489af030",
+          "statement": "Bump actions/checkout from 3.3.0 to 3.5.0 in pallets/itsdangerous.",
+          "status": "proposed"
+        },
+        {
+          "category": "bot_bump",
+          "prediction_id": "Decision:1c1d4b58aad5f18b13b9e3ac535039020429f8ffcf2fde088ed620db3a8dc8d5",
+          "statement": "Migrate the repository's Dependabot configuration from Dependabot.com to a GitHub-native Dependabot config file using the new syntax.",
+          "status": "proposed"
+        },
+        {
+          "category": "bot_bump",
+          "prediction_id": "Decision:52a87e2d7c19abc409f385beaf3f29cd11727eb949eaef828b1e32feab3ee210",
+          "statement": "Drop the repository's Dependabot automerge settings from the new config file.",
+          "status": "proposed"
+        },
+        {
+          "category": "bot_bump",
+          "prediction_id": "Decision:166c59b1f28f6892198b56d3d743f75486c318ba640b9d9df63de7c813c2656e",
+          "statement": "Change the configured open pull request limit from unlimited to 99 in the new config file.",
+          "status": "proposed"
+        },
+        {
+          "category": "bot_bump",
+          "prediction_id": "Decision:4ac593651a3bd5a227907a8003b40daa8b9379d8c4af93ddc8b9013c8f941e99",
+          "statement": "Bump sphinx from 3.0.3 to 3.0.4.",
+          "status": "proposed"
+        },
+        {
+          "category": "bot_bump",
+          "prediction_id": "Decision:a2102584bb7c45e422e1fb5e6de588ff04b10f28f3efa643e27da4d5d09cdc68",
+          "statement": "Bump pre-commit from 2.5.1 to 2.6.0.",
+          "status": "proposed"
+        },
+        {
+          "category": "bot_bump",
+          "prediction_id": "Decision:45ead411298a2931bade6ed3eca85d06282f5e7e1ee7dee77930f9a404c64881",
+          "statement": "Bump tox from 3.16.0 to 3.16.1 in pallets/itsdangerous.",
+          "status": "proposed"
+        },
+        {
+          "category": "status_mismatch",
+          "prediction_id": "Decision:431023c909efd531c530bc28e3f8249e91fc269659e7beab47b9ea94ce885732",
+          "statement": "Use hashlib._hashlib.get_fips_mode() to select a FIPS-compatible digest method by default.",
+          "status": "proposed"
+        },
+        {
+          "category": "plain_bug_or_nondecision",
+          "prediction_id": "Decision:047b26665884215c876dfaef3377d85c8f6c5d0e433c15c28a00a693af218278",
+          "statement": "TimedSerializer.loads() with return_timestamp=True raises a TypeError and is reported as a bug to be fixed.",
+          "status": "proposed"
+        },
+        {
+          "category": "plain_bug_or_nondecision",
+          "prediction_id": "Decision:01e2a59da9ba14a162f79566900209917787c5ee8070ab5f16898ca544398807",
+          "statement": "The request to add an interface for extending the expiry time of an already issued token was rejected as impossible.",
+          "status": "rejected"
+        },
+        {
+          "category": "plain_bug_or_nondecision",
+          "prediction_id": "Decision:c61a0e733463c05b28e3bd878311421a3cbe2375ee12535b77149dc304adf732",
+          "statement": "An alternative implementation of issuing a non-expiring refresh token to issue new primary tokens was proposed.",
+          "status": "proposed"
+        },
+        {
+          "category": "plain_bug_or_nondecision",
+          "prediction_id": "Decision:692f542ffae916119de4942ce1fe96907c611a0a388ae234e9d029fb88aafa91",
+          "statement": "Consider providing a better error message when a non-string value such as None is passed to loads.",
+          "status": "proposed"
+        }
+      ],
+      "rationale_breakdown": {
+        "covered": 5,
+        "eligible": 17,
+        "empty": 1,
+        "missed_decision": 8,
+        "partial_or_unsupported": 3,
+        "status_error": 1
+      }
+    },
+    "v2": {
+      "f1": 0.6061,
+      "fn": 8,
+      "fp": 5,
+      "precision": 0.6667,
+      "precision_ci95": [
+        0.4171,
+        0.8482
+      ],
+      "predictions": 15,
+      "rationale_ci95": [
+        0.3096,
+        0.7383
+      ],
+      "rationale_coverage": 0.5294,
+      "rationale_covered": 9,
+      "rationale_eligible": 17,
+      "recall": 0.5556,
+      "recall_ci95": [
+        0.3372,
+        0.7544
+      ],
+      "references": 18,
+      "tp": 10
+    },
+    "v2_errors": {
+      "fn_breakdown": {
+        "missed_proposal_or_change": 5,
+        "missed_rejection_or_keep": 3
+      },
+      "fn_items": [
+        {
+          "action": "add",
+          "category": "missed_proposal_or_change",
+          "reference_id": "ae749df93002d6bce3ca3e32e43d8126b158ae41cc43d4772f6b46e504632611",
+          "statement": "Maintainer states intent to finish a pre-existing draft for the website documenting versioning, independent of this issue.",
+          "status": "proposed"
+        },
+        {
+          "action": "change",
+          "category": "missed_proposal_or_change",
+          "reference_id": "239c1f768fbedc565ba777389e3f3a2fec51ab138e5dfa9c6b09b951c1cd61d2",
+          "statement": "Change the default digest method from SHA1 to a stronger method such as HMAC-SHA512.",
+          "status": "proposed"
+        },
+        {
+          "action": "keep",
+          "category": "missed_rejection_or_keep",
+          "reference_id": "54f592c352b42f0e72951fc3b1920a4948e82eac329d565e211f59d2fd40a63d",
+          "statement": "Keep SHA1 as the default digest method; SHA1 used inside HMAC is not an issue.",
+          "status": "rejected"
+        },
+        {
+          "action": "change",
+          "category": "missed_proposal_or_change",
+          "reference_id": "fada7db97d195707ce0f351caae9e8e4971cffddaee09c2ded1d25919528fe1f",
+          "statement": "If the default digest is changed, allow SHA1 as a fallback so existing sessions are not invalidated by default.",
+          "status": "proposed"
+        },
+        {
+          "action": "keep",
+          "category": "missed_rejection_or_keep",
+          "reference_id": "77e6bf4318138d6878a2e13da63cc77032754a10eb02fcbaff366d92623da864",
+          "statement": "Keep the current serializer as JWS with extra time headers rather than moving exp and iat into the payload as JWT claims.",
+          "status": "rejected"
+        },
+        {
+          "action": "add",
+          "category": "missed_proposal_or_change",
+          "reference_id": "f063cbb0ecd6c950337c479221c847255d970ddef4d902ad5d2d3a940a6db2d6",
+          "statement": "Add a separate serializer for JWT/JW* support if someone implements one.",
+          "status": "proposed"
+        },
+        {
+          "action": "keep",
+          "category": "missed_rejection_or_keep",
+          "reference_id": "5a30703b04a8f73483da9210ea501ab8e2085454791f704019397b9440ba38ef",
+          "statement": "Do not implement and support JWT in itsdangerous; users can plug a JWT library into a Serializer subclass.",
+          "status": "rejected"
+        },
+        {
+          "action": "change",
+          "category": "missed_proposal_or_change",
+          "reference_id": "f1b7ab6b6227c7ac9d2ea7b31db82036015dd7bdcc0eb5610debcd52bc3e16e1",
+          "statement": "Cut a new release with the change moving exp/iat (per PR #19), accepting that it would invalidate all Flask sessions.",
+          "status": "proposed"
+        }
+      ],
+      "fp_breakdown": {
+        "bot_bump": 0,
+        "other_fp": 2,
+        "plain_bug_or_nondecision": 2,
+        "status_mismatch": 1
+      },
+      "fp_items": [
+        {
+          "category": "status_mismatch",
+          "prediction_id": "Decision:c6e8da8e825abf5649559e92415ba1a590587528a4d75679e8ab482c4a0b9bcf",
+          "statement": "Update the outdated pip link referenced in issue #255 by modifying the pip-related link in the project (PR #256, \"update pip link\").",
+          "status": "proposed"
+        },
+        {
+          "category": "plain_bug_or_nondecision",
+          "prediction_id": "Decision:1d4ec17528b81749e9b6272335013ca6d573c5e06bd6380977016886f17bc7d5",
+          "statement": "Declined the reported raw-token-string \"security control desynchronization\" as an itsdangerous vulnerability, keeping existing library behavior and directing the reporter to the security policy instead of the public issue tracker.",
+          "status": "rejected"
+        },
+        {
+          "category": "other_fp",
+          "prediction_id": "Decision:d31f7ae931b1da13027070bb3aa7c6c8093fb2ecf996a8e9c99e2787b5fff9fe",
+          "statement": "Detect FIPS mode via hashlib._hashlib.get_fips_mode() and automatically pass a FIPS-compatible digest method instead of the lazy SHA-1 default.",
+          "status": "proposed"
+        },
+        {
+          "category": "plain_bug_or_nondecision",
+          "prediction_id": "Decision:ea12ead3070956bfbc4bab45a7fa20e1636a4a88a4e02f2e2415d151665efe03",
+          "statement": "Do not support extending the expiry time of an already-issued token; issue a new token instead, optionally using a long-lived refresh token to issue new primary tokens.",
+          "status": "rejected"
+        },
+        {
+          "category": "other_fp",
+          "prediction_id": "Decision:fa651bdd38af63e8f9c75a42882dac0e001acbe707c8d82c4cc3c71b74349957",
+          "statement": "Proposes dropping support for Python 2.6 in itsdangerous (revisiting the earlier proposal in PR #72).",
+          "status": "proposed"
+        }
+      ],
+      "rationale_breakdown": {
+        "covered": 9,
+        "eligible": 17,
+        "empty": 0,
+        "missed_decision": 8,
+        "partial_or_unsupported": 0,
+        "status_error": 0
+      }
+    }
+  },
+  "repo": "pallets/itsdangerous",
+  "spend": {
+    "approaching_cap": false,
+    "calls": 144,
+    "cap_cny": 15.0,
+    "recorded_at": "2026-11-26T08:38:01Z",
+    "remaining_cny": 11.1686,
+    "spent_cny": 3.8314
+  }
+}

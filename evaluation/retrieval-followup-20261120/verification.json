@@ -1,0 +1,375 @@
+{
+  "frozen_files": {
+    "protocol": "ad2dd504af787d3263894b4c7e7fecf7692f880562f752f09c081d2903f6b1a0",
+    "reference": "716521073f33a8b97f50b44ea865f4bd9cde28e6e0e659e257a8615d88f6377f"
+  },
+  "source_count": 7417,
+  "spans": {
+    "A1": {
+      "fragments": 3,
+      "checked_claim_citations": 1
+    },
+    "A2": {
+      "fragments": 4,
+      "checked_claim_citations": 1
+    },
+    "A3": {
+      "fragments": 8,
+      "checked_claim_citations": 1
+    },
+    "A4": {
+      "fragments": 3,
+      "checked_claim_citations": 1
+    },
+    "A5": {
+      "fragments": 12,
+      "checked_claim_citations": 0
+    },
+    "A6": {
+      "fragments": 12,
+      "checked_claim_citations": 0
+    },
+    "B1": {
+      "fragments": 3,
+      "checked_claim_citations": 1
+    },
+    "B2": {
+      "fragments": 3,
+      "checked_claim_citations": 1
+    },
+    "B3": {
+      "fragments": 8,
+      "checked_claim_citations": 4
+    },
+    "B4": {
+      "fragments": 5,
+      "checked_claim_citations": 5
+    },
+    "B5": {
+      "fragments": 14,
+      "checked_claim_citations": 0
+    },
+    "B6": {
+      "fragments": 14,
+      "checked_claim_citations": 0
+    },
+    "C1": {
+      "fragments": 3,
+      "checked_claim_citations": 1
+    },
+    "C3": {
+      "fragments": 8,
+      "checked_claim_citations": 0
+    },
+    "C5": {
+      "fragments": 14,
+      "checked_claim_citations": 0
+    },
+    "O1": {
+      "fragments": 3,
+      "checked_claim_citations": 0
+    },
+    "O2": {
+      "fragments": 3,
+      "checked_claim_citations": 0
+    },
+    "O3": {
+      "fragments": 4,
+      "checked_claim_citations": 1
+    },
+    "O4": {
+      "fragments": 3,
+      "checked_claim_citations": 1
+    },
+    "O5": {
+      "fragments": 2,
+      "checked_claim_citations": 0
+    },
+    "O6": {
+      "fragments": 3,
+      "checked_claim_citations": 0
+    },
+    "dev-B1": {
+      "fragments": 3,
+      "checked_claim_citations": 1
+    },
+    "dev-B2": {
+      "fragments": 5,
+      "checked_claim_citations": 0
+    },
+    "dev-B3": {
+      "fragments": 16,
+      "checked_claim_citations": 0
+    },
+    "live-A1": {
+      "fragments": 3,
+      "checked_claim_citations": 1
+    },
+    "live-A2": {
+      "fragments": 4,
+      "checked_claim_citations": 1
+    },
+    "live-A3": {
+      "fragments": 8,
+      "checked_claim_citations": 0
+    },
+    "live-A4": {
+      "fragments": 3,
+      "checked_claim_citations": 1
+    },
+    "live-A5": {
+      "fragments": 12,
+      "checked_claim_citations": 7
+    },
+    "live-A6": {
+      "fragments": 12,
+      "checked_claim_citations": 7
+    },
+    "live-B1": {
+      "fragments": 3,
+      "checked_claim_citations": 2
+    },
+    "live-B2": {
+      "fragments": 3,
+      "checked_claim_citations": 2
+    },
+    "live-B3": {
+      "fragments": 8,
+      "checked_claim_citations": 5
+    },
+    "live-B4": {
+      "fragments": 5,
+      "checked_claim_citations": 5
+    },
+    "live-B5": {
+      "fragments": 14,
+      "checked_claim_citations": 13
+    },
+    "live-B6": {
+      "fragments": 14,
+      "checked_claim_citations": 13
+    },
+    "live-B7": {
+      "fragments": 18,
+      "checked_claim_citations": 13
+    },
+    "live-B8": {
+      "fragments": 16,
+      "checked_claim_citations": 13
+    },
+    "live-C1": {
+      "fragments": 3,
+      "checked_claim_citations": 1
+    },
+    "live-C3": {
+      "fragments": 8,
+      "checked_claim_citations": 6
+    },
+    "live-C5": {
+      "fragments": 14,
+      "checked_claim_citations": 13
+    },
+    "live-O1": {
+      "fragments": 3,
+      "checked_claim_citations": 0
+    },
+    "live-O2": {
+      "fragments": 3,
+      "checked_claim_citations": 0
+    },
+    "live-O3": {
+      "fragments": 4,
+      "checked_claim_citations": 2
+    },
+    "live-O4": {
+      "fragments": 3,
+      "checked_claim_citations": 1
+    },
+    "live-O5": {
+      "fragments": 2,
+      "checked_claim_citations": 0
+    },
+    "live-O6": {
+      "fragments": 3,
+      "checked_claim_citations": 0
+    },
+    "output-A6": {
+      "fragments": 12,
+      "checked_claim_citations": 2
+    },
+    "output-B5": {
+      "fragments": 14,
+      "checked_claim_citations": 0
+    },
+    "output-B6": {
+      "fragments": 14,
+      "checked_claim_citations": 0
+    },
+    "output-C3": {
+      "fragments": 8,
+      "checked_claim_citations": 5
+    },
+    "output-C5": {
+      "fragments": 14,
+      "checked_claim_citations": 0
+    },
+    "output-dev-B2": {
+      "fragments": 5,
+      "checked_claim_citations": 6
+    },
+    "output-dev-B3": {
+      "fragments": 16,
+      "checked_claim_citations": 0
+    },
+    "passages-B5": {
+      "fragments": 14,
+      "checked_claim_citations": 13
+    },
+    "passages-B6": {
+      "fragments": 14,
+      "checked_claim_citations": 13
+    },
+    "passages-B7": {
+      "fragments": 18,
+      "checked_claim_citations": 14
+    },
+    "passages-B8": {
+      "fragments": 16,
+      "checked_claim_citations": 13
+    },
+    "passages-dev-B3": {
+      "fragments": 16,
+      "checked_claim_citations": 13
+    }
+  },
+  "identical_BC_contexts": [
+    1,
+    3,
+    5
+  ],
+  "verified_tag_ancestry": [
+    {
+      "sha": "53efacdf1136edb9462aeca221023a8f9bbd79a9",
+      "tag": "2.0.0",
+      "tip": "d101100c395958d67368b8c37d95a9c404598c2e",
+      "returncode": 1
+    },
+    {
+      "sha": "53efacdf1136edb9462aeca221023a8f9bbd79a9",
+      "tag": "2.0.1",
+      "tip": "8f39dd317914321fed26437c874637641bd598b6",
+      "returncode": 1
+    },
+    {
+      "sha": "53efacdf1136edb9462aeca221023a8f9bbd79a9",
+      "tag": "2.1.0",
+      "tip": "bfafa6541acd8c7573661d6b1545ff8e8133a43e",
+      "returncode": 1
+    },
+    {
+      "sha": "53efacdf1136edb9462aeca221023a8f9bbd79a9",
+      "tag": "2.1.1",
+      "tip": "38e9d8a417ac4e578ec422cb58e84c33b207b740",
+      "returncode": 1
+    },
+    {
+      "sha": "53efacdf1136edb9462aeca221023a8f9bbd79a9",
+      "tag": "2.1.2",
+      "tip": "49d263f60b6f78df8924be51262eeb5216ab1468",
+      "returncode": 1
+    },
+    {
+      "sha": "53efacdf1136edb9462aeca221023a8f9bbd79a9",
+      "tag": "2.2.0",
+      "tip": "096c8d42545d3b68ea21a4f890fb2b2d8979c0bd",
+      "returncode": 0
+    },
+    {
+      "sha": "0b92f16a59022b5756311b1ca5ebd67aabef9371",
+      "tag": "2.0.0",
+      "tip": "d101100c395958d67368b8c37d95a9c404598c2e",
+      "returncode": 1
+    },
+    {
+      "sha": "0b92f16a59022b5756311b1ca5ebd67aabef9371",
+      "tag": "2.0.1",
+      "tip": "8f39dd317914321fed26437c874637641bd598b6",
+      "returncode": 1
+    },
+    {
+      "sha": "0b92f16a59022b5756311b1ca5ebd67aabef9371",
+      "tag": "2.1.0",
+      "tip": "bfafa6541acd8c7573661d6b1545ff8e8133a43e",
+      "returncode": 1
+    },
+    {
+      "sha": "0b92f16a59022b5756311b1ca5ebd67aabef9371",
+      "tag": "2.1.1",
+      "tip": "38e9d8a417ac4e578ec422cb58e84c33b207b740",
+      "returncode": 1
+    },
+    {
+      "sha": "0b92f16a59022b5756311b1ca5ebd67aabef9371",
+      "tag": "2.1.2",
+      "tip": "49d263f60b6f78df8924be51262eeb5216ab1468",
+      "returncode": 1
+    },
+    {
+      "sha": "0b92f16a59022b5756311b1ca5ebd67aabef9371",
+      "tag": "2.2.0",
+      "tip": "096c8d42545d3b68ea21a4f890fb2b2d8979c0bd",
+      "returncode": 1
+    }
+  ],
+  "live_requests_32768": {
+    "live-A1": 1,
+    "live-A2": 3,
+    "live-A3": 3,
+    "live-A4": 1,
+    "live-A5": 1,
+    "live-A6": 1,
+    "live-B1": 1,
+    "live-B2": 3,
+    "live-B3": 1,
+    "live-B4": 1,
+    "live-B5": 1,
+    "live-B6": 1,
+    "live-B7": 1,
+    "live-B8": 1,
+    "live-C1": 2,
+    "live-C3": 1,
+    "live-C5": 1,
+    "live-O1": 1,
+    "live-O2": 1,
+    "live-O3": 1,
+    "live-O4": 1,
+    "live-O5": 1,
+    "live-O6": 1
+  },
+  "extra_tag_checks": [
+    {
+      "q": 7,
+      "tags": {
+        "2.0.0": false,
+        "2.0.1": true,
+        "2.1.0": true,
+        "2.1.1": true,
+        "2.1.2": true,
+        "2.2.0": true
+      },
+      "first": "2.0.1"
+    },
+    {
+      "q": 8,
+      "tags": {
+        "2.0.0": false,
+        "2.0.1": false,
+        "2.1.0": false,
+        "2.1.1": false,
+        "2.1.2": false,
+        "2.2.0": false
+      },
+      "first": null
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "arm": "B",
+  "question": "仓库 pallets/itsdangerous，截止时间 2026-11-16T06:31:18Z，冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd。2.0.0rc2 是正式版还是候选版？它在 GitHub 哪天发布？请附出处。",
+  "status": "error",
+  "error": {
+    "code": "answer_failed",
+    "run_id": "38ca67e9218b9362df494e0fdfa4cf9e19a9120d2a502771c59a38d7ce02a707"
+  },
+  "seconds": 47.415,
+  "method": "p2_query_v1.4.2_historykg_discussion_v1_full_focal_v2",
+  "max_output_tokens": 32768,
+  "timeout_seconds": 240,
+  "claims": [],
+  "evidence": [],
+  "gaps": [],
+  "context_characters": 11940,
+  "context_sha256": "d09f4238ee08a0ce60f762cb36d8aeb233db9a2348ebe68f776ead8dfd7a8e32",
+  "visible": [
+    {
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 23025,
+      "end": 23095,
+      "title": "2.0.0rc2 · https://github.com/pallets/itsdangerous/releases/tag/2.0.0rc2 · draft=False, prerelease=True",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:88b413c1a84b7123b540bd5be2876fdabeffa3407b70c7d77cc31fb13c7328f3",
+      "start": 0,
+      "end": 9789,
+      "title": "Bump actions/cache from 3.0.11 to 3.2.2",
+      "url": "https://github.com/pallets/itsdangerous/pull/323",
+      "author": "dependabot[bot]",
+      "time": "2023-01-01T16:01:03Z"
+    },
+    {
+      "source_id": "SourceDocument:779170b978f15b20e350b83f98c315fd662b557a3008941d1a7021e3b9c10a5c",
+      "start": 0,
+      "end": 879,
+      "title": "Bump pre-commit from 2.13.0 to 2.14.1",
+      "url": "https://github.com/pallets/itsdangerous/pull/260",
+      "author": "dependabot[bot]",
+      "time": "2021-09-01T08:03:18Z"
+    }
+  ],
+  "graph_edges": [],
+  "responses": [
+    {
+      "status": 200,
+      "usage": {
+        "completion_tokens": 2021,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1755
+        },
+        "prompt_tokens": 4754,
+        "prompt_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "total_tokens": 6775
+      },
+      "answer": "{\"claims\":[{\"text\":\"2.0.0rc2 是候选版/预发布版，不是正式版。\",\"evidence\":[{\"source_id\":\"SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d\",\"quote\":\"\\\"tag_name\\\": \\\"2.0.0rc2\\\"\"},{\"source_id\":\"SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d\",\"quote\":\"prerelease=True\"}]},{\"text\":\"该 GitHub 发布条目的发布时间为 2021-04-16T14:54:13Z，即 2021-04-16（UTC）。\",\"evidence\":[{\"source_id\":\"SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d\",\"quote\":\"\\\"published_at\\\": \\\"2021-04-16T14:54:13Z\\\"\"}]}],\"gaps\":[]}",
+      "reason": "stop",
+      "provider_error": null
+    },
+    {
+      "status": 200,
+      "usage": {
+        "completion_tokens": 1512,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1246
+        },
+        "prompt_tokens": 4810,
+        "prompt_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 4096
+        },
+        "total_tokens": 6322
+      },
+      "answer": "{\"claims\":[{\"text\":\"2.0.0rc2 是候选版（预发布版），不是正式版。\",\"evidence\":[{\"source_id\":\"SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d\",\"quote\":\"2.0.0rc2 · https://github.com/pallets/itsdangerous/releases/tag/2.0.0rc2 · draft=False, prerelease=True\"}]},{\"text\":\"GitHub 记录的 2.0.0rc2 发布时间为 2021-04-16T14:54:13Z，也就是 2021 年 4 月 16 日（UTC）。\",\"evidence\":[{\"source_id\":\"SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d\",\"quote\":\"    \\\"published_at\\\": \\\"2021-04-16T14:54:13Z\\\",\\n    \\\"tag_name\\\": \\\"2.0.0rc2\\\"\"}]}],\"gaps\":[]}",
+      "reason": "stop",
+      "provider_error": null
+    },
+    {
+      "status": 200,
+      "usage": {
+        "completion_tokens": 4937,
+        "completion_tokens_details": {
+          "reasoning_tokens": 4616
+        },
+        "prompt_tokens": 4810,
+        "prompt_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 4096
+        },
+        "total_tokens": 9747
+      },
+      "answer": "{\"claims\":[{\"text\":\"2.0.0rc2 是候选版（GitHub 标记 prerelease=True，标签名为 2.0.0rc2），不是正式版。\",\"evidence\":[{\"source_id\":\"SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d\",\"quote\":\"2.0.0rc2 · https://github.com/pallets/itsdangerous/releases/tag/2.0.0rc2 · draft=False, prerelease=True\"},{\"source_id\":\"SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d\",\"quote\":\"    \\\"tag_name\\\": \\\"2.0.0rc2\\\"\"}]},{\"text\":\"该候选版在 GitHub 的 published_at 为 2021-04-16T14:54:13Z，即 2021-04-16（UTC）发布。\",\"evidence\":[{\"source_id\":\"SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d\",\"quote\":\"    \\\"published_at\\\": \\\"2021-04-16T14:54:13Z\\\",\"}]}],\"gaps\":[]}",
+      "reason": "stop",
+      "provider_error": null
+    }
+  ]
+}

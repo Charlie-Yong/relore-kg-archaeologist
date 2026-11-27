@@ -1,0 +1,312 @@
+{
+  "schema_version": "p2_cross_source_chain_v1",
+  "generated_at": "2026-10-30",
+  "status": "ok_with_documented_production_gap",
+  "question": "Issue #6093 报告 IPv6 地址解析问题。请沿 PR #6096（作者 lkk7、合并者 davidism）追到 merge commit 05e9c6bd630ecf4ec0ec884b1fc7901663737bc7、src/flask/testing.py 以及顶层函数 flask.testing._get_werkzeug_version。",
+  "scope": {
+    "production_data_modified": false,
+    "private_test_read": false,
+    "paid_model_calls": 0,
+    "model_requests_during_acceptance": 0,
+    "database_services_started_or_stopped_by_p2": false,
+    "neo4j_uri": "bolt://127.0.0.1:17687",
+    "postgresql_port": 16432
+  },
+  "p3_replay": {
+    "path": "/private/tmp/p2-p3-replay.3WYuhT/p3",
+    "status": "ok",
+    "model_requests": 0,
+    "model_requests_scope": "P3 code-stage manifest local count; not the historical global production extraction usage",
+    "counts": {
+      "sources": 114,
+      "entities": 433,
+      "relations": 452,
+      "evidence": 512
+    },
+    "entity_counts": {
+      "Commit": 4,
+      "Developer": 18,
+      "File": 24,
+      "Function": 384,
+      "Release": 3
+    },
+    "relation_counts": {
+      "Authored": 20,
+      "ChangesTo": 8,
+      "Defines": 384,
+      "HasRelease": 3,
+      "Imports": 25,
+      "Merged": 4,
+      "Touches": 8
+    },
+    "key_shapes": {
+      "Developer": "scalar identity_key: github:<id> or login:<casefold(login)>",
+      "Function": "[sha, path, qualified_name, start_line]"
+    },
+    "file_sha256": {
+      "sources.jsonl": "27dbf22d0337e57ead26fe08c95a1e046442ec326f12cce7195f04e0a0fedaf8",
+      "entities.jsonl": "15460d73aa02cf65c3cff08bd995394a9fa0173a6a22fa9458bea0797a2069b3",
+      "relations.jsonl": "8fd6ac270d581e47e196c5a12eba78e2f84f204cbfae4ae180cdeaaecd319c81",
+      "evidence.jsonl": "74037854f6cf1a1902f782fe1d4cd5245f0ae4a7393db4e032760b42bb717288"
+    }
+  },
+  "p1_base": {
+    "path": "/Users/Exile/工作与学习/课程学习/知识图谱/relore-agents/p1/data/dataset-810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+    "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+    "original_graph_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe"
+  },
+  "merged_dataset": {
+    "path": "/private/tmp/p2_p3_real_merge.eHdNqb",
+    "dataset_id": "p2_p3_real_014e28d89e1f",
+    "contract_version": "1.4.2",
+    "derivation": "P1 frozen Flask package plus the actual P3 replay shard; no production writes",
+    "manifest_sha256": "9c2e966369560b206c3f6d433c8475bdd16cec069ddecf8454e818918e6ba724",
+    "fingerprint": "d0c1be456f70acdf354776e2fbee24ee5d6614e94437add2a3e90239a48539dd",
+    "counts": {
+      "sources": 370,
+      "source_units": 40,
+      "evidence": 741,
+      "entities": 535,
+      "relations": 591,
+      "subjects": 65
+    },
+    "entity_counts": {
+      "Commit": 4,
+      "Decision": 61,
+      "Developer": 18,
+      "File": 24,
+      "Function": 384,
+      "Issue": 19,
+      "Project": 1,
+      "PullRequest": 21,
+      "Release": 3
+    },
+    "relation_counts": {
+      "ABOUT": 61,
+      "Authored": 20,
+      "ChangesTo": 8,
+      "ClaimsToClose": 12,
+      "Defines": 384,
+      "EVIDENCED_BY": 62,
+      "HasRelease": 3,
+      "Imports": 25,
+      "Merged": 4,
+      "MergedAs": 4,
+      "Touches": 8
+    },
+    "validation": {
+      "function": "historykg.graph.validate_extended_dataset",
+      "status": "ok",
+      "errors": []
+    },
+    "load": {
+      "function": "historykg.graph.load_dataset",
+      "status": "ok",
+      "graph_ready": true,
+      "retrieval_ready": true,
+      "rejected": [],
+      "retrieval_index": {
+        "version": "dataset_relore_replay_v1",
+        "namespace": "hg_5a35afec1a4c865053a2d15c78f322eb",
+        "input_hash": "c1df115a2762c4e92d8dc5cc33a4fe7b742ef038aad650d86ca22735e57e4858",
+        "dataset_fingerprint": "d0c1be456f70acdf354776e2fbee24ee5d6614e94437add2a3e90239a48539dd",
+        "backend": "postgresql"
+      }
+    }
+  },
+  "query": {
+    "run_id": "query-0746f75077e84b6f8759782dd7a76d80",
+    "result_sha256": "8601c273fba3b92f276feed3417f7bd9ee50b346699bd4e3fff873faf58512db",
+    "status": "ok",
+    "system": "B",
+    "kind": "trace",
+    "method_version": "relore_common_rrf_graph_v2",
+    "seed_ids": [
+      "Developer:14b5ede4facfe75a5c84e846f8806df7b7157b48e5a73fc948372544334e53b6",
+      "Function:b0f5e030cc7a9050d0a339cf3cceadc153ecb023cd578a7ed5192fb09f0edb31"
+    ],
+    "config": {
+      "graph_depth": 4,
+      "graph_path_limit": 100,
+      "graph_expand_seeds": false
+    },
+    "default_protocol_unchanged": {
+      "graph_depth": 3,
+      "graph_path_limit": 50,
+      "graph_expand_seeds": true
+    },
+    "path_count": 99,
+    "matching_path_count": 2,
+    "evidence_count": 53,
+    "usage": {
+      "actual_requests": 0,
+      "model_calls": 0
+    },
+    "model_run_id": "no-model-real-p3-load-6096-v1",
+    "claims": [
+      {
+        "text": "PR #6096 的冻结正文说明修复潜在 IPv6 地址上的 .partition(\":\") 用法，并声明处理 Issue #6093。",
+        "evidence_ids": [
+          "Evidence:415f8958873407d7275c2f5d639746e69ced4149fc8b2c44483860700f649785"
+        ]
+      },
+      {
+        "text": "PR #6096 的冻结 GitHub API 记录将作者记为 lkk7。",
+        "evidence_ids": [
+          "Evidence:97e5eeaccc8eb5ac21ee7846c5257b7cf3d1f9e696bad42cdf70e8d3da985cd2"
+        ]
+      },
+      {
+        "text": "同一条冻结 PR 记录将 davidism 记为 merged_by，merge_commit_sha 为 05e9c6bd630ecf4ec0ec884b1fc7901663737bc7。",
+        "evidence_ids": [
+          "Evidence:6f04d896fcfbfcafd00ae21d87f4ea75386091aa181a685b12a82ec17d51d11a",
+          "Evidence:bba0fb3a8e7c91b18b4de8e30b81e89732a9a7fb8fde002384b537b5f528fa69"
+        ]
+      },
+      {
+        "text": "该提交快照中的 src/flask/testing.py 定义顶层函数 flask.testing._get_werkzeug_version。",
+        "evidence_ids": [
+          "Evidence:ff1bb74155dfefe90ac3391244543b3958dc245e809e8c4b77c2c54018a51e19"
+        ]
+      }
+    ],
+    "paths": [
+      {
+        "direction": "author-to-function",
+        "entity_types": [
+          "Developer",
+          "PullRequest",
+          "Commit",
+          "File",
+          "Function"
+        ],
+        "entity_ids": [
+          "Developer:14b5ede4facfe75a5c84e846f8806df7b7157b48e5a73fc948372544334e53b6",
+          "PullRequest:394df73d1807cf9972108af3bb8230d0df0865236d1ee6a51b5d435c95aabbbc",
+          "Commit:b125746862d05c1c37d6fbac0ba3437c5d2670dbc7c5d5e58a43123ef9d6542d",
+          "File:f6867b4dbeedd6b4b698fbbcaad7ab5f30271434907283227af873220ec8db8d",
+          "Function:b0f5e030cc7a9050d0a339cf3cceadc153ecb023cd578a7ed5192fb09f0edb31"
+        ],
+        "relation_types": [
+          "Authored",
+          "MergedAs",
+          "Touches",
+          "Defines"
+        ],
+        "relation_ids": [
+          "Relation:a93b5efa39826afd9b209821b4923674ff414115ba9a9b406f9b993b01859004",
+          "Relation:90007a4e1f5c7293bd980420d8745213fae4187664d822224e0480a30deb4125",
+          "Relation:6e186e8d98eb9dd86a305dcf58d3079567de12c642c7d06a301d5e716e290a18",
+          "Relation:da169aa17eb6819c0d417c20a7a1bcd85b9b94a2d90226ee2e11f3b9fa7b68d4"
+        ],
+        "evidence_ids": [
+          "Evidence:96fe3a6fcbee5b6316e31bfbc60bde54330924889502e3fe9c6befc5b08e9971",
+          "Evidence:97e5eeaccc8eb5ac21ee7846c5257b7cf3d1f9e696bad42cdf70e8d3da985cd2",
+          "Evidence:bba0fb3a8e7c91b18b4de8e30b81e89732a9a7fb8fde002384b537b5f528fa69",
+          "Evidence:ff1bb74155dfefe90ac3391244543b3958dc245e809e8c4b77c2c54018a51e19"
+        ]
+      },
+      {
+        "direction": "function-to-merger",
+        "entity_types": [
+          "Function",
+          "File",
+          "Commit",
+          "PullRequest",
+          "Developer"
+        ],
+        "entity_ids": [
+          "Function:b0f5e030cc7a9050d0a339cf3cceadc153ecb023cd578a7ed5192fb09f0edb31",
+          "File:f6867b4dbeedd6b4b698fbbcaad7ab5f30271434907283227af873220ec8db8d",
+          "Commit:b125746862d05c1c37d6fbac0ba3437c5d2670dbc7c5d5e58a43123ef9d6542d",
+          "PullRequest:394df73d1807cf9972108af3bb8230d0df0865236d1ee6a51b5d435c95aabbbc",
+          "Developer:ba444277d5904ac487dd6214d3d99450c1ca3084ec811c5787ca80ba7d9de8f9"
+        ],
+        "relation_types": [
+          "Defines",
+          "Touches",
+          "MergedAs",
+          "Merged"
+        ],
+        "relation_ids": [
+          "Relation:da169aa17eb6819c0d417c20a7a1bcd85b9b94a2d90226ee2e11f3b9fa7b68d4",
+          "Relation:6e186e8d98eb9dd86a305dcf58d3079567de12c642c7d06a301d5e716e290a18",
+          "Relation:90007a4e1f5c7293bd980420d8745213fae4187664d822224e0480a30deb4125",
+          "Relation:c73048f6644f5b2bda50e54119330fe8e63fc40481e7574addde0e570a368d9c"
+        ],
+        "evidence_ids": [
+          "Evidence:6f04d896fcfbfcafd00ae21d87f4ea75386091aa181a685b12a82ec17d51d11a",
+          "Evidence:96fe3a6fcbee5b6316e31bfbc60bde54330924889502e3fe9c6befc5b08e9971",
+          "Evidence:bba0fb3a8e7c91b18b4de8e30b81e89732a9a7fb8fde002384b537b5f528fa69",
+          "Evidence:ff1bb74155dfefe90ac3391244543b3958dc245e809e8c4b77c2c54018a51e19"
+        ]
+      }
+    ]
+  },
+  "source_evidence": {
+    "pr_json": {
+      "source_id": "SourceDocument:fb8e50e26ea46927bebef3a40fd173efb83862de05cf1947738fd17c2eeb235e",
+      "kind": "api_response",
+      "endpoint": "https://api.github.com/repos/pallets/flask/pulls/6096",
+      "fields": [
+        "user.login=lkk7",
+        "merged_by.login=davidism",
+        "merge_commit_sha=05e9c6bd630ecf4ec0ec884b1fc7901663737bc7"
+      ]
+    },
+    "commit_diff": {
+      "source_id": "SourceDocument:91fea111e58d698a187c284382c58424aa3a8b9dcd2e2e169fec360675b72721",
+      "kind": "git_output",
+      "command": "git diff-tree --no-commit-id -r -M --name-status -z 514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b 05e9c6bd630ecf4ec0ec884b1fc7901663737bc7",
+      "observed_path": "src/flask/testing.py"
+    },
+    "code_snapshot": {
+      "source_id": "SourceDocument:b93498c7ca9700cf3492c8b2c03d5323d4d453afa2549d256c1ffd6cec1f2e56",
+      "kind": "code",
+      "url": "https://github.com/pallets/flask/blob/05e9c6bd630ecf4ec0ec884b1fc7901663737bc7/src/flask/testing.py",
+      "observed_definition": "def _get_werkzeug_version() -> str:",
+      "start_line": 100
+    }
+  },
+  "stable_ids": {
+    "author_lkk7": "Developer:14b5ede4facfe75a5c84e846f8806df7b7157b48e5a73fc948372544334e53b6",
+    "merger_davidism": "Developer:ba444277d5904ac487dd6214d3d99450c1ca3084ec811c5787ca80ba7d9de8f9",
+    "pull_request_6096": "PullRequest:394df73d1807cf9972108af3bb8230d0df0865236d1ee6a51b5d435c95aabbbc",
+    "merge_commit": "Commit:b125746862d05c1c37d6fbac0ba3437c5d2670dbc7c5d5e58a43123ef9d6542d",
+    "file_testing_py": "File:f6867b4dbeedd6b4b698fbbcaad7ab5f30271434907283227af873220ec8db8d",
+    "function_get_werkzeug_version": "Function:b0f5e030cc7a9050d0a339cf3cceadc153ecb023cd578a7ed5192fb09f0edb31"
+  },
+  "production_read_only": {
+    "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+    "fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+    "query_run_id": "query-308d4468c4b9410097f33905d7860b9b",
+    "query_status": "ok",
+    "usage": {
+      "actual_requests": 0,
+      "model_calls": 0
+    },
+    "entity_counts": {
+      "Commit": 4,
+      "Decision": 61,
+      "File": 24,
+      "Issue": 19,
+      "Project": 1,
+      "PullRequest": 21,
+      "Release": 3
+    },
+    "has_developer_or_function": false,
+    "covered_chain": "PullRequest -> Commit -> File",
+    "gap": "The current production graph has no Developer or Function nodes. The PR #6096 four-hop chain is therefore proven on the actual P1+P3 merged shard in a random test namespace, not misrepresented as production graph state."
+  },
+  "cleanup": {
+    "graph_namespace_deleted": true,
+    "postgres_schema_dropped": true
+  },
+  "invalidated_artifacts": [
+    {
+      "path": "/private/tmp/p2_extended_query_summary.json",
+      "status": "superseded",
+      "reason": "Synthetic Function.key [sha,path,qualified_name] lacked start_line and the Developer identity did not match the actual P3 replay shard. It is not used as integration evidence."
+    }
+  ]
+}

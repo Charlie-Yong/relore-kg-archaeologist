@@ -1,0 +1,50 @@
+{
+  "rubric": [
+    "原文支持的类型问题",
+    "对应 PR #374",
+    "实际合并 SHA",
+    "三个模块或带出处的具体差异"
+  ],
+  "model": "bailian/deepseek-v4.1-flash-1017",
+  "usage": {
+    "completion_tokens": 137,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 3203,
+    "prompt_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "total_tokens": 3340
+  },
+  "scores": {
+    "B": {
+      "points": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "note": "完整覆盖四项：类型问题、PR #374、合并 SHA、三个模块路径均有实际出处支持。"
+    },
+    "O": {
+      "points": [
+        0.5,
+        1,
+        0,
+        0
+      ],
+      "note": "部分讨论了 #347 的类型问题，且有 PR #374 链接；但未给出实际合并 SHA 和改动模块，所引模块（docs/conf.py、signer.py）与类型改动无关。"
+    },
+    "A": {
+      "points": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "note": "原文支持的类型问题完整；但未答对应 PR、实际合并 SHA 和改动模块。"
+    }
+  }
+}

@@ -1,0 +1,569 @@
+{
+  "case_count": 5,
+  "cases": [
+    {
+      "commit_id": null,
+      "decision_ids": [
+        "Decision:72a6d1a094fba3f9df6f0438dd9edb9c02681b69817255148aae8afaac2da731",
+        "Decision:7c13872828f8daebce574fbda80217b8d98a1153fae2a70de7222c7ee7ecc3fc"
+      ],
+      "decisions": [
+        {
+          "action": "change",
+          "evidence_ids": [
+            "Evidence:ab1cd4e7c6ea374e42f5c914b04700f7191eea250ba29100ab00d388d89349aa"
+          ],
+          "id": "Decision:72a6d1a094fba3f9df6f0438dd9edb9c02681b69817255148aae8afaac2da731",
+          "rationale": null,
+          "rationale_status": "not_stated",
+          "statement": "The tests about options are cleaned up, and some other tests that were inadvertently adding duplicate routes are fixed.",
+          "status": "accepted"
+        },
+        {
+          "action": "fix",
+          "evidence_ids": [
+            "Evidence:1fab70125ef15eec990c90fa918b0941570ed2b7d3fd1f5304c772b43298c6c6",
+            "Evidence:ebf2b5eeb279112db1e8e3654eb253c4c4be76d4536637940c31a413c7fcf277"
+          ],
+          "id": "Decision:7c13872828f8daebce574fbda80217b8d98a1153fae2a70de7222c7ee7ecc3fc",
+          "rationale": "Previously, `OPTIONS` was only added if the argument was not passed and was not set as an attribute, so it could only be disabled, not enabled.",
+          "rationale_status": "stated",
+          "statement": "`OPTIONS` is now added correctly whenever `provide_automatic_options` is set, allowing it to be enabled as well as disabled.",
+          "status": "accepted"
+        }
+      ],
+      "defined_function_count": 0,
+      "defined_function_examples": [],
+      "issue_id": "Issue:1c13a9ed555e7b10f5bda544866c16b5f0e1b2c64f390e9b359ee82806c4c3a2",
+      "pull_request_id": "PullRequest:3daabcf923d980e4f9bdd26f3f1b19634f5d000eea447a48e793f4fbf39e4517",
+      "slug": "route-option-fix",
+      "touched_paths": []
+    },
+    {
+      "commit_id": "Commit:de89b87808193e6d13a3d4c5043e1db9932d807aeba6252e1b62d9e91fd9037a",
+      "decision_ids": [
+        "Decision:bfed00e660bed61c06477c1c965865d7dc90d962b4a4563e238a6a322793234d"
+      ],
+      "decisions": [
+        {
+          "action": "add",
+          "evidence_ids": [
+            "Evidence:9026b4ac2dd7e86e2dfa519f5abbc1003bb3888fc75e9ab6afd4c289da54c60e",
+            "Evidence:ad2058718325ffa37ba114a623f96a5d2789a8fdeb1d3fb744375a69cd361e95"
+          ],
+          "id": "Decision:bfed00e660bed61c06477c1c965865d7dc90d962b4a4563e238a6a322793234d",
+          "rationale": "RFC 10008 is not accepted yet, but it has been around for years and appears likely to pass, so the author is adding support now.",
+          "rationale_status": "stated",
+          "statement": "Add an `app.query` route decorator to Flask for the HTTP QUERY method from RFC 10008.",
+          "status": "proposed"
+        }
+      ],
+      "defined_function_count": 0,
+      "defined_function_examples": [],
+      "issue_id": "Issue:d898d79b37ae9f4a8a87e04e522d7e149ecee1fa4bb8f83338956b678e0f5434",
+      "pull_request_id": "PullRequest:060eec7c867d23a44749fcc55d169e1678b528db6ff11076695415202d4bbc66",
+      "slug": "query-route-feature",
+      "touched_paths": [
+        "src/flask/sansio/scaffold.py",
+        "tests/test_basic.py"
+      ]
+    },
+    {
+      "commit_id": "Commit:7f57d5806277ed42731b9e0a3a5195f49a6f7206e36bd137f0d939f72cca42bb",
+      "decision_ids": [
+        "Decision:c1ff2f408e8294b6238e7bfa917223cd4305bd0046f8f19385d90b0e07fefcf8",
+        "Decision:7fcf76af54df8bf5d231aa70a61f65f6a5847863d16a99c3b4462dd313909a68",
+        "Decision:1cae070f99590e932512e4347ad9c923b6b9ac3d16cbd77b086a087b808719ed"
+      ],
+      "decisions": [
+        {
+          "action": "change",
+          "evidence_ids": [
+            "Evidence:3a7d53ca96513e8d5c31e0ed9cf19e34b4775b14da9d251396fb56dcc5abb09e",
+            "Evidence:956f27b6825edafe9d8faa8ae9eeec20b85587322998b17a2b89474e71a1777d"
+          ],
+          "id": "Decision:1cae070f99590e932512e4347ad9c923b6b9ac3d16cbd77b086a087b808719ed",
+          "rationale": "The previous code operated on `monkeypatch` fixture internals, which does not seem strictly valid and led to tests making wrong assumptions.",
+          "rationale_status": "stated",
+          "statement": "Use public API only: clean up the standard set of environment variables for every test, and additionally clean up variables specifically used by dotenv tests.",
+          "status": "proposed"
+        },
+        {
+          "action": "keep",
+          "evidence_ids": [
+            "Evidence:81de123574cf16018e9a0caa7f02b09d901d77fc132faa118237dbc4c2d84bff"
+          ],
+          "id": "Decision:7fcf76af54df8bf5d231aa70a61f65f6a5847863d16a99c3b4462dd313909a68",
+          "rationale": null,
+          "rationale_status": "not_stated",
+          "statement": "Keep the fixture and use `pytest.MonkeyPatch.context()` within it.",
+          "status": "proposed"
+        },
+        {
+          "action": "change",
+          "evidence_ids": [
+            "Evidence:015cf8c4cee0fa394998ed2238d971fe687b142be0d167e09497961b6c088fdb",
+            "Evidence:6943b8851fca821dd95d978f1b24deb34dc1becf791b9f9aa9ba06af29768964"
+          ],
+          "id": "Decision:c1ff2f408e8294b6238e7bfa917223cd4305bd0046f8f19385d90b0e07fefcf8",
+          "rationale": "To fix compatibility with pytest 9.1 and make the tests more reliable in the future.",
+          "rationale_status": "stated",
+          "statement": "Replace the use of private `monkeypatch` fixture API with standard invocations in the tests.",
+          "status": "proposed"
+        }
+      ],
+      "defined_function_count": 0,
+      "defined_function_examples": [],
+      "issue_id": "Issue:ba744f1cc85e3f932fc3315af87f10b822c409fc757907151a85d0f4ad005f20",
+      "pull_request_id": "PullRequest:987d875bba26a195214cdee40d695c90c311b9c97a47837fdbb29257833da208",
+      "slug": "pytest-compat-fix",
+      "touched_paths": [
+        "tests/conftest.py",
+        "tests/test_cli.py"
+      ]
+    },
+    {
+      "commit_id": "Commit:b125746862d05c1c37d6fbac0ba3437c5d2670dbc7c5d5e58a43123ef9d6542d",
+      "decision_ids": [
+        "Decision:4bd3514c094325da8320a63079473c1ade83c968dd690038fe9937ecbf11fa1b",
+        "Decision:d26d784cacbc8e186f69397f3e645bb8e254f8d056e023d51ecef8b7a1e6fbec",
+        "Decision:8ea4a2946bff881bece6519e38f6c0ac475e67019d1cf00b9e0fdb6b87b891e0",
+        "Decision:36a97fda316e26b14364c1686f7d5b6966929cb476c3af1ddd6295b08d176916"
+      ],
+      "decisions": [
+        {
+          "action": "change",
+          "evidence_ids": [
+            "Evidence:08cd03b51371d95b5085c5b9ec95b2ed09ba6455eadc60d5c74361dcd312a2f7",
+            "Evidence:9e767b2d0ad64437e45db093c848fca515799cedc167dfacb8a4a9ffd4206085"
+          ],
+          "id": "Decision:36a97fda316e26b14364c1686f7d5b6966929cb476c3af1ddd6295b08d176916",
+          "rationale": "There likely won't be another bug fix release, and this isn't anything critical.",
+          "rationale_status": "stated",
+          "statement": "Target the IPv6 partition fix at main rather than a bug fix release.",
+          "status": "accepted"
+        },
+        {
+          "action": "keep",
+          "evidence_ids": [
+            "Evidence:386090103491c591f3321bca08fc55b747efe77d4cb39736bc82b9d663c01824"
+          ],
+          "id": "Decision:d26d784cacbc8e186f69397f3e645bb8e254f8d056e023d51ecef8b7a1e6fbec",
+          "rationale": "Dev tests are not updated for Werkzeug main yet, they're expected to fail until next Werkzeug release.",
+          "rationale_status": "stated",
+          "statement": "Development tests are expected to fail until the next Werkzeug release because they are not updated for Werkzeug main yet.",
+          "status": "accepted"
+        },
+        {
+          "action": "fix",
+          "evidence_ids": [
+            "Evidence:0dff1d2577d69cd7890a7d20016ab820f69761206a07eab4601827336f920e58"
+          ],
+          "id": "Decision:4bd3514c094325da8320a63079473c1ade83c968dd690038fe9937ecbf11fa1b",
+          "rationale": null,
+          "rationale_status": "not_stated",
+          "statement": "A PR was opened to fix `.partition(\":\")` usage on potential IPv6 addresses.",
+          "status": "proposed"
+        },
+        {
+          "action": "fix",
+          "evidence_ids": [
+            "Evidence:2bb7d1d7532fdb82a37d525170f40f004e52d6c97245e499d6ca472cde4d68b4"
+          ],
+          "id": "Decision:8ea4a2946bff881bece6519e38f6c0ac475e67019d1cf00b9e0fdb6b87b891e0",
+          "rationale": null,
+          "rationale_status": "not_stated",
+          "statement": "Fix two usages of `.partition(\":\")` on potential IPv6 addresses by replacing them with alternatives.",
+          "status": "proposed"
+        }
+      ],
+      "defined_function_count": 0,
+      "defined_function_examples": [],
+      "issue_id": "Issue:e8c9b11c78c10c7dd247f277cc1008178f3aefcc8734f06d294d370c64a6312c",
+      "pull_request_id": "PullRequest:394df73d1807cf9972108af3bb8230d0df0865236d1ee6a51b5d435c95aabbbc",
+      "slug": "ipv6-partition-fix",
+      "touched_paths": [
+        "src/flask/app.py",
+        "src/flask/testing.py"
+      ]
+    },
+    {
+      "commit_id": "Commit:41be7eb6fbc545d785bb9898466108c02735897ae1d28806bff311ce1d9ce891",
+      "decision_ids": [
+        "Decision:edd93b51bbbe6482d80a58192a196344137bd80f9f33fc18fd7dd8c61a066837"
+      ],
+      "decisions": [
+        {
+          "action": "remove",
+          "evidence_ids": [
+            "Evidence:8882b42a533f946ddd13b8d609e2728af23dce2e175bc2150a4dde1933f0c547"
+          ],
+          "id": "Decision:edd93b51bbbe6482d80a58192a196344137bd80f9f33fc18fd7dd8c61a066837",
+          "rationale": "3.10 reaches EOL within six months of the feature release.",
+          "rationale_status": "stated",
+          "statement": "Drop support for Python 3.10.",
+          "status": "proposed"
+        }
+      ],
+      "defined_function_count": 0,
+      "defined_function_examples": [],
+      "issue_id": null,
+      "pull_request_id": "PullRequest:910a0ba2d40fb51d2f4b05fdb6f7b9d362dd0070a5a4966089ff528a0c7a183d",
+      "slug": "python-support-policy",
+      "touched_paths": [
+        "src/flask/cli.py",
+        "src/flask/helpers.py"
+      ]
+    }
+  ],
+  "checks": {
+    "event_timestamps_valid": true,
+    "evidence_references": 46,
+    "evidence_spans_exact": 46,
+    "missing_evidence": 0,
+    "pr_to_commit_paths_with_commit": 4
+  },
+  "coverage_gaps": [
+    "Release entities are version checkpoints; the current graph has no ReachableIn edge tying the selected merge commits to a later release.",
+    "Issue closure timestamps are state changes. ClaimsToClose is not promoted to an official Closes fact without a matching GitHub closure event.",
+    "Developer and Function nodes exist only in the separate P1+P3 merged acceptance dataset; this production timeline stops at File snapshots.",
+    "The timeline is bounded by the profile's 3 releases and 4 code commits; it is not a complete project history."
+  ],
+  "entity_type_counts": {
+    "Commit": 4,
+    "Issue": 4,
+    "PullRequest": 5,
+    "Release": 3
+  },
+  "event_count": 25,
+  "events": [
+    {
+      "entity_ids": [
+        "Release:d8208162adf61fa513ff37ce12c7cde995266fc77c0cf93d813848f2a3c4fe2f"
+      ],
+      "event_type": "release_published",
+      "evidence_ids": [
+        "Evidence:1aae42147ce2c2221193fc6d7e1818e167e4a6b8d07cbbec5707c3d441f57597",
+        "Evidence:adb0747245918c7b6da1890e9430279f637b50d1e477975d9b76f7bc14fc5abe"
+      ],
+      "occurred_at": "2025-05-13T15:01:32Z",
+      "title": "Release 3.1.1",
+      "url": "https://github.com/pallets/flask/releases/tag/3.1.1"
+    },
+    {
+      "entity_ids": [
+        "Release:602ecb1802d819e48f761700512d379bdf579e229d6ff993ec13be47cdd72dd3"
+      ],
+      "event_type": "release_published",
+      "evidence_ids": [
+        "Evidence:9553b50088d5c9723ac1455f243d60ee1aee00c0943a4d90ae32a58914369053",
+        "Evidence:adb0747245918c7b6da1890e9430279f637b50d1e477975d9b76f7bc14fc5abe"
+      ],
+      "occurred_at": "2025-08-19T21:03:31Z",
+      "title": "Release 3.1.2",
+      "url": "https://github.com/pallets/flask/releases/tag/3.1.2"
+    },
+    {
+      "entity_ids": [
+        "Issue:1c13a9ed555e7b10f5bda544866c16b5f0e1b2c64f390e9b359ee82806c4c3a2"
+      ],
+      "event_type": "issue_opened",
+      "evidence_ids": [
+        "Evidence:614648b5f170bbf4dfe26b3c04c86b7c9d0cc280d25b85824f60c49fb3e84ee8",
+        "Evidence:69b5585f98e949aa3ca0b1e8130fdbdb7f2b7d5f6c337002aafcd883f8f48fad"
+      ],
+      "occurred_at": "2026-02-12T20:32:21Z",
+      "title": "Issue #5916 opened: `provide_automatic_options` is weird"
+    },
+    {
+      "entity_ids": [
+        "PullRequest:3daabcf923d980e4f9bdd26f3f1b19634f5d000eea447a48e793f4fbf39e4517"
+      ],
+      "event_type": "pull_request_opened",
+      "evidence_ids": [
+        "Evidence:cb7d47a5be7ebd9ce2d2b09c3c3c2314ad6e71c476a1e55a1eb8ae3355235a69",
+        "Evidence:e9e92127a273010c1b3fc12b700401dfe00238d266c278eabf24f529336e7ad2"
+      ],
+      "occurred_at": "2026-02-12T21:06:34Z",
+      "title": "PR #5917 opened: fix provide_automatic_options override"
+    },
+    {
+      "entity_ids": [
+        "PullRequest:3daabcf923d980e4f9bdd26f3f1b19634f5d000eea447a48e793f4fbf39e4517"
+      ],
+      "event_type": "pull_request_merged",
+      "evidence_ids": [
+        "Evidence:cb7d47a5be7ebd9ce2d2b09c3c3c2314ad6e71c476a1e55a1eb8ae3355235a69",
+        "Evidence:e9e92127a273010c1b3fc12b700401dfe00238d266c278eabf24f529336e7ad2"
+      ],
+      "occurred_at": "2026-02-12T21:07:51Z",
+      "title": "PR #5917 merged"
+    },
+    {
+      "entity_ids": [
+        "Issue:1c13a9ed555e7b10f5bda544866c16b5f0e1b2c64f390e9b359ee82806c4c3a2"
+      ],
+      "event_type": "issue_closed",
+      "evidence_ids": [
+        "Evidence:614648b5f170bbf4dfe26b3c04c86b7c9d0cc280d25b85824f60c49fb3e84ee8",
+        "Evidence:69b5585f98e949aa3ca0b1e8130fdbdb7f2b7d5f6c337002aafcd883f8f48fad"
+      ],
+      "interpretation": "state_change_only_not_causal_fix_proof",
+      "occurred_at": "2026-02-12T21:07:52Z",
+      "title": "Issue #5916 closed"
+    },
+    {
+      "entity_ids": [
+        "Release:6ac756e5a37ac17564a9cd2eebf6686cd682fb884f17dec1e7c818ae8c0cca8d"
+      ],
+      "event_type": "release_published",
+      "evidence_ids": [
+        "Evidence:79b127cac25ce0e2992b1dd6b9b66b0e1819774bab6e806f489c72b6a41fe8f5",
+        "Evidence:adb0747245918c7b6da1890e9430279f637b50d1e477975d9b76f7bc14fc5abe"
+      ],
+      "occurred_at": "2026-02-19T05:01:30Z",
+      "title": "Release 3.1.3",
+      "url": "https://github.com/pallets/flask/releases/tag/3.1.3"
+    },
+    {
+      "entity_ids": [
+        "Issue:d898d79b37ae9f4a8a87e04e522d7e149ecee1fa4bb8f83338956b678e0f5434"
+      ],
+      "event_type": "issue_opened",
+      "evidence_ids": [
+        "Evidence:4b167cf62bd7fd96bb8cb34012cc81dccb13a93d419d49df26f7eb0b0210605b",
+        "Evidence:601f99a92c964be6d661d1924b0310c6ffde394acbd7c6d2d35a1f453da3a062"
+      ],
+      "occurred_at": "2026-06-23T22:10:11Z",
+      "title": "Issue #6065 opened: Add a query() route shortcut and MethodView support for HTTP QUERY (RFC 10008)"
+    },
+    {
+      "entity_ids": [
+        "Issue:ba744f1cc85e3f932fc3315af87f10b822c409fc757907151a85d0f4ad005f20"
+      ],
+      "event_type": "issue_opened",
+      "evidence_ids": [
+        "Evidence:93a63f704b168d9e06be94727d3a623fb8504eae109d9f9d015f0c4abd033a8d",
+        "Evidence:fd8b1bccb849914108e1c830bb6260c0b49bf59b2a113bc2f71ed7a9322c2e53"
+      ],
+      "occurred_at": "2026-07-02T07:37:53Z",
+      "title": "Issue #6071 opened: Tests fail with pytest 9.1: _pytest.monkeypatch.notset removed"
+    },
+    {
+      "entity_ids": [
+        "Issue:e8c9b11c78c10c7dd247f277cc1008178f3aefcc8734f06d294d370c64a6312c"
+      ],
+      "event_type": "issue_opened",
+      "evidence_ids": [
+        "Evidence:93cc9fd49c2ac0bf14bc0938e3d0dcb5e88ec60f37847fb259b76b86ef8020f8",
+        "Evidence:be60fe5391f932ac11f85a7bf5ab0af87230e96662cba7c3fa36ac365dc80af9"
+      ],
+      "occurred_at": "2026-07-13T22:07:38Z",
+      "title": "Issue #6093 opened: IPv6 addresses parsed incorrectly because of `.partition(\":\")`?"
+    },
+    {
+      "entity_ids": [
+        "PullRequest:987d875bba26a195214cdee40d695c90c311b9c97a47837fdbb29257833da208"
+      ],
+      "event_type": "pull_request_opened",
+      "evidence_ids": [
+        "Evidence:3128d509ed4d9428e76837638c31776a3609826bbd59368834be771c2db935e2",
+        "Evidence:b47213dbababd0a7e998b88d497092994fec094d75cb53d29735d7d6eb10bb01"
+      ],
+      "occurred_at": "2026-07-14T10:21:31Z",
+      "title": "PR #6095 opened: Replace the use of private `monkeypatch` fixture API"
+    },
+    {
+      "entity_ids": [
+        "PullRequest:394df73d1807cf9972108af3bb8230d0df0865236d1ee6a51b5d435c95aabbbc"
+      ],
+      "event_type": "pull_request_opened",
+      "evidence_ids": [
+        "Evidence:415f8958873407d7275c2f5d639746e69ced4149fc8b2c44483860700f649785",
+        "Evidence:bba0fb3a8e7c91b18b4de8e30b81e89732a9a7fb8fde002384b537b5f528fa69"
+      ],
+      "occurred_at": "2026-07-14T15:30:46Z",
+      "title": "PR #6096 opened: Fix `.partition(\":\")` usage on potential IPv6 addresses"
+    },
+    {
+      "entity_ids": [
+        "Commit:7f57d5806277ed42731b9e0a3a5195f49a6f7206e36bd137f0d939f72cca42bb"
+      ],
+      "event_type": "commit_merged",
+      "evidence_ids": [
+        "Evidence:3128d509ed4d9428e76837638c31776a3609826bbd59368834be771c2db935e2",
+        "Evidence:d8662c75e9549ac6182b7d6ef95018f13c8d011085e9e536b9c912b9cc6f4110",
+        "Evidence:f5d13267040f5d93eb9075af9c5ef18ec0c098d48dc280bf434b4e9bb65a0a71"
+      ],
+      "occurred_at": "2026-07-30T10:05:04-07:00",
+      "relation_ids": [
+        "Relation:d4ab4c315812e5b3591059c79b21f19ddea6d470535ad39f085bff38f86719fd"
+      ],
+      "title": "Commit 548994ea0c61: Replace the use of private `monkeypatch` fixture API (#6095)"
+    },
+    {
+      "entity_ids": [
+        "PullRequest:987d875bba26a195214cdee40d695c90c311b9c97a47837fdbb29257833da208"
+      ],
+      "event_type": "pull_request_merged",
+      "evidence_ids": [
+        "Evidence:3128d509ed4d9428e76837638c31776a3609826bbd59368834be771c2db935e2",
+        "Evidence:b47213dbababd0a7e998b88d497092994fec094d75cb53d29735d7d6eb10bb01"
+      ],
+      "occurred_at": "2026-07-30T17:05:05Z",
+      "title": "PR #6095 merged"
+    },
+    {
+      "entity_ids": [
+        "Issue:ba744f1cc85e3f932fc3315af87f10b822c409fc757907151a85d0f4ad005f20"
+      ],
+      "event_type": "issue_closed",
+      "evidence_ids": [
+        "Evidence:93a63f704b168d9e06be94727d3a623fb8504eae109d9f9d015f0c4abd033a8d",
+        "Evidence:fd8b1bccb849914108e1c830bb6260c0b49bf59b2a113bc2f71ed7a9322c2e53"
+      ],
+      "interpretation": "state_change_only_not_causal_fix_proof",
+      "occurred_at": "2026-07-30T17:05:18Z",
+      "title": "Issue #6071 closed"
+    },
+    {
+      "entity_ids": [
+        "Commit:b125746862d05c1c37d6fbac0ba3437c5d2670dbc7c5d5e58a43123ef9d6542d"
+      ],
+      "event_type": "commit_merged",
+      "evidence_ids": [
+        "Evidence:27645fd2600192dca428630c1881aedfcbb03dc9626347bca691975899e38ce8",
+        "Evidence:8b988f6a7d83ba31cd795dde00e7e0508909484f5dfc142e1e3803d71656105d",
+        "Evidence:bba0fb3a8e7c91b18b4de8e30b81e89732a9a7fb8fde002384b537b5f528fa69"
+      ],
+      "occurred_at": "2026-08-11T12:48:40-07:00",
+      "relation_ids": [
+        "Relation:90007a4e1f5c7293bd980420d8745213fae4187664d822224e0480a30deb4125"
+      ],
+      "title": "Commit 05e9c6bd630e: Fix `.partition(\":\")` usage on potential IPv6 addresses (#6096)"
+    },
+    {
+      "entity_ids": [
+        "PullRequest:394df73d1807cf9972108af3bb8230d0df0865236d1ee6a51b5d435c95aabbbc"
+      ],
+      "event_type": "pull_request_merged",
+      "evidence_ids": [
+        "Evidence:415f8958873407d7275c2f5d639746e69ced4149fc8b2c44483860700f649785",
+        "Evidence:bba0fb3a8e7c91b18b4de8e30b81e89732a9a7fb8fde002384b537b5f528fa69"
+      ],
+      "occurred_at": "2026-08-11T19:48:41Z",
+      "title": "PR #6096 merged"
+    },
+    {
+      "entity_ids": [
+        "Issue:e8c9b11c78c10c7dd247f277cc1008178f3aefcc8734f06d294d370c64a6312c"
+      ],
+      "event_type": "issue_closed",
+      "evidence_ids": [
+        "Evidence:93cc9fd49c2ac0bf14bc0938e3d0dcb5e88ec60f37847fb259b76b86ef8020f8",
+        "Evidence:be60fe5391f932ac11f85a7bf5ab0af87230e96662cba7c3fa36ac365dc80af9"
+      ],
+      "interpretation": "state_change_only_not_causal_fix_proof",
+      "occurred_at": "2026-08-11T19:48:42Z",
+      "title": "Issue #6093 closed"
+    },
+    {
+      "entity_ids": [
+        "PullRequest:060eec7c867d23a44749fcc55d169e1678b528db6ff11076695415202d4bbc66"
+      ],
+      "event_type": "pull_request_opened",
+      "evidence_ids": [
+        "Evidence:5801788b2da8ca1f444bc7ba72ca7ebabfc715fb62eff0a47dce5683f4e09844",
+        "Evidence:5fb76a91a47a21c15270e0d5a907d80b0c7924409667b855d992f1a0df47ccc5"
+      ],
+      "occurred_at": "2026-08-11T20:17:29Z",
+      "title": "PR #6133 opened: add `app.query` route decorator"
+    },
+    {
+      "entity_ids": [
+        "Issue:d898d79b37ae9f4a8a87e04e522d7e149ecee1fa4bb8f83338956b678e0f5434"
+      ],
+      "event_type": "issue_closed",
+      "evidence_ids": [
+        "Evidence:4b167cf62bd7fd96bb8cb34012cc81dccb13a93d419d49df26f7eb0b0210605b",
+        "Evidence:601f99a92c964be6d661d1924b0310c6ffde394acbd7c6d2d35a1f453da3a062"
+      ],
+      "interpretation": "state_change_only_not_causal_fix_proof",
+      "occurred_at": "2026-08-11T20:18:12Z",
+      "title": "Issue #6065 closed"
+    },
+    {
+      "entity_ids": [
+        "Commit:de89b87808193e6d13a3d4c5043e1db9932d807aeba6252e1b62d9e91fd9037a"
+      ],
+      "event_type": "commit_merged",
+      "evidence_ids": [
+        "Evidence:5fb76a91a47a21c15270e0d5a907d80b0c7924409667b855d992f1a0df47ccc5",
+        "Evidence:6403d24afa5ceebafa4cf25754da8b099d0b28614195bdf31646390a02be6cf1",
+        "Evidence:bd06b544f91c4f5695964366aab18ed9c02426cc6046e6355b6e3e90d4cbf193"
+      ],
+      "occurred_at": "2026-08-11T13:19:14-07:00",
+      "relation_ids": [
+        "Relation:873d7fecd91a83769e6ce6eb585d5229630aa6066d1949defe2edd1e726bf8de"
+      ],
+      "title": "Commit d8eaaba82465: add `app.query` route decorator (#6133)"
+    },
+    {
+      "entity_ids": [
+        "PullRequest:060eec7c867d23a44749fcc55d169e1678b528db6ff11076695415202d4bbc66"
+      ],
+      "event_type": "pull_request_merged",
+      "evidence_ids": [
+        "Evidence:5801788b2da8ca1f444bc7ba72ca7ebabfc715fb62eff0a47dce5683f4e09844",
+        "Evidence:5fb76a91a47a21c15270e0d5a907d80b0c7924409667b855d992f1a0df47ccc5"
+      ],
+      "occurred_at": "2026-08-11T20:19:14Z",
+      "title": "PR #6133 merged"
+    },
+    {
+      "entity_ids": [
+        "PullRequest:910a0ba2d40fb51d2f4b05fdb6f7b9d362dd0070a5a4966089ff528a0c7a183d"
+      ],
+      "event_type": "pull_request_opened",
+      "evidence_ids": [
+        "Evidence:89c22d8ac5cb7f1316ab66413f842c9fbed03ef14338996bb537c69174ec88fa",
+        "Evidence:da5a283eda9efc836bbab23a3c6ffd02506705a3e3971d916d4d3e084384d6d9"
+      ],
+      "occurred_at": "2026-10-07T13:48:01Z",
+      "title": "PR #6168 opened: drop support for Python 3.10"
+    },
+    {
+      "entity_ids": [
+        "Commit:41be7eb6fbc545d785bb9898466108c02735897ae1d28806bff311ce1d9ce891"
+      ],
+      "event_type": "commit_merged",
+      "evidence_ids": [
+        "Evidence:3ce1c66ec188dc39ac6c3e5248e137097ad102413b1c91bf3bc7fbd22ae0c5c7",
+        "Evidence:89c22d8ac5cb7f1316ab66413f842c9fbed03ef14338996bb537c69174ec88fa",
+        "Evidence:8c3159ecbe676837e32cb27faf12ed3dcbe0fe62ce57b5e589372f6fef767231"
+      ],
+      "occurred_at": "2026-10-07T06:56:05-07:00",
+      "relation_ids": [
+        "Relation:171a997ab5d9d0c96a8de33c5e5dc40f228e46d84fa69eca3db2cd910fc71e67"
+      ],
+      "title": "Commit 728c5e440af7: drop support for Python 3.10 (#6168)"
+    },
+    {
+      "entity_ids": [
+        "PullRequest:910a0ba2d40fb51d2f4b05fdb6f7b9d362dd0070a5a4966089ff528a0c7a183d"
+      ],
+      "event_type": "pull_request_merged",
+      "evidence_ids": [
+        "Evidence:89c22d8ac5cb7f1316ab66413f842c9fbed03ef14338996bb537c69174ec88fa",
+        "Evidence:da5a283eda9efc836bbab23a3c6ffd02506705a3e3971d916d4d3e084384d6d9"
+      ],
+      "occurred_at": "2026-10-07T13:56:06Z",
+      "title": "PR #6168 merged"
+    }
+  ],
+  "generated_from_dataset": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+  "repo": "pallets/flask",
+  "schema_version": "historykg_evolution_timeline_v1",
+  "selection_basis": "Fixed public Issue/PR numbers plus all collected Release checkpoints; no test question, reference answer, or private material was read.",
+  "status": "ok_with_recorded_coverage_gaps"
+}

@@ -1,0 +1,27 @@
+{
+  "arm": "D",
+  "q": 7,
+  "start_utc": "2026-11-21T11:02:05.151521+00:00",
+  "elapsed_seconds": 196.912,
+  "status": "ok",
+  "answer": "**结论**\n\n按“正式版”指非 alpha/rc、GitHub Release 标记为 `prerelease: false` 的稳定版：**PR #153 最早进入 `2.0.0`**。\n\n合并提交是 `b11475aa0e1534f1fe7736d56140d81e872b1f5f`；`2.0.0` 标签指向 `d101100c395958d67368b8c37d95a9c404598c2e`，而该提交的可达历史中包含 `b11475...`，因此 **`2.0.0` 标签确实包含 PR #153 的合并提交**。\n\n**核对字段**\n\nPR API：\n\n```text\nnumber: 153\ntitle: Deprecate JWS support\nmerged: true\nmerge_commit_sha: b11475aa0e1534f1fe7736d56140d81e872b1f5f\nmerged_at: 2020-04-17T19:18:51Z\nmilestone.title: 2.0.0\n```\n\n合并提交原文：\n\n```text\nb11475aa0e1534f1fe7736d56140d81e872b1f5f\n981ade6e73ff9ce420aa29143039de0aaccb9770 53f34c9a8fed28aa0f58502001ed2d75d23d3104\n2020-04-17T12:18:50-07:00\nMerge pull request #153 from pallets/deprecate-jws\n\nDeprecate JWS support\n```\n\n标签与祖先关系：\n\n```text\ngit rev-parse --verify refs/tags/2.0.0^{commit}\n=> d101100c395958d67368b8c37d95a9c404598c2e\n\ngit rev-list d101100c395958d67368b8c37d95a9c404598c2e\n=> 输出包含 b11475aa0e1534f1fe7736d56140d81e872b1f5f\n```\n\n`2.0.0` Release API：\n\n```text\ntag_name: 2.0.0\ndraft: false\nprerelease: false\npublished_at: 2021-05-12T00:13:07Z\nbody: \"New major versions ... including ItsDangerous 2.0, have been released!\"\n```\n\n**正式发布范围**\n\n冻结材料中的正式版范围是 **`2.0.0` 及以后**；以下正式标签均包含 `b11475...`：\n\n| 正式版本 | 标签提交 | 是否包含合并提交 |\n|---|---|---|\n| `1.1.0` | `6e6359864be6055860adf1e11d8bb0db69ff1840` | 否 |\n| `2.0.0` | `d101100c395958d67368b8c37d95a9c404598c2e` | 是 |\n| `2.0.1` | `8f39dd317914321fed26437c874637641bd598b6` | 是 |\n| `2.1.0` | `bfafa6541acd8c7573661d6b1545ff8e8133a43e` | 是 |\n| `2.1.1` | `38e9d8a417ac4e578ec422cb58e84c33b207b740` | 是 |\n| `2.1.2` | `49d263f60b6f78df8924be51262eeb5216ab1468` | 是 |\n| `2.2.0` | `096c8d42545d3b68ea21a4f890fb2b2d8979c0bd` | 是 |\n\n补充说明：若把预发布也计入，则 `2.0.0a1` 标签对应 `ec0b069b8c704ef3c55efbc47d50330d9e04fbb4`，已经包含该提交；其提交信息为 `pre-release version 2.0.0a1`。`2.0.0rc1`、`2.0.0rc2` 也包含它，但它们都不是正式版。\n\n**官方出处**\n\n- PR #153：https://github.com/pallets/itsdangerous/pull/153\n- 合并提交：https://github.com/pallets/itsdangerous/commit/b11475aa0e1534f1fe7736d56140d81e872b1f5f\n- `2.0.0` 正式发布：https://github.com/pallets/itsdangerous/releases/tag/2.0.0\n- `2.0.0` 标签提交：https://github.com/pallets/itsdangerous/commit/d101100c395958d67368b8c37d95a9c404598c2e\n- Releases API：https://api.github.com/repos/pallets/itsdangerous/releases\n- Tags API：https://api.github.com/repos/pallets/itsdangerous/tags\n\n以上字段和命令输出均取自当前目录冻结的 `sources.jsonl`。",
+  "exit": 0,
+  "tools": [],
+  "usage": [
+    {
+      "input_tokens": 2613979,
+      "cached_input_tokens": 2506240,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 25396,
+      "reasoning_output_tokens": 14386
+    }
+  ],
+  "event_types": [
+    "item.completed",
+    "item.started",
+    "thread.started",
+    "turn.completed",
+    "turn.started"
+  ],
+  "prompt": "仓库 pallets/itsdangerous，截止时间 2026-11-16T06:31:18Z，冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd。PR #153 最早进了哪个正式版？请说明合并提交、正式发布范围和版本标签是否包含它，给出出处。 用中文直接给出回答、可核对的原文或字段与官方出处链接。独立以当前目录 sources.jsonl 中冻结的原始材料作答。每行是 JSON，含 kind/url/text。只用 shell 在当前目录查阅，不访问网络、其他目录或历史答案。"
+}

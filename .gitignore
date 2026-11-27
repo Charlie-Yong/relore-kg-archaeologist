@@ -24,3 +24,23 @@ __pycache__/
 # Later explicit course packaging must be reviewed before sharing
 /submission/
 /tmp/
+
+# Course-only identity documents
+/demo/midterm/期中汇报_科研架构详解版_20261111.pptx
+*_实名提交版.*
+
+# Intermediate experiment outputs. Keep the runnable protocols and scripts.
+/evaluation/agent-comparison-20261120/records/
+/evaluation/agent-comparison-20261120/scores/
+/evaluation/agent-comparison-20261120/diagnostics/
+/evaluation/agent-comparison-20261120/reference.json
+/evaluation/agent-comparison-20261120/*.html
+/evaluation/agent-comparison-20261120/*.pdf
+/evaluation/agent-comparison-20261120/*.csv
+/evaluation/retrieval-followup-20261120/records/
+/evaluation/retrieval-followup-20261120/scores/
+/evaluation/retrieval-followup-20261120/diagnostics/
+/evaluation/retrieval-followup-20261120/reference.json
+/evaluation/retrieval-followup-20261120/*.html
+/evaluation/retrieval-followup-20261120/*.pdf
+/evaluation/retrieval-followup-20261120/*.csv

@@ -2,6 +2,13 @@
 
 import pytest
 
+from historykg.contracts import (
+    CONTRACT_VERSION,
+    ENTITY_TYPES,
+    RELATION_ENDPOINTS,
+    Entity,
+    Subject,
+)
 from historykg.ids import entity_id
 from historykg.ingest.discovery import parse_references
 from historykg.ingest.fixture import create_fixture
@@ -29,6 +36,73 @@ def test_fixture_and_same_commit_distinct_tags(dataset):
     assert releases[0]["properties"]["commit_sha"] == releases[1]["properties"]["commit_sha"]
     assert releases[0]["id"] != releases[1]["id"]
     assert entity_id("Release", "EXAMPLE/TOY", "v1.0") == releases[0]["id"]
+
+
+def test_additive_contract_keeps_legacy_data_and_adds_required_coverage(dataset):
+    assert CONTRACT_VERSION == "1.4.2"
+    assert {"Developer", "Function"} <= set(ENTITY_TYPES)
+    assert "Feature" not in ENTITY_TYPES
+    assert RELATION_ENDPOINTS["Authored"] == ({"Developer"}, {"PullRequest"})
+    assert RELATION_ENDPOINTS["Merged"] == ({"Developer"}, {"PullRequest"})
+    assert RELATION_ENDPOINTS["Defines"] == ({"File"}, {"Function"})
+    assert validate_dataset(dataset)["status"] == "ok"
+
+    developer = {
+        "contract_version": "1.4.2",
+        "dataset_id": "toy_v1",
+        "id": entity_id("Developer", "example/toy", "github:42"),
+        "repo": "example/toy",
+        "type": "Developer",
+        "key": "github:42",
+        "properties": {
+            "login": "alice",
+            "display_name": "alice",
+            "github_user_id": 42,
+        },
+        "evidence_ids": [],
+    }
+    function = {
+        "contract_version": "1.4.2",
+        "dataset_id": "toy_v1",
+        "id": entity_id(
+            "Function",
+            "example/toy",
+            "a" * 40,
+            "toy/cache.py",
+            "toy.cache.cache",
+            12,
+        ),
+        "repo": "example/toy",
+        "type": "Function",
+        "key": ["a" * 40, "toy/cache.py", "toy.cache.cache", 12],
+        "properties": {
+            "commit_sha": "a" * 40,
+            "path": "toy/cache.py",
+            "qualified_name": "toy.cache.cache",
+            "start_line": 12,
+        },
+        "evidence_ids": [],
+    }
+    assert Entity.model_validate(developer).type == "Developer"
+    assert Entity.model_validate(function).type == "Function"
+    assert Subject.model_validate(
+        {
+            "subject_id": developer["id"],
+            "repo": "example/toy",
+            "entity_type": "Developer",
+            "display_name": "alice",
+            "aliases": [],
+            "source_ids": [],
+        }
+    ).entity_type == "Developer"
+    assert function["id"] != entity_id(
+        "Function",
+        "example/toy",
+        "a" * 40,
+        "toy/cache.py",
+        "toy.cache.cache",
+        13,
+    )
 
 
 def test_unicode_lf_and_repeated_quote():

@@ -1,0 +1,180 @@
+{
+  "role": "P4",
+  "date": "2026-10-30",
+  "audit": "final_answer_evidence_render_no_model",
+  "branch": "feat/p4-final-audit-p4",
+  "base_commit": "2af7ea9e0556fdd237e9b22c3767fbd039503c28",
+  "checked_at": "2026-10-30T07:32:00+00:00",
+  "input": {
+    "frozen_package": "repro/flask_frozen.tar.gz",
+    "frozen_package_sha256": "b361eda156abba3b8af715b0c62cd3263ae76a1903aa8e88dca771c98af512de",
+    "dataset_id": "dataset:810db3718867788c5acb0fa437cdbf62bc0f99cd8e7435e9261471225f5cd00c",
+    "repo": "pallets/flask",
+    "frozen": true,
+    "package_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+    "graph_fingerprint": "5cbe7b6f68a74d31ebf1fceeb7a00fd16d9b3737066b1ac7e9e51f90be955cfe",
+    "fingerprints_match": true,
+    "counts": {
+      "sources": 369,
+      "entities": 133,
+      "relations": 183,
+      "evidence": 333,
+      "subjects": 65
+    }
+  },
+  "services": {
+    "postgresql": {
+      "url": "postgresql://postgres@127.0.0.1:16432/historykg_course",
+      "connected": true
+    },
+    "neo4j": {
+      "uri": "bolt://127.0.0.1:17687",
+      "connected": true,
+      "version": "5.26.0"
+    }
+  },
+  "prepare_query": {
+    "question": "Why keep the cache API?",
+    "kind": "search",
+    "status": "ok",
+    "candidate_count": 37,
+    "path_count": 40,
+    "seed_count": 8,
+    "path_entity_types": {
+      "Commit": 6,
+      "Decision": 49,
+      "File": 2,
+      "Issue": 14,
+      "PullRequest": 21,
+      "SourceDocument": 17
+    },
+    "path_relation_types": {
+      "ABOUT": 32,
+      "ClaimsToClose": 5,
+      "EVIDENCED_BY": 24,
+      "MergedAs": 6,
+      "Touches": 2
+    },
+    "path_entity_labels_nonblank": 109,
+    "path_entity_labels_total": 109,
+    "path_entity_fallback_to_identifier": 49
+  },
+  "render_context": {
+    "max_characters": 12000,
+    "characters": 11972,
+    "fragment_count": 6,
+    "gap_count": 32,
+    "rendered_sha256": "2a138a2626007763f2882730e3d91de90b5dcf8148679d7bdb8c1e8191a6d231",
+    "fragments": [
+      {
+        "source_id": "SourceDocument:adfb3022c076fcb0710e7ad47960482cfb255e64f3e0bdc18d2005df6be01c14",
+        "start": 0,
+        "end": 97,
+        "quote_characters": 97,
+        "quote_sha256": "71103d7538ecd9d83b9e93e3fda398bbdd588f531cdbbe1fbbb13e78edaf0a5f",
+        "title": "Replace the use of private `monkeypatch` fixture API",
+        "url": "https://github.com/pallets/flask/pull/6095#discussion_r3578161016",
+        "author": "RonnyPfannschmidt",
+        "time": "2026-07-14T10:27:56Z"
+      },
+      {
+        "source_id": "SourceDocument:e7671f11b442bec7ea89667ec1ab9aa0b59b68fdab36287c59c1e0426cfe6cda",
+        "start": 0,
+        "end": 1034,
+        "quote_characters": 1034,
+        "quote_sha256": "e61fc39e9340a428390a77ded124e874bce12c72952fe6f68630a1ff694b6635",
+        "title": "Replace the use of private `monkeypatch` fixture API",
+        "url": "https://github.com/pallets/flask/pull/6095",
+        "author": "mgorny",
+        "time": "2026-07-14T10:21:31Z"
+      },
+      {
+        "source_id": "SourceDocument:f464af4b1e516fea55f100497a65527cc23515828fa992c7f4de34a79ca85607",
+        "start": 0,
+        "end": 663,
+        "quote_characters": 663,
+        "quote_sha256": "757332574b2e485720931bb7fb977ac59a9ca35548c0e64e13b05c3c63494ca8",
+        "title": "[rejected AI] Error handling docs examples use `request.arg` instead of `request.args`",
+        "url": "https://github.com/pallets/flask/issues/6175",
+        "author": "Mukhametvaleev",
+        "time": "2026-10-27T11:33:34Z"
+      },
+      {
+        "source_id": "SourceDocument:a3cb5ef2813cf85481c36efe98b502178ef2ee508038f47a10e84a7f49e89527",
+        "start": 0,
+        "end": 4765,
+        "quote_characters": 4765,
+        "quote_sha256": "f0bce613d68abca33636e87fa6861e94c61061c0872fa51f10e516b9b4893f9a",
+        "title": "[rejected AI] `register_blueprint()` silently ignores the host option",
+        "url": "https://github.com/pallets/flask/issues/6171",
+        "author": "Lenormju",
+        "time": "2026-10-16T10:17:45Z"
+      },
+      {
+        "source_id": "SourceDocument:3679858e6de1201b96e78150842d27dacae9d69a188457b09fd8a21019a7196c",
+        "start": 0,
+        "end": 905,
+        "quote_characters": 905,
+        "quote_sha256": "85d311791dcb7469482b2f5243e4f23c896a947296725dcac4b6a1e3e222be27",
+        "title": "update docs for `MAX_CONTENT_LENGTH`",
+        "url": "https://github.com/pallets/flask/issues/6165#issuecomment-5838756975",
+        "author": "davidism",
+        "time": "2026-09-25T20:02:27Z"
+      },
+      {
+        "source_id": "SourceDocument:58f914a687de30216c08218c0fd0d4c51b8c16372b2b1658be6fad8a13dec6e2",
+        "start": 0,
+        "end": 2280,
+        "quote_characters": 2280,
+        "quote_sha256": "596fbe7657f7951e0acda9e387eb77984b871a84571b7c3997e579f8815caf5e",
+        "title": "`stream_with_context`: abandoned generator leaves the app context current on the worker thread; later requests skip `teardown_appcontext`",
+        "url": "https://github.com/pallets/flask/issues/6123#issuecomment-5248222849",
+        "author": "robkooper",
+        "time": "2026-08-11T02:10:28Z"
+      }
+    ]
+  },
+  "compatibility": {
+    "new_type_fixture": {
+      "entity_types": [
+        "Developer",
+        "Function"
+      ],
+      "relation_types": [
+        "Authored",
+        "Defines"
+      ],
+      "covered_by": "tests/test_render_context.py::test_new_entity_and_relation_types_in_path_metadata_are_safe"
+    },
+    "actual_frozen_data_contains_new_types": false,
+    "renderer_uses_entity_type_allowlist": false,
+    "path_metadata_passed_to_model": false
+  },
+  "guarantees": {
+    "new_model_requests": 0,
+    "private_test_read": false,
+    "quality_experiment": false,
+    "answer_claims_generated": false
+  },
+  "limitations": [
+    "This is an interface and rendering check on frozen public Flask data, not an answer-quality experiment.",
+    "The frozen dataset currently contains the existing entity/relation types; Developer/Function/Authored/Defines compatibility is covered by a synthetic unit fixture.",
+    "render_context does not render P2 path labels into the model prompt; paths remain in QueryResult and are displayed by the caller."
+  ],
+  "validation": {
+    "targeted_tests": {
+      "command": "pytest tests/test_llm.py tests/test_extract.py tests/test_render_context.py -q",
+      "passed": 32,
+      "failed": 0
+    },
+    "main_regression": {
+      "command": "pytest tests -q",
+      "passed": 162,
+      "failed": 0,
+      "skipped": 0
+    },
+    "ruff": "passed",
+    "git_diff_check": "passed",
+    "planning_check": "passed"
+  }
+}

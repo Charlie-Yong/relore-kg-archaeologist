@@ -1,0 +1,251 @@
+{
+  "application_commit": "2af7ea9e0556fdd237e9b22c3767fbd039503c28",
+  "application_worktree_dirty": false,
+  "at_least_one_verifiable_answer": true,
+  "automatic_source_selection": true,
+  "completed_stages": [
+    "discover",
+    "collect",
+    "code",
+    "extract",
+    "validate",
+    "index_graph"
+  ],
+  "costs": {
+    "by_task": {
+      "answer": {
+        "accounted_cny": 0.0196,
+        "attempts": 2
+      },
+      "extract": {
+        "accounted_cny": 0.569861,
+        "attempts": 26
+      }
+    },
+    "snapshot_scope": "shared ledger attempts carrying this second-repository dataset_id",
+    "total_cny": 0.589461
+  },
+  "dataset_id": "dataset:d817eee2ee7ff9763526b36aeb4d918493d0e6902633771deffca4bb33d69888",
+  "entrypoint": "python -m historykg.cli build <repo_url>",
+  "gap_counts": {
+    "explicit_reference_not_collected": 147,
+    "external_or_unresolved": 78,
+    "fetch_failed": 10,
+    "import_target_not_collected": 74,
+    "release_reachability_unknown": 60
+  },
+  "graph": {
+    "fingerprint": "12c370e99369a7bc2b1ea54c749fa464673c04b43515344f034404359aa2e682",
+    "graph_ready": true,
+    "rejected": 0,
+    "retrieval_backend": {
+      "common_sources": "fixed_lexical_rrf_v1",
+      "discussion": "relore.search_history",
+      "visible_source_count": 347
+    },
+    "retrieval_ready": true
+  },
+  "job_id": "ebfd8c8dae5e4bcf998a79fef35de981",
+  "job_status": "partial",
+  "live_service_note": {
+    "action": "No service was started, stopped, or restarted; saved graph/query exports above remain the acceptance evidence.",
+    "checked_at": "2026-10-30T07:40:03+00:00",
+    "neo4j_bolt_17687": "unavailable_connection_refused",
+    "postgres": "ok"
+  },
+  "manual_threads_or_shas": false,
+  "profile_sha256": "c553085aa5164c800be3c06b82b591f0ff53d55b913301a74aaa351ba37d3366",
+  "profile_version": "course_small_v1",
+  "queries": [
+    {
+      "all_cited_quotes_match_frozen_source": true,
+      "answer_text": "",
+      "cited_evidence": [],
+      "claim_count": 0,
+      "claim_evidence_ids_resolve": true,
+      "claims": [],
+      "cost_cny": 0.008851,
+      "evidence_count": 26,
+      "kind": "search",
+      "path_count": 43,
+      "query_id": "query-2b40d22fd3804339968e65d0faaeea01",
+      "question": "How does itsdangerous sign serialized data, and what does the Signer class do?",
+      "run_id": "e40b0c6747a8e51c3f4ab299e08d8246cf34194f842567f240bd819e769bc795",
+      "status": "empty",
+      "system": "B",
+      "timings_ms": {
+        "retrieve_graph": 264.224,
+        "total": 1801.416
+      }
+    },
+    {
+      "all_cited_quotes_match_frozen_source": true,
+      "answer_text": "src/itsdangerous/timed.py imports from the .encoding module: base64_decode, base64_encode, bytes_to_int, int_to_bytes, and want_bytes.\nsrc/itsdangerous/timed.py imports from the .exc module: BadSignature, BadTimeSignature, and SignatureExpired.\nsrc/itsdangerous/timed.py imports _TSerialized and Serializer from the .serializer module.\nsrc/itsdangerous/timed.py imports Signer from the .signer module.\nsrc/itsdangerous/timed.py imports standard library modules: collections.abc as cabc, time, typing as t, and datetime/timezone from datetime.",
+      "cited_evidence": [
+        {
+          "author": null,
+          "dataset_id": "dataset:d817eee2ee7ff9763526b36aeb4d918493d0e6902633771deffca4bb33d69888",
+          "end": 530,
+          "evidence_id": "Evidence:82a1c3537294258a43bb541e17def419bae09b84d667bcd03a93024098669e9f",
+          "quote": "from .signer import Signer",
+          "source_id": "SourceDocument:a267399c8a81ad51d897de7183d3a94ade2ee7c22473b7c8060fee774879a716",
+          "start": 504,
+          "text_sha256": "3afbf6050e8b73605931d1e516f374835456979e4319c098bfe5f284f120c6c5",
+          "time": null,
+          "url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/src/itsdangerous/timed.py"
+        },
+        {
+          "author": null,
+          "dataset_id": "dataset:d817eee2ee7ff9763526b36aeb4d918493d0e6902633771deffca4bb33d69888",
+          "end": 333,
+          "evidence_id": "Evidence:b46865dfdb6ae7eb354d7013a0a4d252b94f16a4aa16a658d7f5029276e21b07",
+          "quote": "from .encoding import base64_decode\nfrom .encoding import base64_encode\nfrom .encoding import bytes_to_int\nfrom .encoding import int_to_bytes\nfrom .encoding import want_bytes",
+          "source_id": "SourceDocument:a267399c8a81ad51d897de7183d3a94ade2ee7c22473b7c8060fee774879a716",
+          "start": 159,
+          "text_sha256": "3afbf6050e8b73605931d1e516f374835456979e4319c098bfe5f284f120c6c5",
+          "time": null,
+          "url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/src/itsdangerous/timed.py"
+        },
+        {
+          "author": null,
+          "dataset_id": "dataset:d817eee2ee7ff9763526b36aeb4d918493d0e6902633771deffca4bb33d69888",
+          "end": 431,
+          "evidence_id": "Evidence:ceb7e42c592e80de94077af6f0e4fd68aae81046854058fb422689946ad00191",
+          "quote": "from .exc import BadSignature\nfrom .exc import BadTimeSignature\nfrom .exc import SignatureExpired",
+          "source_id": "SourceDocument:a267399c8a81ad51d897de7183d3a94ade2ee7c22473b7c8060fee774879a716",
+          "start": 334,
+          "text_sha256": "3afbf6050e8b73605931d1e516f374835456979e4319c098bfe5f284f120c6c5",
+          "time": null,
+          "url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/src/itsdangerous/timed.py"
+        },
+        {
+          "author": null,
+          "dataset_id": "dataset:d817eee2ee7ff9763526b36aeb4d918493d0e6902633771deffca4bb33d69888",
+          "end": 503,
+          "evidence_id": "Evidence:ab258491e1c2b56f9d743b4346b90e5019367cc19c1f0190cbcac0cdeb7eec05",
+          "quote": "from .serializer import _TSerialized\nfrom .serializer import Serializer",
+          "source_id": "SourceDocument:a267399c8a81ad51d897de7183d3a94ade2ee7c22473b7c8060fee774879a716",
+          "start": 432,
+          "text_sha256": "3afbf6050e8b73605931d1e516f374835456979e4319c098bfe5f284f120c6c5",
+          "time": null,
+          "url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/src/itsdangerous/timed.py"
+        },
+        {
+          "author": null,
+          "dataset_id": "dataset:d817eee2ee7ff9763526b36aeb4d918493d0e6902633771deffca4bb33d69888",
+          "end": 157,
+          "evidence_id": "Evidence:fd51087865d71d275c3516aca0662c7150c9c5ceafc3ab655125cbe433f2995b",
+          "quote": "import collections.abc as cabc\nimport time\nimport typing as t\nfrom datetime import datetime\nfrom datetime import timezone",
+          "source_id": "SourceDocument:a267399c8a81ad51d897de7183d3a94ade2ee7c22473b7c8060fee774879a716",
+          "start": 36,
+          "text_sha256": "3afbf6050e8b73605931d1e516f374835456979e4319c098bfe5f284f120c6c5",
+          "time": null,
+          "url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/src/itsdangerous/timed.py"
+        }
+      ],
+      "claim_count": 5,
+      "claim_evidence_ids_resolve": true,
+      "claims": [
+        {
+          "evidence_ids": [
+            "Evidence:b46865dfdb6ae7eb354d7013a0a4d252b94f16a4aa16a658d7f5029276e21b07"
+          ],
+          "text": "src/itsdangerous/timed.py imports from the .encoding module: base64_decode, base64_encode, bytes_to_int, int_to_bytes, and want_bytes."
+        },
+        {
+          "evidence_ids": [
+            "Evidence:ceb7e42c592e80de94077af6f0e4fd68aae81046854058fb422689946ad00191"
+          ],
+          "text": "src/itsdangerous/timed.py imports from the .exc module: BadSignature, BadTimeSignature, and SignatureExpired."
+        },
+        {
+          "evidence_ids": [
+            "Evidence:ab258491e1c2b56f9d743b4346b90e5019367cc19c1f0190cbcac0cdeb7eec05"
+          ],
+          "text": "src/itsdangerous/timed.py imports _TSerialized and Serializer from the .serializer module."
+        },
+        {
+          "evidence_ids": [
+            "Evidence:82a1c3537294258a43bb541e17def419bae09b84d667bcd03a93024098669e9f"
+          ],
+          "text": "src/itsdangerous/timed.py imports Signer from the .signer module."
+        },
+        {
+          "evidence_ids": [
+            "Evidence:fd51087865d71d275c3516aca0662c7150c9c5ceafc3ab655125cbe433f2995b"
+          ],
+          "text": "src/itsdangerous/timed.py imports standard library modules: collections.abc as cabc, time, typing as t, and datetime/timezone from datetime."
+        }
+      ],
+      "cost_cny": 0.010749,
+      "evidence_count": 25,
+      "kind": "dependencies",
+      "path_count": 50,
+      "query_id": "query-a58794186baf4ac088d2cd4a9b2b5db4",
+      "question": "Which modules does src/itsdangerous/timed.py import or depend on?",
+      "run_id": "b1a3d0eddd37feda1816ff9bc1c0ed7e7e2b3b2dd5e851a68d4f5881118b2deb",
+      "status": "ok",
+      "system": "B",
+      "timings_ms": {
+        "retrieve_graph": 233.058,
+        "total": 2677.315
+      }
+    }
+  ],
+  "repo": "pallets/itsdangerous",
+  "repo_url": "https://github.com/pallets/itsdangerous",
+  "reproduce": {
+    "build": "PYTHONPATH=vendor/relore:. \"$PRIMARY_VENV/bin/python\" -m historykg.cli --config \"$PROJECT_CONFIG\" build https://github.com/pallets/itsdangerous",
+    "query": "PYTHONPATH=vendor/relore:. \"$PRIMARY_VENV/bin/python\" -m historykg.cli --config \"$PROJECT_CONFIG\" query \"Which modules does src/itsdangerous/timed.py import or depend on?\" --dataset-id dataset:d817eee2ee7ff9763526b36aeb4d918493d0e6902633771deffca4bb33d69888 --kind dependencies",
+    "status": "PYTHONPATH=vendor/relore:. \"$PRIMARY_VENV/bin/python\" -m historykg.cli --config \"$PROJECT_CONFIG\" build-status ebfd8c8dae5e4bcf998a79fef35de981"
+  },
+  "source_counts": {
+    "complete_units": 30,
+    "entities": 82,
+    "evidence": 180,
+    "file_snapshots": 17,
+    "partial_units": 0,
+    "relations": 78,
+    "source_units": 30,
+    "sources": 347,
+    "subjects": 48
+  },
+  "source_kind_counts": {
+    "api_response": 126,
+    "code": 17,
+    "comment": 2,
+    "commit_message": 20,
+    "git_output": 149,
+    "pr_body": 30,
+    "release_note": 3
+  },
+  "source_or_graph_edits_after_generation": false,
+  "source_pool_hash": "60be0729a0aecf73795aba43075bce82e85a49f0a3cb598a764997915d007afd",
+  "stage_statuses": {
+    "code": "ok",
+    "collect": "partial",
+    "discover": "ok",
+    "extract": "ok",
+    "index_graph": "ok",
+    "validate": "ok"
+  },
+  "status": "pass_with_recorded_collection_gaps",
+  "validation": {
+    "counts": {
+      "entities": 82,
+      "evidence": 180,
+      "relations": 78,
+      "source_units": 30,
+      "sources": 347,
+      "subjects": 48
+    },
+    "dataset_id": "dataset:d817eee2ee7ff9763526b36aeb4d918493d0e6902633771deffca4bb33d69888",
+    "errors": [],
+    "status": "ok"
+  },
+  "verification_notes": [
+    "Every cited evidence ID resolves to the saved QueryResult evidence list.",
+    "Every cited quote is a verbatim substring of the frozen source text and the source SHA-256 recomputes.",
+    "The ok dependencies answer is backed by src/itsdangerous/timed.py at the recorded public GitHub URL."
+  ]
+}

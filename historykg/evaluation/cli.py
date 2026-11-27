@@ -7,6 +7,7 @@ from pathlib import Path
 from historykg.io import read_json, write_json
 
 from .metrics import score_extraction, score_qa
+from .pool_check import retry_failed_whole_pool
 from .reference import freeze_sources
 from .statistics import summarize_qa
 
@@ -25,6 +26,13 @@ def main(argv=None):
     freeze.add_argument("dataset_dir", type=Path)
     freeze.add_argument("--out", type=Path, required=True)
     freeze.add_argument("--dev-threads", type=int, nargs="+", required=True)
+    retry_pool = commands.add_parser(
+        "retry-pool", help="只重试全池核验的失败位置；成功缓存与原记录保留"
+    )
+    retry_pool.add_argument("freeze", type=Path)
+    retry_pool.add_argument("--model-config", type=Path, required=True)
+    retry_pool.add_argument("--ledger", type=Path, required=True)
+    retry_pool.add_argument("--approved-cny", type=float, required=True)
     args = parser.parse_args(argv)
     if args.command == "score":
         data = read_json(args.records)
@@ -47,9 +55,21 @@ def main(argv=None):
         result = summarize_qa(read_json(args.records), split=args.split)
         if args.out:
             write_json(args.out, result)
-    else:
+    elif args.command == "freeze":
         frozen = freeze_sources(args.dataset_dir, args.out, dev_threads=args.dev_threads)
         result = {"status": "ok", "counts": frozen["counts"], "freeze_hash": frozen["freeze_hash"]}
+    else:
+        freeze = read_json(args.freeze)
+        config = read_json(args.model_config)
+        budget = {
+            **config.get("budget", {}),
+            "ledger_path": str(args.ledger),
+            "approved_cny": args.approved_cny,
+            "max_cost_cny": args.approved_cny,
+        }
+        result = retry_failed_whole_pool(
+            freeze, args.freeze.parent, config["model"], budget
+        )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

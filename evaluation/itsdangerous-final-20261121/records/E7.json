@@ -1,0 +1,27 @@
+{
+  "arm": "E",
+  "q": 7,
+  "start_utc": "2026-11-21T11:06:48.457474+00:00",
+  "elapsed_seconds": 368.646,
+  "status": "ok",
+  "answer": "**结论**\nPR #153（`Deprecate JWS support`）最早进入的正式版是 **ItsDangerous 2.0.0**。\n\n**合并与标签**\n- PR 页面显示：`Merged`、`merged 1 commit into master`，合并日期 **2020-04-17**，里程碑为 **2.0.0**。\n- Merge commit 为：`b11475aa0e1534f1fe7736d56140d81e872b1f5f`  \n  提交信息：`Merge pull request #153 from pallets/deprecate-jws`；其两个父提交为 `981ade6e...` 和 `53f34c9a...`。\n- `2.0.0` 标签对应的发布提交为 `d101100c395958d67368b8c37d95a9c404598c2e`。\n- 标签 `2.0.0` **包含该改动**：其 `CHANGES.rst` 明确列有 JWS 弃用说明，`jws.py` 中也包含 `.. deprecated:: 2.0` 和 `DeprecationWarning`。\n- `2.0.0` 的正式发布日期为 **2021-05-11**。其前的 `2.0.0rc2` 被 GitHub 标记为 **Pre-release**，不是正式版。\n\n**正式发布范围**\n截至问题给定的冻结时间，正式版标签序列是：\n\n`2.0.0`、`2.0.1`、`2.1.0`、`2.1.1`、`2.1.2`、`2.2.0`\n\n其中需要区分两点：\n\n- 作为 **Git 历史中的发布范围**，从 `2.0.0` 起的这条正式发布线包含该合并提交。\n- 若按 **PR #153 的 JWS 弃用功能实际存在的范围**，则是 `2.0.0`–`2.0.1`。`2.1.0` 的 changelog 明确写着 `Remove previously deprecated code`，并注明 JWS 功能已被移除，因此 `2.1.0` 起不再保留该弃用行为。\n\n**官方出处**\n- PR #153：https://github.com/pallets/itsdangerous/pull/153\n- 合并提交及完整 SHA、父提交字段：https://github.com/pallets/itsdangerous/commit/b11475a.json\n- `2.0.0` GitHub Release：https://github.com/pallets/itsdangerous/releases/tag/2.0.0\n- `2.0.0` 标签的 `CHANGES.rst`：https://raw.githubusercontent.com/pallets/itsdangerous/2.0.0/CHANGES.rst\n- `2.0.0` 标签的 `jws.py`：https://raw.githubusercontent.com/pallets/itsdangerous/2.0.0/src/itsdangerous/jws.py\n- 正式版及预发布版列表：https://github.com/pallets/itsdangerous/releases\n- 2.1.0 移除 JWS 的记录：https://raw.githubusercontent.com/pallets/itsdangerous/2.2.0/CHANGES.rst",
+  "exit": 0,
+  "tools": [],
+  "usage": [
+    {
+      "input_tokens": 4426477,
+      "cached_input_tokens": 4271616,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 34200,
+      "reasoning_output_tokens": 21994
+    }
+  ],
+  "event_types": [
+    "item.completed",
+    "item.started",
+    "thread.started",
+    "turn.completed",
+    "turn.started"
+  ],
+  "prompt": "仓库 pallets/itsdangerous，截止时间 2026-11-16T06:31:18Z，冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd。PR #153 最早进了哪个正式版？请说明合并提交、正式发布范围和版本标签是否包含它，给出出处。 用中文直接给出回答、可核对的原文或字段与官方出处链接。只使用终端通过公开 GitHub API、GitHub 原文或 git 自行调查。可用 curl、python、git。仅使用截止日前已公开资料；不要读取工作区以外的文件。"
+}

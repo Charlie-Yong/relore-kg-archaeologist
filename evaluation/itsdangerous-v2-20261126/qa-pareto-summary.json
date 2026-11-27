@@ -1,0 +1,384 @@
+{
+  "codex_e_audit": {
+    "all_6": {
+      "accuracy": 0.6176,
+      "empty_wrapper_questions": [
+        1,
+        5
+      ],
+      "max": 17,
+      "median_seconds": 230.07,
+      "score": 10.5
+    },
+    "common_questions": [
+      1,
+      3,
+      5,
+      7,
+      9,
+      11
+    ],
+    "per_question": [
+      {
+        "answer_preview": "::browser-complete{title=\"Confirmed itsdangerous 2.1.0 release date\"}",
+        "input_tokens": 1183618,
+        "max": 2,
+        "output_tokens": 12688,
+        "q": 1,
+        "score": 0,
+        "seconds": 122.454,
+        "status": "empty"
+      },
+      {
+        "answer_preview": "**结论**\nPR #408 的目的是**移除独立的 SLSA provenance 生成步骤**。作者在 PR 正文中给出的原文是：\n\n> PyPI and trusted publishing has built-in attestat",
+        "input_tokens": 2157305,
+        "max": 3,
+        "output_tokens": 26245,
+        "q": 3,
+        "score": 3,
+        "seconds": 266.677,
+        "status": "ok"
+      },
+      {
+        "answer_preview": "::browser-complete{title=\"Confirmed PR 152 and merge commit\"}",
+        "input_tokens": 1262091,
+        "max": 4,
+        "output_tokens": 15435,
+        "q": 5,
+        "score": 0,
+        "seconds": 129.778,
+        "status": "empty"
+      },
+      {
+        "answer_preview": "**结论**\nPR #153（`Deprecate JWS support`）最早进入的正式版是 **ItsDangerous 2.0.0**。\n\n**合并与标签**\n- PR 页面显示：`Merged`、`merged 1 commit ",
+        "input_tokens": 4426477,
+        "max": 4,
+        "output_tokens": 34200,
+        "q": 7,
+        "score": 3.5,
+        "seconds": 368.646,
+        "status": "ok"
+      },
+      {
+        "answer_preview": "**结论**\n\n- `Serializer.dumps`：**先序列化，再签名**。第一条执行语句是 `payload = want_bytes(self.dump_payload(obj))`；`dump_payload` 会调用内部 s",
+        "input_tokens": 1495526,
+        "max": 2,
+        "output_tokens": 37593,
+        "q": 9,
+        "score": 2,
+        "seconds": 258.531,
+        "status": "ok"
+      },
+      {
+        "answer_preview": "**结论**\n没有。PR #399 是**关闭但未合并**，不能算作“已经随某个正式版发布的合并改动”。\n\n**可核对原文**\n- [PR #399](https://github.com/pallets/itsdangerous/pull",
+        "input_tokens": 1839949,
+        "max": 2,
+        "output_tokens": 22573,
+        "q": 11,
+        "score": 2,
+        "seconds": 201.602,
+        "status": "ok"
+      }
+    ],
+    "valid_prose_4": {
+      "accuracy": 0.9545,
+      "max": 11,
+      "median_seconds": 262.6,
+      "questions": [
+        3,
+        7,
+        9,
+        11
+      ],
+      "score": 10.5
+    }
+  },
+  "common_questions": [
+    1,
+    3,
+    5,
+    7,
+    9,
+    11
+  ],
+  "frozen_baselines": {
+    "A": {
+      "accuracy": 0.5588,
+      "max": 17,
+      "median_seconds": 25.2,
+      "score": 9.5,
+      "statuses": {
+        "empty": 1,
+        "ok": 5
+      }
+    },
+    "B": {
+      "accuracy": 0.8235,
+      "max": 17,
+      "median_seconds": 41.7,
+      "score": 14,
+      "statuses": {
+        "empty": 1,
+        "ok": 5
+      }
+    },
+    "C": {
+      "accuracy": 0.8235,
+      "max": 17,
+      "median_seconds": 26.2,
+      "score": 14,
+      "statuses": {
+        "empty": 1,
+        "ok": 5
+      }
+    },
+    "D": {
+      "accuracy": 1.0,
+      "max": 17,
+      "median_seconds": 154.6,
+      "score": 17,
+      "statuses": {
+        "ok": 6
+      }
+    },
+    "E": {
+      "accuracy": 0.6176,
+      "max": 17,
+      "median_seconds": 230.1,
+      "score": 10.5,
+      "statuses": {
+        "empty": 2,
+        "ok": 4
+      }
+    },
+    "O": {
+      "accuracy": 0.1176,
+      "max": 17,
+      "median_seconds": 13.3,
+      "score": 2,
+      "statuses": {
+        "empty": 4,
+        "ok": 2
+      }
+    }
+  },
+  "pareto_winner": "B_v2_fast_nothink",
+  "spend": {
+    "approaching_cap": false,
+    "calls": 234,
+    "cap_cny": 15.0,
+    "recorded_at": "2026-11-26T08:51:35Z",
+    "remaining_cny": 9.4247,
+    "spent_cny": 5.5753
+  },
+  "v2_pareto_arms": {
+    "B_v2_fast_low": {
+      "accuracy": 1.0,
+      "max": 17,
+      "median_seconds": 7.64,
+      "per_question": [
+        {
+          "answer_ms": 1516.135,
+          "citations": 51,
+          "max": 2,
+          "note": "日期与出处均正确，引用API记录可核对。",
+          "points": [
+            1,
+            1
+          ],
+          "q": 1,
+          "retrieve_ms": 574.999,
+          "score": 2,
+          "seconds": 2.191,
+          "status": "ok"
+        },
+        {
+          "answer_ms": 5359.214,
+          "citations": 40,
+          "max": 3,
+          "note": "三项均与参考一致：理由、合并提交sha、实际修改文件及diff出处均正确。",
+          "points": [
+            1,
+            1,
+            1
+          ],
+          "q": 3,
+          "retrieve_ms": 817.233,
+          "score": 3,
+          "seconds": 6.287,
+          "status": "ok"
+        },
+        {
+          "answer_ms": 7958.679,
+          "citations": 43,
+          "max": 4,
+          "note": "四项均与原文出处对应：质疑理由、PR#152、合并SHA及源码文件修改均准确。",
+          "points": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "q": 5,
+          "retrieve_ms": 936.081,
+          "score": 4,
+          "seconds": 9.001,
+          "status": "ok"
+        },
+        {
+          "answer_ms": 8494.292,
+          "citations": 43,
+          "max": 4,
+          "note": "合并SHA、发布范围、标签包含核对与首次正式版2.0.0均有出处支持，且诚实标注了范围局限。",
+          "points": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "q": 7,
+          "retrieve_ms": 1001.706,
+          "score": 4,
+          "seconds": 9.601,
+          "status": "ok"
+        },
+        {
+          "answer_ms": 14389.057,
+          "citations": 49,
+          "max": 2,
+          "note": "dumps与loads顺序描述均与源码一致且附出处，两提交版本逻辑相同。",
+          "points": [
+            1,
+            1
+          ],
+          "q": 9,
+          "retrieve_ms": 410.087,
+          "score": 2,
+          "seconds": 14.883,
+          "status": "ok"
+        },
+        {
+          "answer_ms": 5028.22,
+          "citations": 50,
+          "max": 2,
+          "note": "正确依据API的merged:false与merged_at:null判定未合并，并合理限制发布归属结论，未编造合并证据。",
+          "points": [
+            1,
+            1
+          ],
+          "q": 11,
+          "retrieve_ms": 952.927,
+          "score": 2,
+          "seconds": 6.096,
+          "status": "ok"
+        }
+      ],
+      "score": 17,
+      "total_citations": 276
+    },
+    "B_v2_fast_nothink": {
+      "accuracy": 1.0,
+      "max": 17,
+      "median_seconds": 3.4,
+      "per_question": [
+        {
+          "answer_ms": 901.585,
+          "citations": 51,
+          "max": 2,
+          "note": "日期与出处均正确且可核对，引用GitHub API数据支持。",
+          "points": [
+            1,
+            1
+          ],
+          "q": 1,
+          "retrieve_ms": 764.558,
+          "score": 2,
+          "seconds": 1.767,
+          "status": "ok"
+        },
+        {
+          "answer_ms": 2461.537,
+          "citations": 40,
+          "max": 3,
+          "note": "三项声明均有出处支持：理由、合并SHA与时间、实际修改文件均正确。",
+          "points": [
+            1,
+            1,
+            1
+          ],
+          "q": 3,
+          "retrieve_ms": 855.584,
+          "score": 3,
+          "seconds": 3.435,
+          "status": "ok"
+        },
+        {
+          "answer_ms": 2866.949,
+          "citations": 43,
+          "max": 4,
+          "note": "四项均与参考一致且附原文出处，理由、PR、SHA、文件列表均准确。",
+          "points": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "q": 5,
+          "retrieve_ms": 953.156,
+          "score": 4,
+          "seconds": 3.941,
+          "status": "ok"
+        },
+        {
+          "answer_ms": 3128.823,
+          "citations": 43,
+          "max": 4,
+          "note": "合并SHA、发布范围、标签核对与首次正式版2.0.0均有出处支持，结论正确。",
+          "points": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "q": 7,
+          "retrieve_ms": 994.041,
+          "score": 4,
+          "seconds": 4.235,
+          "status": "ok"
+        },
+        {
+          "answer_ms": 2026.555,
+          "citations": 49,
+          "max": 2,
+          "note": "dumps与loads顺序均正确且引用对应源码，出处匹配。",
+          "points": [
+            1,
+            1
+          ],
+          "q": 9,
+          "retrieve_ms": 399.622,
+          "score": 2,
+          "seconds": 2.52,
+          "status": "ok"
+        },
+        {
+          "answer_ms": 2280.333,
+          "citations": 45,
+          "max": 2,
+          "note": "准确说明PR未合并且merge_commit_sha非合并证据，并正确限制发布结论，出处齐全。",
+          "points": [
+            1,
+            1
+          ],
+          "q": 11,
+          "retrieve_ms": 966.197,
+          "score": 2,
+          "seconds": 3.363,
+          "status": "ok"
+        }
+      ],
+      "score": 17,
+      "total_citations": 271
+    }
+  }
+}

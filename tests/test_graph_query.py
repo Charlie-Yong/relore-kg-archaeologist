@@ -10,11 +10,13 @@ from pathlib import Path
 import pytest
 
 from historykg import collector
-from historykg.graph import GraphStore, load_dataset
+from historykg.contracts import CONTRACT_VERSION
+from historykg.graph import GraphStore, load_dataset, validate_extended_dataset
+from historykg.ids import entity_id, relation_id
 from historykg.io import make_evidence, read_jsonl, write_jsonl, write_manifest
 from historykg.query import prepare_query, query
 from historykg.query.frozen_index import drop_index
-from historykg.query.retrieval import context_candidates, resolve_seeds
+from historykg.query.retrieval import context_candidates, resolve_seeds, subject_records
 
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures/toy_v1"
 
@@ -25,10 +27,130 @@ def refresh(root):
                                   if k not in {"files", "sources"}})
 
 
+def add_extended_graph_records(root):
+    manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+    dataset, repo = manifest["dataset_id"], manifest["repo"]
+    entities_path = root / "p1/entities.jsonl"
+    relations_path = root / "p1/relations.jsonl"
+    entities = read_jsonl(entities_path)
+    relations = read_jsonl(relations_path)
+    pull_request = next(
+        entity for entity in entities
+        if entity["type"] == "PullRequest" and entity["properties"]["number"] == 2
+    )
+    commit = next(entity for entity in entities if entity["type"] == "Commit")
+    file = next(
+        entity for entity in entities
+        if entity["type"] == "File"
+        and entity["properties"]["path"] == "toy/cache.py"
+        and entity["properties"]["commit_sha"]
+        == commit["properties"]["sha"]
+    )
+    sha, path = file["properties"]["commit_sha"], file["properties"]["path"]
+    function_name = "cache"
+    qualified_name = "toy.cache.cache"
+
+    def developer(login, github_id):
+        identity_key = (
+            f"github:{github_id}" if github_id is not None
+            else "login:" + login.casefold()
+        )
+        return {
+            "contract_version": CONTRACT_VERSION,
+            "dataset_id": dataset,
+            "id": entity_id("Developer", repo, identity_key),
+            "repo": repo,
+            "type": "Developer",
+            "key": identity_key,
+            "properties": {
+                "login": login,
+                "display_name": login,
+                "logins": [login],
+                "github_user_id": github_id,
+            },
+            "evidence_ids": pull_request["evidence_ids"][:1],
+        }
+
+    def function(start_line, end_line):
+        return {
+            "contract_version": CONTRACT_VERSION,
+            "dataset_id": dataset,
+            "id": entity_id(
+                "Function", repo, sha, path, qualified_name, start_line
+            ),
+            "repo": repo,
+            "type": "Function",
+            "key": [sha, path, qualified_name, start_line],
+            "properties": {
+                "commit_sha": sha,
+                "path": path,
+                "name": function_name,
+                "qualified_name": qualified_name,
+                "kind": "function",
+                "start_line": start_line,
+                "end_line": end_line,
+                "scope": "module",
+            },
+            "evidence_ids": file["evidence_ids"][:1],
+        }
+
+    author, merger = developer("Alice", 101), developer("bob", None)
+    function_record = function(1, 5)
+    repeated_function = function(20, 24)
+    assert function_record["id"] != repeated_function["id"]
+    write_jsonl(
+        entities_path,
+        [*entities, author, merger, function_record, repeated_function],
+    )
+
+    def relation(kind, from_id, to_id, evidence_ids, method):
+        return {
+            "contract_version": CONTRACT_VERSION,
+            "dataset_id": dataset,
+            "id": relation_id(repo, kind, from_id, to_id),
+            "repo": repo,
+            "type": kind,
+            "from_id": from_id,
+            "to_id": to_id,
+            "properties": {},
+            "evidence_ids": evidence_ids,
+            "method": method,
+            "extractor_version": "test_extended_v1",
+            "occurred_at": None,
+        }
+
+    write_jsonl(
+        relations_path,
+        [
+            *relations,
+            relation("Authored", author["id"], pull_request["id"],
+                     pull_request["evidence_ids"][:1], "github_api"),
+            relation("Merged", merger["id"], pull_request["id"],
+                     pull_request["evidence_ids"][:1], "github_api"),
+            relation("Defines", file["id"], function_record["id"],
+                     file["evidence_ids"][:1], "ast"),
+            relation("Defines", file["id"], repeated_function["id"],
+                     file["evidence_ids"][:1], "ast"),
+        ],
+    )
+    refresh(root)
+    return (
+        author,
+        merger,
+        pull_request,
+        commit,
+        file,
+        function_record,
+        repeated_function,
+    )
+
+
 @pytest.fixture
 def sample(tmp_path):
     root = tmp_path / "dataset"
     shutil.copytree(FIXTURE, root)
+    # Exported replay artifacts carry their original dataset id; rebuild them per test copy.
+    shutil.rmtree(root / "exports", ignore_errors=True)
     dataset = "p2_test_" + uuid.uuid4().hex
     for file in root.rglob("*.jsonl"):
         rows = read_jsonl(file)
@@ -49,7 +171,7 @@ def graph_config(tmp_path):
     if not uri:
         pytest.skip("P2_TEST_NEO4J_URI enables actual namespace-scoped Neo4j integration")
     database = os.environ.get("P2_TEST_DATABASE_URL") or (
-        "sqlite:///" + (tmp_path / "relore.sqlite3").as_posix()
+        "sqlite:///" + (tmp_path / "discussion.sqlite3").as_posix()
     )
     assert collector.initialize_database(database)["status"] == "ok"
     config = {"neo4j_uri": uri, "database_url": database,
@@ -75,6 +197,53 @@ def loaded(sample, graph_config):
     return root, dataset
 
 
+def add_disconnected_timeline_event(root, dataset, repo):
+    entities_path = root / "p1/entities.jsonl"
+    relations_path = root / "p1/relations.jsonl"
+    entities, relations = read_jsonl(entities_path), read_jsonl(relations_path)
+    pull_request = next(e for e in entities if e["type"] == "PullRequest")
+    release = next(e for e in entities if e["type"] == "Release")
+    template = next(r for r in relations if r["type"] == "MentionsPR")
+    pull_request_id = entity_id("PullRequest", repo, 999)
+    release_id = entity_id("Release", repo, "v9.9")
+    event = {
+        **template,
+        "dataset_id": dataset,
+        "id": relation_id(repo, "MentionsPR", release_id, pull_request_id),
+        "from_id": release_id,
+        "to_id": pull_request_id,
+        "occurred_at": "2030-01-01T00:00:00Z",
+    }
+    write_jsonl(entities_path, [
+        *entities,
+        {
+            **pull_request,
+            "dataset_id": dataset,
+            "id": pull_request_id,
+            "key": 999,
+            "properties": {
+                **pull_request["properties"],
+                "number": 999,
+                "title": "Disconnected release event",
+            },
+        },
+        {
+            **release,
+            "dataset_id": dataset,
+            "id": release_id,
+            "key": "v9.9",
+            "properties": {
+                **release["properties"],
+                "tag": "v9.9",
+                "published_at": "2030-01-01T00:00:00Z",
+            },
+        },
+    ])
+    write_jsonl(relations_path, [*relations, event])
+    refresh(root)
+    return event
+
+
 def synthetic_answerer(**kwargs):
     source = kwargs["context"][0]
     evidence = make_evidence({**source, "repo": kwargs["repo"],
@@ -97,6 +266,323 @@ def test_idempotent_load_and_isolated_dataset(sample, graph_config):
         after = store.snapshot(dataset)
         assert before == after
         assert all(r["dataset_id"] == dataset for r in after["relations"])
+
+
+def test_extended_entities_import_and_developer_to_function_path(sample, graph_config):
+    root, dataset = sample
+    (
+        author,
+        _merger,
+        pull_request,
+        commit,
+        file,
+        function,
+        repeated_function,
+    ) = add_extended_graph_records(root)
+    loaded(sample, graph_config)
+    with GraphStore(graph_config) as store:
+        before = store.snapshot(dataset)
+        assert {"Developer", "Function"} <= {e["type"] for e in before["entities"]}
+        function_ids = {
+            entity["id"] for entity in before["entities"]
+            if entity["type"] == "Function"
+        }
+        assert function["id"] in function_ids
+        assert repeated_function["id"] in function_ids
+        assert function["id"] != repeated_function["id"]
+        assert store.run(
+            "MATCH (n:HGDeveloper {dataset_id:$dataset}) RETURN count(n) AS count",
+            dataset=dataset,
+        )[0]["count"] == 2
+        assert store.run(
+            "MATCH (n:HGFunction {dataset_id:$dataset}) RETURN count(n) AS count",
+            dataset=dataset,
+        )[0]["count"] == 2
+    repeat = load_dataset(root, config=graph_config)
+    assert repeat["status"] == "ok"
+    with GraphStore(graph_config) as store:
+        assert store.snapshot(dataset) == before
+
+    default_prepared = prepare_query(
+        {"dataset_id": dataset, "question": "Alice", "kind": "trace"},
+        config=graph_config,
+    )
+    assert author["id"] in default_prepared["seed_ids"]
+    assert default_prepared["method_version"] == "p2_query_v1.4.2_historykg_discussion_v1"
+    expected = [
+        author["id"],
+        pull_request["id"],
+        commit["id"],
+        file["id"],
+        function["id"],
+    ]
+    assert not any(
+        path["entity_ids"] == expected for path in default_prepared["paths"]
+    )
+
+    prepared = prepare_query(
+        {"dataset_id": dataset, "question": "Alice", "kind": "trace"},
+        config={**graph_config, "graph_depth": 4},
+    )
+    assert author["id"] in prepared["seed_ids"]
+    path = next(path for path in prepared["paths"] if path["entity_ids"] == expected)
+    assert [relation["type"] for relation in path["relations"]] == [
+        "Authored", "MergedAs", "Touches", "Defines"
+    ]
+
+    by_function = prepare_query(
+        {
+            "dataset_id": dataset,
+            "question": "toy/cache.py::toy.cache.cache",
+            "kind": "trace",
+        },
+        config={**graph_config, "graph_depth": 4},
+    )
+    assert function["id"] in by_function["seed_ids"]
+    result = query(
+        {"dataset_id": dataset, "question": "Alice", "kind": "trace"},
+        config={
+            **graph_config,
+            "graph_depth": 4,
+            "answerer": synthetic_answerer,
+        },
+    )
+    assert result.status == "ok"
+    assert any(
+        {"Developer", "Function"} <= {entity["type"] for entity in path["entities"]}
+        for path in result.paths
+    )
+
+
+def test_extended_subject_fallback_and_validation(sample):
+    root, _dataset = sample
+    add_extended_graph_records(root)
+    package = {
+        "manifest": json.loads((root / "manifest.json").read_text(encoding="utf-8")),
+        "entities": read_jsonl(root / "p1/entities.jsonl"),
+        "evidence": read_jsonl(root / "p1/evidence.jsonl"),
+        "subjects": read_jsonl(root / "subjects.jsonl"),
+    }
+    subjects = subject_records(package)
+    developer_subject = next(
+        subject for subject in subjects if subject["entity_type"] == "Developer"
+    )
+    function_subject = next(
+        subject for subject in subjects if subject["entity_type"] == "Function"
+    )
+    assert developer_subject["display_name"] == "Alice"
+    assert {"Alice", "101"} <= set(developer_subject["aliases"])
+    assert not any("github:101" in alias or alias.startswith("[")
+                   for alias in developer_subject["aliases"])
+    assert function_subject["display_name"] == "toy.cache.cache"
+    assert {"cache", "toy/cache.py", "toy/cache.py::toy.cache.cache"} <= set(
+        function_subject["aliases"]
+    )
+    assert not any(alias.startswith("[") for alias in function_subject["aliases"])
+
+    seeds, gaps = resolve_seeds(
+        "toy/cache.py::toy.cache.cache", package, []
+    )
+    function_ids = {
+        entity["id"] for entity in package["entities"]
+        if entity["type"] == "Function"
+    }
+    assert function_ids <= set(seeds)
+    assert any("主体匹配多个" in gap for gap in gaps)
+    assert validate_extended_dataset(root)["status"] == "ok"
+
+    functions = read_jsonl(root / "p1/entities.jsonl")
+    function = next(entity for entity in functions if entity["type"] == "Function")
+    function["properties"]["path"] = "toy/other.py"
+    function["key"][1] = "toy/other.py"
+    function["id"] = entity_id(
+        "Function",
+        function["repo"],
+        function["properties"]["commit_sha"],
+        "toy/other.py",
+        function["properties"]["qualified_name"],
+        function["properties"]["start_line"],
+    )
+    write_jsonl(root / "p1/entities.jsonl", functions)
+    relations = read_jsonl(root / "p1/relations.jsonl")
+    defines = next(relation for relation in relations if relation["type"] == "Defines")
+    defines["to_id"] = function["id"]
+    defines["id"] = relation_id(
+        function["repo"], "Defines", defines["from_id"], defines["to_id"]
+    )
+    write_jsonl(root / "p1/relations.jsonl", relations)
+    refresh(root)
+    report = validate_extended_dataset(root)
+    assert report["status"] == "error"
+    assert any("Defines必须连接同SHA同路径" in error for error in report["errors"])
+
+
+@pytest.mark.parametrize(
+    ("fault", "message"),
+    [
+        ("developer_key", "Developer.key与github_user_id不一致"),
+        ("developer_id", "稳定ID不匹配"),
+        ("function_missing_start_line", "Function.key须为"),
+        ("function_id_without_start_line", "稳定ID不匹配"),
+    ],
+)
+def test_p3_developer_function_key_and_id_validation(sample, fault, message):
+    root, _dataset = sample
+    add_extended_graph_records(root)
+    path = root / "p1/entities.jsonl"
+    entities = read_jsonl(path)
+    developer = next(
+        entity for entity in entities
+        if entity["type"] == "Developer" and entity["key"] == "github:101"
+    )
+    function = next(
+        entity for entity in entities
+        if entity["type"] == "Function"
+        and entity["properties"]["start_line"] == 1
+    )
+    if fault == "developer_key":
+        developer["key"] = ["github:999"]
+    elif fault == "developer_id":
+        developer["id"] = entity_id("Developer", developer["repo"], "login:alice")
+    elif fault == "function_missing_start_line":
+        function["key"] = function["key"][:3]
+        function["properties"].pop("start_line")
+    else:
+        function["id"] = entity_id(
+            "Function",
+            function["repo"],
+            function["properties"]["commit_sha"],
+            function["properties"]["path"],
+            function["properties"]["qualified_name"],
+        )
+    write_jsonl(path, entities)
+    refresh(root)
+    report = validate_extended_dataset(root)
+    assert report["status"] == "error"
+    assert any(message in error for error in report["errors"])
+
+
+def test_p3_real_flask_identity_shape_matches_known_ids():
+    from historykg.io import expected_entity_id as _extended_entity_id
+
+    repo = "pallets/flask"
+    sha = "05e9c6bd630ecf4ec0ec884b1fc7901663737bc7"
+    path = "src/flask/testing.py"
+    qualified_name = "flask.testing._get_werkzeug_version"
+    author = {
+        "type": "Developer",
+        "repo": repo,
+        "key": "github:14022447",
+        "properties": {
+            "login": "lkk7",
+            "display_name": "lkk7",
+            "github_user_id": 14022447,
+        },
+    }
+    function = {
+        "type": "Function",
+        "repo": repo,
+        "key": [sha, path, qualified_name, 100],
+        "properties": {
+            "commit_sha": sha,
+            "path": path,
+            "qualified_name": qualified_name,
+            "start_line": 100,
+        },
+    }
+    assert _extended_entity_id(author) == (
+        "Developer:14b5ede4facfe75a5c84e846f8806df7b7157b48e5a73fc948372544334e53b6"
+    )
+    wrapped_author = {**author, "key": ["github:14022447"]}
+    assert _extended_entity_id(wrapped_author) == _extended_entity_id(author)
+    assert _extended_entity_id(function) == (
+        "Function:b0f5e030cc7a9050d0a339cf3cceadc153ecb023cd578a7ed5192fb09f0edb31"
+    )
+    repeated = {
+        **function,
+        "key": [sha, path, qualified_name, 120],
+        "properties": {**function["properties"], "start_line": 120},
+    }
+    assert _extended_entity_id(repeated) != _extended_entity_id(function)
+
+
+@pytest.mark.skipif(
+    not os.environ.get("P2_REAL_P3_DATASET_DIR"),
+    reason="P2_REAL_P3_DATASET_DIR enables the actual P1+P3 shard acceptance test",
+)
+def test_real_p3_merged_shard_loads_and_returns_four_hop_path(graph_config):
+    root = Path(os.environ["P2_REAL_P3_DATASET_DIR"]).resolve()
+    report = validate_extended_dataset(root)
+    assert report["status"] == "ok", report["errors"]
+    assert report["counts"] == {
+        "sources": 370,
+        "source_units": 40,
+        "evidence": 741,
+        "entities": 535,
+        "relations": 591,
+        "subjects": 65,
+    }
+    dataset = report["dataset_id"]
+    graph_config["_owned"].append(dataset)
+    loaded_result = load_dataset(root, config=graph_config)
+    assert loaded_result["status"] == "ok", loaded_result
+
+    with GraphStore(graph_config) as store:
+        snapshot = store.snapshot(dataset)
+    developer = next(
+        entity for entity in snapshot["entities"]
+        if entity["id"] == (
+            "Developer:14b5ede4facfe75a5c84e846f8806df7b7157b48e5a73fc948372544334e53b6"
+        )
+    )
+    function = next(
+        entity for entity in snapshot["entities"]
+        if entity["id"] == (
+            "Function:b0f5e030cc7a9050d0a339cf3cceadc153ecb023cd578a7ed5192fb09f0edb31"
+        )
+    )
+    assert developer["key"] == "github:14022447"
+    assert function["key"] == [
+        "05e9c6bd630ecf4ec0ec884b1fc7901663737bc7",
+        "src/flask/testing.py",
+        "flask.testing._get_werkzeug_version",
+        100,
+    ]
+
+    prepared = prepare_query(
+        {
+            "dataset_id": dataset,
+            "question": (
+                "PR #6096（作者 lkk7、合并者 davidism）合并为 commit "
+                "05e9c6bd630ecf4ec0ec884b1fc7901663737bc7，请追到 "
+                "src/flask/testing.py 中的顶层函数 "
+                "flask.testing._get_werkzeug_version。"
+            ),
+            "kind": "trace",
+            "seed_ids": [developer["id"], function["id"]],
+        },
+        config={
+            **graph_config,
+            "graph_depth": 4,
+            "graph_path_limit": 100,
+            "graph_expand_seeds": False,
+        },
+    )
+    expected_relations = {
+        "Relation:a93b5efa39826afd9b209821b4923674ff414115ba9a9b406f9b993b01859004",
+        "Relation:90007a4e1f5c7293bd980420d8745213fae4187664d822224e0480a30deb4125",
+        "Relation:6e186e8d98eb9dd86a305dcf58d3079567de12c642c7d06a301d5e716e290a18",
+        "Relation:da169aa17eb6819c0d417c20a7a1bcd85b9b94a2d90226ee2e11f3b9fa7b68d4",
+    }
+    merged_relations = {
+        "Relation:c73048f6644f5b2bda50e54119330fe8e63fc40481e7574addde0e570a368d9c",
+        "Relation:90007a4e1f5c7293bd980420d8745213fae4187664d822224e0480a30deb4125",
+        "Relation:6e186e8d98eb9dd86a305dcf58d3079567de12c642c7d06a301d5e716e290a18",
+        "Relation:da169aa17eb6819c0d417c20a7a1bcd85b9b94a2d90226ee2e11f3b9fa7b68d4",
+    }
+    path_relations = {frozenset(path["relation_ids"]) for path in prepared["paths"]}
+    assert frozenset(expected_relations) in path_relations
+    assert frozenset(merged_relations) in path_relations
 
 
 @pytest.mark.parametrize("fault", ["span", "endpoint", "dataset", "manifest"])
@@ -182,7 +668,7 @@ def test_ab_share_seeds_sources_and_adapter_code_visibility(sample, graph_config
     b = prepare_query(request, config={**graph_config, "system": "B"})
     assert a["seed_ids"] == b["seed_ids"]
     assert a["retrieval"] == b["retrieval"]
-    assert a["retrieval"]["backend"]["discussion"] == "relore.search_history"
+    assert a["retrieval"]["backend"]["discussion"] == "historykg.collector.search_history"
     assert a["paths"] == [] and b["paths"]
     assert any(a["source_by_id"][c["source_id"]]["kind"] == "code" for c in a["candidates"])
     assert a["retrieval"]["backend"]["visible_source_ids"] == sorted(a["source_by_id"])
@@ -237,11 +723,113 @@ def test_citation_outside_visible_context_is_rejected(sample, graph_config):
     assert result.status == "error" and not result.claims
 
 
+def test_external_reference_blocks_retrieval_and_answer(sample, graph_config, monkeypatch):
+    _, dataset = loaded(sample, graph_config)
+
+    def forbidden(*_args, **_kwargs):
+        pytest.fail("外库问题不得进入本库检索或回答器")
+
+    monkeypatch.setattr("historykg.query.service.verify_index", forbidden)
+    monkeypatch.setattr("historykg.query.service.retrieve", forbidden)
+    for question in (
+        "https://github.com/other/repo/issues/1",
+        "https://github.com/other/repo/issues/1为什么与本库有关？",
+    ):
+        request = {"dataset_id": dataset, "question": question}
+        prepared = prepare_query(request, config=graph_config)
+        assert prepared["status"] == "unsupported"
+        assert prepared["candidates"] == []
+        assert prepared["paths"] == [] and prepared["timeline"] == []
+        assert prepared["retrieval"]["raw_discussion"]["status"] == "skipped"
+        assert any(isinstance(gap, dict) and gap.get("reason") == "external_project"
+                   for gap in prepared["gaps"])
+
+        result = query(request, config={**graph_config, "answerer": forbidden})
+        assert result.status == "unsupported"
+        assert result.claims == [] and result.evidence == []
+
+
+def test_timeline_scopes_to_related_path_and_keeps_event_evidence(
+        sample, graph_config, monkeypatch):
+    root, dataset = sample
+    event = add_disconnected_timeline_event(root, dataset, "example/toy")
+    source_seed = entity_id("PullRequest", "example/toy", 2)
+    monkeypatch.setattr(
+        "historykg.query.service.seed_from_sources",
+        lambda *_args, **_kwargs: [source_seed],
+    )
+    monkeypatch.setattr(
+        "historykg.query.service.context_candidates",
+        lambda *_args, **_kwargs: [],
+    )
+    loaded(sample, graph_config)
+    request = {"dataset_id": dataset, "question": "#999 timeline", "kind": "timeline"}
+    prepared = prepare_query(request, config=graph_config)
+    assert prepared["status"] == "ok"
+    assert prepared["timeline_scope"] == "related"
+    assert prepared["method_version"] == "p2_query_v1.4.2_historykg_discussion_v1"
+    assert prepared["timeline_subject_ids"] == [event["to_id"]]
+    assert source_seed in prepared["seed_ids"]
+    assert prepared["candidates"] == []
+    assert [item["id"] for item in prepared["timeline"]] == [event["id"]]
+    assert prepared["timeline"][0] == event
+
+    result = query(request, config={
+        **graph_config,
+        "answerer": lambda **_kwargs: pytest.fail(
+            "已有结构化时间线时不应调用回答器"
+        ),
+    })
+    assert result.status == "ok"
+    assert result.claims == []
+    assert result.model_extra["timeline_scope"] == "related"
+    assert result.model_extra["timeline"] == [event]
+    returned = {item["evidence_id"] for item in result.evidence}
+    assert set(event["evidence_ids"]) <= returned
+
+
+def test_timeline_without_explicit_subject_uses_retrieval_seeds(sample, graph_config):
+    _, dataset = loaded(sample, graph_config)
+    request = {"dataset_id": dataset, "question": "cache timeout", "kind": "timeline"}
+    prepared = prepare_query(request, config=graph_config)
+    assert prepared["status"] == "ok"
+    assert prepared["timeline_scope"] == "related"
+    assert prepared["timeline_subject_ids"] == prepared["seed_ids"]
+    assert prepared["timeline"]
+
+
+def test_explicit_repository_timeline_returns_all_events_and_evidence(sample, graph_config):
+    _, dataset = loaded(sample, graph_config)
+    with GraphStore(graph_config) as store:
+        all_events = sorted(
+            (relation for relation in store.snapshot(dataset)["relations"]
+             if relation.get("occurred_at")),
+            key=lambda relation: (relation["occurred_at"], relation["id"]),
+        )
+    request = {"dataset_id": dataset, "question": "全仓时间线", "kind": "timeline"}
+    prepared = prepare_query(request, config=graph_config)
+    assert prepared["status"] == "ok"
+    assert prepared["timeline_scope"] == "repository"
+    assert prepared["timeline"] == all_events
+
+    result = query(request, config={**graph_config, "answerer": synthetic_answerer})
+    assert result.model_extra["timeline"] == all_events
+    returned = {item["evidence_id"] for item in result.evidence}
+    event_evidence = {eid for relation in all_events
+                      for eid in relation.get("evidence_ids", [])}
+    assert event_evidence <= returned
+
+
 def test_external_issue_number_is_not_resolved_into_local_subject():
     from historykg.graph.store import read_package
     package = read_package(FIXTURE)
     seeds, gaps = resolve_seeds("https://github.com/other/repo/issues/1", package, [])
     assert not seeds and gaps
+    assert gaps[0]["reason"] == "external_project"
+    seeds, gaps = resolve_seeds(
+        "https://github.com/other/repo/issues/1为什么", package, []
+    )
+    assert not seeds and gaps[0]["reason"] == "external_project"
 
 
 def test_candidate_priority_prefers_scoped_discussion_over_generic_sources():
@@ -306,16 +894,14 @@ def test_candidate_priority_keeps_explicit_code_snapshot_first():
     assert ordered[0]["source_id"] == "code"
 
 
-def test_same_repo_mutation_does_not_change_frozen_relore_hits(tmp_path, graph_config):
-    from fake_github import FakeGitHub
-    from relore.github.fetch_thread import ThreadPayload
-
+def test_same_repo_mutation_does_not_change_frozen_discussion_hits(tmp_path, graph_config):
     from historykg.ingest.capture import map_capture
+    from historykg.ingest.github import ThreadPayload
 
     repo = "example/p2-frozen-" + uuid.uuid4().hex[:10]
-    fake = FakeGitHub(repo)
-    old = fake.add_issue(1, title="Frozen cache protocol", body="sentinel_old cache protocol")
-    payload = ThreadPayload(repo=repo, number=1, thread_type="issue", thread=old.payload)
+    payload = ThreadPayload(repo=repo, number=1, thread_type="issue", thread={
+        "number": 1, "title": "Frozen cache protocol", "body": "sentinel_old cache protocol",
+    })
 
     def freeze_version(name, thread):
         dataset = "p2_test_" + uuid.uuid4().hex
@@ -323,7 +909,7 @@ def test_same_repo_mutation_does_not_change_frozen_relore_hits(tmp_path, graph_c
         root.mkdir()
         capture = root / "capture.json"
         write = {"format": collector.CAPTURE, "repo": repo,
-                 "retrieved_at": "2026-10-30T00:00:00Z", "relore_commit": collector.COMMIT,
+                 "retrieved_at": "2026-10-30T00:00:00Z", "collector_version": collector.VERSION,
                  "result": {"status": "ok", "gaps": []}, "http_responses": [],
                  "payloads": [{**asdict(thread), "unread": []}]}
         capture.write_text(json.dumps(write), encoding="utf-8")
@@ -338,7 +924,7 @@ def test_same_repo_mutation_does_not_change_frozen_relore_hits(tmp_path, graph_c
     first = freeze_version("old", payload)
     request = {"dataset_id": first, "question": "cache protocol"}
     before = prepare_query(request, config={**graph_config, "system": "A"})
-    assert before["retrieval"]["raw_relore"]["hits"]
+    assert before["retrieval"]["raw_discussion"]["hits"]
     payload.thread = {**payload.thread, "body": "sentinel_new changed cache protocol"}
     assert collector.index_threads([payload], database_url=graph_config["database_url"])[
         "status"] == "ok"
@@ -350,9 +936,9 @@ def test_same_repo_mutation_does_not_change_frozen_relore_hits(tmp_path, graph_c
     newer = prepare_query({**request, "dataset_id": second}, config=graph_config)
     assert before["retrieval"] == after["retrieval"]
     assert before["candidates"] == after["candidates"]
-    assert "sentinel_old" in json.dumps(after["retrieval"]["raw_relore"])
-    assert "sentinel_new" not in json.dumps(after["retrieval"]["raw_relore"])
-    assert "sentinel_new" in json.dumps(newer["retrieval"]["raw_relore"])
+    assert "sentinel_old" in json.dumps(after["retrieval"]["raw_discussion"])
+    assert "sentinel_new" not in json.dumps(after["retrieval"]["raw_discussion"])
+    assert "sentinel_new" in json.dumps(newer["retrieval"]["raw_discussion"])
     result = query(request, config={**graph_config, "answerer": synthetic_answerer})
     assert result.status == "ok" and Path(result.model_extra["artifacts"]["query_run"]).exists()
 
@@ -393,3 +979,45 @@ def test_real_answerer_default_root_and_final_context_budget(sample, graph_confi
     assert fragment["end"] < len(source["text"])
     assert source["text"][fragment["start"]:fragment["end"]] == fragment["quote"]
     assert final["gaps"] and result.model_extra["usage"]["actual_requests"] == 0
+
+
+def test_cypher_subgraph_parity_and_apply_delta(sample, graph_config):
+    from historykg.graph.store import read_package
+
+    root, dataset = loaded(sample, graph_config)
+    prev_pkg = read_package(root)
+    cyp = prepare_query(
+        {"dataset_id": dataset, "question": "cache", "kind": "search"},
+        config={**graph_config, "query_mode": "cypher_subgraph"},
+    )
+    snap = prepare_query(
+        {"dataset_id": dataset, "question": "cache", "kind": "search"},
+        config={**graph_config, "query_mode": "snapshot"},
+    )
+    assert cyp["query_mode"] == "cypher_subgraph" and snap["query_mode"] == "snapshot"
+    assert [c["source_id"] for c in cyp["candidates"]] == [
+        c["source_id"] for c in snap["candidates"]
+    ]
+    assert cyp["paths"] == snap["paths"]
+
+    # Simulate temporal evolution: add an entity + relation + source and apply_delta
+    entities = read_jsonl(root / "p1/entities.jsonl")
+    pr_template = next(e for e in entities if e["type"] == "PullRequest")
+    new_pr_id = entity_id("PullRequest", pr_template["repo"], 888)
+    new_pr = {
+        **pr_template,
+        "id": new_pr_id,
+        "key": 888,
+        "properties": {**pr_template["properties"], "number": 888, "title": "Incremental delta PR"},
+    }
+    write_jsonl(root / "p1/entities.jsonl", [*entities, new_pr])
+    refresh(root)
+    next_pkg = read_package(root)
+    with GraphStore(graph_config) as store:
+        next_pkg["retrieval_index"] = store.dataset_meta(dataset)["retrieval_index"]
+        delta = store.apply_delta(dataset, prev_pkg, next_pkg)
+        assert delta["entities_upserted"] == 1
+        snap_after = store.snapshot(dataset)
+        assert snap_after is not None and snap_after["fingerprint"] == next_pkg["fingerprint"]
+        fetched = store.fetch_entities(dataset, ids=[new_pr_id])
+        assert len(fetched) == 1 and fetched[0]["properties"]["number"] == 888

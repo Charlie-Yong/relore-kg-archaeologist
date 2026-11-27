@@ -1,0 +1,134 @@
+{
+  "source": "only manifest files and exports/discussion_input.json",
+  "fresh_neo4j": true,
+  "original_jobs_required": false,
+  "status": "ok",
+  "questions": [
+    {
+      "question": "2.1.2 是哪天出的？",
+      "seconds": 16.46,
+      "status": "ok",
+      "answer": [
+        {
+          "text": "itsdangerous 2.1.2 的发布日期为 2022-03-24（发布时间戳为 2022-03-24T15:14:38Z）。",
+          "evidence_ids": [
+            "Evidence:1453a105a150270614dd485cc144e6d12a41e4120f0c28963150b0556e07450b"
+          ]
+        }
+      ],
+      "links": [
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/192",
+        "https://api.github.com/repos/pallets/itsdangerous/releases",
+        "https://github.com/pallets/itsdangerous",
+        "https://github.com/pallets/itsdangerous/releases/tag/2.1.2"
+      ],
+      "paths": 50
+    },
+    {
+      "question": "PR #372 最早进了哪个正式版？",
+      "seconds": 24.91,
+      "status": "ok",
+      "answer": [
+        {
+          "text": "PR #372 的合并提交 SHA 为 53efacdf1136edb9462aeca221023a8f9bbd79a9，合并时间为 2024-04-13T17:54:20Z。",
+          "evidence_ids": [
+            "Evidence:6edbb9faa6f7e14bca75ababe79f2732b943a96a0f038127fc2f21847bd599db"
+          ]
+        },
+        {
+          "text": "2.2.0 是正式版（draft=False、prerelease=False），发布时间为 2024-04-16T21:46:38Z。",
+          "evidence_ids": [
+            "Evidence:3787f2c26929983c4bee3c3cf22838d898679b64f139333ad71ba29f201c06aa"
+          ]
+        },
+        {
+          "text": "2.0.0、2.0.1、2.1.0、2.1.1、2.1.2 均为正式版；它们的单标签 rev-list 均不包含 53efacdf1136edb9462aeca221023a8f9bbd79a9。",
+          "evidence_ids": [
+            "Evidence:4f307e971895d02c30df17b98c9e1d9453a0e46de7ab3264b792de36fef1254c",
+            "Evidence:6ffd6642d4312757774b41527a0423a5c4ac7a4d7b730bacf55015236691521b",
+            "Evidence:51a9fcbe97c1161e44c086e3752c62e9f1428dedee6b8e83cad0091df705ef06",
+            "Evidence:15cbc818271bdab42c2c72281be42c01a395a0c625d73f3438e1f0c1c1c3f724",
+            "Evidence:0d34c542d00653aee8fd4c2e81726f5bef6aaa677eed07bcb0fcf4acff90fa08",
+            "Evidence:4cc17d5d30fc50f675ba1a79d678940bc89604c1ead50feaef84d9fe950075f1",
+            "Evidence:0a2032fba7c266a79386eac7831826d371b244a7e4dbf0df9338b295537ed66d",
+            "Evidence:5f8efedac7a763f7f50e2c4d39b5bd948b80a16ffa0211efb30f689736a44578",
+            "Evidence:7046c40dfa9f320f470409e179f36fdda6175401248962cccd54997748e0cb62",
+            "Evidence:a676d4c4960bd3d44ef7ff715df9b061b89b77d3493d8bf9b7dc7bb67a3dd64d"
+          ]
+        },
+        {
+          "text": "2.2.0 的单标签 rev-list 包含 53efacdf1136edb9462aeca221023a8f9bbd79a9。",
+          "evidence_ids": [
+            "Evidence:3e50f988ed025ebec468ce9146ddad27a385ab0badeb4eb23ab52719b21a9f5b"
+          ]
+        },
+        {
+          "text": "因此，在提供的正式版记录中，PR #372 最早进入的正式版是 2.2.0。",
+          "evidence_ids": [
+            "Evidence:6edbb9faa6f7e14bca75ababe79f2732b943a96a0f038127fc2f21847bd599db",
+            "Evidence:3787f2c26929983c4bee3c3cf22838d898679b64f139333ad71ba29f201c06aa",
+            "Evidence:4cc17d5d30fc50f675ba1a79d678940bc89604c1ead50feaef84d9fe950075f1",
+            "Evidence:0a2032fba7c266a79386eac7831826d371b244a7e4dbf0df9338b295537ed66d",
+            "Evidence:5f8efedac7a763f7f50e2c4d39b5bd948b80a16ffa0211efb30f689736a44578",
+            "Evidence:7046c40dfa9f320f470409e179f36fdda6175401248962cccd54997748e0cb62",
+            "Evidence:a676d4c4960bd3d44ef7ff715df9b061b89b77d3493d8bf9b7dc7bb67a3dd64d",
+            "Evidence:3e50f988ed025ebec468ce9146ddad27a385ab0badeb4eb23ab52719b21a9f5b"
+          ]
+        }
+      ],
+      "links": [
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/104",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/125",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/152",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/154",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/162",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/164",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/169",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/186",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/198",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/216",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/217",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/218",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/228",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/241",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/245",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/260",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/271",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/272",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/287",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/307",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/323",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/324",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/344",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/371",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/372",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/374",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/385",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/394",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/401",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/405",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/53",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/65",
+        "https://api.github.com/repos/pallets/itsdangerous/pulls/98",
+        "https://github.com/pallets/itsdangerous",
+        "https://github.com/pallets/itsdangerous/compare/53efacdf1136edb9462aeca221023a8f9bbd79a9...2.0.0",
+        "https://github.com/pallets/itsdangerous/compare/53efacdf1136edb9462aeca221023a8f9bbd79a9...2.0.1",
+        "https://github.com/pallets/itsdangerous/compare/53efacdf1136edb9462aeca221023a8f9bbd79a9...2.1.0",
+        "https://github.com/pallets/itsdangerous/compare/53efacdf1136edb9462aeca221023a8f9bbd79a9...2.1.1",
+        "https://github.com/pallets/itsdangerous/compare/53efacdf1136edb9462aeca221023a8f9bbd79a9...2.1.2",
+        "https://github.com/pallets/itsdangerous/compare/53efacdf1136edb9462aeca221023a8f9bbd79a9...2.2.0",
+        "https://github.com/pallets/itsdangerous/pull/164",
+        "https://github.com/pallets/itsdangerous/pull/168",
+        "https://github.com/pallets/itsdangerous/pull/169",
+        "https://github.com/pallets/itsdangerous/pull/394",
+        "https://github.com/pallets/itsdangerous/releases/tag/2.0.0",
+        "https://github.com/pallets/itsdangerous/releases/tag/2.0.1",
+        "https://github.com/pallets/itsdangerous/releases/tag/2.1.0",
+        "https://github.com/pallets/itsdangerous/releases/tag/2.1.1",
+        "https://github.com/pallets/itsdangerous/releases/tag/2.1.2",
+        "https://github.com/pallets/itsdangerous/releases/tag/2.2.0"
+      ],
+      "paths": 49
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "question": "截至冻结时间，PR #241 的合并最早进入了哪个 GitHub 正式发布版？请说明合并、发布范围、各标签的包含证据和结论。",
+    "pr": "https://github.com/pallets/itsdangerous/pull/241",
+    "sha": "87d4e83a1ff7810b5016d447b39d82ce28496f8f",
+    "date": "2021-05-18T14:58:55Z",
+    "membership": {
+      "2.0.0": false,
+      "2.0.1": true,
+      "2.1.0": true,
+      "2.1.1": true,
+      "2.1.2": true,
+      "2.2.0": true
+    },
+    "first": "2.0.1"
+  },
+  {
+    "question": "截至冻结时间，PR #406 的合并最早进入了哪个 GitHub 正式发布版？请说明合并、发布范围、各标签的包含证据和结论。",
+    "pr": "https://github.com/pallets/itsdangerous/pull/406",
+    "sha": "31f46a3469dbfb2ecf83dd0c4297c1efc508fcca",
+    "date": "2025-05-28T21:03:54Z",
+    "membership": {
+      "2.0.0": false,
+      "2.0.1": false,
+      "2.1.0": false,
+      "2.1.1": false,
+      "2.1.2": false,
+      "2.2.0": false
+    },
+    "first": null
+  }
+]

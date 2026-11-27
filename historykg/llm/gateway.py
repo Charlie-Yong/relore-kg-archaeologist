@@ -6,12 +6,15 @@ import contextlib
 import copy
 import datetime as dt
 import hashlib
+import itertools
 import json
 import os
 import tempfile
 import time
+import tomllib
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 import httpx
 
@@ -20,6 +23,22 @@ from .pricing import quote_usage
 
 TASKS = {"extract", "answer", "reference", "judge"}
 RATES = {"deepseek-flash": (2, 8), "deepseek-v4-pro": (9, 27)}
+
+
+BAILIAN_FLASH = "bailian/deepseek-v4.1-flash-1017"
+
+
+def bailian_connection():
+    settings_path = Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex") / "config.toml"
+    with settings_path.open("rb") as stream:
+        settings = tomllib.load(stream)["model_providers"]["magpie"]
+    base = settings["base_url"].rstrip("/")
+    parsed = urlsplit(base)
+    if parsed.scheme != "http" or parsed.hostname != "127.0.0.1" or not parsed.port:
+        raise ValueError("百炼问答需要本机已配置的 Codex 中转。")
+    headers = {**settings.get("http_headers", {}),
+               "Authorization": "Bearer " + settings["experimental_bearer_token"]}
+    return base + "/chat/completions", headers
 
 
 def canonical(value: Any) -> str:
@@ -108,6 +127,7 @@ def prepare_request(
     output_schema: dict,
     output_root: str | Path,
     repeat_index: int = 0,
+    persist: bool = True,
 ) -> dict:
     if task not in TASKS or not dataset_id or repeat_index < 0:
         raise ValueError("非法模型任务、dataset_id或repeat_index。")
@@ -149,6 +169,8 @@ def prepare_request(
     }
     if thinking == "enabled":
         body["reasoning_effort"] = config.get("reasoning_effort", "low")
+    elif config.get("route") == BAILIAN_FLASH:
+        body["reasoning_effort"] = "none"
     input_bytes = len(canonical(messages).encode("utf-8"))
     if input_bytes > config.get("max_input_bytes", 200_000):
         raise ValueError("模型输入超过已配置字节上限，禁止静默截断。")
@@ -165,6 +187,14 @@ def prepare_request(
         "timeout_seconds": config.get("timeout_seconds", 90),
         "parameters": {k: v for k, v in body.items() if k != "messages"},
     }
+    if config.get("route") is not None:
+        if (
+            task not in {"extract", "answer"}
+            or model != "deepseek-flash"
+            or config["route"] != BAILIAN_FLASH
+        ):
+            raise ValueError("未识别的问答模型通道。")
+        actual_config["route"] = BAILIAN_FLASH
     identity = {
         "task": task,
         "dataset_id": dataset_id,
@@ -193,7 +223,7 @@ def prepare_request(
         "prepared_at": now(),
     }
     path = directory / "request.json"
-    if not path.exists():
+    if persist and not path.exists():
         save_json(path, request)
     return request
 
@@ -260,7 +290,13 @@ def _run_locked(
             "new_requests": 0,
             "usage": {**cached.get("usage", {}), "new_charge_upper_cny": 0},
         }
-    if not os.environ.get("DEEPSEEK_API_KEY"):
+    local_bailian = request["config"].get("route") == BAILIAN_FLASH
+    if local_bailian:
+        endpoint, headers = bailian_connection()
+    elif os.environ.get("DEEPSEEK_API_KEY"):
+        endpoint = "https://api.deepseek.com/chat/completions"
+        headers = {"Authorization": "Bearer " + os.environ["DEEPSEEK_API_KEY"]}
+    else:
         return {
             "status": "blocked",
             "run_id": request["run_id"],
@@ -269,7 +305,12 @@ def _run_locked(
             "error": "missing_deepseek_api_key",
             "attempts": [],
         }
-    ledger = BudgetLedger(budget["ledger_path"], budget["approved_cny"])
+    provider_balance = budget.get("mode") == "provider_balance"
+    if provider_balance and request["task"] not in {"extract", "answer"}:
+        raise ValueError("余额模式仅适用于试跑抽取和问答")
+    ledger = BudgetLedger(
+        budget["ledger_path"], budget.get("approved_cny"), provider_balance=provider_balance,
+    )
     in_rate, out_rate = RATES[request["body"]["model"]]
     upper = request["input_token_upper_bound"] * in_rate + request["body"]["max_tokens"] * out_rate
     attempts = []
@@ -283,7 +324,11 @@ def _run_locked(
         "parsed": None,
         "usage": {"prompt_tokens": 0, "completion_tokens": 0, "known_usage_attempts": 0},
     }
-    for index in range(request["config"]["max_retries"] + 1):
+    consumed = 0
+    max_attempts = request["config"]["max_retries"] + 1
+    for index in itertools.count():
+        if consumed >= max_attempts:
+            break
         attempt_id = request["run_id"] + f":{index}"
         attempt_dir = directory / "attempts" / str(index)
         previous = ledger.attempt(attempt_id)
@@ -304,6 +349,9 @@ def _run_locked(
                 }
                 save_json(record_path, record)
             attempts.append(record)
+            if record.get("http_status") == 402 or previous["state"] == "rejected":
+                continue  # A provider refusal is not a completed model attempt.
+            consumed += 1
             usage = record.get("usage") or {}
             if all(isinstance(usage.get(k), int) for k in ("prompt_tokens", "completion_tokens")):
                 result["usage"]["known_usage_attempts"] += 1
@@ -317,6 +365,9 @@ def _run_locked(
                 break
             continue
         attempt_body = copy.deepcopy(request["body"])
+        if local_bailian:
+            attempt_body.update(model=BAILIAN_FLASH,
+                                enable_thinking=attempt_body["thinking"]["type"] == "enabled")
         if attempts and attempts[-1].get("error") and attempts[-1].get("http_status") == 200:
             attempt_body["messages"].append(
                 {
@@ -355,17 +406,18 @@ def _run_locked(
         )
         actual_cost = None
         settlement = None
+        provider_rejected = False
+        consumed += 1
         retryable = True
         result["new_requests"] += 1
         try:
             # The credential is used only as an in-memory header, never serialized.
             with httpx.Client(
-                transport=transport, timeout=request["config"]["timeout_seconds"]
+                transport=transport, timeout=request["config"]["timeout_seconds"],
+                trust_env=not local_bailian,
             ) as http:
                 response = http.post(
-                    "https://api.deepseek.com/chat/completions",
-                    json=attempt_body,
-                    headers={"Authorization": "Bearer " + os.environ["DEEPSEEK_API_KEY"]},
+                    endpoint, json=attempt_body, headers=headers,
                 )
             record["http_status"] = response.status_code
             record["provider_request_id"] = response.headers.get("x-request-id")
@@ -374,7 +426,14 @@ def _run_locked(
                 attempt_dir / "response.json",
                 {"status_code": response.status_code, "body": response.text},
             )
-            if not response.is_success:
+            if response.status_code == 402 or (provider_balance and response.status_code == 401):
+                provider_rejected = True
+                retryable = False
+                code = ("provider_balance_exhausted" if response.status_code == 402
+                        else "provider_auth_failed")
+                record["error"] = code
+                result.update(status="blocked", error=code)
+            elif not response.is_success:
                 retryable = response.status_code in {408, 429, 500, 502, 503, 504}
                 record["error"] = f"http_{response.status_code}"
                 retry_after = response.headers.get("retry-after", "0")
@@ -423,9 +482,12 @@ def _run_locked(
                 started_at=record["started_at"],
                 finished_at=record["finished_at"],
             )
-            actual_cost = settlement["charged_micro_cny"] if settlement else None
+            actual_cost = (
+                0 if provider_rejected else settlement["charged_micro_cny"] if settlement else None
+            )
             ledger.settle(
-                attempt_id, actual_cost, canonical(record["usage"]), settlement=settlement
+                attempt_id, actual_cost, canonical(record["usage"]), settlement=settlement,
+                rejected=provider_rejected,
             )
             record["settlement"] = settlement
             record["charged_micro_cny"] = attempt_upper if actual_cost is None else actual_cost

@@ -116,9 +116,10 @@ class GitReader:
         value, source = self.run(["show", sha + ":" + path])
         return value, source
 
-    def changes(self, parent: str, sha: str) -> tuple[list[dict], dict]:
+    def changes(self, parent: str | None, sha: str) -> tuple[list[dict], dict]:
         value, source = self.run(
-            ["diff-tree", "--no-commit-id", "-r", "-M", "--name-status", "-z", parent, sha]
+            ["diff-tree", "--no-commit-id", "-r", "-M", "--name-status", "-z",
+             *([parent] if parent else ["--root"]), sha]
         )
         tokens = value.split("\0")
         changes = []

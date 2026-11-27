@@ -2,6 +2,12 @@
 
 P5页面仅调用P1构建和P2查询；资料采集、任务编排、图查询及统一回答器均沿用所属模块。
 
+## 2026-11-26 v2 升级摘要（便携实机工作台与离线回放）
+
+- **一键便携启动与 `full_history_v1` 对齐**：使用 `tools/serve_frozen.py` 配合 [便携示例配置](../../demo/final/itsdangerous.example.json) 与仓库根 `.streamlit/config.toml`（`toolbarMode = "minimal"` 隐藏 Deploy 栏）直接启动现场工作台；`app/backend.py` 已根据 `provider_balance` 自动选择 `FULL_HISTORY`。
+- **双模切换与实机可观测性**：支持 **「快速实证（推荐 · 秒级）」**（默认 `B_v2_fast_nothink`）与 **「深度思考」** 切换，新增 4 枚一键场景按钮、4 项毫秒级实时遥测（子图检索 ms / 有据问答 ms / 证据路径数 / 核验原文数）、五级证据强度徽章与默认展开的 Top-2 原文卡片。
+- **双防翻车兜底**：`materials/itsdangerous-replay.json`（及仓内 `.local/full-history-itsdangerous/itsdangerous-replay.json`）已升级为 `B_v2_fast_nothink` 的 6 题实测离线回放，断网时可通过 `HISTORYKG_REPLAY_FILE` 秒级切换；详细操作见 [操作与讲稿](../../demo/final/ItsDangerous-操作与讲稿.md) · [答辩追问小抄](../../demo/final/答辩追问应答小抄.md) · [v2 实验汇总索引](../../evaluation/itsdangerous-v2-20261126/README.md)。
+
 ## 启动
 
 在仓库根目录按锁文件安装依赖。一次配置由安装者完成，普通使用只输入仓库URL。
@@ -75,3 +81,45 @@ A/B结果，并明确bootstrap区间跨零和正确弃答率N/A。五页逐页�
 版式几何、字体、页数、标题及精确重导入检查均通过。完整机器可读记录见
 [formal_results_validation.json](../../deliveries/P5/2026-10-30/formal_results_validation.json)。
 具体版本、任务与待验收项统一记录于[P5 handoff](../../deliveries/P5/2026-10-30/handoff.md)。
+
+## 期末汇报可提交版
+
+基于最终冻结数据和P6公开汇总制作了10页期末汇报：
+
+- `demo/final/期末汇报_20261030最终版.pptx`
+- `demo/final/讲稿.md`
+- `demo/final/演示步骤.md`
+- `demo/final/材料说明.md`
+- `demo/final/previews/slide-01.png`至`slide-10.png`
+- `deliveries/P5/2026-10-30/final_presentation_validation.json`
+
+第4页按新增契约1.4.2加入Developer/Function与Authored/Merged/Defines，并明确真实冻结只读重放
+为18 Developer、384 Function、20 Authored、4 Merged、384 Defines。该结果是新数据版本重放，
+不是旧1.4.1生产图原地补写；`Authored/Merged`方向为`Developer→PullRequest`，
+`Defines`方向为`File→Function`，不生成`Developer→Commit`。
+第6页使用跨源演化链：Issue #6093→PR #6096→08-11合并→`05e9c6b`→
+`src/flask/testing.py`→`flask.testing._get_werkzeug_version`，同时说明Issue关闭、
+PR合并与Release可达是不同强度的证据，`class`不冒充Function。
+
+第9页唯一`p6-status-update`文本区采用`feat/p6-formal-results`提交`78eaa07`的公开最终结果：
+全池92/92，6道候选题均两遍完整核验，确认证据不足0；正确弃答率为`N/A`仅因合格分母为0。
+48个答案保持32 ok / 15 empty / 1 error。第二小库`pallets/itsdangerous`得到
+347来源、30讨论、82实体、78关系和180证据；作业为partial并保留记录缺口，
+但validate/graph/retrieval ready，依赖查询返回50路径、25证据、5 claims且出处全部通过。
+共享账本累计9.465795元，剩余10.374205元。A/B的B-A为0.157，95%描述性bootstrap区间
+`[-0.122,0.457]`跨零，仍不宣称显著收益。
+
+最终PPTX已经macOS Microsoft PowerPoint 16.113.4原生打开、导出10页PDF、按2倍比例渲染并复核；
+包结构、几何、字体、3个原生表格、1个原生图表、10份notes、页数与新版第6页均通过，
+未发现裁切或重叠。这不替代Windows字体替换、WPS（可选）和正式课堂彩排；
+姓名、学号、职责确认及组内互评按当前要求留空。
+P2已在真实Neo4j完成扩展分片四跳验收；
+当前生产图仍为旧1.4.1，新增实体来自真实新数据版本重放。公开验收记录为提交
+`19602e6`，真实Neo4j/PostgreSQL回归26 passed，PR #6096两条方向路径均通过。
+
+### 回答与图谱
+
+答案逐条显示，证据编号可跳到同一响应内的原文卡片及 GitHub 链接。证据关系图默认展示
+与答案直接证据或原文重合最多的一条完整关系链，箭头指向原有关系终点，切换链不触发查询。
+时间线按事件时间分页，依赖与版本比较各有对应视图。窄屏可点击“跳到可视化”直接查看图表。
+真实在线响应和冻结回放使用同一展示入口。

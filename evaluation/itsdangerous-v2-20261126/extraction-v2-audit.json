@@ -1,0 +1,1701 @@
+{
+  "heldout20_references": [
+    {
+      "action": "fix",
+      "rationale": null,
+      "rationale_evidence": [],
+      "rationale_status": "not_stated",
+      "reference_id": "dfb99a604116a58a47af165c314b6699858b7e5a5cf371526e5867220244d733",
+      "statement": "The missing TimedJSONWebSignatureSerializer documentation will be handled in the next release.",
+      "statement_evidence": [
+        {
+          "quote": "This will be handled in the next release.",
+          "source_id": "SourceDocument:0c07085573b644d1f708f80ab100e38ca267435a631521e496b02bd11ca70cd8"
+        }
+      ],
+      "status": "accepted",
+      "subject_id": "Issue:b63ef0209d9145217c4ec38db18cd922bb1f904edf6826aa091edc673e41b479",
+      "target_repo": "pallets/itsdangerous",
+      "unit_id": "SourceUnit:a86b8d746ea4ba440e908ee12aeb6ee26d7053a34ee8e76786e786263f2052cb"
+    },
+    {
+      "action": "remove",
+      "rationale": "The default fallback was always intended as temporary; the SHA-512 change was done for optics and caused backwards compatibility issues and greatly increased the size of the signed values.",
+      "rationale_evidence": [
+        {
+          "quote": "The change to SHA-512 was done for optics at the time, but caused backwards compatibility issues and greatly increased the size of the signed values.",
+          "source_id": "SourceDocument:854c207bf4b0f26fd9914feccb707b90200ce359e96cec71e625ca49b7fb3307"
+        }
+      ],
+      "rationale_status": "stated",
+      "reference_id": "8592db10db686d6078c93aacbc2e5e353902f39038987e300e63048b182611a7",
+      "statement": "Remove the default sha512 fallback signer and make the default fallback signers empty.",
+      "statement_evidence": [
+        {
+          "quote": "This default fallback was always intended as temporary. Remove it and make the default fallback signers empty.",
+          "source_id": "SourceDocument:854c207bf4b0f26fd9914feccb707b90200ce359e96cec71e625ca49b7fb3307"
+        }
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:1bfed68d08d453bd3a95f65086071e8244486c9714701ef6a2405b6874f89dc9",
+      "target_repo": "pallets/itsdangerous",
+      "unit_id": "SourceUnit:89bd334c4a6568d1cb4a1918800bf4563249ede2d24564eebfa707ecac00dece"
+    },
+    {
+      "action": "keep",
+      "rationale": "The only thing changed is the transport format, not the payload; unless it makes forging signatures easier, it is not a security threat.",
+      "rationale_evidence": [
+        {
+          "quote": "The only thing that you changed is the transport format, not the payload.",
+          "source_id": "SourceDocument:fe66e68de27355298cd90d9579d12fa7917b9cad3e5b7d61f84c571984e5f7cb"
+        },
+        {
+          "quote": "unless this makes it easier for an attacker to forge signatures or create new signatures based on existing ones, I don't see it as a security threat.",
+          "source_id": "SourceDocument:5e80769dc1cb96bd38d417221cafb92a8f4c8be160d6723f6177705507194320"
+        }
+      ],
+      "rationale_status": "stated",
+      "reference_id": "81f66d261bde6ae925b27461aab20cd2094852bc2454ded8c6ab16e74e73af44",
+      "statement": "Close the issue without changing behavior, treating the base64 transport-format variation as not a security problem.",
+      "statement_evidence": [
+        {
+          "quote": "OK, so probably this issue can be closed safely.",
+          "source_id": "SourceDocument:ff4e9aa9342987942d57c95948a4682fe4979cf2e8e73a23f2a2e9841485ff4d"
+        },
+        {
+          "quote": "ACK, should be closed.",
+          "source_id": "SourceDocument:d776aafed9926691a2453cc8d115e04c3b1e46c1a0c61b6fc93059bf687e7106"
+        }
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:5e9b7527b4fe6cb2f99fda60a49b420aaca667ffd103b4ffca4b154b5bc39f94",
+      "target_repo": "pallets/itsdangerous",
+      "unit_id": "SourceUnit:b707fa835e932c892e3ec4c31c8d9ef78d5c63186dceef1324f8af16e3639aa2"
+    },
+    {
+      "action": "fix",
+      "rationale": "The signature is urlsafe_b64encoded, so the separator '-' might appear in the signature or timestamp, resulting in a wrong timestamp or wrong signature.",
+      "rationale_evidence": [
+        {
+          "quote": "So part of the signature (and/or part of the timestamp) _might_ contain your separator `-` , which would result in either a wrong timestamp or a wrong signature.",
+          "source_id": "SourceDocument:2344873edc24eae721fda0a1c1e3e8847a2ad453b7324f052617ca51257a4f91"
+        }
+      ],
+      "rationale_status": "stated",
+      "reference_id": "e28faad98bcc52e3e9f56b81a37087cbd715d7bd7d572aac674303808d9139a3",
+      "statement": "Fix TimestampSigner so a separator character appearing in the base64 signature or timestamp does not cause wrong parsing.",
+      "statement_evidence": [
+        {
+          "quote": "I fixed it exactly as @johnlam described.",
+          "source_id": "SourceDocument:874a0f01c5f70a7da516e29a8f31ae02ae8c5d1ff16c205dc6d97e352f7b93fa"
+        }
+      ],
+      "status": "accepted",
+      "subject_id": "Issue:b2ea40d1c19e5738be556cf1819180b2871dd31f5c145c278061431f24691a36",
+      "target_repo": "pallets/itsdangerous",
+      "unit_id": "SourceUnit:b0ae23595252db9394fcae089412d9e04f8c56501536d689de69d6c5b7b53a3e"
+    },
+    {
+      "action": "keep",
+      "rationale": "This sort of usage never worked.",
+      "rationale_evidence": [
+        {
+          "quote": "this sort of usage never worked.",
+          "source_id": "SourceDocument:874a0f01c5f70a7da516e29a8f31ae02ae8c5d1ff16c205dc6d97e352f7b93fa"
+        }
+      ],
+      "rationale_status": "stated",
+      "reference_id": "f98c79db2223da8f15ea9a6d906598432c3c7047665d0a207dcfddc6a87aa1f8",
+      "statement": "Do not treat the fix as API breakage.",
+      "statement_evidence": [
+        {
+          "quote": "I'm not considering this API breakage because this sort of usage never worked.",
+          "source_id": "SourceDocument:874a0f01c5f70a7da516e29a8f31ae02ae8c5d1ff16c205dc6d97e352f7b93fa"
+        }
+      ],
+      "status": "accepted",
+      "subject_id": "Issue:b2ea40d1c19e5738be556cf1819180b2871dd31f5c145c278061431f24691a36",
+      "target_repo": "pallets/itsdangerous",
+      "unit_id": "SourceUnit:b0ae23595252db9394fcae089412d9e04f8c56501536d689de69d6c5b7b53a3e"
+    },
+    {
+      "action": "add",
+      "rationale": "Python 3.9 has been released on October 5, 2020. So it makes sense to add it to CI.",
+      "rationale_evidence": [
+        {
+          "quote": "Python 3.9 has been released on October 5, 2020. So it makes sense to add it to CI.",
+          "source_id": "SourceDocument:6cbe61d4eb1649bd8179a84175c36b1059456ba5e3bfc17b9b251b2998a92695"
+        }
+      ],
+      "rationale_status": "stated",
+      "reference_id": "f0f78a53d0507049280dd069703ca3884f55c5fa9ffcc08c127a3721ffc4fba4",
+      "statement": "Add Python 3.9 to CI.",
+      "statement_evidence": [
+        {
+          "quote": "Python 3.9 has been released on October 5, 2020. So it makes sense to add it to CI.",
+          "source_id": "SourceDocument:6cbe61d4eb1649bd8179a84175c36b1059456ba5e3bfc17b9b251b2998a92695"
+        }
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:938927395da9bd0cb590da746868ab91d32dd539446f153d236384380d0ed7c6",
+      "target_repo": "pallets/itsdangerous",
+      "unit_id": "SourceUnit:7b546880cb081ca07d89f37a5bbb3fd17df1af86cea26ec46b4c3ff110c200b0"
+    },
+    {
+      "action": "add",
+      "rationale": "Will add this once https://github.com/actions/virtual-environments/issues/1740 is closed.",
+      "rationale_evidence": [
+        {
+          "quote": "Will add this once https://github.com/actions/virtual-environments/issues/1740 is closed.",
+          "source_id": "SourceDocument:5016dcd63c019f46b49779f2ff1014932c77a1c79b97a5e686dbf218756d00e1"
+        }
+      ],
+      "rationale_status": "stated",
+      "reference_id": "21f061145c27264bed9c0337987a8e38cb7f66e76d6cf4a8a7a95c6ce40531e5",
+      "statement": "Defer adding Python 3.9 to CI until the actions virtual-environments issue is closed.",
+      "statement_evidence": [
+        {
+          "quote": "Will add this once https://github.com/actions/virtual-environments/issues/1740 is closed.",
+          "source_id": "SourceDocument:5016dcd63c019f46b49779f2ff1014932c77a1c79b97a5e686dbf218756d00e1"
+        }
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:938927395da9bd0cb590da746868ab91d32dd539446f153d236384380d0ed7c6",
+      "target_repo": "pallets/itsdangerous",
+      "unit_id": "SourceUnit:7b546880cb081ca07d89f37a5bbb3fd17df1af86cea26ec46b4c3ff110c200b0"
+    },
+    {
+      "action": "change",
+      "rationale": null,
+      "rationale_evidence": [],
+      "rationale_status": "not_stated",
+      "reference_id": "9551c65e0dcd6dc02107a49fd246fa18a600f779207bdf7b63d8b42c11672a7a",
+      "statement": "Add the missing dollar symbol for the command to add remote in the contributing guide.",
+      "statement_evidence": [
+        {
+          "quote": "- Add the missing dollar symbol for the command to add remote.",
+          "source_id": "SourceDocument:0f706ca657523147fe4db94f4a398471fd15a0af2f64c4324c421c9ba4c4d3d8"
+        }
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:044c77e8548c2dc6d73c5e35ba9da789faa7efa46b21bc56bea5990df6413da4",
+      "target_repo": "pallets/itsdangerous",
+      "unit_id": "SourceUnit:5f821da803d32f128f1a246ad58f90183892277a63eafa5045ae9e19fb6e09dc"
+    },
+    {
+      "action": "change",
+      "rationale": null,
+      "rationale_evidence": [],
+      "rationale_status": "not_stated",
+      "reference_id": "8b3ed04648fdb1ada06706b85440e9a35b6ed86895d102986ee281fbf6369a3b",
+      "statement": "Add the step to upgrade pip and setuptools in the contributing guide.",
+      "statement_evidence": [
+        {
+          "quote": "- Add the step to upgrade pip and setuptools.",
+          "source_id": "SourceDocument:0f706ca657523147fe4db94f4a398471fd15a0af2f64c4324c421c9ba4c4d3d8"
+        }
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:044c77e8548c2dc6d73c5e35ba9da789faa7efa46b21bc56bea5990df6413da4",
+      "target_repo": "pallets/itsdangerous",
+      "unit_id": "SourceUnit:5f821da803d32f128f1a246ad58f90183892277a63eafa5045ae9e19fb6e09dc"
+    },
+    {
+      "action": "fix",
+      "rationale": null,
+      "rationale_evidence": [],
+      "rationale_status": "not_stated",
+      "reference_id": "74583332095449de29902bff258b01b33ad5c5a286843280549652fb48af2662",
+      "statement": "Fix the fork URL in the contributing guide.",
+      "statement_evidence": [
+        {
+          "quote": "- Fix the fork URL.",
+          "source_id": "SourceDocument:0f706ca657523147fe4db94f4a398471fd15a0af2f64c4324c421c9ba4c4d3d8"
+        }
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:044c77e8548c2dc6d73c5e35ba9da789faa7efa46b21bc56bea5990df6413da4",
+      "target_repo": "pallets/itsdangerous",
+      "unit_id": "SourceUnit:5f821da803d32f128f1a246ad58f90183892277a63eafa5045ae9e19fb6e09dc"
+    },
+    {
+      "action": "change",
+      "rationale": null,
+      "rationale_evidence": [],
+      "rationale_status": "not_stated",
+      "reference_id": "8ae0e021354aca1f375afce01ce79814fbebb8c5c3991e2c803e091c2ff67dc4",
+      "statement": "Update the example branch to the latest branch in the contributing guide.",
+      "statement_evidence": [
+        {
+          "quote": "- Update example branch to the latest branch.",
+          "source_id": "SourceDocument:0f706ca657523147fe4db94f4a398471fd15a0af2f64c4324c421c9ba4c4d3d8"
+        }
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:044c77e8548c2dc6d73c5e35ba9da789faa7efa46b21bc56bea5990df6413da4",
+      "target_repo": "pallets/itsdangerous",
+      "unit_id": "SourceUnit:5f821da803d32f128f1a246ad58f90183892277a63eafa5045ae9e19fb6e09dc"
+    },
+    {
+      "action": "change",
+      "rationale": null,
+      "rationale_evidence": [],
+      "rationale_status": "not_stated",
+      "reference_id": "0493441020cefc1271b861936333154ea81ad4de4b669b76870b2aedfda38987",
+      "statement": "Automated pre-commit autoupdate proposing version bumps for pyupgrade, flake8, pip-compile-multi, and pre-commit-hooks in the pre-commit configuration.",
+      "statement_evidence": [
+        {
+          "quote": "updates:\n- [github.com/asottile/pyupgrade: v3.2.0 → v3.3.0]",
+          "source_id": "SourceDocument:120492a959deb21163274bffe04d6fa4fcc63b2e2de298e1d752e6b4c13d7b03"
+        },
+        {
+          "quote": "- [github.com/PyCQA/flake8: 5.0.4 → 6.0.0]",
+          "source_id": "SourceDocument:120492a959deb21163274bffe04d6fa4fcc63b2e2de298e1d752e6b4c13d7b03"
+        },
+        {
+          "quote": "- [github.com/peterdemin/pip-compile-multi: v2.5.0 → v2.6.1]",
+          "source_id": "SourceDocument:120492a959deb21163274bffe04d6fa4fcc63b2e2de298e1d752e6b4c13d7b03"
+        },
+        {
+          "quote": "- [github.com/pre-commit/pre-commit-hooks: v4.3.0 → v4.4.0]",
+          "source_id": "SourceDocument:120492a959deb21163274bffe04d6fa4fcc63b2e2de298e1d752e6b4c13d7b03"
+        }
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:178487835036c46a8ced494d19f424db17ca1c1865dbbcdc27e8ea4857290eff",
+      "target_repo": "pallets/itsdangerous",
+      "unit_id": "SourceUnit:67b6928af1b3190a5f5f1fcef216a641c051a91ec604e3d4b0fc03b13f3368fc"
+    },
+    {
+      "action": "add",
+      "rationale": "It is not possible through any easy means to set a custom hashlib on these objects.",
+      "rationale_evidence": [
+        {
+          "quote": "it isn't possible through any easy means to set a custom hashlib on these objects.",
+          "source_id": "SourceDocument:c4ba3dfe22c7f247cf4e6b2d2b2528e79e5b7d2a859bd89b1b32ffa0352ba2a9"
+        }
+      ],
+      "rationale_status": "stated",
+      "reference_id": "7cfc82ee625f0f6e42b212fe082f241b370cb176843f784e4cbe73f05231c4fe",
+      "statement": "Proposal to allow setting a custom hashlib digest method on serializer objects via a digest_method attribute.",
+      "statement_evidence": [
+        {
+          "quote": "it isn't possible through any easy means to set a custom hashlib on these objects.",
+          "source_id": "SourceDocument:c4ba3dfe22c7f247cf4e6b2d2b2528e79e5b7d2a859bd89b1b32ffa0352ba2a9"
+        },
+        {
+          "quote": "s.digest_method = hashlib.sha512",
+          "source_id": "SourceDocument:c4ba3dfe22c7f247cf4e6b2d2b2528e79e5b7d2a859bd89b1b32ffa0352ba2a9"
+        }
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:8ce46fa7662f87948ab331ac3c0af85512748a7d87f68c2da14fe60a36c34702",
+      "target_repo": "pallets/itsdangerous",
+      "unit_id": "SourceUnit:e1c01aa2b1155f44df4afbfeea94c19aa648b1d5e5d666016c2b437ce65e5a0f"
+    },
+    {
+      "action": "change",
+      "rationale": "This fixes the test failures in \"bad payload\" tests that incidentally surface when using zlib-ng as the compression library.",
+      "rationale_evidence": [
+        {
+          "quote": "This fixes the test failures in \"bad payload\" tests that incidentally surface when using zlib-ng as the compression library.",
+          "source_id": "SourceDocument:0b6dd6df93c2f856a92e010bc3ac283aeb45880eafd1b4c05cda35e427020955"
+        }
+      ],
+      "rationale_status": "stated",
+      "reference_id": "ab3e8e8527a442fa3fef10782e10132614cde610689c02f16d4ec980085464f1",
+      "statement": "Restore the old behavior of urlsafe_b64decode() to require padding when running on Python 3.15+, to fix raising BadData in some cases of malformed input.",
+      "statement_evidence": [
+        {
+          "quote": "Restore the old behavior of `urlsafe_b64decode()` to require padding when running on Python 3.15+, in order to fix raising `BadData` in some cases of malformed input.",
+          "source_id": "SourceDocument:0b6dd6df93c2f856a92e010bc3ac283aeb45880eafd1b4c05cda35e427020955"
+        }
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:51da05c214799402f4294ed41600183605cfa42a343a63fae6ad612be9eb5673",
+      "target_repo": "pallets/itsdangerous",
+      "unit_id": "SourceUnit:b4a4f5df09f6fb8cac49ccd381edf9b1016c757cbab1d79f451707da205d6382"
+    }
+  ],
+  "heldout20_unit_ids": [
+    "SourceUnit:c8ae90c3a8e37a40c006f14f8245f03793c27a75403b20c6639eb1bbd5a120bd",
+    "SourceUnit:81c637c51ae0a512a6587bf5ef4fcb6b9f1452b669038b5e559a667c908889ba",
+    "SourceUnit:2d08e4ed72d6cdc6d1ff7d5776c0b3200acfd3b544d69c2b1efedb09990579e6",
+    "SourceUnit:a86b8d746ea4ba440e908ee12aeb6ee26d7053a34ee8e76786e786263f2052cb",
+    "SourceUnit:89bd334c4a6568d1cb4a1918800bf4563249ede2d24564eebfa707ecac00dece",
+    "SourceUnit:1e9fff2755628324de272cc7602cc282ff8e349dd24dac7d5efe55248b15f958",
+    "SourceUnit:b707fa835e932c892e3ec4c31c8d9ef78d5c63186dceef1324f8af16e3639aa2",
+    "SourceUnit:b0ae23595252db9394fcae089412d9e04f8c56501536d689de69d6c5b7b53a3e",
+    "SourceUnit:7b546880cb081ca07d89f37a5bbb3fd17df1af86cea26ec46b4c3ff110c200b0",
+    "SourceUnit:50d134b5283df35a97e6bd4d98b589a6a1513fedba2f975601fde554fcb24005",
+    "SourceUnit:b34e06cfe24bc448434bbe65eb40aeb3d280d7839054d647bc9258019f37ae05",
+    "SourceUnit:5f821da803d32f128f1a246ad58f90183892277a63eafa5045ae9e19fb6e09dc",
+    "SourceUnit:67b6928af1b3190a5f5f1fcef216a641c051a91ec604e3d4b0fc03b13f3368fc",
+    "SourceUnit:e1c01aa2b1155f44df4afbfeea94c19aa648b1d5e5d666016c2b437ce65e5a0f",
+    "SourceUnit:b4a4f5df09f6fb8cac49ccd381edf9b1016c757cbab1d79f451707da205d6382",
+    "SourceUnit:38ef4df30bdfc9f21136e024a3797bf4f4219c4b358c69f08d8558b15518161d",
+    "SourceUnit:6a85e30dbf36a9f09a01dbd227e7c5c7a61fc0c63c3dc54cbd65dfbeb3533c33",
+    "SourceUnit:b177944be0cbccfded48850b80f2335c06b6b80afa6af6879356cffa6626032c",
+    "SourceUnit:ccb65bfe80471ce470332cef472d7ca7de09e597180e377e20cfc4ee611152ff",
+    "SourceUnit:9c0f1e248fe541fe02cd416fe081806f9041318593a8d15ad6c0e18dee0dcbd5"
+  ],
+  "heldout20_unresolved": [
+    {
+      "action": "change",
+      "rationale": "The format is not compatible between Django and itsdangerous.",
+      "rationale_evidence": [
+        {
+          "quote": "The format is not compatible between Django and itsdangerous.",
+          "source_id": "SourceDocument:c9007fba30a9ff5a89188da19a196790ff1e0e9d2ce425c9021f942b37fd465d"
+        }
+      ],
+      "rationale_status": "stated",
+      "reference_id": "45918cdad0b12f7bcbb4af8d15caf24ea07d25561a7bb7774408a5ba65690d71",
+      "statement": "Proposed using the same signing implementation in both Django and itsdangerous for compatibility.",
+      "statement_evidence": [
+        {
+          "quote": "I would propose to use the same implementation in both.",
+          "source_id": "SourceDocument:c9007fba30a9ff5a89188da19a196790ff1e0e9d2ce425c9021f942b37fd465d"
+        }
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:75abd7d62624f87d80e467cc389f1220517e5f893f1d3d4651148dc7472e857a",
+      "target_repo": null,
+      "unit_id": "SourceUnit:81c637c51ae0a512a6587bf5ef4fcb6b9f1452b669038b5e559a667c908889ba"
+    }
+  ],
+  "heldout20_v1_judgments": [
+    {
+      "explanation": "The prediction matches the original thread for issue #34: mitsuhiko's comment states 'The format is not compatible between Django and itsdangerous. I would propose to use the same implementation in both.' This is a proposal, not an accepted change, and the prediction correctly records status as proposed. The rationale ('The signed-cookie format is not compatible between Django and itsdangerous') captures the explicitly stated reason for the proposal, backed by the cited evidence quote. No silver references were supplied, so no reference_ids can be matched; this is a reference disagreement, not a defect in the prediction.",
+      "prediction_id": "Decision:fcbc67292c6ea6c00b573da7ce84819025202d8b6f9cd38e55a05f55424c39e7",
+      "rationale_support": "supported",
+      "reference_ids": [],
+      "support": "supported"
+    },
+    {
+      "explanation": "Prediction matches the reference: same project (pallets/itsdangerous), same subject (issue 83, TimedJSONWebSignatureSerializer docs), same action (fix), same accepted status, and semantically equivalent conclusion that the missing docs will be handled in the next release, supported by davidism's authoritative comment. Rationale is null/not stated, so no separate rationale captures any reasons; rationale_support is unsupported.",
+      "prediction_id": "Decision:6669f9de67879d17e7a041c6ef4044b9cd63e1be8aa467e0ef250067586a6ae9",
+      "rationale_support": "unsupported",
+      "reference_ids": [
+        "dfb99a604116a58a47af165c314b6699858b7e5a5cf371526e5867220244d733"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Prediction matches the reference: same project, subject (issue 155, fallback signer removal), action (remove), proposed status, and equivalent statement to remove the default fallback signer and make default fallback signers empty, supported by the issue body. However, the prediction's rationale only captures one stated reason ('always intended as temporary') while the reference rationale also includes the SHA-512 optics, backwards compatibility issues, and increased signed value size; the rationale is partial, so rationale_support is unsupported.",
+      "prediction_id": "Decision:5afcfb831f78245c8ecf0df0ba4f14e99c8eeaa2ee95c50554d34641cc617b3d",
+      "rationale_support": "unsupported",
+      "reference_ids": [
+        "8592db10db686d6078c93aacbc2e5e353902f39038987e300e63048b182611a7"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Project (pallets/itsdangerous), subject (Issue 193, add Python 3.9 to CI), action (add), and status (proposed) all match reference f0f78a53. The statement is directly supported by the issue body quote. The prediction's rationale includes the reference's stated reason (Python 3.9 released Oct 5, 2020) plus the deferral condition from davidism's comment; both are explicitly stated in the original thread, so the rationale fully captures the matched reference's stated reason and is source-supported.",
+      "prediction_id": "Decision:733900cc5ff1fba1f2135f08276771e790d75a9c264fc7a0e26f0d097b0b7e35",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "f0f78a53d0507049280dd069703ca3884f55c5fa9ffcc08c127a3721ffc4fba4"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "PR #307 by dependabot bumps actions/cache from 3.0.2 to 3.0.3, matching the prediction's subject, action, and proposed status. No reference exists for this PR (reference disagreement: the silver reference set only covers PR #244 and Issue #97), so no reference_ids. Rationale is empty while the PR body states reasons (fixed empty cache save when no files available), so rationale_support is unsupported.",
+      "prediction_id": "Decision:30195cb896e9ab01b140e0e381ee2db8efa294b2fa7bd3a5b3d5c428b351b509",
+      "rationale_support": "unsupported",
+      "reference_ids": [],
+      "support": "supported"
+    },
+    {
+      "explanation": "Matches reference for PR #244: 'Add the missing dollar symbol for the command to add remote in the contributing guide.' Evidence quote '- Add the missing dollar symbol for the command to add remote.' supports it. Action differs (add vs change) but the atomic conclusion is equivalent. Rationale is empty and the reference rationale is not_stated, so rationale_support is unsupported.",
+      "prediction_id": "Decision:581187888f7af0c4ce9829fc9983abf362adaa15f65fc692d866a35ca080a302",
+      "rationale_support": "unsupported",
+      "reference_ids": [
+        "9551c65e0dcd6dc02107a49fd246fa18a600f779207bdf7b63d8b42c11672a7a"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Matches reference: 'Add the step to upgrade pip and setuptools in the contributing guide.' Evidence quote '- Add the step to upgrade pip and setuptools.' supports it. Empty rationale, reference rationale not stated.",
+      "prediction_id": "Decision:b5726d33c6b0c4ccd72602d42e4d4fcfbcea1c61096026daab68036c5e36a102",
+      "rationale_support": "unsupported",
+      "reference_ids": [
+        "8b3ed04648fdb1ada06706b85440e9a35b6ed86895d102986ee281fbf6369a3b"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Matches reference: 'Fix the fork URL in the contributing guide.' Evidence quote '- Fix the fork URL.' supports it. Empty rationale, reference rationale not stated.",
+      "prediction_id": "Decision:a047c9fa23ed3cb86f452c51f86888080f4db25e2e0c1ec2317595740c230707",
+      "rationale_support": "unsupported",
+      "reference_ids": [
+        "74583332095449de29902bff258b01b33ad5c5a286843280549652fb48af2662"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Matches reference: 'Update the example branch to the latest branch in the contributing guide.' Evidence quote '- Update example branch to the latest branch.' supports it. Empty rationale, reference rationale not stated.",
+      "prediction_id": "Decision:0c886e163629424653b2be4146322f68025b9dbd0177d516e2ff33d8bb27c63b",
+      "rationale_support": "unsupported",
+      "reference_ids": [
+        "8ae0e021354aca1f375afce01ce79814fbebb8c5c3991e2c803e091c2ff67dc4"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Issue #97 body asks 'if adding a lower time resolution as well as monotonic time will help to reduce the risk of token replay attacks and skewed clocks' — a proposal/question, matching the prediction's statement and stated rationale verbatim. No reference exists for Issue #97 (reference disagreement: silver references only cover PR #244), so no reference_ids. Rationale captures the explicitly stated reason from the issue body, so rationale_support is supported.",
+      "prediction_id": "Decision:7bd45cf78b02984b5058448d2629702020d6c831d0b58ed00fee15502570ec05",
+      "rationale_support": "supported",
+      "reference_ids": [],
+      "support": "supported"
+    },
+    {
+      "explanation": "Prediction matches reference ab3e8e85: same PR #428, same action (change), proposed status, and semantically identical statement about restoring urlsafe_b64decode() padding requirement on Python 3.15+ to fix BadData on malformed input. Rationale captures both stated reasons from the PR body (fixing BadData on malformed input and the zlib-ng 'bad payload' test failures), both cited and supported by the source.",
+      "prediction_id": "Decision:2c8cd059d795481b8cc2795ea68ad6c676a16bbaf8387ddc26b96f5d5a9a6115",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "ab3e8e8527a442fa3fef10782e10132614cde610689c02f16d4ec980085464f1"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Prediction matches reference 7cfc82ee: same PR #12, action add, proposed status, and equivalent statement about setting a custom hashlib digest method on serializer objects via digest_method. Rationale matches the reference's stated reason (not possible through any easy means to set a custom hashlib) and is cited and supported by the PR body.",
+      "prediction_id": "Decision:ea7333d8665efd02c824c17b752551c1039fd6d6ca46541888d50dfe19807498",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "7cfc82ee625f0f6e42b212fe082f241b370cb176843f784e4cbe73f05231c4fe"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Project (pallets/itsdangerous), subject (PR #355), action (bump actions/setup-python 4.6.1→4.7.0) and status (proposed, dependabot PR with no merge evidence) all match the PR body source. No references supplied, so no reference_ids; this is a reference disagreement (reference missed the item). Rationale is empty, so rationale_support is unsupported.",
+      "prediction_id": "Decision:15d9d20ea5bedcba83b91ba0bd9636fd53060a52894b57cb9c57bf923e19088b",
+      "rationale_support": "unsupported",
+      "reference_ids": [],
+      "support": "supported"
+    },
+    {
+      "explanation": "Project, subject (PR #303), action (bump actions/checkout 2→3) and status (proposed) match the PR body source exactly. No references supplied; reference disagreement. Empty rationale means rationale_support is unsupported.",
+      "prediction_id": "Decision:b0d23dd1d85bab68951e2b737c9e711d54142007cad647f758a9252b4ab25577",
+      "rationale_support": "unsupported",
+      "reference_ids": [],
+      "support": "supported"
+    },
+    {
+      "explanation": "Project, subject (PR #182), action (bump sphinx 3.1.2→3.2.0) and status (proposed) match the PR body source. No references supplied; reference disagreement. Empty rationale means rationale_support is unsupported.",
+      "prediction_id": "Decision:01ea07e07874ed49bdf7bad99dd8ad50b66e02d9bf6aef0ddb85b98d6e5de425",
+      "rationale_support": "unsupported",
+      "reference_ids": [],
+      "support": "supported"
+    },
+    {
+      "explanation": "The PR body for pallets/itsdangerous PR #343 explicitly states the slsa-framework/slsa-github-generator GitHub Actions dependency is bumped from 1.5.0 to 1.6.0, matching the prediction's subject, action, and proposed status. No silver references were supplied, so no reference_ids can be matched (reference disagreement: reference set is empty). Rationale is null, so rationale_support is unsupported.",
+      "prediction_id": "Decision:554e6d8219786dc0d93565441886c30fe0b766f3ab9ad7bdf26bb52f4215958a",
+      "rationale_support": "unsupported",
+      "reference_ids": [],
+      "support": "supported"
+    },
+    {
+      "explanation": "The PR body for pallets/itsdangerous PR #214 explicitly states sphinx is bumped from 3.4.1 to 3.4.3, matching the prediction's subject, action, and proposed status. No silver references were supplied, so no reference_ids can be matched (reference disagreement: reference set is empty). Rationale is null, so rationale_support is unsupported.",
+      "prediction_id": "Decision:d0380a38ae920a7dd2bd96ad061e6f95919a4176a5622223ab045b3cf638ee8b",
+      "rationale_support": "unsupported",
+      "reference_ids": [],
+      "support": "supported"
+    }
+  ],
+  "heldout20_v1_predictions": [
+    {
+      "action": "change",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:15d9d20ea5bedcba83b91ba0bd9636fd53060a52894b57cb9c57bf923e19088b",
+      "model_run_id": "ed7a048c648ce96abf3b6d235b94a8d1812fb26f3921bea7c88f99e459427336",
+      "prediction_id": "Decision:15d9d20ea5bedcba83b91ba0bd9636fd53060a52894b57cb9c57bf923e19088b",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Bump actions/setup-python from 4.6.1 to 4.7.0 in pallets/itsdangerous.",
+      "statement_evidence_ids": [
+        "Evidence:32bf2aed7f8791a4b014c3e0d444b950b5a0b82e1259d1d2e1fcff113da65ffe"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:fbd9f2aa09fe7638cc60db64cc355f051b2d5a1d6bb5ed5dd79e89e0cc901238",
+      "unit_id": "SourceUnit:38ef4df30bdfc9f21136e024a3797bf4f4219c4b358c69f08d8558b15518161d"
+    },
+    {
+      "action": "change",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:554e6d8219786dc0d93565441886c30fe0b766f3ab9ad7bdf26bb52f4215958a",
+      "model_run_id": "a0a6324dc85829742f9a5377296378884352c6d75301aad10c1a64e1b292cbe3",
+      "prediction_id": "Decision:554e6d8219786dc0d93565441886c30fe0b766f3ab9ad7bdf26bb52f4215958a",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Bump the slsa-framework/slsa-github-generator GitHub Actions dependency from 1.5.0 to 1.6.0.",
+      "statement_evidence_ids": [
+        "Evidence:2900d18cef7218d1c220e2816af2966da7a39fc4e1de3b68b0177cd23061282e"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:cc958fe1abc83aee27c5a49598034c9accb94754a892a14c9f2d4a269f85569f",
+      "unit_id": "SourceUnit:9c0f1e248fe541fe02cd416fe081806f9041318593a8d15ad6c0e18dee0dcbd5"
+    },
+    {
+      "action": "change",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:30195cb896e9ab01b140e0e381ee2db8efa294b2fa7bd3a5b3d5c428b351b509",
+      "model_run_id": "0c8d895e2b933f48ca3989e50666bbdce2c6d49a303fa8b9ca496626721a16c4",
+      "prediction_id": "Decision:30195cb896e9ab01b140e0e381ee2db8efa294b2fa7bd3a5b3d5c428b351b509",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Bump the actions/cache GitHub Action dependency from 3.0.2 to 3.0.3.",
+      "statement_evidence_ids": [
+        "Evidence:117fe532f82682856ff556ee5b23bb3cb9cb8b6cf8767328f49b0952b4fbe62a"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:18a213cc8dd8956d330f03842cc632d0407734960254e9e9d90b3c7e7404f16b",
+      "unit_id": "SourceUnit:b34e06cfe24bc448434bbe65eb40aeb3d280d7839054d647bc9258019f37ae05"
+    },
+    {
+      "action": "change",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:b0d23dd1d85bab68951e2b737c9e711d54142007cad647f758a9252b4ab25577",
+      "model_run_id": "c181e880971611828eecc2307b8a38ea378c241199247ea53103aedb680b5772",
+      "prediction_id": "Decision:b0d23dd1d85bab68951e2b737c9e711d54142007cad647f758a9252b4ab25577",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "actions/checkout is proposed to be bumped from version 2 to version 3 in pallets/itsdangerous.",
+      "statement_evidence_ids": [
+        "Evidence:f18929867a12ce344bff7491feec0d0e3c6dd2da612362f4d83f7eb16a77b330"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:3751d30fd721ceddd12f46e417d2af0577127ae27aaca34593aab19ef0ce7550",
+      "unit_id": "SourceUnit:b177944be0cbccfded48850b80f2335c06b6b80afa6af6879356cffa6626032c"
+    },
+    {
+      "action": "add",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:581187888f7af0c4ce9829fc9983abf362adaa15f65fc692d866a35ca080a302",
+      "model_run_id": "3aae5ccdc51bd9dea55db35e7d48a806aed772684ecc3d02aaefd6daaed5b0bc",
+      "prediction_id": "Decision:581187888f7af0c4ce9829fc9983abf362adaa15f65fc692d866a35ca080a302",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "The proposed contributing-guide change adds the missing dollar symbol for the command to add a remote.",
+      "statement_evidence_ids": [
+        "Evidence:f9d991fa64ab11e73cd9ce8d4f784461296801486ee646459686a63285525c9f"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:044c77e8548c2dc6d73c5e35ba9da789faa7efa46b21bc56bea5990df6413da4",
+      "unit_id": "SourceUnit:5f821da803d32f128f1a246ad58f90183892277a63eafa5045ae9e19fb6e09dc"
+    },
+    {
+      "action": "add",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:b5726d33c6b0c4ccd72602d42e4d4fcfbcea1c61096026daab68036c5e36a102",
+      "model_run_id": "3aae5ccdc51bd9dea55db35e7d48a806aed772684ecc3d02aaefd6daaed5b0bc",
+      "prediction_id": "Decision:b5726d33c6b0c4ccd72602d42e4d4fcfbcea1c61096026daab68036c5e36a102",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "The proposed contributing-guide change adds the step to upgrade pip and setuptools.",
+      "statement_evidence_ids": [
+        "Evidence:4b2fb817ef3342cec49c1a86696aaceab8a0a0c4c3e4f27dec294fbd5c3f5f15"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:044c77e8548c2dc6d73c5e35ba9da789faa7efa46b21bc56bea5990df6413da4",
+      "unit_id": "SourceUnit:5f821da803d32f128f1a246ad58f90183892277a63eafa5045ae9e19fb6e09dc"
+    },
+    {
+      "action": "fix",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:a047c9fa23ed3cb86f452c51f86888080f4db25e2e0c1ec2317595740c230707",
+      "model_run_id": "3aae5ccdc51bd9dea55db35e7d48a806aed772684ecc3d02aaefd6daaed5b0bc",
+      "prediction_id": "Decision:a047c9fa23ed3cb86f452c51f86888080f4db25e2e0c1ec2317595740c230707",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "The proposed contributing-guide change fixes the fork URL.",
+      "statement_evidence_ids": [
+        "Evidence:d7b0c9e430949587995f73acce22e5100621ec2b7dfd70b6ee231e3cd11575f9"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:044c77e8548c2dc6d73c5e35ba9da789faa7efa46b21bc56bea5990df6413da4",
+      "unit_id": "SourceUnit:5f821da803d32f128f1a246ad58f90183892277a63eafa5045ae9e19fb6e09dc"
+    },
+    {
+      "action": "change",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:0c886e163629424653b2be4146322f68025b9dbd0177d516e2ff33d8bb27c63b",
+      "model_run_id": "3aae5ccdc51bd9dea55db35e7d48a806aed772684ecc3d02aaefd6daaed5b0bc",
+      "prediction_id": "Decision:0c886e163629424653b2be4146322f68025b9dbd0177d516e2ff33d8bb27c63b",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "The proposed contributing-guide change updates the example branch to the latest branch.",
+      "statement_evidence_ids": [
+        "Evidence:2769e18f4dd662c67ed36293a20c3312b62480cc46325293657ba43397ece35c"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:044c77e8548c2dc6d73c5e35ba9da789faa7efa46b21bc56bea5990df6413da4",
+      "unit_id": "SourceUnit:5f821da803d32f128f1a246ad58f90183892277a63eafa5045ae9e19fb6e09dc"
+    },
+    {
+      "action": "change",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:d0380a38ae920a7dd2bd96ad061e6f95919a4176a5622223ab045b3cf638ee8b",
+      "model_run_id": "07046c7506cf95254a1414926abd86995e9b1bd93e1b01585aea24d02552b823",
+      "prediction_id": "Decision:d0380a38ae920a7dd2bd96ad061e6f95919a4176a5622223ab045b3cf638ee8b",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Bump sphinx from 3.4.1 to 3.4.3.",
+      "statement_evidence_ids": [
+        "Evidence:c8a1586d50472824eab053712d63e861dc5686d7b57abf948f993fd34a279580"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:6ae20d73266b652f298deb0044e60821841e21749b5a4d889d454f1808a67af4",
+      "unit_id": "SourceUnit:ccb65bfe80471ce470332cef472d7ca7de09e597180e377e20cfc4ee611152ff"
+    },
+    {
+      "action": "change",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:01ea07e07874ed49bdf7bad99dd8ad50b66e02d9bf6aef0ddb85b98d6e5de425",
+      "model_run_id": "ab2fcde133a7a64101a813cac2345ddf33e1d48f1ff20913fa29be82e3a34b6b",
+      "prediction_id": "Decision:01ea07e07874ed49bdf7bad99dd8ad50b66e02d9bf6aef0ddb85b98d6e5de425",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Update the Sphinx dependency from 3.1.2 to 3.2.0.",
+      "statement_evidence_ids": [
+        "Evidence:73d65b7ec5b27c1ae76658aa9a16865808646b47822b441d4aa6a8f7b8d56cdd"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:a9aa5f0b0bf100a06dcd9295cf3b1060e0d869a374955d760db3b59111da1689",
+      "unit_id": "SourceUnit:6a85e30dbf36a9f09a01dbd227e7c5c7a61fc0c63c3dc54cbd65dfbeb3533c33"
+    },
+    {
+      "action": "change",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:2c8cd059d795481b8cc2795ea68ad6c676a16bbaf8387ddc26b96f5d5a9a6115",
+      "model_run_id": "3d63bbae49d735e365672d43b08f9c15be2f608bb9e1773fa1628f0db9b30bb6",
+      "prediction_id": "Decision:2c8cd059d795481b8cc2795ea68ad6c676a16bbaf8387ddc26b96f5d5a9a6115",
+      "rationale": "To fix raising `BadData` in some cases of malformed input and the “bad payload” test failures that incidentally surface when using zlib-ng as the compression library.",
+      "rationale_evidence_ids": [
+        "Evidence:1c9949441f7668811d27abf10c28ae8cb46f1cb4186c0d64d5c05fa7e59c225c",
+        "Evidence:97658cafb8d0d9a9488bf3a0626779f28479a8d51b25007395309f71e8cb80d2"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "`urlsafe_b64decode()` should be restored to require padding when running on Python 3.15+, in order to fix raising `BadData` in some cases of malformed input.",
+      "statement_evidence_ids": [
+        "Evidence:61d9896092005a353d003e4c392137dd995b57cfa89ffb15898c84899535d6fd"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:51da05c214799402f4294ed41600183605cfa42a343a63fae6ad612be9eb5673",
+      "unit_id": "SourceUnit:b4a4f5df09f6fb8cac49ccd381edf9b1016c757cbab1d79f451707da205d6382"
+    },
+    {
+      "action": "add",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:ea7333d8665efd02c824c17b752551c1039fd6d6ca46541888d50dfe19807498",
+      "model_run_id": "8c811235ddf5b7dd0c04539b5e00d03225a1e95d49760cc438b857ec585435d3",
+      "prediction_id": "Decision:ea7333d8665efd02c824c17b752551c1039fd6d6ca46541888d50dfe19807498",
+      "rationale": "It was not possible through any easy means to set a custom hashlib on these objects.",
+      "rationale_evidence_ids": [
+        "Evidence:966e3636c6a44b72d8667a4cb503a4eff2dcc935cf88b6f7490837e56b892528"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Support setting a custom hashlib/digest method on serializer objects via s.digest_method.",
+      "statement_evidence_ids": [
+        "Evidence:bdb733991e1d32d41d21410445deefde8e148e4c9bba83c812b26edf33d2724e",
+        "Evidence:62c841d8eff1597aafab831c010ecda21a372cd3ff338a368382fc20f12774b5"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:8ce46fa7662f87948ab331ac3c0af85512748a7d87f68c2da14fe60a36c34702",
+      "unit_id": "SourceUnit:e1c01aa2b1155f44df4afbfeea94c19aa648b1d5e5d666016c2b437ce65e5a0f"
+    },
+    {
+      "action": "change",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:fcbc67292c6ea6c00b573da7ce84819025202d8b6f9cd38e55a05f55424c39e7",
+      "model_run_id": "ccff769e12068f5fe15365c99080d8170fa94d7f996ce38c1f1f332999a1f623",
+      "prediction_id": "Decision:fcbc67292c6ea6c00b573da7ce84819025202d8b6f9cd38e55a05f55424c39e7",
+      "rationale": "The signed-cookie format is not compatible between Django and itsdangerous.",
+      "rationale_evidence_ids": [
+        "Evidence:06d3186793a9aae824e22fb0d9deedeffbf56b1626cabdf8f964c6cd8bcd6595"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Use the same signed-cookie implementation in both itsdangerous and Django.",
+      "statement_evidence_ids": [
+        "Evidence:7a917230c2b4989a69d5e38fd6146b1715de982bed727fd85b41ffe56a9868cf"
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:75abd7d62624f87d80e467cc389f1220517e5f893f1d3d4651148dc7472e857a",
+      "unit_id": "SourceUnit:81c637c51ae0a512a6587bf5ef4fcb6b9f1452b669038b5e559a667c908889ba"
+    },
+    {
+      "action": "add",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:7bd45cf78b02984b5058448d2629702020d6c831d0b58ed00fee15502570ec05",
+      "model_run_id": "feb6ac6c2fe0f4325704780cc5fff6e7bd0be7dc3bef92e62ab2f726d1b2304c",
+      "prediction_id": "Decision:7bd45cf78b02984b5058448d2629702020d6c831d0b58ed00fee15502570ec05",
+      "rationale": "To reduce the risk of token replay attacks and skewed clocks.",
+      "rationale_evidence_ids": [
+        "Evidence:0fc44e23d778cb3d1ec9427c96c72b92e59c56c7fe299049a73a07ad88431edb"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "A proposal was made to add lower time resolution and monotonic time to token timestamps.",
+      "statement_evidence_ids": [
+        "Evidence:d67b36c9fb90b198c6eb74a10967a409d780e05d6c76bdddbd8c525e123837f6"
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:a5bd7b8cb4b24a7d9c788b8006d00a919cd3363f11c63da0b4dbd56dc9d8da93",
+      "unit_id": "SourceUnit:50d134b5283df35a97e6bd4d98b589a6a1513fedba2f975601fde554fcb24005"
+    },
+    {
+      "action": "fix",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:6669f9de67879d17e7a041c6ef4044b9cd63e1be8aa467e0ef250067586a6ae9",
+      "model_run_id": "976cc66f984023530426dbabf2478110e5c87d43a606ed65a9e27e4ca51540f0",
+      "prediction_id": "Decision:6669f9de67879d17e7a041c6ef4044b9cd63e1be8aa467e0ef250067586a6ae9",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "The missing API documentation for `TimedJSONWebSignatureSerializer` will be handled in the next release.",
+      "statement_evidence_ids": [
+        "Evidence:26bbddfcec2a5ede3cce4ff70cb02e88479639124a58141c0a04452a9849fe25",
+        "Evidence:4a7ee5777ad7ab3a0530f6c9d9ce36868dd2b75c5d9c5e38cc9b7c9b02eebd87"
+      ],
+      "status": "accepted",
+      "subject_id": "Issue:b63ef0209d9145217c4ec38db18cd922bb1f904edf6826aa091edc673e41b479",
+      "unit_id": "SourceUnit:a86b8d746ea4ba440e908ee12aeb6ee26d7053a34ee8e76786e786263f2052cb"
+    },
+    {
+      "action": "remove",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:5afcfb831f78245c8ecf0df0ba4f14e99c8eeaa2ee95c50554d34641cc617b3d",
+      "model_run_id": "2d48d0a5f25d8a8588596a12f7aa1d9a312664f89349b7434ba980c5c06ae550",
+      "prediction_id": "Decision:5afcfb831f78245c8ecf0df0ba4f14e99c8eeaa2ee95c50554d34641cc617b3d",
+      "rationale": "This default fallback was always intended as temporary.",
+      "rationale_evidence_ids": [
+        "Evidence:43b6d7b71d65692a07e861bc79340aac7b66896f0a8c98fa807c5574407160cf"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Remove the default fallback signer and make the default fallback signers empty.",
+      "statement_evidence_ids": [
+        "Evidence:0d47d8d78f2aad6e4d9521f3a579a931118e96b1a556c79b888b8d7a2c0c32eb"
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:1bfed68d08d453bd3a95f65086071e8244486c9714701ef6a2405b6874f89dc9",
+      "unit_id": "SourceUnit:89bd334c4a6568d1cb4a1918800bf4563249ede2d24564eebfa707ecac00dece"
+    },
+    {
+      "action": "add",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:733900cc5ff1fba1f2135f08276771e790d75a9c264fc7a0e26f0d097b0b7e35",
+      "model_run_id": "8c2500f0c1170879cfbbe009589595d144dc654c6949e7f3af32e3c79d23cf34",
+      "prediction_id": "Decision:733900cc5ff1fba1f2135f08276771e790d75a9c264fc7a0e26f0d097b0b7e35",
+      "rationale": "Python 3.9 was released on October 5, 2020, and the project will add it once the referenced actions/virtual-environments issue is closed.",
+      "rationale_evidence_ids": [
+        "Evidence:e1b462dc8c00dd44c8b4cf27f103bd3604f113434fa7c0945807a15b737996f0",
+        "Evidence:cbbda261219af9fed061ffc177a55186351eb75791cda1e4abafba90c2b87f42"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Add Python 3.9 to CI.",
+      "statement_evidence_ids": [
+        "Evidence:e1b462dc8c00dd44c8b4cf27f103bd3604f113434fa7c0945807a15b737996f0",
+        "Evidence:cbbda261219af9fed061ffc177a55186351eb75791cda1e4abafba90c2b87f42"
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:938927395da9bd0cb590da746868ab91d32dd539446f153d236384380d0ed7c6",
+      "unit_id": "SourceUnit:7b546880cb081ca07d89f37a5bbb3fd17df1af86cea26ec46b4c3ff110c200b0"
+    }
+  ],
+  "heldout20_v2_judgments": [
+    {
+      "explanation": "Project (pallets/itsdangerous) and subject (Issue 34, Django cookie unsigning) match the thread. The maintainer's comment states the formats are incompatible and proposes using the same implementation in both, which the reporter confirmed taking; this supports the prediction's conclusion that the request was declined with a recommendation to use itsdangerous on both sides. The rationale separately captures both explicitly stated reasons: format incompatibility and the API following Django's closely. No silver references were supplied, so no reference_ids can be matched (reference disagreement: the reference set is empty and missed this decision).",
+      "prediction_id": "Decision:da231dcf0415917012acdc2848455d25c6bbf0798e937130f40bd76138a492e1",
+      "rationale_support": "supported",
+      "reference_ids": [],
+      "support": "supported"
+    },
+    {
+      "explanation": "Subject is the project; the thread (Issue 79) contains the maintainer's response that the library uses JWS with HMAC-SHA1 as the fixed signing algorithm and only a very specific subset of the standard, so most of the JWT critiques do not apply. This supports the prediction's conclusion that the signing scheme was kept unchanged. The decision framing ('keep... rather than changing') is a mild inference from the maintainer's defensive answer with no proposed change, but the atomic conclusion is semantically supported. The rationale captures both stated reasons (narrow subset of JWS, HMAC-SHA1 fixed). No silver references were supplied, so no reference_ids can be matched (reference disagreement: empty reference set).",
+      "prediction_id": "Decision:e393af8f5a3bbcadd4ffbf10b4840aa5c87f16a5dd116cb450f9f1186557ea66",
+      "rationale_support": "supported",
+      "reference_ids": [],
+      "support": "supported"
+    },
+    {
+      "explanation": "Project (pallets/itsdangerous), subject (Issue #83, TimedJSONWebSignatureSerializer missing from docs), action (fix), and atomic conclusion (handled in next release) all match the thread, and the authoritative comment 'This will be handled in the next release.' directly supports the statement. However, the reference records status 'accepted' while the prediction records 'proposed'; per matching rules a proposal is not matched to an accepted change, so no reference_id is assigned (reference disagreement on adoption status, not on substance). Rationale is empty (rationale_status not_stated), so rationale_support is unsupported.",
+      "prediction_id": "Decision:5c2f2bfcfe4f4963e08e68322c36491f9a777d454daf6a9af5c2082447532cf3",
+      "rationale_support": "unsupported",
+      "reference_ids": [],
+      "support": "supported"
+    },
+    {
+      "explanation": "Project, subject (Issue #155, remove the fallback signer), action (remove), status (proposed), and atomic conclusion (remove the default sha512 fallback signer and make default fallback signers empty) are semantically equivalent to the reference and directly supported by the issue body. The separate rationale captures all material stated reasons: fallback intended as temporary, SHA-512 change done for optics, backwards compatibility issues, increased signed value size, HMAC security of SHA-1/MD5, and configurability of digest method/fallback signers — all cited with matching evidence from the original source.",
+      "prediction_id": "Decision:39671eaea0b59631233a8b99387fd9946f0e845625acf6693c42d0282f33cf76",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "8592db10db686d6078c93aacbc2e5e353902f39038987e300e63048b182611a7"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Project (pallets/itsdangerous), subject (issue 62, TimestampSigner separator), action (fix), status (accepted) and atomic conclusion all match reference e28faad9: the fix was applied exactly as johnlam described so a separator in the base64 signature/timestamp no longer breaks parsing, evidenced by untitaker's comment. The prediction's rationale explicitly states the separator-in-base64 reason from the matched reference (johnlam's comment) and is supported by the original thread; the additional API-breakage note is extra material from the same thread and does not contradict the matched reference's stated reason.",
+      "prediction_id": "Decision:937a33071f76eb6990172cc272cf10b5c82502ba48753227d5c7c95b3161bce6",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "e28faad98bcc52e3e9f56b81a37087cbd715d7bd7d572aac674303808d9139a3"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Project, subject (issue 193), action (add), status (proposed) and conclusion (add Python 3.9 to CI) match reference f0f78a53, supported by the issue body. The deferral reference 21f06114 is a distinct conclusion (defer until upstream issue closed) and is not matched as the prediction's statement. The prediction's rationale captures the matched reference's stated reason (Python 3.9 released, tests pass, so add to CI) with citations from the original thread; the deferral clause is additional thread-supported context, so the rationale fully covers the matched reference's material reasons.",
+      "prediction_id": "Decision:e5d55c1d42381f6fc49ce420e6be75b0358a242136c8402a1af919d7e0e7e71b",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "f0f78a53d0507049280dd069703ca3884f55c5fa9ffcc08c127a3721ffc4fba4"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Prediction matches PR #244 in pallets/itsdangerous: proposed change to add the missing dollar symbol for the add-remote command in the contributing guide, directly supported by the PR body quote. Reference 9551c65e is semantically equivalent. No rationale is stated in either the prediction or the reference, so rationale_support is unsupported (empty rationale).",
+      "prediction_id": "Decision:3acc92449284f68f0b2b6b1023eb9c34f01846c82c458079427d36183ae9bbd7",
+      "rationale_support": "unsupported",
+      "reference_ids": [
+        "9551c65e0dcd6dc02107a49fd246fa18a600f779207bdf7b63d8b42c11672a7a"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Prediction matches PR #244: proposed addition of a step to upgrade pip and setuptools in the contributing guide, supported by the PR body quote and equivalent to reference 8b3ed04. No rationale stated in prediction or reference, so rationale_support is unsupported.",
+      "prediction_id": "Decision:6b8d5a3f72f4876b98b462e722c73664daba5b4d3252a223ba364a4571eb5fd4",
+      "rationale_support": "unsupported",
+      "reference_ids": [
+        "8b3ed04648fdb1ada06706b85440e9a35b6ed86895d102986ee281fbf6369a3b"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Prediction matches PR #244: proposed fix of the fork URL in the contributing guide, supported by the PR body quote and equivalent to reference 7458333. No rationale stated in prediction or reference, so rationale_support is unsupported.",
+      "prediction_id": "Decision:b0806d4f5d7a41ce6ea71d0d2e6ca80e5632258ae963ecfdf11971d04b3ad72d",
+      "rationale_support": "unsupported",
+      "reference_ids": [
+        "74583332095449de29902bff258b01b33ad5c5a286843280549652fb48af2662"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Prediction matches PR #244: proposed update of the example branch to the latest branch in the contributing guide, supported by the PR body quote and equivalent to reference 8ae0e02. No rationale stated in prediction or reference, so rationale_support is unsupported.",
+      "prediction_id": "Decision:e563d67b9a9aefaa0f203e69ce54b7b9154eee155ccc163f2341ddfa57ec2e46",
+      "rationale_support": "unsupported",
+      "reference_ids": [
+        "8ae0e021354aca1f375afce01ce79814fbebb8c5c3991e2c803e091c2ff67dc4"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Prediction matches reference ab3e8e85: same PR #428 in pallets/itsdangerous, same action (change), same proposed status, and semantically equivalent statement (restore urlsafe_b64decode padding requirement on Python 3.15+). Statement evidence quotes the PR body directly. The rationale captures both stated reasons in the PR body (fixing BadData on malformed input and the zlib-ng 'bad payload' test failures), covering the reference's stated rationale and supported by the original source.",
+      "prediction_id": "Decision:23c351731a4717453cc92f5fb0a9de88f510c2d76eb499cb8dda8a92a15d53e2",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "ab3e8e8527a442fa3fef10782e10132614cde610689c02f16d4ec980085464f1"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Prediction matches reference 7cfc82ee: same PR #12 in pallets/itsdangerous, same action (add), same proposed status, and equivalent statement (allow setting a custom hashlib digest_method on serializer objects, matching Signer classes). Statement evidence cites the PR body's digest_method assignment and Signer comparison. The rationale ('no easy means to set a custom hashlib') matches the reference's stated rationale and is directly quoted from the PR body.",
+      "prediction_id": "Decision:f3200c3ce133f51390f651c3a5fdf2d9d1fecef4d4d5e036e686172daf970b5a",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "7cfc82ee625f0f6e42b212fe082f241b370cb176843f784e4cbe73f05231c4fe"
+      ],
+      "support": "supported"
+    }
+  ],
+  "heldout20_v2_predictions": [
+    {
+      "action": "fix",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:3acc92449284f68f0b2b6b1023eb9c34f01846c82c458079427d36183ae9bbd7",
+      "model_run_id": "c4032f96cf63bbfbc0a43315003c3633524b51a18cf199a07c50365a3eb631ed",
+      "prediction_id": "Decision:3acc92449284f68f0b2b6b1023eb9c34f01846c82c458079427d36183ae9bbd7",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Add the missing dollar symbol to the command for adding a remote in the contributing guide.",
+      "statement_evidence_ids": [
+        "Evidence:58028e8ba575dd551268ec6725e424ae40b975b2566f2d6077e9e2a26a25e748"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:044c77e8548c2dc6d73c5e35ba9da789faa7efa46b21bc56bea5990df6413da4",
+      "unit_id": "SourceUnit:5f821da803d32f128f1a246ad58f90183892277a63eafa5045ae9e19fb6e09dc"
+    },
+    {
+      "action": "add",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:6b8d5a3f72f4876b98b462e722c73664daba5b4d3252a223ba364a4571eb5fd4",
+      "model_run_id": "c4032f96cf63bbfbc0a43315003c3633524b51a18cf199a07c50365a3eb631ed",
+      "prediction_id": "Decision:6b8d5a3f72f4876b98b462e722c73664daba5b4d3252a223ba364a4571eb5fd4",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Add a step to upgrade pip and setuptools in the contributing guide.",
+      "statement_evidence_ids": [
+        "Evidence:f23b58924e43b8c9c5e815116981d4729e4d67ab4b0d74b32e9c9dc3bcdf6d33"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:044c77e8548c2dc6d73c5e35ba9da789faa7efa46b21bc56bea5990df6413da4",
+      "unit_id": "SourceUnit:5f821da803d32f128f1a246ad58f90183892277a63eafa5045ae9e19fb6e09dc"
+    },
+    {
+      "action": "fix",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:b0806d4f5d7a41ce6ea71d0d2e6ca80e5632258ae963ecfdf11971d04b3ad72d",
+      "model_run_id": "c4032f96cf63bbfbc0a43315003c3633524b51a18cf199a07c50365a3eb631ed",
+      "prediction_id": "Decision:b0806d4f5d7a41ce6ea71d0d2e6ca80e5632258ae963ecfdf11971d04b3ad72d",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Fix the fork URL in the contributing guide.",
+      "statement_evidence_ids": [
+        "Evidence:bd903b6d498658e80525675934da930381a0884cc9c7da9fdf385c8e40209e3e"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:044c77e8548c2dc6d73c5e35ba9da789faa7efa46b21bc56bea5990df6413da4",
+      "unit_id": "SourceUnit:5f821da803d32f128f1a246ad58f90183892277a63eafa5045ae9e19fb6e09dc"
+    },
+    {
+      "action": "change",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:e563d67b9a9aefaa0f203e69ce54b7b9154eee155ccc163f2341ddfa57ec2e46",
+      "model_run_id": "c4032f96cf63bbfbc0a43315003c3633524b51a18cf199a07c50365a3eb631ed",
+      "prediction_id": "Decision:e563d67b9a9aefaa0f203e69ce54b7b9154eee155ccc163f2341ddfa57ec2e46",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Update the example branch to the latest branch in the contributing guide.",
+      "statement_evidence_ids": [
+        "Evidence:6b45527f2aa31a0ba1e0aa83e88f8b328f5d02748265f3051f2a1d1461295340"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:044c77e8548c2dc6d73c5e35ba9da789faa7efa46b21bc56bea5990df6413da4",
+      "unit_id": "SourceUnit:5f821da803d32f128f1a246ad58f90183892277a63eafa5045ae9e19fb6e09dc"
+    },
+    {
+      "action": "change",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:23c351731a4717453cc92f5fb0a9de88f510c2d76eb499cb8dda8a92a15d53e2",
+      "model_run_id": "3859239827c6003a3c6df44f5bed8d1d81ff8374610bc99baad374a496f5b2ac",
+      "prediction_id": "Decision:23c351731a4717453cc92f5fb0a9de88f510c2d76eb499cb8dda8a92a15d53e2",
+      "rationale": "To fix `BadData` being raised for some cases of malformed input, and to fix 'bad payload' test failures that incidentally surface when using zlib-ng as the compression library.",
+      "rationale_evidence_ids": [
+        "Evidence:1c9949441f7668811d27abf10c28ae8cb46f1cb4186c0d64d5c05fa7e59c225c",
+        "Evidence:97658cafb8d0d9a9488bf3a0626779f28479a8d51b25007395309f71e8cb80d2"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Restore `urlsafe_b64decode()` behavior to require padding when running on Python 3.15+.",
+      "statement_evidence_ids": [
+        "Evidence:61d9896092005a353d003e4c392137dd995b57cfa89ffb15898c84899535d6fd"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:51da05c214799402f4294ed41600183605cfa42a343a63fae6ad612be9eb5673",
+      "unit_id": "SourceUnit:b4a4f5df09f6fb8cac49ccd381edf9b1016c757cbab1d79f451707da205d6382"
+    },
+    {
+      "action": "add",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:f3200c3ce133f51390f651c3a5fdf2d9d1fecef4d4d5e036e686172daf970b5a",
+      "model_run_id": "74969ab08e93a31bef415a45f84393d46273338e58a24e6b141a4421b27be698",
+      "prediction_id": "Decision:f3200c3ce133f51390f651c3a5fdf2d9d1fecef4d4d5e036e686172daf970b5a",
+      "rationale": "There was no easy means to set a custom hashlib on these serializer objects.",
+      "rationale_evidence_ids": [
+        "Evidence:df9e52aa29c759945fb8a28d7bb98ab76983a1d1ea4e9cfbe3eca76ef3498b04"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Allow setting a custom hashlib on serializer objects by assigning digest_method directly, matching the Signer classes.",
+      "statement_evidence_ids": [
+        "Evidence:feab6bdbc9895d57e47f0e4330cef74f481ae6cdeac57e483a0e7bc3186ce60d",
+        "Evidence:62c841d8eff1597aafab831c010ecda21a372cd3ff338a368382fc20f12774b5"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:8ce46fa7662f87948ab331ac3c0af85512748a7d87f68c2da14fe60a36c34702",
+      "unit_id": "SourceUnit:e1c01aa2b1155f44df4afbfeea94c19aa648b1d5e5d666016c2b437ce65e5a0f"
+    },
+    {
+      "action": "keep",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:da231dcf0415917012acdc2848455d25c6bbf0798e937130f40bd76138a492e1",
+      "model_run_id": "874fcb50a92a39986db18b901ec2f5767c819a5390506ef1db398fd528cd4e6b",
+      "prediction_id": "Decision:da231dcf0415917012acdc2848455d25c6bbf0798e937130f40bd76138a492e1",
+      "rationale": "The cookie/token signing formats of Django and itsdangerous are not compatible, and because itsdangerous' API closely follows Django's, the maintainer advises hooking itsdangerous up on the Django side rather than adapting itsdangerous' format.",
+      "rationale_evidence_ids": [
+        "Evidence:06d3186793a9aae824e22fb0d9deedeffbf56b1626cabdf8f964c6cd8bcd6595",
+        "Evidence:13a699bf029019ac03e58e994d4da69827f410fafd612280fd8ee23a2689ba59"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Maintainer declined to make itsdangerous able to unsign Django-signed cookies (Django uses a double-colon separator), stating the signing formats are simply incompatible and recommending using itsdangerous in both applications instead.",
+      "statement_evidence_ids": [
+        "Evidence:06d3186793a9aae824e22fb0d9deedeffbf56b1626cabdf8f964c6cd8bcd6595",
+        "Evidence:7a917230c2b4989a69d5e38fd6146b1715de982bed727fd85b41ffe56a9868cf",
+        "Evidence:4e7cbc3edb30b8895f325f3e8c3b4de6da133a2ee19b65ccb969e3051a589008"
+      ],
+      "status": "rejected",
+      "subject_id": "Issue:75abd7d62624f87d80e467cc389f1220517e5f893f1d3d4651148dc7472e857a",
+      "unit_id": "SourceUnit:81c637c51ae0a512a6587bf5ef4fcb6b9f1452b669038b5e559a667c908889ba"
+    },
+    {
+      "action": "keep",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:e393af8f5a3bbcadd4ffbf10b4840aa5c87f16a5dd116cb450f9f1186557ea66",
+      "model_run_id": "4f8f24d737c11eed6e40c99acf096adb68dfec9e0361aa5b340e3af67fed4e7a",
+      "prediction_id": "Decision:e393af8f5a3bbcadd4ffbf10b4840aa5c87f16a5dd116cb450f9f1186557ea66",
+      "rationale": "Because the library implements only a very specific subset of the JWS standard (with HMAC-SHA1 hardcoded as the signing algorithm), most of the criticisms raised against JWT/JWS do not apply to it.",
+      "rationale_evidence_ids": [
+        "Evidence:607531bdfd88ab93ecab9a9cece07486b69914616f81947a0116d60946bc922a",
+        "Evidence:7300fc326f5069cc3a03ea0283479c0222ae19cb6b634460f5a835a3b9ecad7b"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Keep itsdangerous on a narrowly-scoped subset of JWS with HMAC-SHA1 as the fixed signing algorithm, rather than changing the signing scheme in response to critiques of the JWT standard.",
+      "statement_evidence_ids": [
+        "Evidence:7300fc326f5069cc3a03ea0283479c0222ae19cb6b634460f5a835a3b9ecad7b",
+        "Evidence:607531bdfd88ab93ecab9a9cece07486b69914616f81947a0116d60946bc922a"
+      ],
+      "status": "accepted",
+      "subject_id": "Project:e93d6fa2893b109cd137aecc87273b968833487c12fc7331cf79da7a23d2dde8",
+      "unit_id": "SourceUnit:2d08e4ed72d6cdc6d1ff7d5776c0b3200acfd3b544d69c2b1efedb09990579e6"
+    },
+    {
+      "action": "fix",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:5c2f2bfcfe4f4963e08e68322c36491f9a777d454daf6a9af5c2082447532cf3",
+      "model_run_id": "e72fac815584e57bf73dc43e42290ecd3f9b27e9540f43d9396ca29e498c0cc8",
+      "prediction_id": "Decision:5c2f2bfcfe4f4963e08e68322c36491f9a777d454daf6a9af5c2082447532cf3",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "The missing API documentation for TimedJSONWebSignatureSerializer will be handled in the next release.",
+      "statement_evidence_ids": [
+        "Evidence:a09d9d67f1cce3c2da515125a0525868f9f6989d884129e1c5c238cf6f4e3f74",
+        "Evidence:4a7ee5777ad7ab3a0530f6c9d9ce36868dd2b75c5d9c5e38cc9b7c9b02eebd87"
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:b63ef0209d9145217c4ec38db18cd922bb1f904edf6826aa091edc673e41b479",
+      "unit_id": "SourceUnit:a86b8d746ea4ba440e908ee12aeb6ee26d7053a34ee8e76786e786263f2052cb"
+    },
+    {
+      "action": "fix",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:937a33071f76eb6990172cc272cf10b5c82502ba48753227d5c7c95b3161bce6",
+      "model_run_id": "99171c602e1b5b908f359b57be29133614cc9c278d2b7e8a0f849109796314e0",
+      "prediction_id": "Decision:937a33071f76eb6990172cc272cf10b5c82502ba48753227d5c7c95b3161bce6",
+      "rationale": "The separator '-' can occur inside the URL-safe base64-encoded signature or timestamp, so splitting on it can produce a wrong timestamp or signature. The maintainer followed johnlam's proposed fix and did not treat it as an API breakage because that separator usage never worked.",
+      "rationale_evidence_ids": [
+        "Evidence:73b35112367438c1e5714085a72c605b7ed0029676e7f2eb4aa43e969b941f90",
+        "Evidence:195118f7e50ed593c491bea80cd7ab87b5e0a6ff55d1bb6b9bc3309b8fd0aa47"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Fixed TimestampSigner so a separator character that can occur in the URL-safe base64-encoded timestamp or signature no longer causes incorrect parsing.",
+      "statement_evidence_ids": [
+        "Evidence:f4f814820832efeaceb9ee9e8fe88d5fa5c2f73a92c6f987ceba1caf8641318b",
+        "Evidence:511907bbf06e783adf2ebeb267946ba228294c5df010ce053e56a4f34fe2726c"
+      ],
+      "status": "accepted",
+      "subject_id": "Issue:b2ea40d1c19e5738be556cf1819180b2871dd31f5c145c278061431f24691a36",
+      "unit_id": "SourceUnit:b0ae23595252db9394fcae089412d9e04f8c56501536d689de69d6c5b7b53a3e"
+    },
+    {
+      "action": "remove",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:39671eaea0b59631233a8b99387fd9946f0e845625acf6693c42d0282f33cf76",
+      "model_run_id": "4e40741392ce5f05f87905381c2ae363e941a88650cc86df3694c5c9f40d8f88",
+      "prediction_id": "Decision:39671eaea0b59631233a8b99387fd9946f0e845625acf6693c42d0282f33cf76",
+      "rationale": "The default fallback was always intended to be temporary. The SHA-512 change was done for optics but caused backwards compatibility issues and greatly increased the size of signed values; SHA-1 and MD5 remain secure when used in HMAC, and projects can configure the digest method and fallback signers to upgrade old tokens.",
+      "rationale_evidence_ids": [
+        "Evidence:43b6d7b71d65692a07e861bc79340aac7b66896f0a8c98fa807c5574407160cf",
+        "Evidence:a6672d322abb7a913c8ca160e635b6ada42a476fd59403d2fd0b7d108e305a48",
+        "Evidence:ce8bbdd79355566d78b3aebda6f40109160ad8a3e629ec9681d3ca620ee9769d",
+        "Evidence:ff14afb1154e84a4208add15b33b8e5fa215811f3bdeade75f931f26c3e7cfde"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Remove the temporary default SHA-512 fallback signer and make the default fallback signers empty.",
+      "statement_evidence_ids": [
+        "Evidence:0d47d8d78f2aad6e4d9521f3a579a931118e96b1a556c79b888b8d7a2c0c32eb"
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:1bfed68d08d453bd3a95f65086071e8244486c9714701ef6a2405b6874f89dc9",
+      "unit_id": "SourceUnit:89bd334c4a6568d1cb4a1918800bf4563249ede2d24564eebfa707ecac00dece"
+    },
+    {
+      "action": "add",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:e5d55c1d42381f6fc49ce420e6be75b0358a242136c8402a1af919d7e0e7e71b",
+      "model_run_id": "5f7749228597cfec0eb8f15e3ae603d7d9d9cc5cd7e495dcfd8edd60aed66961",
+      "prediction_id": "Decision:e5d55c1d42381f6fc49ce420e6be75b0358a242136c8402a1af919d7e0e7e71b",
+      "rationale": "Python 3.9 was released on October 5, 2020 and the test suite already passes under 3.9, so adding it to CI makes sense; however, the addition is being deferred until the upstream actions/virtual-environments issue #1740 is closed.",
+      "rationale_evidence_ids": [
+        "Evidence:e1b462dc8c00dd44c8b4cf27f103bd3604f113434fa7c0945807a15b737996f0",
+        "Evidence:b7c829fd2b97c90496c90bd8e5749d2a039f53ec7b16e3448c70f304f22db058",
+        "Evidence:cbbda261219af9fed061ffc177a55186351eb75791cda1e4abafba90c2b87f42"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Add Python 3.9 to the CI test matrix.",
+      "statement_evidence_ids": [
+        "Evidence:e1b462dc8c00dd44c8b4cf27f103bd3604f113434fa7c0945807a15b737996f0",
+        "Evidence:cbbda261219af9fed061ffc177a55186351eb75791cda1e4abafba90c2b87f42"
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:938927395da9bd0cb590da746868ab91d32dd539446f153d236384380d0ed7c6",
+      "unit_id": "SourceUnit:7b546880cb081ca07d89f37a5bbb3fd17df1af86cea26ec46b4c3ff110c200b0"
+    }
+  ],
+  "orig30_unit_ids": [
+    "SourceUnit:c97613f0c9b32ebd3480b318f51d817be5fe6c70a4fc5718382e19dd7933ad8a",
+    "SourceUnit:870c12c6b08f37c113022aa215564ac483abd4a9bb4a29edf594533f22e7432d",
+    "SourceUnit:259158af75ee288274a500d878fd1ed2f2800c72dd12f17861a133f4b991fa51",
+    "SourceUnit:bd19416424e157feebde06eacaa15a5fc9c7ebbfd34d21bdbb1493905d34a96b",
+    "SourceUnit:c39d1d62780b3e86eca5ece6d3436d76a03b3aca08ae2f3e22743556e8c2078d",
+    "SourceUnit:f4bed251c041bd8edd03ab15dc575572281422d5b28a18172ba47e07f3221e0a",
+    "SourceUnit:6b93ef0f7d279dfbb421acce89feb29aee94daca9568e77f0e8c48e5cf1126a3",
+    "SourceUnit:211519b9f1411dcf9b32fc134bedd0d06321d41a4b27419ad87fa2cf2313ef7d",
+    "SourceUnit:b111666371018bd1f56dfed27db15f16f3ac4878a8242247fa4c8bbda5f42906",
+    "SourceUnit:2be8be264450e9f1375b2d1bbc7487399b54d5e62ac8eefcb6273ab903178fe6",
+    "SourceUnit:7bc3d8d25ccd688a5230992ed8c12102375dd68431b5e1c3de9a7228f9db580b",
+    "SourceUnit:9ab4eacfc7a1ee203b8a9c7499c71998e59558f6bbb7ea71d13dfd6711c49b25",
+    "SourceUnit:f7648095f767f818df50fd651fbf32091607bf81119b1c1f3bd37a4b348b1108",
+    "SourceUnit:b90cfc4374ebdbcc43393c9fd7de39bda7ee7bf31b287b6d9c21eef16ebf1921",
+    "SourceUnit:41c2333c6dcd55c4272b44b79ebd0117a7cc9d64ca513bdb0be4f2e913f8b218",
+    "SourceUnit:4069b327d82c55d5dc7d939e8863518c1fe7ea06ae43a32b54813d6fab1b3f74",
+    "SourceUnit:3b55f4b0133e86dc6cd8096ebe82f2451fe58a5f26b55e52e7d61db7892f8264",
+    "SourceUnit:02f788a1c5e7e8c8fc84a365e6e183e773a5679963c86defa684a8ae38398fa7",
+    "SourceUnit:a226fac850ac17ae2ba680fc2fd1546bbd5e40de75d7e6144f4e25c461ea960f",
+    "SourceUnit:8f092543c932e79aa0aec9c73164def869cf38b9514e4afe8a44ff2580348b73",
+    "SourceUnit:5ebac2b16052c42d577403afd13dceaf5f1105b0f933c169029b7e013af7d363",
+    "SourceUnit:7d473fcd47fecc3578e32a5d87355f69bcec214d79dbad3193b7e7d948a0a61f",
+    "SourceUnit:b1551a57108d571e64988d04e7f2571a96d8fca78e41213775fc0afbc1de7a17",
+    "SourceUnit:d64de92ba75466e7d9fa68a478dc7b18075be5fb0ed34c650a439f6f286ee4c5",
+    "SourceUnit:088d9cf6d4d3a26288c4fbc1502bed017de55a4453748a37667ccea9a7edae15",
+    "SourceUnit:97032d4a32576f3b3f60e8a1abd49a167c61ccd0e3c82465d54aec6514778160",
+    "SourceUnit:96f838ee9762345b8a30383e6500d3f53e56a7b4b8ad21e08038159191b82cda",
+    "SourceUnit:cdebdc7b4a9369a44718623f2f5e9de68edc24502ff24f581b33db9255bfad28",
+    "SourceUnit:59f8051a05cd0600e3888212080bb795a04fd99e4d820bd0b2c0a3ed351dcf32",
+    "SourceUnit:14075d0dd0d4ec38204091b9c25b7295c2bef6aa6de94436c1f01221ad5abed0"
+  ],
+  "orig30_v2_judgments": [
+    {
+      "explanation": "Project (pallets/itsdangerous) and subject (Issue #416) match the source unit. The maintainer's authoritative comment explicitly calls the report an irresponsible potential vulnerability report, points to the security policy, labels it AI slop, and states the described issue would be a vulnerability of the application relying on raw token strings, not of itsdangerous — matching the prediction's rejected/keep conclusion. No silver references exist, so no reference_ids can be matched (reference disagreement: reference set is empty). The rationale captures the material stated reason (vulnerability belongs to applications relying on raw token strings as security identifiers) and is supported by the cited comment text.",
+      "prediction_id": "Decision:1d4ec17528b81749e9b6272335013ca6d573c5e06bd6380977016886f17bc7d5",
+      "rationale_support": "supported",
+      "reference_ids": [],
+      "support": "supported"
+    },
+    {
+      "explanation": "The prediction concerns Issue 45 (extending expiry of an issued token). The original thread's comment states it is impossible to provide such a facility because the expiration time is in the token itself, that changing any token value yields a different token, and suggests a non-expiring refresh token to issue new primary tokens. The prediction's statement (do not support extending expiry; issue new tokens, optionally via refresh token) and its rationale (all three stated reasons) are directly supported by the cited evidence in the thread. No references were supplied, so no reference_ids can be matched; this is a reference disagreement (reference missed the item), not a defect in the prediction.",
+      "prediction_id": "Decision:ea12ead3070956bfbc4bab45a7fa20e1636a4a88a4e02f2e2415d151665efe03",
+      "rationale_support": "supported",
+      "reference_ids": [],
+      "support": "supported"
+    },
+    {
+      "explanation": "Same project, issue #293, and atomic conclusion: the request to document non-semver versioning was closed/rejected as not specific to itsdangerous, matching the reference's rejected status. The rationale captures all stated reasons from the maintainer comment (not a semver problem but users not pinning; not specific to itsdangerous) plus the website draft detail, all directly supported by the source.",
+      "prediction_id": "Decision:7dbff62ece056f77e458efba2370fda1ec0d00e874803a243d158fab4afd7448",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "3b7fb3e2fc1f9b6854b38fce6ebcf463cf41dbf53032074a671db429ea92f014"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Matches the reference for issue #224: proposal to add encrypted cookie/secret storage rejected as out of scope. Rationale captures both stated reasons (out of scope; subclass Signer) from the authoritative maintainer comment.",
+      "prediction_id": "Decision:1a6b81e2fcc613e1d229dfc78068920b9b42c0883f29bee9aa36540daabfc304",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "84b10582aec1b028559fbb77fac716f96addca688ee28459cc714d3b103930e0"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Statement matches the reference's remove/proposed decision for issue #93 (revisiting PR #72 to drop Python 2.6). However, the prediction provides no rationale (null, not_stated), so rationale_support is unsupported despite the reference having stated reasons (EOL, 0.4% downloads, deprecation phase).",
+      "prediction_id": "Decision:fa651bdd38af63e8f9c75a42882dac0e001acbe707c8d82c4cc3c71b74349957",
+      "rationale_support": "unsupported",
+      "reference_ids": [
+        "f886e0445c96906c40d9c90b278a77ac4f221582533a1bd3f8734957bd50204f"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "The deprecation-phase proposal (long, previously announced phase, install-time warning on 2.6) is the deprecation component of the reference's combined remove-with-deprecation-phase decision for issue #93, supported by the issue body. The rationale captures the stated reason (avoid spontaneous removal; long, announced deprecation) from the quoted PR #72 comment.",
+      "prediction_id": "Decision:c8d7ac93a0023bc888db5bc9455f50138bbf0f513cce4a48c4ae6f55b24a4d33",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "f886e0445c96906c40d9c90b278a77ac4f221582533a1bd3f8734957bd50204f"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Same project, issue 402, action keep, accepted status, and atomic conclusion (keep lazy SHA-1 default; users override via digest_method) matches the reference and is directly supported by maintainer comments in the thread. The rationale captures both stated reasons (no import-time break, opportunity to change default) with valid citations.",
+      "prediction_id": "Decision:066acd6ca2b12519a8e6933053b10f53d46dcaef3d2b3f3fb355982d05e4675f",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "aa4a65b5a531573a2aba2b2287974ee50aca57c377d0244c556866856d070f6a"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "This is the reporter's suggestion (get_fips_mode auto-detection), never adopted by maintainers; the thread shows maintainers instead directing users to digest_method and keeping the lazy default. No reference records this change, and the original thread does not support it as an accepted outcome. The rationale itself accurately reflects the reporter's stated reasons (used by many modules, benefits everyone) with citations, so rationale_support is supported, but the prediction's conclusion is unsupported.",
+      "prediction_id": "Decision:d31f7ae931b1da13027070bb3aa7c6c8093fb2ecf996a8e9c99e2787b5fff9fe",
+      "rationale_support": "supported",
+      "reference_ids": [],
+      "support": "unsupported"
+    },
+    {
+      "explanation": "Same project, issue 368, action keep, and equivalent conclusion: trailing-character variants are inherent to base64, not an itsdangerous bug. The prediction's 'rejected' status refers to the issue/bug report being rejected, which is semantically equivalent to the reference's accepted keep-decision. Rationale matches the maintainer's stated base64 padding reason with valid citations.",
+      "prediction_id": "Decision:37d021d4e99c9897727613dbfed7a95756f3c1aa290f450ec60306756eeb2e92",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "9e75dced5828f08899c49ad2d580add37406eac8b8d0957077bf54d1f6aeef23"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Prediction matches reference d9e4fd24: same PR (401), same action (remove per-project contributing guide files), same proposed status. The 'in favor of a global contributing guide' phrasing aligns with the PR title 'use global contributing guide' and the PR body. Rationale 'to avoid having to keep the per-project files in sync' captures the stated reason in the source and matches the reference rationale.",
+      "prediction_id": "Decision:0ed8c8a5d432faf384aae9924d7b6e7aabc6a4214679678bec52824aced6bc1d",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "d9e4fd24fd6ed997c45370c7997f60cbca5cd5a2b0489d5db9f76a53d3266655"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Prediction matches reference a6e2f39d: same PR (401), same action (add a section about the contributing guide to the readme), same proposed status, directly supported by the PR body quote. Rationale captures the full stated reason (GitHub's UI links to everything except the contributing guide) and matches the reference rationale.",
+      "prediction_id": "Decision:8dac0e87bad93d5e4700f9f1a448ab05a8b54e9f65499074da6f823cc03d9ba4",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "a6e2f39dbd33a91b6f632335cd4df3dcd6ec8e674b441e5c22f12deb2d3e460a"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "PR #256 'update pip link' body states it fixes #255, and the prediction describes updating the pip-related link in the project, matching the PR subject, action, and proposed status. No reference covers this PR (reference disagreement: the silver reference only covers PR #14), so no reference_ids. Rationale is empty/not stated, so rationale_support is unsupported.",
+      "prediction_id": "Decision:c6e8da8e825abf5649559e92415ba1a590587528a4d75679e8ab482c4a0b9bcf",
+      "rationale_support": "unsupported",
+      "reference_ids": [],
+      "support": "supported"
+    },
+    {
+      "explanation": "The prediction matches the reference for PR #14: same subject, change action, proposed status, and the atomic conclusion about assuming latin1 encoding when negotiating serializer string types for Python 3 compatibility. The rationale captures the stated reasons from the PR body (json.loads() str-only in Python 3, bytes-only serializers like pickle, latin1 assumption, effect on Python 2 users) and is supported by the source evidence.",
+      "prediction_id": "Decision:228b32d22fc0c3e571018dc775a66f074cbcd66e8b4b02cabe6ddc6882d5669c",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "3d00eaeb566af424c9ff8586dceac6d3fda5c36ff218cc3dac54f21a336489bc"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Same project (pallets/itsdangerous), same PR #250, same action (add), same proposed status, and semantically equivalent statement: adding the ability to specify the signing timestamp so tokens can be created with a chosen start time/specific age or expiry. The rationale captures both stated reasons from the PR body (easier testing with specific-age tokens; tokens for a specific expiry, e.g. midnight timestamp with 24-hour max age), matching the reference rationale and supported by the original source.",
+      "prediction_id": "Decision:6278658245231d300e70c30b71abb99e05e01cd596726e364836b1ddd996100f",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "e562490bce3959a36c0a7535d4105b761441eecbd01c127b01293b54093328a6"
+      ],
+      "support": "supported"
+    },
+    {
+      "explanation": "Same project, PR #250, action (keep), proposed status, and equivalent statement: maintainer suggests keeping the library unchanged and using a TimestampSigner subclass overriding get_timestamp rather than exposing a user-facing option. The rationale captures the stated reasons from davidism's comment: concern about misunderstanding/misuse to set token expiry, and the calendar-day use case being better served by a subclass. Both are supported by the original comment text.",
+      "prediction_id": "Decision:4aa531d60d6b6304e30a59bf7e9efef27a98c398ac4e6811e55064dd08d1400d",
+      "rationale_support": "supported",
+      "reference_ids": [
+        "17c63018d15ec5610ba0326677375f70d3dbe770ce8ad0fb203bd0e4b29ab96c"
+      ],
+      "support": "supported"
+    }
+  ],
+  "orig30_v2_predictions": [
+    {
+      "action": "remove",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:0ed8c8a5d432faf384aae9924d7b6e7aabc6a4214679678bec52824aced6bc1d",
+      "model_run_id": "7e34fccc4cfd621b2fe4e805408e12f3fd40941fb31e5a0b4529b722b94a89b1",
+      "prediction_id": "Decision:0ed8c8a5d432faf384aae9924d7b6e7aabc6a4214679678bec52824aced6bc1d",
+      "rationale": "To avoid having to keep the per-project files in sync.",
+      "rationale_evidence_ids": [
+        "Evidence:652a0893d557690659f616cec4b08a99560b943d5da052a859a9a778d635a92f"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Remove the per-project files in favor of a global contributing guide.",
+      "statement_evidence_ids": [
+        "Evidence:3d641162fa884736d74505c3fda0e5e62e3923b84c080d39e0a06ec1a293db42"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:08daef6c76cee3ec07c2fd51e9d0c355df915d431bdce5b9b40f754882ec85fe",
+      "unit_id": "SourceUnit:02f788a1c5e7e8c8fc84a365e6e183e773a5679963c86defa684a8ae38398fa7"
+    },
+    {
+      "action": "add",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:8dac0e87bad93d5e4700f9f1a448ab05a8b54e9f65499074da6f823cc03d9ba4",
+      "model_run_id": "7e34fccc4cfd621b2fe4e805408e12f3fd40941fb31e5a0b4529b722b94a89b1",
+      "prediction_id": "Decision:8dac0e87bad93d5e4700f9f1a448ab05a8b54e9f65499074da6f823cc03d9ba4",
+      "rationale": "GitHub's UI links to everything except the contributing guide, so the README needs a section about it.",
+      "rationale_evidence_ids": [
+        "Evidence:0fe001b145810f699b7580dde940a8b544bf385388b90902e17e14173a6b7be0"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Add a section about the contributing guide to the README.",
+      "statement_evidence_ids": [
+        "Evidence:fa8575306dad5d2f0cfe9545e946b12c18d56b186d7a5b6d01dc4e683d317ac1"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:08daef6c76cee3ec07c2fd51e9d0c355df915d431bdce5b9b40f754882ec85fe",
+      "unit_id": "SourceUnit:02f788a1c5e7e8c8fc84a365e6e183e773a5679963c86defa684a8ae38398fa7"
+    },
+    {
+      "action": "change",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:c6e8da8e825abf5649559e92415ba1a590587528a4d75679e8ab482c4a0b9bcf",
+      "model_run_id": "dad26074d67ae62c50cd304f266f3c976dbd41fab0a00dae81871cd415abefb6",
+      "prediction_id": "Decision:c6e8da8e825abf5649559e92415ba1a590587528a4d75679e8ab482c4a0b9bcf",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Update the outdated pip link referenced in issue #255 by modifying the pip-related link in the project (PR #256, \"update pip link\").",
+      "statement_evidence_ids": [
+        "Evidence:35bacb992a7cbe2064f219cb71b33045399a1154567097e26b7505fda3a02287"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:5c1a3f29e6abeea959f81c641563971c6b2f34615d527ccb4781d912ca85ece0",
+      "unit_id": "SourceUnit:a226fac850ac17ae2ba680fc2fd1546bbd5e40de75d7e6144f4e25c461ea960f"
+    },
+    {
+      "action": "add",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:6278658245231d300e70c30b71abb99e05e01cd596726e364836b1ddd996100f",
+      "model_run_id": "1a5b580ac26e7fcd2df9650ee93c8501364f008e589c9339fb2ef57efd0915f4",
+      "prediction_id": "Decision:6278658245231d300e70c30b71abb99e05e01cd596726e364836b1ddd996100f",
+      "rationale": "It makes testing much easier because signed tokens with a specific age can be created, and it allows tokens to be created with a specific expiry in mind, e.g. a token with a midnight timestamp and a max age of 24 hours.",
+      "rationale_evidence_ids": [
+        "Evidence:c5c98da03b976ba524b85f97b6c2db7f82609563ca25ec22f3cb7de0c724b444",
+        "Evidence:6c9e7636e4db429acec6a1a5b79430351b3c27a8eaa8c80a76443b9be9391272"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Add the ability to specify the timestamp used when signing tokens, so tokens can be created with a chosen start time.",
+      "statement_evidence_ids": [
+        "Evidence:7d89be0bbb38c02aea2bd985bf566a80375728dcf2d8aaf29188be7fe0543ced",
+        "Evidence:09a03b73ee4e460894f3268d4e16bc98f6d8d39d6f9073ec1ad208eff36b5025"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:8f6c7b0218ae0d34a4995356208c7ed644e68c6772f36473e26b5f8428b0877a",
+      "unit_id": "SourceUnit:088d9cf6d4d3a26288c4fbc1502bed017de55a4453748a37667ccea9a7edae15"
+    },
+    {
+      "action": "keep",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:4aa531d60d6b6304e30a59bf7e9efef27a98c398ac4e6811e55064dd08d1400d",
+      "model_run_id": "1a5b580ac26e7fcd2df9650ee93c8501364f008e589c9339fb2ef57efd0915f4",
+      "prediction_id": "Decision:4aa531d60d6b6304e30a59bf7e9efef27a98c398ac4e6811e55064dd08d1400d",
+      "rationale": "A maintainer worries users would misunderstand or misuse such an option to try to set when the token expires; the calendar-day use case (a token lasting exactly one calendar day rather than 24 hours from creation) is better served by a project subclassing TimestampSigner.",
+      "rationale_evidence_ids": [
+        "Evidence:ad92e80f5d096ced67366ccc9061aae6a33cb0a17945f787031ec7ae25127746",
+        "Evidence:525a0211d06a17d6223398aee88874e494beed53a0504cfd0b15f0a80f545e6e"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Do not expose a user-facing option for setting the signing timestamp; projects needing a calendar-day-based token should subclass TimestampSigner and override get_timestamp instead.",
+      "statement_evidence_ids": [
+        "Evidence:fd10680f3292ec067a65ec17309320c7f1104bc8ab57d7b3387a07ba04b72521",
+        "Evidence:99ecdb9e296d4891705c5c4702a363389be6b97e31d2fa4a15357926a9c0b8a5"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:8f6c7b0218ae0d34a4995356208c7ed644e68c6772f36473e26b5f8428b0877a",
+      "unit_id": "SourceUnit:088d9cf6d4d3a26288c4fbc1502bed017de55a4453748a37667ccea9a7edae15"
+    },
+    {
+      "action": "change",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:228b32d22fc0c3e571018dc775a66f074cbcd66e8b4b02cabe6ddc6882d5669c",
+      "model_run_id": "41961ed3bf7c31ae7b5f5a17b87c05fd77a79304878c4725353dc0f819281982",
+      "prediction_id": "Decision:228b32d22fc0c3e571018dc775a66f074cbcd66e8b4b02cabe6ddc6882d5669c",
+      "rationale": "In Python 3, json.loads() accepts only unicode str, while some serializers such as pickle produce only bytes, so itsdangerous negotiates the serializer string type and assumes latin1 in that case; this may also affect Python 2 users.",
+      "rationale_evidence_ids": [
+        "Evidence:c4d93216f0c1c4e8330be942648e1e9a9162a621596fdde7d021e5d8e7863644",
+        "Evidence:a043e46f31698df40387a6214fc5fefe088b31764177473f75a1c593d8653fa0"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Assume latin1 encoding when negotiating serializer string types so bytes-producing serializers can work with Python 3 json.loads().",
+      "statement_evidence_ids": [
+        "Evidence:6a7718bb89e8952211a5cf22b2b9c442da21ec47c994ace7deac69f34193e5c6"
+      ],
+      "status": "proposed",
+      "subject_id": "PullRequest:fa39fce311ad6a50735f6bd6037afb86ac30c040e23b857e15891cf6a91135c7",
+      "unit_id": "SourceUnit:5ebac2b16052c42d577403afd13dceaf5f1105b0f933c169029b7e013af7d363"
+    },
+    {
+      "action": "keep",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:1d4ec17528b81749e9b6272335013ca6d573c5e06bd6380977016886f17bc7d5",
+      "model_run_id": "c13233e32456de4a0b8768f07c8365a13e1d7efb6d02fc883a3a6dc71d8befce",
+      "prediction_id": "Decision:1d4ec17528b81749e9b6272335013ca6d573c5e06bd6380977016886f17bc7d5",
+      "rationale": "The behavior described only becomes a vulnerability in applications that choose to rely on the raw token string as a security identifier (e.g., for revocation, rate limiting, or session indexing); that would be a vulnerability in such an application, not in itsdangerous, so it is not actionable here.",
+      "rationale_evidence_ids": [
+        "Evidence:4144ff2265859906f2f82dc45e950fc177a5f37baf9646067752fc447606e074",
+        "Evidence:1e9cb994ec3e93fa644a69e56bea857125a65493724d0aee507a55a04e40c1be"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Declined the reported raw-token-string \"security control desynchronization\" as an itsdangerous vulnerability, keeping existing library behavior and directing the reporter to the security policy instead of the public issue tracker.",
+      "statement_evidence_ids": [
+        "Evidence:f9f006a8fdf2e09531f3b36fadc283bc7d8ba0256823b6c6e7f2897ecb07c883"
+      ],
+      "status": "rejected",
+      "subject_id": "Issue:c4e2dcfb13f11a2d5c66f29e29d613551e11283fefbfe22a4754f1f83d243aa0",
+      "unit_id": "SourceUnit:259158af75ee288274a500d878fd1ed2f2800c72dd12f17861a133f4b991fa51"
+    },
+    {
+      "action": "keep",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:066acd6ca2b12519a8e6933053b10f53d46dcaef3d2b3f3fb355982d05e4675f",
+      "model_run_id": "cad4137817dbd3065cddbf6102484dceb193c06738773e19bafc206508ce5e87",
+      "prediction_id": "Decision:066acd6ca2b12519a8e6933053b10f53d46dcaef3d2b3f3fb355982d05e4675f",
+      "rationale": "The SHA-1 digest is resolved lazily so that importing the module does not break at import time, and this lazy behavior intentionally gives users the opportunity to change the default via the digest_method argument when their system does not support SHA-1.",
+      "rationale_evidence_ids": [
+        "Evidence:df9bbf0c966903d266d5431c05ba30a9d016769f7bf9019726779141675bd3b4",
+        "Evidence:4af43c1898a4ed5956e8d9971b26f8d94680fd1d8b38bddf41677c8a0af6a911"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Keep the lazy SHA-1 default digest resolution in Signer and rely on the existing digest_method argument for users on systems (such as FIPS hosts) that do not support SHA-1 to override it.",
+      "statement_evidence_ids": [
+        "Evidence:df9bbf0c966903d266d5431c05ba30a9d016769f7bf9019726779141675bd3b4",
+        "Evidence:39d7733e8b0c577a4cff299ef6f614bd0cad9ff39bf31c3cff539d26846d9761"
+      ],
+      "status": "accepted",
+      "subject_id": "Issue:097ea2133399130b88e4f4abd24977631e3cd9a8acf40b60982a673b8d185b9f",
+      "unit_id": "SourceUnit:f7648095f767f818df50fd651fbf32091607bf81119b1c1f3bd37a4b348b1108"
+    },
+    {
+      "action": "change",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:d31f7ae931b1da13027070bb3aa7c6c8093fb2ecf996a8e9c99e2787b5fff9fe",
+      "model_run_id": "cad4137817dbd3065cddbf6102484dceb193c06738773e19bafc206508ce5e87",
+      "prediction_id": "Decision:d31f7ae931b1da13027070bb3aa7c6c8093fb2ecf996a8e9c99e2787b5fff9fe",
+      "rationale": "The module is used by many other modules, and automatically handling FIPS mode would benefit everyone.",
+      "rationale_evidence_ids": [
+        "Evidence:39b90216807e5ea6648a563b3d25de5cd057de7e3db735c2b9ccbaae9081d50b",
+        "Evidence:5a170bc40f61283c2fc53f4ac047bef0ba10c61b11bcc31e3480c2cc55d971be"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Detect FIPS mode via hashlib._hashlib.get_fips_mode() and automatically pass a FIPS-compatible digest method instead of the lazy SHA-1 default.",
+      "statement_evidence_ids": [
+        "Evidence:540079ac7255c531ef90c485b8f26ec50d13c45663ec44351711fafe4f817d57"
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:097ea2133399130b88e4f4abd24977631e3cd9a8acf40b60982a673b8d185b9f",
+      "unit_id": "SourceUnit:f7648095f767f818df50fd651fbf32091607bf81119b1c1f3bd37a4b348b1108"
+    },
+    {
+      "action": "keep",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:37d021d4e99c9897727613dbfed7a95756f3c1aa290f450ec60306756eeb2e92",
+      "model_run_id": "ee937cc10c50bb570be0595a949fd45b7625b1d773f0888303eaa304f5404a36",
+      "prediction_id": "Decision:37d021d4e99c9897727613dbfed7a95756f3c1aa290f450ec60306756eeb2e92",
+      "rationale": "Signatures are base64-encoded bytes rather than ASCII characters, so some trailing bytes/bits act as padding to a standard length or boundary.",
+      "rationale_evidence_ids": [
+        "Evidence:7c77d8ea3181ce86db8d13a055f6f9437429bd8f1873cae44ed793ae22390e25"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Do not treat trailing-character variants in signed/serialized data as an itsdangerous bug; the behavior is inherent to base64 encoding, not the library.",
+      "statement_evidence_ids": [
+        "Evidence:39275d8308691e89ee82a95350c72b480d9e46549cab807c7be7f6cb68f885cc"
+      ],
+      "status": "rejected",
+      "subject_id": "Issue:95c44d2a260952179a4b4e34a7118bc4942e66e77bae3bcd33aff737d6c674a8",
+      "unit_id": "SourceUnit:b90cfc4374ebdbcc43393c9fd7de39bda7ee7bf31b287b6d9c21eef16ebf1921"
+    },
+    {
+      "action": "keep",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:7dbff62ece056f77e458efba2370fda1ec0d00e874803a243d158fab4afd7448",
+      "model_run_id": "9acceb2a664868908effb714108c98359ead545d3f72dfe61a926e412faff007",
+      "prediction_id": "Decision:7dbff62ece056f77e458efba2370fda1ec0d00e874803a243d158fab4afd7448",
+      "rationale": "The maintainer believed documenting this would not have changed anything because the underlying problem is that users are not pinning dependencies, not semver; versioning documentation is not specific to itsdangerous and a broader website draft already existed but needed finishing.",
+      "rationale_evidence_ids": [
+        "Evidence:458918d4e21f715f61e53e7898f04115dffcf9a0410e15545ce419876b29bed9"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Declined to add itsdangerous-specific documentation about its versioning scheme and non-adherence to Semantic Versioning, closing the request as not specific to itsdangerous.",
+      "statement_evidence_ids": [
+        "Evidence:5b7585f84d8c10d0d488aa70017565dd8b6e360126db7811a3c3dc16d39d44ac",
+        "Evidence:ea76b4705cdadb6042f268811cb3a51417798c196ba3a585fd98da0c260a8d96"
+      ],
+      "status": "rejected",
+      "subject_id": "Issue:f1584fda332d7bf339258aa98d4433c7d1d3509a6a5b5f9e4292cef3dd2c1ab9",
+      "unit_id": "SourceUnit:6b93ef0f7d279dfbb421acce89feb29aee94daca9568e77f0e8c48e5cf1126a3"
+    },
+    {
+      "action": "keep",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:1a6b81e2fcc613e1d229dfc78068920b9b42c0883f29bee9aa36540daabfc304",
+      "model_run_id": "b34d74ca5b9775982fc05e226fa1618895e999bb3f325561f0dbb1127f19bb2a",
+      "prediction_id": "Decision:1a6b81e2fcc613e1d229dfc78068920b9b42c0883f29bee9aa36540daabfc304",
+      "rationale": "The maintainer considers encryption out of scope for itsdangerous; users who need it should subclass the Signer to implement their own behavior.",
+      "rationale_evidence_ids": [
+        "Evidence:a5b888d0c6cb4c9396501c3514a0dc3c35dce12cd11c56f03eb2731e68c07867",
+        "Evidence:79774486611ac344694967e316dbf849f1b9e1aa8ad65ef3a5028a5c16f48311"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Declined to add built-in encrypted cookie/secret transport support to itsdangerous, keeping encryption out of the library's scope.",
+      "statement_evidence_ids": [
+        "Evidence:a5b888d0c6cb4c9396501c3514a0dc3c35dce12cd11c56f03eb2731e68c07867"
+      ],
+      "status": "rejected",
+      "subject_id": "Issue:0ea287dbc058c010837ce858c279780814d52af47c1b09e108a33fccfb0061df",
+      "unit_id": "SourceUnit:b111666371018bd1f56dfed27db15f16f3ac4878a8242247fa4c8bbda5f42906"
+    },
+    {
+      "action": "keep",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:ea12ead3070956bfbc4bab45a7fa20e1636a4a88a4e02f2e2415d151665efe03",
+      "model_run_id": "06cded491ff263a238cbba4d152bcee844435a5d051ab1da5e0b1948baa9c038",
+      "prediction_id": "Decision:ea12ead3070956bfbc4bab45a7fa20e1636a4a88a4e02f2e2415d151665efe03",
+      "rationale": "Expiration is embedded in the token itself, and changing any value in the token produces a completely different token, so in-place expiry extension is impossible. A non-expiring refresh token is suggested as an alternative to issue new primary tokens.",
+      "rationale_evidence_ids": [
+        "Evidence:9da958175f115ad9a6f6a160047284cb8886a669414907577f638692e3a0df0c",
+        "Evidence:31602117721072521809e954737b7da5611555893cf0a53503fb7603b4446618",
+        "Evidence:7343b88f6932d37bc88a6ef63935feb084bbe4c88008618d70c844be6f291e26"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Do not support extending the expiry time of an already-issued token; issue a new token instead, optionally using a long-lived refresh token to issue new primary tokens.",
+      "statement_evidence_ids": [
+        "Evidence:9da958175f115ad9a6f6a160047284cb8886a669414907577f638692e3a0df0c",
+        "Evidence:7343b88f6932d37bc88a6ef63935feb084bbe4c88008618d70c844be6f291e26"
+      ],
+      "status": "rejected",
+      "subject_id": "Issue:ada0d337a0886be15b611963cc9eec55ef90fee78a22942caec369f7d6dc9d42",
+      "unit_id": "SourceUnit:bd19416424e157feebde06eacaa15a5fc9c7ebbfd34d21bdbb1493905d34a96b"
+    },
+    {
+      "action": "remove",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:fa651bdd38af63e8f9c75a42882dac0e001acbe707c8d82c4cc3c71b74349957",
+      "model_run_id": "40dcd33d6b4f10bb63226b5dd4a14e23ac73a0bb2401a1222c0e5907659b3288",
+      "prediction_id": "Decision:fa651bdd38af63e8f9c75a42882dac0e001acbe707c8d82c4cc3c71b74349957",
+      "rationale": null,
+      "rationale_evidence_ids": [],
+      "rationale_status": "not_stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Proposes dropping support for Python 2.6 in itsdangerous (revisiting the earlier proposal in PR #72).",
+      "statement_evidence_ids": [
+        "Evidence:0b2e47482d3f5f60824146ad980f2d211574e9302ff8514cb7dca5e218fa559b",
+        "Evidence:0dc2eb9b5c14ba3e300b549ecce34da11790b110c326b239db7a21fccac10b1b"
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:ed5fd76d1a59f806f181fd838874c0718ffd40d6751c836ae86d8666b71cbdae",
+      "unit_id": "SourceUnit:211519b9f1411dcf9b32fc134bedd0d06321d41a4b27419ad87fa2cf2313ef7d"
+    },
+    {
+      "action": "deprecate",
+      "contract_version": "1.4.2",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "id": "Decision:c8d7ac93a0023bc888db5bc9455f50138bbf0f513cce4a48c4ae6f55b24a4d33",
+      "model_run_id": "40dcd33d6b4f10bb63226b5dd4a14e23ac73a0bb2401a1222c0e5907659b3288",
+      "prediction_id": "Decision:c8d7ac93a0023bc888db5bc9455f50138bbf0f513cce4a48c4ae6f55b24a4d33",
+      "rationale": "Support should not be removed as a spontaneous reaction; the deprecation should be reasonably long and announced in advance.",
+      "rationale_evidence_ids": [
+        "Evidence:34bceee42a1ab90865d6aa361aa928261622265d14c60876df44c81b362f8293"
+      ],
+      "rationale_status": "stated",
+      "repo": "pallets/itsdangerous",
+      "statement": "Proposes a reasonably long, previously announced deprecation phase for Python 2.6 support, such as a warning during installation on Python 2.6, rather than removing support immediately.",
+      "statement_evidence_ids": [
+        "Evidence:820145d9215b0887e74e0b020a4168ec0ab873ab2ae03e4078e4e9109ab5b1ce"
+      ],
+      "status": "proposed",
+      "subject_id": "Issue:ed5fd76d1a59f806f181fd838874c0718ffd40d6751c836ae86d8666b71cbdae",
+      "unit_id": "SourceUnit:211519b9f1411dcf9b32fc134bedd0d06321d41a4b27419ad87fa2cf2313ef7d"
+    }
+  ]
+}

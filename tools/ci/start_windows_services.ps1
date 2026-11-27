@@ -22,7 +22,7 @@ foreach ($database in @('collector_test', 'historykg_windows')) {
     & "$pgBin/createdb.exe" -h 127.0.0.1 -p 16432 -U collector $database
     if ($LASTEXITCODE -ne 0) { throw "PostgreSQL createdb failed: $database" }
 }
-& "$pgBin/psql.exe" -h 127.0.0.1 -p 16432 -U collector -d collector_test -c 'select version(); create extension if not exists pg_trgm;'
+& "$pgBin/psql.exe" -h 127.0.0.1 -p 16432 -U collector -d collector_test -c 'select version();'
 if ($LASTEXITCODE -ne 0) { throw 'PostgreSQL version/extension check failed' }
 
 $neoHome = Join-Path $services 'neo4j-community-5.26.0'

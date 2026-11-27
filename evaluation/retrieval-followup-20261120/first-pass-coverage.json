@@ -1,0 +1,78 @@
+{
+  "1": {
+    "criteria": [
+      "UTC 日期",
+      "与该日期对应的正式发布出处"
+    ],
+    "evidence_present": [
+      true,
+      true
+    ]
+  },
+  "2": {
+    "criteria": [
+      "UTC 日期",
+      "与该日期对应的正式发布出处"
+    ],
+    "evidence_present": [
+      true,
+      true
+    ]
+  },
+  "3": {
+    "criteria": [
+      "动机",
+      "对应 PR",
+      "实际合并 SHA",
+      "历史改动文件及来源"
+    ],
+    "evidence_present": [
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "4": {
+    "criteria": [
+      "动机",
+      "对应 PR",
+      "实际合并 SHA",
+      "实际改动测试文件及来源"
+    ],
+    "evidence_present": [
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "5": {
+    "criteria": [
+      "实际合并",
+      "截止日前正式发布清单或有据的边界",
+      "对应标签的实际祖先核对",
+      "首次版本或有限结论"
+    ],
+    "evidence_present": [
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "6": {
+    "criteria": [
+      "实际合并",
+      "截止日前正式发布清单或有据的边界",
+      "对应标签的实际祖先核对",
+      "首次版本或有限结论"
+    ],
+    "evidence_present": [
+      true,
+      true,
+      true,
+      true
+    ]
+  }
+}

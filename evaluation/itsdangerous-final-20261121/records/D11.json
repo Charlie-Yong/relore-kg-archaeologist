@@ -1,0 +1,27 @@
+{
+  "arm": "D",
+  "q": 11,
+  "start_utc": "2026-11-21T11:03:22.166013+00:00",
+  "elapsed_seconds": 205.579,
+  "status": "ok",
+  "answer": "**结论**\n没有合并；也不能算作“已经随某个正式版发布的合并改动”。\n\n**PR #399 的状态**\n`GET https://api.github.com/repos/pallets/itsdangerous/pulls/399` 返回的关键字段是：\n\n```json\n\"state\": \"closed\",\n\"merged\": false,\n\"merged_at\": null,\n\"merged_by\": null,\n\"closed_at\": \"2024-11-25T15:22:31Z\",\n\"merge_commit_sha\": \"871d10c94d4007397cd9d2b29516a86949f14454\"\n```\n\n`https://api.github.com/repos/pallets/itsdangerous/issues/399` 也一致：\n\n```json\n\"state\": \"closed\",\n\"closed_by\": {\"login\": \"davidism\"},\n\"pull_request\": {\"merged_at\": null}\n```\n\n这里特别要注意：`merge_commit_sha` 非空不等于已经合并。它是 GitHub 为 PR 计算出的测试合并提交 SHA；判断是否合并要看 `merged`、`merged_at`、`merged_by`，而这三个字段分别显示为 `false`、`null`、`null`。\n\n**正式版核对**\n`GET https://api.github.com/repos/pallets/itsdangerous/releases`（按 `per_page=100` 抓取）中最新正式版是：\n\n```json\n\"tag_name\": \"2.2.0\",\n\"published_at\": \"2024-04-16T21:46:38Z\",\n\"draft\": false,\n\"prerelease\": false\n```\n\n`https://api.github.com/repos/pallets/itsdangerous/tags` 中最新版本标签也是 `2.2.0`，指向提交 `096c8d42545d3b68ea21a4f890fb2b2d8979c0bd`；该提交信息为 `release version 2.2.0`，时间是 `2024-04-16T14:19:20-07:00`。\n\nPR #399 创建于 `2024-11-25T14:40:58Z`，晚于 2.2.0；冻结材料中 2.2.0 之后没有 2.2.1、2.3.0 等新正式版。\n\n**旁证与解释**\n- issue #398 中作者写道：`This is the [PR](https://github.com/pallets/itsdangerous/pull/399) I see it fails your CI/CD. I'll check it.`；评论者 ThiefMaster 也对宽泛捕获异常的做法提出了异议。\n- 随后 `davidism` 于 `2024-11-25T15:22:31Z` 关闭 PR #399；issue #398 在约 10 秒后也以 `state_reason: \"not_planned\"` 关闭。\n- 对 `sources.jsonl` 中冻结的默认分支 `672971d66a2ef9f85151e53283113f33d642dabd` 做可达性检查：其历史包含 2.2.0 的 `096c8d4`，但不包含 PR head `20e3b9e`，也不包含 `merge_commit_sha` `871d10c`。\n\n因此，PR #399 既没有被合并进默认分支，也没有随 2.2.0 或之后的任何一个正式版发布；不能把它计入“已发布的合并改动”。\n\n**官方出处**\n- PR 页面：https://github.com/pallets/itsdangerous/pull/399\n- PR API：https://api.github.com/repos/pallets/itsdangerous/pulls/399\n- Issue #399 API：https://api.github.com/repos/pallets/itsdangerous/issues/399\n- Issue #398 评论：https://github.com/pallets/itsdangerous/issues/398#issuecomment-2498214376\n- 2.2.0 Release：https://github.com/pallets/itsdangerous/releases/tag/2.2.0\n- Releases API：https://api.github.com/repos/pallets/itsdangerous/releases\n- Tags API：https://api.github.com/repos/pallets/itsdangerous/tags",
+  "exit": 0,
+  "tools": [],
+  "usage": [
+    {
+      "input_tokens": 2190074,
+      "cached_input_tokens": 2087424,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 29838,
+      "reasoning_output_tokens": 20969
+    }
+  ],
+  "event_types": [
+    "item.completed",
+    "item.started",
+    "thread.started",
+    "turn.completed",
+    "turn.started"
+  ],
+  "prompt": "仓库 pallets/itsdangerous，截止时间 2026-11-16T06:31:18Z，冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd。PR #399 合并了吗？能否把它算成已经随某个正式版发布的合并改动？请给出出处并解释。 用中文直接给出回答、可核对的原文或字段与官方出处链接。独立以当前目录 sources.jsonl 中冻结的原始材料作答。每行是 JSON，含 kind/url/text。只用 shell 在当前目录查阅，不访问网络、其他目录或历史答案。"
+}

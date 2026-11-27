@@ -1,0 +1,77 @@
+{
+  "rubric": [
+    "实际合并 SHA",
+    "正式发布范围及出处",
+    "实际标签包含核对",
+    "有依据的首次正式版本"
+  ],
+  "model": "bailian/deepseek-v4.1-flash-1017",
+  "usage": {
+    "completion_tokens": 438,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 10191,
+    "prompt_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "total_tokens": 10629
+  },
+  "scores": {
+    "O": {
+      "points": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "note": "未识别合并SHA、未核对发布范围与标签包含关系，也未给出首次正式版本，均以缺少上下文为由未答。"
+    },
+    "D": {
+      "points": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "note": "给出合并SHA b11475...；列出2.0.0–2.2.0正式版并区分rc/预发布；核对2.0.0标签指向d101100...且rev-list含合并提交，后续正式标签亦逐项核对；首次正式版2.0.0有依据。"
+    },
+    "B": {
+      "points": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "note": "合并SHA及PR API merged=true有出处；正式发布列表含日期与draft/prerelease=false；六个正式标签均给出单标签rev-list含b11475...的context_note；首次正式版结论为2.0.0。仅未覆盖2.0.0前最早版严格性，但标签包含和发布范围已实际核对。"
+    },
+    "A": {
+      "points": [
+        1,
+        1,
+        0,
+        0.5
+      ],
+      "note": "合并SHA有依据；发布范围与日期有出处；但缺少2.0.0等标签单标签遍历或祖先关系记录，未实际核对标签包含；首次正式版仅按发布时间推断，依据不足。"
+    },
+    "E": {
+      "points": [
+        1,
+        0.5,
+        1,
+        1
+      ],
+      "note": "给出合并SHA且标签包含核对有CHANGES/jws.py证据，首次正式版2.0.0正确；正式发布范围列了标签但未在正文逐项给出标签包含历史及日期出处，部分扣分。"
+    },
+    "C": {
+      "points": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "note": "合并SHA及merged_at有API依据；正式版2.0.0–2.2.0均有日期和draft/prerelease=false；各标签单标签rev-list包含b11475...的context_note逐项核对；结论限定给定范围为2.0.0且明确无更早给定正式版。"
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "rubric": [
+    "dumps 顺序及对应源码",
+    "loads 顺序及对应源码"
+  ],
+  "model": "bailian/deepseek-v4.1-flash-1017",
+  "usage": {
+    "completion_tokens": 259,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 2050,
+    "prompt_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "total_tokens": 2309
+  },
+  "scores": {
+    "E": {
+      "points": [
+        1,
+        1
+      ],
+      "note": "dumps顺序序列化再签名并附源码关键行；loads先转bytes再逐signer先unsign后load_payload并附源码关键行，两评分项均满足。"
+    },
+    "C": {
+      "points": [
+        0,
+        0
+      ],
+      "note": "未回答dumps/loads先后顺序，也未给出这两个方法的对应源码；仅说明可见片段不含方法实现。"
+    },
+    "D": {
+      "points": [
+        1,
+        1
+      ],
+      "note": "dumps先dump_payload转bytes再make_signer().sign并附冻结行号源码；loads先want_bytes再iter_unsigners中先unsign后load_payload并附冻结行号源码，两项均满足。"
+    },
+    "O": {
+      "points": [
+        0,
+        0
+      ],
+      "note": "未回答dumps/loads先后顺序，也未给出对应源码；仅说片段未含这两个方法。"
+    },
+    "B": {
+      "points": [
+        0,
+        0
+      ],
+      "note": "未回答dumps/loads先后顺序，也未给出对应源码；仅指出可见片段不含方法实现。"
+    },
+    "A": {
+      "points": [
+        0,
+        0
+      ],
+      "note": "未回答dumps/loads先后顺序，也未给出对应源码；仅指出可见片段不含方法实现。"
+    }
+  }
+}

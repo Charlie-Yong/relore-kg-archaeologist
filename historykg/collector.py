@@ -1,4 +1,4 @@
-"""P4: project-local collection, storage and retrieval using the bundled relore.
+"""Project history collection, capture replay, and discussion search.
 
 These are development/data interfaces, not the final BuildJob/QueryResult pipeline.
 No daemon, original deployment, model service or target-project code is executed.
@@ -19,28 +19,25 @@ from pathlib import Path
 from typing import Any
 
 import httpx
-import relore
-from relore.github.client import GitHubClient, GitHubError
-from relore.github.fetch_thread import ThreadPayload, fetch_thread
-from relore.ingest.index_thread import index_payload
-from relore.search import SearchQuery, open_backend, search_best
-from relore.store import schema
-from relore.store.dialect import make_engine
-from relore.store.migrations import migrate
-from sqlalchemy import Engine, func, inspect, select
+from sqlalchemy import Engine, inspect
 from sqlalchemy.exc import SQLAlchemyError
 
+from historykg.ingest import index
+from historykg.ingest.github import (
+    FULL_HISTORY,
+    FULL_MAX_REQUESTS,
+    CollectionBlocked,
+    GitHubClient,
+    GitHubError,
+    ThreadPayload,
+    fetch_thread,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "vendor" / "relore" / "relore"
-VERSION = "0.3.19"
-COMMIT = "06a1c99c4653e9db899a18e96d8ff0ee6b419815"
+VERSION = "historykg_collector_v1"
 INTERFACE = "collector_v1"
 PROFILE = "collector_smoke_v1"
 CAPTURE = "historykg.collector.capture.v1"
-
-
-class CollectionBlocked(RuntimeError):
-    """A request budget or external rate limit stopped this bounded collection."""
 
 
 class UnsupportedRepository(ValueError):
@@ -74,20 +71,11 @@ def _result(status: str = "ok", **fields: Any) -> dict[str, Any]:
 
 
 def _source() -> dict[str, Any]:
-    location = Path(relore.__file__).resolve()
-    bundled = location.is_relative_to(SOURCE.resolve()) and relore.__version__ == VERSION
     return {
-        "version": relore.__version__,
-        "expected_version": VERSION,
-        "commit": COMMIT,
-        "bundled": bundled,
-        "module_path": str(location),
+        "implementation": "historykg",
+        "version": VERSION,
+        "module_path": str(Path(__file__).resolve()),
     }
-
-
-def _require_source() -> None:
-    if not _source()["bundled"]:
-        raise ValueError("请从项目根目录运行 python -m pip install -r requirements.txt")
 
 
 def normalize_repo(value: str, *, require_url: bool = False) -> str:
@@ -101,25 +89,12 @@ def normalize_repo(value: str, *, require_url: bool = False) -> str:
 
 
 def _engine(database_url: str | None) -> Engine:
-    _require_source()
-    url = database_url or os.environ.get("RELORE_DATABASE_URL")
+    url = database_url or os.getenv("HISTORYKG_DATABASE_URL") or os.getenv("RELORE_DATABASE_URL")
     if not url:
         path = ROOT / ".local" / "collector" / "index.sqlite3"
         path.parent.mkdir(parents=True, exist_ok=True)
         url = "sqlite:///" + path.as_posix()
-    return make_engine(url)
-
-
-def _counts(engine: Engine, repo: str | None = None) -> dict[str, int]:
-    threads = select(func.count()).select_from(schema.threads)
-    documents = select(func.count()).select_from(
-        schema.documents.join(schema.threads, schema.documents.c.thread_id == schema.threads.c.id)
-    )
-    if repo is not None:
-        threads = threads.where(schema.threads.c.repo == repo)
-        documents = documents.where(schema.threads.c.repo == repo)
-    with engine.connect() as conn:
-        return {"threads": conn.scalar(threads), "documents": conn.scalar(documents)}
+    return index.make_engine(url)
 
 
 def _database_error(exc: Exception) -> dict[str, Any]:
@@ -129,7 +104,7 @@ def _database_error(exc: Exception) -> dict[str, Any]:
         error={
             "code": "database_error",
             "type": type(exc).__name__,
-            "message": "数据库操作失败，请检查RELORE_DATABASE_URL及数据库服务。",
+            "message": "数据库操作失败，请检查HISTORYKG_DATABASE_URL及数据库服务。",
         },
     )
 
@@ -139,8 +114,8 @@ def initialize_database(database_url: str | None = None) -> dict[str, Any]:
     engine = None
     try:
         engine = _engine(database_url)
-        migrate(engine)
-        return _result(backend=engine.dialect.name, counts=_counts(engine))
+        index.metadata.create_all(engine)
+        return _result(backend=engine.dialect.name, counts=index.counts(engine))
     except ValueError as exc:
         return _result("error", error={"code": "configuration", "message": str(exc)})
     except SQLAlchemyError as exc:
@@ -156,12 +131,12 @@ def doctor(database_url: str | None = None) -> dict[str, Any]:
     try:
         engine = _engine(database_url)
         tables = inspect(engine).get_table_names()
-        ready = {"threads", "documents", "schema_migrations"}.issubset(tables)
+        ready = index.documents.name in tables
         return _result(
             source=_source(),
             backend=engine.dialect.name,
             schema_ready=ready,
-            counts=_counts(engine) if ready else None,
+            counts=index.counts(engine) if ready else None,
             token_configured=bool(os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")),
             hint=None
             if ready
@@ -276,23 +251,27 @@ def collect_repo(
     ``transport`` is injectable for offline consumers/tests. A failed collection keeps
     already indexed threads; gaps and status distinguish it from a complete sample.
     """
+    full = profile_version == FULL_HISTORY
     try:
         repo = normalize_repo(repo_url, require_url=True)
         if min(max_issues, max_prs) < 0 or not 1 <= max_issues + max_prs <= 40:
             raise ValueError("讨论单元总上限须在1到40之间。")
-        if not 1 <= max_requests <= 300:
-            raise ValueError("GitHub请求上限须在1到300之间。")
+        request_limit = FULL_MAX_REQUESTS if full else 300
+        if not 1 <= max_requests <= request_limit:
+            raise ValueError(f"GitHub请求上限须在1到{request_limit}之间。")
         if not 0 <= initial_requests <= max_requests:
             raise ValueError("已用请求数必须位于请求上限内。")
         if selected is not None:
             selected = list({(x["kind"], x["number"]): dict(x) for x in selected}.values())
-            if len(selected) > 40 or any(
+            if (not full and len(selected) > 40) or any(
                 x["kind"] not in {"issue", "pr"}
                 or not isinstance(x["number"], int)
                 or x["number"] <= 0
                 for x in selected
             ):
-                raise ValueError("selected只允许至多40条合法线程。")
+                raise ValueError("selected含非法线程或超过当前档位的上限。")
+        elif full:
+            raise ValueError("全量采集需要冻结的公开讨论清单。")
     except ValueError as exc:
         return _result("unsupported", error={"code": "input", "message": str(exc)})
 
@@ -315,7 +294,6 @@ def collect_repo(
         initial_requests = previous["result"]["github_requests"]
         if initial_requests > max_requests:
             raise ValueError("续作请求上限不能小于已有耗用。")
-    budget = _RequestBudget(max_requests, initial_requests, captured)
     token = (
         token
         if token is not None
@@ -340,6 +318,15 @@ def collect_repo(
         / (dt.datetime.now(dt.UTC).strftime("%Y%m%dT%H%M%SZ-") + uuid.uuid4().hex[:6])
     )
     capture_path = directory / "capture.json"
+    journal = directory / "requests.jsonl"
+    if full and journal.exists():
+        with journal.open(encoding="utf-8") as stream:
+            for line in stream:
+                item = json.loads(line)
+                initial_requests = item["used"]
+                if item.get("response"):
+                    captured.append(item["response"])
+    budget = _RequestBudget(max_requests, initial_requests, captured)
 
     def checkpoint():
         _write_json(
@@ -348,7 +335,7 @@ def collect_repo(
                 "format": CAPTURE,
                 "repo": repo,
                 "retrieved_at": _now(),
-                "relore_commit": COMMIT,
+                "collector_version": VERSION,
                 "checkpoint": True,
                 "result": _result(
                     "partial" if payloads else "blocked",
@@ -368,17 +355,32 @@ def collect_repo(
             },
         )
 
-    budget.checkpoint = checkpoint
+    last_saved = len(budget.responses)
+    last_count = budget.used
+
+    def journal_request():
+        nonlocal last_saved, last_count
+        if len(budget.responses) == last_saved and budget.used == last_count:
+            return
+        row = {"used": budget.used}
+        if len(budget.responses) != last_saved:
+            row["response"] = budget.responses[-1]
+        directory.mkdir(parents=True, exist_ok=True)
+        with journal.open("a", encoding="utf-8") as stream:
+            stream.write(json.dumps(row, ensure_ascii=False) + "\n")
+        last_saved, last_count = len(budget.responses), budget.used
+
+    budget.checkpoint = journal_request if full else checkpoint
     try:
         engine = _engine(database_url)
-        migrate(engine)
+        index.metadata.create_all(engine)
         for raw in prior_payloads:
-            payload = ThreadPayload(**{**raw, "unread": set(raw.get("unread", []))})
+            payload = ThreadPayload.from_capture(raw)
             if normalize_repo(payload.repo) != repo:
                 raise ValueError("续作线程仓库不一致。")
             if not payload.unread:
                 with engine.begin() as conn:
-                    index_payload(conn, payload)
+                    index.write_thread(conn, payload)
                 payloads.append(payload)
         with _ResumableClient(
             captured_responses=captured,
@@ -387,7 +389,7 @@ def collect_repo(
             timeout=30,
             event_hooks={"request": [budget.before_request], "response": [budget.after_response]},
         ) as http:
-            client = GitHubClient(token, client=http, max_retries=2, sleep=_retry_wait)
+            client = GitHubClient(http, sleep=_retry_wait)
             metadata = client.get_json(f"repos/{repo}")
             if metadata.get("private"):
                 raise UnsupportedRepository("本入口只支持公开仓库。")
@@ -397,7 +399,8 @@ def collect_repo(
                     raise UnsupportedRepository("当前项目范围为包含Python源码的公开仓库。")
             if selected is None and not selected_threads:
                 selected_threads = _select_threads(client, repo, max_issues, max_prs)
-            checkpoint()
+            if not full:
+                checkpoint()
             complete_numbers = {p.number for p in payloads}
             for item in selected_threads:
                 if item["number"] in complete_numbers:
@@ -405,26 +408,31 @@ def collect_repo(
                 try:
                     payload = fetch_thread(client, repo, item["number"])
                     with engine.begin() as conn:
-                        index_payload(conn, payload)
+                        index.write_thread(conn, payload)
                     payloads.append(payload)
-                    counts = _counts(engine, repo)
+                    if not full:
+                        counts = index.counts(engine, repo)
                     if payload.unread:
                         gaps.append({**item, "reason": "unread", "parts": sorted(payload.unread)})
-                    checkpoint()
+                    if not full:
+                        checkpoint()
                 except GitHubError as exc:
+                    if full and exc.status not in {404, 410, 422}:
+                        raise
                     gaps.append({**item, "reason": "fetch_failed", "http_status": exc.status})
-            counts = _counts(engine, repo)
+            counts = index.counts(engine, repo)
         status = "partial" if gaps else ("ok" if payloads else "empty")
         if gaps and not payloads:
             status = "error"
     except CollectionBlocked as exc:
-        status = "partial" if payloads else "blocked"
+        status = "blocked" if full or not payloads else "partial"
         gaps.append({"reason": "request_limit_or_rate_limit", "message": str(exc)})
     except GitHubError as exc:
-        status = "partial" if payloads else ("unsupported" if exc.status == 404 else "error")
+        status = ("blocked" if full and payloads else
+                  "partial" if payloads else "unsupported" if exc.status == 404 else "error")
         gaps.append({"reason": "github_error", "http_status": exc.status})
     except httpx.TransportError as exc:
-        status = "partial" if payloads else "error"
+        status = "blocked" if full else "partial" if payloads else "error"
         gaps.append({"reason": "network_error", "type": type(exc).__name__})
     except UnsupportedRepository as exc:
         status = "unsupported"
@@ -439,6 +447,10 @@ def collect_repo(
         if engine is not None:
             engine.dispose()
 
+    if full:
+        # Repo-wide index counts may include earlier jobs. The capture is this job’s inventory.
+        counts = {"threads": len(payloads),
+                  "documents": sum(sum(1 for _ in p.objects()) for p in payloads)}
     result = _result(
         status,
         repo=repo,
@@ -458,12 +470,14 @@ def collect_repo(
             "format": CAPTURE,
             "repo": repo,
             "retrieved_at": _now(),
-            "relore_commit": COMMIT,
+            "collector_version": VERSION,
             "result": result,
             "payloads": [dataclasses.asdict(p) for p in payloads],
             "http_responses": budget.responses,
         },
     )
+    if full:
+        journal.unlink(missing_ok=True)
     return result
 
 
@@ -480,18 +494,18 @@ def index_threads(
         if len(repos) > 1:
             raise ValueError("每次回放只接收同一仓库的讨论。")
         engine = _engine(database_url)
-        migrate(engine)
+        index.metadata.create_all(engine)
         written = 0
         for payload in payloads:
             with engine.begin() as conn:
-                written += index_payload(conn, payload).stats.wrote
+                written += index.write_thread(conn, payload)
         repo = next(iter(repos), None)
         return _result(
             "partial" if any(p.unread for p in payloads) else ("ok" if payloads else "empty"),
             repo=repo,
             indexed_threads=len(payloads),
             documents_written=written,
-            counts=_counts(engine, repo),
+            counts=index.counts(engine, repo),
             gaps=[{"number": p.number, "parts": sorted(p.unread)} for p in payloads if p.unread],
         )
     except ValueError as exc:
@@ -508,9 +522,7 @@ def replay_capture(path: str | Path, *, database_url: str | None = None) -> dict
     capture = json.loads(Path(path).read_text(encoding="utf-8"))
     if capture.get("format") != CAPTURE:
         raise ValueError("不支持的采集快照格式。")
-    payloads = [
-        ThreadPayload(**{**p, "unread": set(p.get("unread", []))}) for p in capture["payloads"]
-    ]
+    payloads = [ThreadPayload.from_capture(p) for p in capture["payloads"]]
     if any(normalize_repo(p.repo) != normalize_repo(capture["repo"]) for p in payloads):
         raise ValueError("采集快照仓库不一致。")
     result = index_threads(payloads, database_url=database_url)
@@ -530,21 +542,20 @@ def search_history(
     database_url: str | None = None,
     limit: int = 5,
 ) -> dict[str, Any]:
-    """P2 retrieval seam. Return relore hits, including original snippets and source URLs."""
+    """Rank local discussion documents, returning original excerpts and source URLs."""
     engine = None
     try:
         repo = normalize_repo(repo)
         if not query.strip() or not 1 <= limit <= 10:
             raise ValueError("关键词不能为空，limit须在1到10之间。")
         engine = _engine(database_url)
-        backend = open_backend(engine)
-        hits, note = search_best(backend, SearchQuery(repos=(repo,), text=query, limit=limit))
+        hits = index.search(engine, repo, query, limit)
         return _result(
             "ok" if hits else "empty",
             repo=repo,
             query=query,
-            hits=[dataclasses.asdict(hit) for hit in hits],
-            note=note,
+            hits=hits,
+            method=index.SEARCH_METHOD,
         )
     except ValueError as exc:
         return _result("unsupported", error={"code": "input_or_configuration", "message": str(exc)})
@@ -556,7 +567,7 @@ def search_history(
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="项目历史采集器：基于开源relore二次开发")
+    parser = argparse.ArgumentParser(description="HistoryKG 项目历史采集器")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("doctor", help="检查本地源码、配置和数据库")
     ingest = sub.add_parser("ingest", help="从公开Python仓库URL有限采集并建立索引")

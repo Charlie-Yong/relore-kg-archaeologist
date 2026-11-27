@@ -1,0 +1,249 @@
+{
+  "arm": "O",
+  "question": "仓库 pallets/itsdangerous，截止时间 2026-11-16T06:31:18Z，冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd。Issue #146 为什么质疑保留 simplejson？后来哪个 PR 处理了这个请求，合并提交是什么，改了哪个源码文件？请附原文出处。",
+  "status": "ok",
+  "error": null,
+  "seconds": 34.837,
+  "method": "p2_query_v1.4.2_historykg_discussion_v1_full_focal_v1",
+  "max_output_tokens": 32768,
+  "timeout_seconds": 240,
+  "claims": [
+    {
+      "text": "Issue #146 的评论指出，itsdangerous（以及 Flask、Starlette 等）在安装了 simplejson 时会使用 simplejson。",
+      "evidence_ids": [
+        "Evidence:0848948cf56fe985ce0d2cce0f1203fcff4b501c647c424e21636c7de9dcd1fc"
+      ]
+    },
+    {
+      "text": "该评论者质疑保留 simplejson 的必要性，表示不知道有什么功能或兼容性理由。",
+      "evidence_ids": [
+        "Evidence:29ea361de9f7fff4dc4160531bcf40c82106a4d84202fd2b6fbcb6a5bf895f47"
+      ]
+    },
+    {
+      "text": "该评论者称，常被提到的性能优势至少在现代 Python 3.6+ 且 simplejson 已编译的环境下并不成立。",
+      "evidence_ids": [
+        "Evidence:3bbf78142d0e68556cc3425cba147f24c15183e761992240772a2c12494dcecc"
+      ]
+    },
+    {
+      "text": "该评论者指出，在没有编译器的容器里 simplejson 会退化为纯 Python，这是一个陷阱（footgun），并认为直接使用 json 更好。",
+      "evidence_ids": [
+        "Evidence:a0939dc0ee121066174ae28f55fe5bd972e77eb0c972ae8f509f817c459e5e77",
+        "Evidence:eca0299c196545b0d30d2b8558ae6cb60d7666e32a78087ad9bb4e1e7f0a4df4"
+      ]
+    },
+    {
+      "text": "另有评论者指出，json 与 simplejson 的一个大差异是后者支持 Decimal 序列化；由于 Flask-SQLAlchemy 使用 Decimal，这次改动可能影响不少升级者。",
+      "evidence_ids": [
+        "Evidence:2864c6e2c59fbe1bd25177e7506b17c6423344b17cb09f27c6f35c42a38ca24b"
+      ]
+    },
+    {
+      "text": "CoburnJoe 评论认为，json 自 Python 2.6 起已可用，保留 simplejson 的主要理由是兼容 Python 2.4+；项目最老的测试运行在 Python 2.7，因此适合重构。",
+      "evidence_ids": [
+        "Evidence:475cae1432e70aec369ae3063e6ac39a36a87d5334abd9bb6c1d0fbac5898204",
+        "Evidence:d58d0ac831918f90053d28fe44f8d5c52a25efe3099b79eb769dccd24cfe406c"
+      ]
+    },
+    {
+      "text": "维护者 davidism 表示，在放弃 Python 2 后对该改动基本可以接受。",
+      "evidence_ids": [
+        "Evidence:992a7d3d3b828cbe282a5ea60d823bcdb5d6d78cc967a61e948eedb06cbc6fc0"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "Evidence:992a7d3d3b828cbe282a5ea60d823bcdb5d6d78cc967a61e948eedb06cbc6fc0",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:9d8a50632efdcc4de0f14836e5acfc5608dad03667781520f9f2e0de88b2c8d1",
+      "start": 0,
+      "end": 52,
+      "quote": "Yeah, I'm fairly ok with this once we drop Python 2.",
+      "url": "https://github.com/pallets/itsdangerous/issues/146#issuecomment-592275222",
+      "author": "davidism",
+      "time": "2020-02-28T02:09:14Z",
+      "text_sha256": "8d63f6631711e80036810715f7440c4947f77fba71aadc5d6bfbdce812ee7e6e"
+    },
+    {
+      "evidence_id": "Evidence:d58d0ac831918f90053d28fe44f8d5c52a25efe3099b79eb769dccd24cfe406c",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:31446bec65e3f89a3b91d3af911e62869a6c1c924b8fd0cc9bf498e88c57233b",
+      "start": 224,
+      "end": 337,
+      "quote": "Considering the oldest test suite on this project runs on Python 2.7, it seems a good candidate to refactor this.",
+      "url": "https://github.com/pallets/itsdangerous/issues/146#issuecomment-590060970",
+      "author": "CoburnJoe",
+      "time": "2020-02-23T11:56:06Z",
+      "text_sha256": "2665c315d54416c91121abfd093feab41167edf3223a1b5fd6cd9a6cc45d5e20"
+    },
+    {
+      "evidence_id": "Evidence:eca0299c196545b0d30d2b8558ae6cb60d7666e32a78087ad9bb4e1e7f0a4df4",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+      "start": 979,
+      "end": 1016,
+      "quote": "It seems preferable to just use json.",
+      "url": "https://github.com/pallets/itsdangerous/issues/146",
+      "author": "ijl",
+      "time": "2020-02-20T16:55:49Z",
+      "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+    },
+    {
+      "evidence_id": "Evidence:0848948cf56fe985ce0d2cce0f1203fcff4b501c647c424e21636c7de9dcd1fc",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+      "start": 0,
+      "end": 99,
+      "quote": "itsdangerous and by extension flask, starlette, and others use simplejson if it's installed due to:",
+      "url": "https://github.com/pallets/itsdangerous/issues/146",
+      "author": "ijl",
+      "time": "2020-02-20T16:55:49Z",
+      "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+    },
+    {
+      "evidence_id": "Evidence:29ea361de9f7fff4dc4160531bcf40c82106a4d84202fd2b6fbcb6a5bf895f47",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+      "start": 187,
+      "end": 280,
+      "quote": "Is there still a reason to use simplejson? I don't know of a feature or compatibility reason.",
+      "url": "https://github.com/pallets/itsdangerous/issues/146",
+      "author": "ijl",
+      "time": "2020-02-20T16:55:49Z",
+      "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+    },
+    {
+      "evidence_id": "Evidence:3bbf78142d0e68556cc3425cba147f24c15183e761992240772a2c12494dcecc",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+      "start": 282,
+      "end": 484,
+      "quote": "The reason I have seen mentioned is better performance. That is not the case with at least python3.6+ and a modern distribution (that probably compiled python with PGO and LTO) with simplejson compiled.",
+      "url": "https://github.com/pallets/itsdangerous/issues/146",
+      "author": "ijl",
+      "time": "2020-02-20T16:55:49Z",
+      "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+    },
+    {
+      "evidence_id": "Evidence:a0939dc0ee121066174ae28f55fe5bd972e77eb0c972ae8f509f817c459e5e77",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+      "start": 553,
+      "end": 674,
+      "quote": "If simplejson is installed in a container without a compiler, it falls back to running in pure Python. This is a footgun:",
+      "url": "https://github.com/pallets/itsdangerous/issues/146",
+      "author": "ijl",
+      "time": "2020-02-20T16:55:49Z",
+      "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+    },
+    {
+      "evidence_id": "Evidence:2864c6e2c59fbe1bd25177e7506b17c6423344b17cb09f27c6f35c42a38ca24b",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:1f74a94c07b0578f751f1fac62bd7275fa91cf97b97c7f64ca21e0b68bbf9c9c",
+      "start": 90,
+      "end": 296,
+      "quote": "One big difference between `json` and `simplejson` is that the latter supports serializing `Decimal` types. Flask-sqlalchemy uses `Decimal`, so this change might affect quite a few people when they upgrade.",
+      "url": "https://github.com/pallets/itsdangerous/issues/146#issuecomment-636811815",
+      "author": "dkarp0",
+      "time": "2020-06-01T11:50:30Z",
+      "text_sha256": "4fb6dd44aa903838c613cb4aa51886510e6f66b5aaad2a13d732f402cda283d5"
+    },
+    {
+      "evidence_id": "Evidence:475cae1432e70aec369ae3063e6ac39a36a87d5334abd9bb6c1d0fbac5898204",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:31446bec65e3f89a3b91d3af911e62869a6c1c924b8fd0cc9bf498e88c57233b",
+      "start": 0,
+      "end": 222,
+      "quote": "``json`` was added to Python 2.6, so the main reason to use ``simplejson`` is backwards compatibility with Python 2.4+ (although, as someone who occasionally has to maintain Python 2.4 code, the sooner it dies the better).",
+      "url": "https://github.com/pallets/itsdangerous/issues/146#issuecomment-590060970",
+      "author": "CoburnJoe",
+      "time": "2020-02-23T11:56:06Z",
+      "text_sha256": "2665c315d54416c91121abfd093feab41167edf3223a1b5fd6cd9a6cc45d5e20"
+    }
+  ],
+  "gaps": [
+    "提供的可见上下文未包含处理 Issue #146 的 PR 编号或链接、合并事件、合并提交哈希，因此无法确定哪个 PR 处理了该请求以及合并提交是什么。",
+    "提供的可见上下文未包含将 simplejson 改为 json 的源码 diff、提交内容或文件改动记录；不能仅凭 docs/conf.py 或 signer.py 的出现推断被改动的源码文件。"
+  ],
+  "context_characters": 11980,
+  "context_sha256": "2e191f0bb622d889cdeff01f781bd905b1af43c157a0646edeca3ba82342cfda",
+  "visible": [
+    {
+      "source_id": "SourceDocument:9d8a50632efdcc4de0f14836e5acfc5608dad03667781520f9f2e0de88b2c8d1",
+      "start": 0,
+      "end": 52,
+      "title": "Use json instead of simplejson",
+      "url": "https://github.com/pallets/itsdangerous/issues/146#issuecomment-592275222",
+      "author": "davidism",
+      "time": "2020-02-28T02:09:14Z"
+    },
+    {
+      "source_id": "SourceDocument:1f74a94c07b0578f751f1fac62bd7275fa91cf97b97c7f64ca21e0b68bbf9c9c",
+      "start": 0,
+      "end": 297,
+      "title": "Use json instead of simplejson",
+      "url": "https://github.com/pallets/itsdangerous/issues/146#issuecomment-636811815",
+      "author": "dkarp0",
+      "time": "2020-06-01T11:50:30Z"
+    },
+    {
+      "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+      "start": 0,
+      "end": 1016,
+      "title": "Use json instead of simplejson",
+      "url": "https://github.com/pallets/itsdangerous/issues/146",
+      "author": "ijl",
+      "time": "2020-02-20T16:55:49Z"
+    },
+    {
+      "source_id": "SourceDocument:31446bec65e3f89a3b91d3af911e62869a6c1c924b8fd0cc9bf498e88c57233b",
+      "start": 0,
+      "end": 337,
+      "title": "Use json instead of simplejson",
+      "url": "https://github.com/pallets/itsdangerous/issues/146#issuecomment-590060970",
+      "author": "CoburnJoe",
+      "time": "2020-02-23T11:56:06Z"
+    },
+    {
+      "source_id": "SourceDocument:9845d68f4b7786beb3c801abe81a9726feb17917a8646c4c78a3f951eedc35c6",
+      "start": 0,
+      "end": 1960,
+      "title": null,
+      "url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/docs/conf.py",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:db5d9ca8c005d09cfef6588717411918a95e3e84f718ddda2c25a2bcba4825d3",
+      "start": 0,
+      "end": 6165,
+      "title": null,
+      "url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/src/itsdangerous/signer.py",
+      "author": null,
+      "time": null
+    }
+  ],
+  "graph_edges": [],
+  "responses": [
+    {
+      "status": 200,
+      "usage": {
+        "completion_tokens": 6634,
+        "completion_tokens_details": {
+          "reasoning_tokens": 5537
+        },
+        "prompt_tokens": 4024,
+        "prompt_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "total_tokens": 10658
+      },
+      "answer": "{\"claims\":[{\"text\":\"Issue #146 的评论指出，itsdangerous（以及 Flask、Starlette 等）在安装了 simplejson 时会使用 simplejson。\",\"evidence\":[{\"source_id\":\"SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9\",\"quote\":\"itsdangerous and by extension flask, starlette, and others use simplejson if it's installed due to:\"}]},{\"text\":\"该评论者质疑保留 simplejson 的必要性，表示不知道有什么功能或兼容性理由。\",\"evidence\":[{\"source_id\":\"SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9\",\"quote\":\"Is there still a reason to use simplejson? I don't know of a feature or compatibility reason.\"}]},{\"text\":\"该评论者称，常被提到的性能优势至少在现代 Python 3.6+ 且 simplejson 已编译的环境下并不成立。\",\"evidence\":[{\"source_id\":\"SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9\",\"quote\":\"The reason I have seen mentioned is better performance. That is not the case with at least python3.6+ and a modern distribution (that probably compiled python with PGO and LTO) with simplejson compiled.\"}]},{\"text\":\"该评论者指出，在没有编译器的容器里 simplejson 会退化为纯 Python，这是一个陷阱（footgun），并认为直接使用 json 更好。\",\"evidence\":[{\"source_id\":\"SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9\",\"quote\":\"If simplejson is installed in a container without a compiler, it falls back to running in pure Python. This is a footgun:\"},{\"source_id\":\"SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9\",\"quote\":\"It seems preferable to just use json.\"}]},{\"text\":\"另有评论者指出，json 与 simplejson 的一个大差异是后者支持 Decimal 序列化；由于 Flask-SQLAlchemy 使用 Decimal，这次改动可能影响不少升级者。\",\"evidence\":[{\"source_id\":\"SourceDocument:1f74a94c07b0578f751f1fac62bd7275fa91cf97b97c7f64ca21e0b68bbf9c9c\",\"quote\":\"One big difference between `json` and `simplejson` is that the latter supports serializing `Decimal` types. Flask-sqlalchemy uses `Decimal`, so this change might affect quite a few people when they upgrade.\"}]},{\"text\":\"CoburnJoe 评论认为，json 自 Python 2.6 起已可用，保留 simplejson 的主要理由是兼容 Python 2.4+；项目最老的测试运行在 Python 2.7，因此适合重构。\",\"evidence\":[{\"source_id\":\"SourceDocument:31446bec65e3f89a3b91d3af911e62869a6c1c924b8fd0cc9bf498e88c57233b\",\"quote\":\"``json`` was added to Python 2.6, so the main reason to use ``simplejson`` is backwards compatibility with Python 2.4+ (although, as someone who occasionally has to maintain Python 2.4 code, the sooner it dies the better).\"},{\"source_id\":\"SourceDocument:31446bec65e3f89a3b91d3af911e62869a6c1c924b8fd0cc9bf498e88c57233b\",\"quote\":\"Considering the oldest test suite on this project runs on Python 2.7, it seems a good candidate to refactor this.\"}]},{\"text\":\"维护者 davidism 表示，在放弃 Python 2 后对该改动基本可以接受。\",\"evidence\":[{\"source_id\":\"SourceDocument:9d8a50632efdcc4de0f14836e5acfc5608dad03667781520f9f2e0de88b2c8d1\",\"quote\":\"Yeah, I'm fairly ok with this once we drop Python 2.\"}]}],\"gaps\":[\"提供的可见上下文未包含处理 Issue #146 的 PR 编号或链接、合并事件、合并提交哈希，因此无法确定哪个 PR 处理了该请求以及合并提交是什么。\",\"提供的可见上下文未包含将 simplejson 改为 json 的源码 diff、提交内容或文件改动记录；不能仅凭 docs/conf.py 或 signer.py 的出现推断被改动的源码文件。\"]}",
+      "reason": "stop",
+      "provider_error": null
+    }
+  ]
+}

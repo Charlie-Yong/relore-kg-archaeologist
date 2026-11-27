@@ -1,0 +1,286 @@
+{
+  "arm": "A",
+  "question": "仓库 pallets/itsdangerous，截止时间 2026-11-16T06:31:18Z，冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd。PR #399 合并了吗？能否把它算成已经随某个正式版发布的合并改动？请给出出处并解释。",
+  "status": "ok",
+  "error": null,
+  "seconds": 34.534,
+  "method": "p2_query_v1.4.2_historykg_discussion_v1_full_focal_v2",
+  "max_output_tokens": 32768,
+  "timeout_seconds": 240,
+  "claims": [
+    {
+      "text": "PR #399 没有合并：GitHub API 记录明确为 merged=false、merged_at=null；记录中的 merge_commit_sha 是 871d10c94d4007397cd9d2b29516a86949f14454。",
+      "evidence_ids": [
+        "Evidence:1d49a53b012f20e537b1c2ae72a24b4224dc27395bb448f7bf1a848277d19169"
+      ]
+    },
+    {
+      "text": "PR #399 是依据 issue 398 进行的 pylint 干预修正，每个干预都有独立说明性提交。",
+      "evidence_ids": [
+        "Evidence:7a39f30cc370e3d2bae7f898acff6a4f75961e87810b78cfe04eacd83b4c3e3f"
+      ]
+    },
+    {
+      "text": "在截止时间 2026-11-16T06:31:18Z 之前，提供的正式发布记录覆盖 2.0.0（2021-05-12）、2.0.1（2021-05-18）、2.1.0（2022-02-18）、2.1.1（2022-03-09）、2.1.2（2022-03-24）和 2.2.0（2024-04-16）；这些记录均标记 draft=false、prerelease=false。",
+      "evidence_ids": [
+        "Evidence:4f307e971895d02c30df17b98c9e1d9453a0e46de7ab3264b792de36fef1254c",
+        "Evidence:6ffd6642d4312757774b41527a0423a5c4ac7a4d7b730bacf55015236691521b",
+        "Evidence:51a9fcbe97c1161e44c086e3752c62e9f1428dedee6b8e83cad0091df705ef06",
+        "Evidence:15cbc818271bdab42c2c72281be42c01a395a0c625d73f3438e1f0c1c1c3f724",
+        "Evidence:0d34c542d00653aee8fd4c2e81726f5bef6aaa677eed07bcb0fcf4acff90fa08",
+        "Evidence:3787f2c26929983c4bee3c3cf22838d898679b64f139333ad71ba29f201c06aa"
+      ]
+    },
+    {
+      "text": "尽管提供范围内有 2.0.0 至 2.2.0 的正式发布记录，由于 #399 未合并，不能把 #399 算作已随某个正式版发布的 PR 合并改动。",
+      "evidence_ids": [
+        "Evidence:1d49a53b012f20e537b1c2ae72a24b4224dc27395bb448f7bf1a848277d19169",
+        "Evidence:4f307e971895d02c30df17b98c9e1d9453a0e46de7ab3264b792de36fef1254c",
+        "Evidence:6ffd6642d4312757774b41527a0423a5c4ac7a4d7b730bacf55015236691521b",
+        "Evidence:51a9fcbe97c1161e44c086e3752c62e9f1428dedee6b8e83cad0091df705ef06",
+        "Evidence:15cbc818271bdab42c2c72281be42c01a395a0c625d73f3438e1f0c1c1c3f724",
+        "Evidence:0d34c542d00653aee8fd4c2e81726f5bef6aaa677eed07bcb0fcf4acff90fa08",
+        "Evidence:3787f2c26929983c4bee3c3cf22838d898679b64f139333ad71ba29f201c06aa"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "Evidence:1d49a53b012f20e537b1c2ae72a24b4224dc27395bb448f7bf1a848277d19169",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:500c3bb70cdb855726191cb92969edf10f6bda4fc70d18c83321ec7ee3b63fa4",
+      "start": 17355,
+      "end": 17511,
+      "quote": "  \"merge_commit_sha\": \"871d10c94d4007397cd9d2b29516a86949f14454\",\n  \"mergeable\": true,\n  \"mergeable_state\": \"clean\",\n  \"merged\": false,\n  \"merged_at\": null,",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/399",
+      "author": null,
+      "time": null,
+      "text_sha256": "77f41988c6acde36987821631c25d6bef44bf6e1d813c3b0a93064ff41e9f60c"
+    },
+    {
+      "evidence_id": "Evidence:7a39f30cc370e3d2bae7f898acff6a4f75961e87810b78cfe04eacd83b4c3e3f",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:aa205983ccb1103242c0c619c73f0c5780d2678e93cc62b3fd9b698cfbffad2a",
+      "start": 0,
+      "end": 341,
+      "quote": "Makes the interventions describe in [intervention issue](https://github.com/pallets/itsdangerous/issues/398).\nThe experiment is described [here](https://github.com/evidencebp/pylint-intervention/).\n\nEach intervention was done in a dedicated commit with a message explaining it.\nHowever, note that the original code and fix are very similar.\n",
+      "url": "https://github.com/pallets/itsdangerous/pull/399",
+      "author": "evidencebp",
+      "time": "2024-11-25T14:40:58Z",
+      "text_sha256": "5fa7c9557ed36f1809d7dd8a2da274226144fe4fd3fec1aecaab1803d52f9123"
+    },
+    {
+      "evidence_id": "Evidence:4f307e971895d02c30df17b98c9e1d9453a0e46de7ab3264b792de36fef1254c",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 20919,
+      "end": 20961,
+      "quote": "    \"published_at\": \"2021-05-12T00:13:07Z\"",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null,
+      "text_sha256": "373fe2b61c84992e215da55d9a470a5185bb181b001a98161fb928fe29a20895",
+      "detail_url": "https://github.com/pallets/itsdangerous/releases/tag/2.0.0",
+      "context_note": "2.0.0 · https://github.com/pallets/itsdangerous/releases/tag/2.0.0 · draft=False, prerelease=False"
+    },
+    {
+      "evidence_id": "Evidence:6ffd6642d4312757774b41527a0423a5c4ac7a4d7b730bacf55015236691521b",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 18193,
+      "end": 18235,
+      "quote": "    \"published_at\": \"2021-05-18T15:10:38Z\"",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null,
+      "text_sha256": "373fe2b61c84992e215da55d9a470a5185bb181b001a98161fb928fe29a20895",
+      "detail_url": "https://github.com/pallets/itsdangerous/releases/tag/2.0.1",
+      "context_note": "2.0.1 · https://github.com/pallets/itsdangerous/releases/tag/2.0.1 · draft=False, prerelease=False"
+    },
+    {
+      "evidence_id": "Evidence:51a9fcbe97c1161e44c086e3752c62e9f1428dedee6b8e83cad0091df705ef06",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 16090,
+      "end": 16132,
+      "quote": "    \"published_at\": \"2022-02-18T03:45:57Z\"",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null,
+      "text_sha256": "373fe2b61c84992e215da55d9a470a5185bb181b001a98161fb928fe29a20895",
+      "detail_url": "https://github.com/pallets/itsdangerous/releases/tag/2.1.0",
+      "context_note": "2.1.0 · https://github.com/pallets/itsdangerous/releases/tag/2.1.0 · draft=False, prerelease=False"
+    },
+    {
+      "evidence_id": "Evidence:15cbc818271bdab42c2c72281be42c01a395a0c625d73f3438e1f0c1c1c3f724",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 13924,
+      "end": 13966,
+      "quote": "    \"published_at\": \"2022-03-09T16:25:33Z\"",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null,
+      "text_sha256": "373fe2b61c84992e215da55d9a470a5185bb181b001a98161fb928fe29a20895",
+      "detail_url": "https://github.com/pallets/itsdangerous/releases/tag/2.1.1",
+      "context_note": "2.1.1 · https://github.com/pallets/itsdangerous/releases/tag/2.1.1 · draft=False, prerelease=False"
+    },
+    {
+      "evidence_id": "Evidence:0d34c542d00653aee8fd4c2e81726f5bef6aaa677eed07bcb0fcf4acff90fa08",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 11464,
+      "end": 11506,
+      "quote": "    \"published_at\": \"2022-03-24T15:14:38Z\"",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null,
+      "text_sha256": "373fe2b61c84992e215da55d9a470a5185bb181b001a98161fb928fe29a20895",
+      "detail_url": "https://github.com/pallets/itsdangerous/releases/tag/2.1.2",
+      "context_note": "2.1.2 · https://github.com/pallets/itsdangerous/releases/tag/2.1.2 · draft=False, prerelease=False"
+    },
+    {
+      "evidence_id": "Evidence:3787f2c26929983c4bee3c3cf22838d898679b64f139333ad71ba29f201c06aa",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 9001,
+      "end": 9043,
+      "quote": "    \"published_at\": \"2024-04-16T21:46:38Z\"",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null,
+      "text_sha256": "373fe2b61c84992e215da55d9a470a5185bb181b001a98161fb928fe29a20895",
+      "detail_url": "https://github.com/pallets/itsdangerous/releases/tag/2.2.0",
+      "context_note": "2.2.0 · https://github.com/pallets/itsdangerous/releases/tag/2.2.0 · draft=False, prerelease=False"
+    }
+  ],
+  "gaps": [
+    "缺少针对 871d10c94d4007397cd9d2b29516a86949f14454 的已验证单标签行走记录（相对冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd），无法判定该 SHA 在冻结历史中是 included、excluded 还是 unknown。",
+    "缺少各正式版标签的提交行走/包含关系，无法验证 871d10c94d4007397cd9d2b29516a86949f14454 是否出现在 2.0.0 至 2.2.0 任一标签中；也不能排除它以非 PR 合并方式进入历史，但更不能认定其已随正式版发布。",
+    "提交 315506e298fb0aae98a1863794c541b718202648 中显示 __version__ = \"2.0.0rc1\"；但未提供 2.0.0 之前的正式发布清单，因此不能把 2.0.0 声称为首个发布。"
+  ],
+  "context_characters": 11731,
+  "context_sha256": "4b4f6dac3fcacb472faf78160aa27024ec5e263209847d3aa1a5921a9ad174b6",
+  "visible": [
+    {
+      "source_id": "SourceDocument:500c3bb70cdb855726191cb92969edf10f6bda4fc70d18c83321ec7ee3b63fa4",
+      "start": 17355,
+      "end": 17511,
+      "title": null,
+      "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/399",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:aa205983ccb1103242c0c619c73f0c5780d2678e93cc62b3fd9b698cfbffad2a",
+      "start": 0,
+      "end": 341,
+      "title": "Pylint alerts corrections as part of an intervention experiment 398",
+      "url": "https://github.com/pallets/itsdangerous/pull/399",
+      "author": "evidencebp",
+      "time": "2024-11-25T14:40:58Z"
+    },
+    {
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 20919,
+      "end": 20961,
+      "title": "2.0.0 · https://github.com/pallets/itsdangerous/releases/tag/2.0.0 · draft=False, prerelease=False",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 18193,
+      "end": 18235,
+      "title": "2.0.1 · https://github.com/pallets/itsdangerous/releases/tag/2.0.1 · draft=False, prerelease=False",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 16090,
+      "end": 16132,
+      "title": "2.1.0 · https://github.com/pallets/itsdangerous/releases/tag/2.1.0 · draft=False, prerelease=False",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 13924,
+      "end": 13966,
+      "title": "2.1.1 · https://github.com/pallets/itsdangerous/releases/tag/2.1.1 · draft=False, prerelease=False",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 11464,
+      "end": 11506,
+      "title": "2.1.2 · https://github.com/pallets/itsdangerous/releases/tag/2.1.2 · draft=False, prerelease=False",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 9001,
+      "end": 9043,
+      "title": "2.2.0 · https://github.com/pallets/itsdangerous/releases/tag/2.2.0 · draft=False, prerelease=False",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:7c771535d9d0d20d19450d6054ad86ad977c858e54929cbb8cddaa30c0c6d661",
+      "start": 0,
+      "end": 911,
+      "title": null,
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:c3d0828fb5a383ef3dc3671463984255efbe9c868d349c6162ced23b733807d4",
+      "start": 0,
+      "end": 6081,
+      "title": "Bump actions/cache from 3.0.9 to 3.0.11",
+      "url": "https://github.com/pallets/itsdangerous/pull/319",
+      "author": "dependabot[bot]",
+      "time": "2022-11-01T16:08:55Z"
+    },
+    {
+      "source_id": "SourceDocument:2663754f7dcb11885eaaf34a3dd20436402666c16cbb527d8d08c79c87bacdf8",
+      "start": 0,
+      "end": 367,
+      "title": "Bump pre-commit from 2.16.0 to 2.17.0 in /requirements",
+      "url": "https://github.com/pallets/itsdangerous/pull/284",
+      "author": "dependabot[bot]",
+      "time": "2022-02-01T16:05:38Z"
+    }
+  ],
+  "graph_edges": [],
+  "responses": [
+    {
+      "status": 200,
+      "usage": {
+        "completion_tokens": 6576,
+        "completion_tokens_details": {
+          "reasoning_tokens": 6032
+        },
+        "prompt_tokens": 3859,
+        "prompt_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "total_tokens": 10435
+      },
+      "answer": "{\"claims\":[{\"text\":\"PR #399 没有合并：GitHub API 记录明确为 merged=false、merged_at=null；记录中的 merge_commit_sha 是 871d10c94d4007397cd9d2b29516a86949f14454。\",\"passages\":[1]},{\"text\":\"PR #399 是依据 issue 398 进行的 pylint 干预修正，每个干预都有独立说明性提交。\",\"passages\":[2]},{\"text\":\"在截止时间 2026-11-16T06:31:18Z 之前，提供的正式发布记录覆盖 2.0.0（2021-05-12）、2.0.1（2021-05-18）、2.1.0（2022-02-18）、2.1.1（2022-03-09）、2.1.2（2022-03-24）和 2.2.0（2024-04-16）；这些记录均标记 draft=false、prerelease=false。\",\"passages\":[3,4,5,6,7,8]},{\"text\":\"尽管提供范围内有 2.0.0 至 2.2.0 的正式发布记录，由于 #399 未合并，不能把 #399 算作已随某个正式版发布的 PR 合并改动。\",\"passages\":[1,3,4,5,6,7,8]}],\"gaps\":[\"缺少针对 871d10c94d4007397cd9d2b29516a86949f14454 的已验证单标签行走记录（相对冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd），无法判定该 SHA 在冻结历史中是 included、excluded 还是 unknown。\",\"缺少各正式版标签的提交行走/包含关系，无法验证 871d10c94d4007397cd9d2b29516a86949f14454 是否出现在 2.0.0 至 2.2.0 任一标签中；也不能排除它以非 PR 合并方式进入历史，但更不能认定其已随正式版发布。\",\"提交 315506e298fb0aae98a1863794c541b718202648 中显示 __version__ = \\\"2.0.0rc1\\\"；但未提供 2.0.0 之前的正式发布清单，因此不能把 2.0.0 声称为首个发布。\"]}",
+      "reason": "stop",
+      "provider_error": null
+    }
+  ]
+}

@@ -10,6 +10,7 @@ from urllib.parse import parse_qsl, urlsplit
 from historykg.contracts import CONTRACT_VERSION
 from historykg.ids import entity_id, relation_id, stable_id
 from historykg.ingest.discovery import parse_references
+from historykg.ingest.github import ThreadPayload
 from historykg.io import (
     api_closer_matches,
     build_subjects,
@@ -53,6 +54,30 @@ def map_capture(
             continue
         parts = urlsplit(response["url"])
         endpoint = parts.scheme + "://" + parts.netloc + parts.path
+        if endpoint == "https://api.github.com/graphql" and isinstance(payload, dict):
+            repo_node = ((payload.get("data") or {}).get("repository")) or {}
+            nodes = sorted(
+                (v for v in repo_node.values() if isinstance(v, dict)),
+                key=lambda item: item.get("number", 0),
+            )
+            if not nodes:
+                continue
+            item = freeze_api_source(
+                dataset_id=dataset_id,
+                repo=repo,
+                endpoint=endpoint,
+                payload=nodes,
+                params={
+                    "repo": repo,
+                    "batch": response.get("batch", len(sources)),
+                    "query": response.get("query", "closedByPullRequestsReferences"),
+                },
+                response_status=response["status"],
+                retrieved_at=response.get("retrieved_at", now),
+                method="POST",
+            )
+            sources.append(item)
+            continue
         item = freeze_api_source(
             dataset_id=dataset_id,
             repo=repo,
@@ -95,6 +120,7 @@ def map_capture(
     repo_api = api_sources.get(f"https://api.github.com/repos/{repo}")
     add_entity("Project", [], {"display_name": repo}, cite(repo_api) if repo_api else [])
     selected_numbers = {p["number"] for p in capture.get("payloads", [])}
+    full = snapshot.get("profile", {}).get("profile_version") == "full_history_v1"
     for payload in capture.get("payloads", []):
         number, thread = payload["number"], payload["thread"]
         kind = "PullRequest" if payload["thread_type"] == "pr" else "Issue"
@@ -105,37 +131,28 @@ def map_capture(
         )
         thread_sources = []
         # Title stays metadata; body text remains byte-for-byte apart from LF.
-        records = [
-            (body_kind, thread, "body", str(number)),
-            *[
-                ("comment", x, "issue_comment", str(x["id"]))
-                for x in payload.get("issue_comments", [])
-            ],
-            *[("review", x, "review", str(x["id"])) for x in payload.get("reviews", [])],
-            *[
-                ("review_comment", x, "review_comment", str(x["id"]))
-                for x in payload.get("review_comments", [])
-            ],
-        ]
+        source_kinds = {"body": body_kind, "issue_comment": "comment", "review": "review",
+                        "review_comment": "review_comment"}
         body_source = None
-        for source_kind, record, relore_kind, origin in records:
+        for origin_kind, origin, record in ThreadPayload.from_capture(payload).objects():
+            source_kind = source_kinds[origin_kind]
             item = make_source(
                 dataset_id=dataset_id,
                 repo=repo,
                 kind=source_kind,
                 url=record.get("html_url") or base_url,
                 text=record.get("body") or "",
-                origin_key=f"{repo}:{relore_kind}:{origin}",
+                origin_key=f"{repo}:{origin_kind}:{origin}",
                 retrieved_at=now,
                 occurred_at=record.get("submitted_at") or record.get("created_at"),
                 author=(record.get("user") or {}).get("login"),
                 trust_tier="authoritative"
                 if record.get("author_association") in {"OWNER", "MEMBER", "COLLABORATOR"}
                 else "reported",
-                relore_mapping={
+                discussion_mapping={
                     "repo": repo,
                     "number": number,
-                    "source_type": relore_kind,
+                    "source_type": origin_kind,
                     "source_id": origin,
                 },
                 title=thread.get("title", ""),
@@ -154,7 +171,7 @@ def map_capture(
                     if ref["target_repo"] != repo
                     else "collected"
                     if ref["number"] in selected_numbers
-                    else "over_limit"
+                    else "unavailable" if full else "over_limit"
                     if len(selected_numbers) >= snapshot.get("profile", {}).get("max_units", 40)
                     else "not_collected",
                 )
@@ -246,13 +263,17 @@ def map_capture(
         for r in references
         if r["resolution"] not in {"collected", "out_of_scope"}
     ]
+    if "collector_version" in capture:
+        provenance = {"collector_version": capture["collector_version"]}
+    elif capture.get("relore_commit"):
+        provenance = {"relore_version": "0.3.19", "relore_commit": capture["relore_commit"]}
+    else:
+        provenance = {}
     write_manifest(
         root,
         dataset_id=dataset_id,
         repo=repo,
         profile_version=snapshot.get("profile", {}).get("profile_version", "collector_smoke_v1"),
-        relore_version="0.3.19",
-        relore_commit=capture.get("relore_commit"),
         retrieved_at=now,
         synthetic=False,
         frozen=False,
@@ -263,6 +284,7 @@ def map_capture(
             "capture_path": str(capture_path),
             "github_requests": capture.get("result", {}).get("github_requests"),
         },
+        **provenance,
     )
     incomplete = capture.get("result", {}).get("status") == "partial" or any(
         g.get("severity", "warning") != "coverage" for g in gaps
@@ -352,6 +374,36 @@ def finalize_relations(dataset_dir: str | Path) -> dict:
             if left in entities and right in entities:
                 add("MergedAs", left, right, source, "github_api", payload.get("merged_at"))
         endpoint = source.get("api_metadata", {}).get("endpoint", "")
+        if endpoint == "https://api.github.com/graphql" and isinstance(payload, list):
+            for obj in payload:
+                if (
+                    isinstance(obj, dict)
+                    and obj.get("__typename") == "Issue"
+                    and obj.get("closed") is True
+                    and isinstance(obj.get("number"), int)
+                ):
+                    issue_id = entity_id("Issue", repo, obj["number"])
+                    if issue_id not in entities:
+                        continue
+                    for closer in (obj.get("closedByPullRequestsReferences") or {}).get(
+                        "nodes", []
+                    ):
+                        if not isinstance(closer, dict) or not isinstance(
+                            closer.get("number"), int
+                        ):
+                            continue
+                        if api_closer_matches(closer, repo, closer["number"]):
+                            pr_id = entity_id("PullRequest", repo, closer["number"])
+                            if pr_id in entities:
+                                add(
+                                    "Closes",
+                                    pr_id,
+                                    issue_id,
+                                    source,
+                                    "github_api",
+                                    obj.get("closedAt") or closer.get("mergedAt"),
+                                )
+            continue
         match = re.search(r"/issues/(\d+)/(?:timeline|events)$", endpoint)
         if not match:
             continue

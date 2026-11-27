@@ -1,0 +1,193 @@
+{
+  "evolution_queries": {
+    "T1": {
+      "q_pr372": {
+        "candidates": 47,
+        "has_220_release": false,
+        "has_pr152": false,
+        "has_pr372": true,
+        "paths": 44,
+        "search_intent": "membership",
+        "top_urls": [
+          "/pulls/372",
+          "/releases",
+          "/releases",
+          "/releases",
+          "/releases",
+          "/releases",
+          "/releases",
+          "/"
+        ]
+      },
+      "q_release_220": {
+        "candidates": 1,
+        "has_220_release": true,
+        "has_pr152": false,
+        "has_pr372": false,
+        "paths": 0,
+        "search_intent": "release",
+        "top_urls": [
+          "/releases"
+        ]
+      },
+      "q_simplejson_pr152": {
+        "candidates": 42,
+        "has_220_release": false,
+        "has_pr152": false,
+        "has_pr372": false,
+        "paths": 50,
+        "search_intent": "decision",
+        "top_urls": [
+          "/pull/63#issuecomment-226116816",
+          "/issues/21#issuecomment-19001856",
+          "/issues/92",
+          "/issues/110#issuecomment-433577564",
+          "/issues/108#issuecomment-431471463",
+          "/issues/118",
+          "/issues/118#issuecomment-434652984",
+          "/pull/72"
+        ]
+      }
+    },
+    "T2": {
+      "q_pr372": {
+        "candidates": 46,
+        "has_220_release": false,
+        "has_pr152": false,
+        "has_pr372": true,
+        "paths": 50,
+        "search_intent": "membership",
+        "top_urls": [
+          "/pulls/372",
+          "/releases",
+          "/releases",
+          "/releases",
+          "/releases",
+          "/releases",
+          "/releases",
+          "/"
+        ]
+      },
+      "q_release_220": {
+        "candidates": 1,
+        "has_220_release": true,
+        "has_pr152": false,
+        "has_pr372": false,
+        "paths": 0,
+        "search_intent": "release",
+        "top_urls": [
+          "/releases"
+        ]
+      },
+      "q_simplejson_pr152": {
+        "candidates": 47,
+        "has_220_release": false,
+        "has_pr152": true,
+        "has_pr372": false,
+        "paths": 50,
+        "search_intent": "decision",
+        "top_urls": [
+          "/issues/146",
+          "/issues/146#issuecomment-590060970",
+          "/pull/63#issuecomment-226116816",
+          "/pull/152",
+          "/issues/146#issuecomment-592275222",
+          "/pull/70",
+          "/issues/21#issuecomment-19001856",
+          "/pull/133#pullrequestreview-246727511"
+        ]
+      }
+    },
+    "T3": {
+      "q_pr372": {
+        "candidates": 50,
+        "has_220_release": false,
+        "has_pr152": false,
+        "has_pr372": true,
+        "paths": 50,
+        "search_intent": "membership",
+        "top_urls": [
+          "/pulls/372",
+          "/releases",
+          "/releases",
+          "/releases",
+          "/releases",
+          "/releases",
+          "/releases",
+          "/"
+        ]
+      },
+      "q_release_220": {
+        "candidates": 1,
+        "has_220_release": true,
+        "has_pr152": false,
+        "has_pr372": false,
+        "paths": 50,
+        "search_intent": "release",
+        "top_urls": [
+          "/releases"
+        ]
+      },
+      "q_simplejson_pr152": {
+        "candidates": 47,
+        "has_220_release": false,
+        "has_pr152": true,
+        "has_pr372": false,
+        "paths": 50,
+        "search_intent": "decision",
+        "top_urls": [
+          "/issues/146",
+          "/issues/146#issuecomment-590060970",
+          "/pull/63#issuecomment-226116816",
+          "/pull/152",
+          "/issues/146#issuecomment-592275222",
+          "/pull/70",
+          "/issues/21#issuecomment-19001856",
+          "/pull/408"
+        ]
+      }
+    }
+  },
+  "stages": {
+    "T1_initial": {
+      "cutoff": "2018-10-31T23:59:59Z",
+      "entities": 1771,
+      "relations": 1951,
+      "sources": 6280,
+      "write_ms": 2035.84
+    },
+    "T2_delta": {
+      "cutoff": "2021-05-31T23:59:59Z",
+      "delta_ms": 1035.9,
+      "entities": 2874,
+      "entities_upserted": 1103,
+      "evidence_upserted": 3323,
+      "fingerprint": "8df2be4e70fdb7ee1894c2a789758de18e0ea19ce07a301322ca5da588fa00c7",
+      "relations": 4856,
+      "relations_upserted": 2905,
+      "sources": 6777,
+      "sources_upserted": 497
+    },
+    "T3_delta": {
+      "cutoff": "2026-11-16T06:31:18Z",
+      "delta_ms": 1679.73,
+      "entities": 4067,
+      "entities_upserted": 1193,
+      "equivalence": {
+        "entity_count_equal": true,
+        "evidence_count_equal": true,
+        "fingerprint_equal": true,
+        "relation_count_equal": true,
+        "source_count_equal": true
+      },
+      "evidence_upserted": 8527,
+      "fingerprint": "928512f3dea7c5b3a804acd72c8f65a25903bfc6677fd3ab86ae00ddaae9f19a",
+      "full_rebuild_ms": 2664.45,
+      "relations": 11674,
+      "relations_upserted": 6818,
+      "sources": 7417,
+      "sources_upserted": 640,
+      "speedup_vs_full_rebuild": 1.59
+    }
+  }
+}

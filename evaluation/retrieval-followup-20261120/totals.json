@@ -1,0 +1,44 @@
+{
+  "O": {
+    "n": 6,
+    "points": 2,
+    "max": 20,
+    "points_in_300s": 2,
+    "median_seconds": 7.9
+  },
+  "A": {
+    "n": 6,
+    "points": 6,
+    "max": 20,
+    "points_in_300s": 6,
+    "median_seconds": 19.3
+  },
+  "B": {
+    "n": 6,
+    "points": 12,
+    "max": 20,
+    "points_in_300s": 12,
+    "median_seconds": 96.3
+  },
+  "C": {
+    "n": 3,
+    "points": 2,
+    "max": 10,
+    "points_in_300s": 2,
+    "median_seconds": 120.7
+  },
+  "D": {
+    "n": 3,
+    "points": 10,
+    "max": 10,
+    "points_in_300s": 10,
+    "median_seconds": 177.4
+  },
+  "E": {
+    "n": 3,
+    "points": 10,
+    "max": 10,
+    "points_in_300s": 6,
+    "median_seconds": 153.0
+  }
+}

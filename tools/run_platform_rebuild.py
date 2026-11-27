@@ -14,6 +14,7 @@ from sqlalchemy import text
 
 from historykg import collector
 from historykg.graph import load_dataset
+from historykg.ingest.index import make_engine
 from historykg.io import read_json, validate_dataset, write_json
 from historykg.query import prepare_query
 
@@ -31,7 +32,7 @@ def main(argv=None):
     assert validated["status"] == "ok", validated
     initialized = collector.initialize_database(database)
     assert initialized["status"] == "ok", initialized
-    engine = collector.make_engine(database)
+    engine = make_engine(database)
     with engine.connect() as conn:
         postgres_version = conn.execute(text("select version()")).scalar()
     engine.dispose()

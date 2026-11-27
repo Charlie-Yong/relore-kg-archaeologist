@@ -23,6 +23,7 @@ def main(argv: list[str] | None = None) -> int:
     build = sub.add_parser("build", help="从URL自动构建，默认等待当前执行结束")
     build.add_argument("repo_url")
     build.add_argument("--profile", default="course_small_v1")
+    build.add_argument("--prepare-only", action="store_true", help="停在模型抽取前并估价")
     resume = sub.add_parser("resume", help="从持久检查点恢复")
     resume.add_argument("job_id")
     status = sub.add_parser("build-status", help="只读取构建状态，不启动任务")
@@ -59,7 +60,8 @@ def main(argv: list[str] | None = None) -> int:
         config = pipeline.load_config(read_json(args.config) if args.config else None)
         if args.command == "build":
             result = pipeline.start_build(
-                {"repo_url": args.repo_url, "profile": args.profile}, config=config
+                {"repo_url": args.repo_url, "profile": args.profile}, config=config,
+                prepare_only=args.prepare_only,
             )
             result = pipeline.wait_build(result["job_id"], config=config)
         elif args.command == "resume":

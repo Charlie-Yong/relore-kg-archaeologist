@@ -6,9 +6,10 @@ from pathlib import Path
 
 import httpx
 import pytest
+from pydantic import ValidationError
 
 from historykg.llm import BudgetLedger, answer_question, prepare_request, run_request
-from historykg.llm.answer import render_context
+from historykg.llm.answer import AnswerOutput, render_context
 from historykg.llm.budget import BudgetBlocked
 
 
@@ -201,6 +202,21 @@ def test_final_context_clips_at_complete_boundary_with_real_offsets():
     assert visible["end"] < item["end"]
 
 
+@pytest.mark.parametrize("blank", ["", " ", "\n\t"])
+def test_answer_output_rejects_blank_claims_gaps_and_evidence(blank):
+    quote = {"source_id": "s", "quote": "visible text"}
+    with pytest.raises(ValidationError, match="text"):
+        AnswerOutput.model_validate(
+            {"claims": [{"text": blank, "evidence": [quote]}], "gaps": []}
+        )
+    with pytest.raises(ValidationError, match="quote"):
+        AnswerOutput.model_validate(
+            {"claims": [{"text": "claim", "evidence": [{**quote, "quote": blank}]}], "gaps": []}
+        )
+    with pytest.raises(ValidationError, match="gaps"):
+        AnswerOutput.model_validate({"claims": [], "gaps": [blank]})
+
+
 def test_answer_only_returns_cited_claims_and_no_free_summary(tmp_path, monkeypatch):
     monkeypatch.setenv("DEEPSEEK_API_KEY", "x")
     import historykg.llm.answer as module
@@ -239,3 +255,98 @@ def test_answer_only_returns_cited_claims_and_no_free_summary(tmp_path, monkeypa
     assert "summary" not in result and "answer" not in result
     assert result["evidence"][0]["start"] == 40
     assert result["usage"]["actual_requests"] == 2
+
+
+def test_answer_does_not_publish_blank_model_claims(tmp_path, monkeypatch):
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "x")
+    import historykg.llm.answer as module
+
+    original = module.run_request
+    outputs = [
+        {
+            "claims": [{"text": " ", "evidence": [{"source_id": "s", "quote": "visible"}]}],
+            "gaps": [],
+        }
+    ] * 3
+
+    def handler(_):
+        return response(outputs.pop(0))
+
+    monkeypatch.setattr(
+        module,
+        "run_request",
+        lambda request, **kwargs: original(
+            request, **kwargs, transport=httpx.MockTransport(handler)
+        ),
+    )
+    text = "visible"
+    result = answer_question(
+        dataset_id="data1",
+        repo="example/toy",
+        question="What changed?",
+        context=[{"source_id": "s", "start": 0, "end": len(text), "quote": text}],
+        config={"output_root": tmp_path / "runs", "max_retries": 2},
+        budget=budget(tmp_path),
+    )
+    assert result["status"] == "error"
+    assert result["claims"] == []
+    assert result["usage"]["actual_requests"] == 3
+
+
+def test_provider_balance_pauses_and_can_resume_even_with_no_retry_slots(tmp_path, monkeypatch):
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-secret")
+    settings = {"ledger_path": str(tmp_path / "trial.sqlite3"), "mode": "provider_balance"}
+    req = prepared(tmp_path, config={"max_output_tokens": 30, "max_retries": 0})
+    calls = []
+
+    def handler(_):
+        calls.append(1)
+        if len(calls) <= 2:
+            return httpx.Response(402, json={"error": {"message": "Insufficient Balance"}})
+        return response({"ok": True})
+
+    transport = httpx.MockTransport(handler)
+    for count in (1, 2):
+        result = run_request(req, budget=settings, transport=transport)
+        assert result["status"] == "blocked"
+        assert result["error"] == "provider_balance_exhausted"
+        assert len(calls) == count
+        assert result["budget"]["states"]["rejected"]["attempts"] == count
+        assert result["budget"]["charged_upper_cny"] == 0
+        assert not (Path(req["output_directory"]) / "result.json").exists()
+    result = run_request(req, budget=settings, transport=transport)
+    assert result["status"] == "ok" and result["new_requests"] == 1
+    assert result["budget"]["effective_cap_cny"] is None
+    assert result["budget"]["charged_upper_cny"] > 0
+    assert run_request(req, budget=settings, transport=transport)["cache_hit"]
+    assert len(calls) == 3
+    with pytest.raises(ValueError, match="已固定"):
+        BudgetLedger(settings["ledger_path"], 20)
+
+
+def test_bailian_answer_sends_configured_cap_and_uses_local_credentials(tmp_path, monkeypatch):
+    from historykg.llm.gateway import BAILIAN_FLASH
+
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    monkeypatch.setenv("CODEX_HOME", str(tmp_path))
+    (tmp_path / "config.toml").write_text(
+        '[model_providers.magpie]\nbase_url="http://127.0.0.1:1234/v1"\n'
+        'experimental_bearer_token="test-only-local-token"\n'
+    )
+    req = prepared(tmp_path, task="answer", config={"route": BAILIAN_FLASH,
+                   "thinking": "enabled", "reasoning_effort": "max", "max_output_tokens": 32768,
+                   "timeout_seconds": 240, "max_retries": 0})
+
+    def relay(request):
+        assert str(request.url) == "http://127.0.0.1:1234/v1/chat/completions"
+        assert request.headers["Authorization"] == "Bearer test-only-local-token"
+        payload = json.loads(request.content)
+        assert payload["max_tokens"] == 32768 and payload["model"] == BAILIAN_FLASH
+        assert payload["enable_thinking"] and payload["reasoning_effort"] == "max"
+        assert request.extensions["timeout"]["read"] == 240
+        return response({"ok": True})
+
+    result = run_request(req, budget=budget(tmp_path), transport=httpx.MockTransport(relay))
+    assert result["status"] == "ok"
+    assert not any("test-only-local-token" in p.read_text()
+                   for p in Path(req["output_directory"]).rglob("*.json"))

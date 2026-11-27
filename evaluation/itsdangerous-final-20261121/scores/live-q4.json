@@ -1,0 +1,46 @@
+{
+  "rubric": [
+    "原文支持的维护动机",
+    "删除 CONTRIBUTING.rst",
+    "修改 README.md 加贡献说明"
+  ],
+  "model": "bailian/deepseek-v4.1-flash-1017",
+  "usage": {
+    "completion_tokens": 179,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 1727,
+    "prompt_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "total_tokens": 1906
+  },
+  "scores": {
+    "A": {
+      "points": [
+        1,
+        0,
+        0
+      ],
+      "note": "维护动机有两处原文支持，给1分；但未给出实际删除 CONTRIBUTING.rst 的证据（仅泛称 per-project files），且未说明修改 README.md，两项均为0。"
+    },
+    "B": {
+      "points": [
+        1,
+        1,
+        0
+      ],
+      "note": "动机引用充分给1分；删除 CONTRIBUTING.rst 有 diff-tree 证据支持给1分；仅证明 README.md 被修改，却没有提供新增贡献说明的具体 diff，因此“加贡献说明”未实际证实，给0。"
+    },
+    "O": {
+      "points": [
+        1,
+        0,
+        0
+      ],
+      "note": "维护动机有原文支持给1分；但明确承认无法确认实际删除和修改的具体文件，删除与 README 加贡献说明两项均未答，给0。"
+    }
+  }
+}

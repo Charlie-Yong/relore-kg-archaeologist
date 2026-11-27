@@ -1,7 +1,7 @@
 # P1 数据、公共契约与 URL 流水线交接
 
 角色P1，2026-10-30，规划/契约1.4.1，独立副本relore-agents/p1、长期分支feat/p1。
-阶段状态in_progress，公共骨架可集成；完整成品尚未验收。
+阶段状态final_candidate：期末统稿、正式实验结果、第二仓库验收和P5最终PPT已完成，仅余Windows字体替换检查与课堂彩排等人工项；姓名、学号、职责确认与互评按用户当前要求留空。
 
 ## 原理说明与授权记录
 
@@ -152,5 +152,84 @@ P6测试集TP/FP/FN=25/19/1、P=0.5682、R=0.9615、F1=0.7143和理由覆盖13/1
 同时保留银标局限；报告PDF已重新生成并逐页渲染检查。复现目录附Flask BSD-3-Clause
 许可证，新增候选成品打包工具拒绝私有测试目录并使用准确干净提交。
 
-该阶段放行Windows CI、正式抽取汇总与候选工程包验收，不表示P6下游A/B或完整课程
-材料已经完成。原job仍保持ready，禁止重新resume、采集或抽取。
+该记录描述当时的阶段放行状态；P6下游A/B、全池核验、第二仓库和完整课程材料的期末
+结果已由本文件末尾“期末统稿最终验收”更新。原job仍保持ready，禁止重新resume、
+采集或抽取。
+
+## 期末统稿最终验收（2026-10-30）
+
+独立工作树为`relore-agents/p1`，分支`feat/p1`。已普通合并主集成分支
+`feat/p1-report-candidate`当前提交`2150aa6`，保留历史并形成合并提交`f0077ae`；
+未reset/rebase，未在主共享目录执行checkout、commit或reset。本轮只修改：
+
+- `reports/technical_report.md`
+- `reports/build_pdf.py`
+- `output/pdf/historykg_technical_report.pdf`
+- `README.md`
+- `00_总规划与组长使用说明.md`
+- `coordination/STATUS_P1.md`
+- `deliveries/P1/2026-10-30/handoff.md`
+
+报告口径已经统一为最终事实：Flask全池首轮6个失败位置经一次格式恢复重试后6/6成功，
+最终92/92；6道候选均完成两遍完整核验，确认证据不足0，正确弃答率N/A仅因合格分母0。
+P3只读增量为18 Developer、384 Function、20 Authored、4 Merged、384 Defines及508条
+证据；固定链核对至PR #6096（lkk7→davidism）→`05e9c6b`→`src/flask/testing.py`→
+`flask.testing._get_werkzeug_version`，没有Developer→Commit。第二仓库
+`pallets/itsdangerous`作业`ebfd8c8dae5e4bcf998a79fef35de981`形成347来源、30完整讨论、
+17文件快照、82实体、78关系、180证据；validate/graph/retrieval ready，job因真实采集
+缺口保持partial；依赖查询50路径、25证据、5 claims，出处、逐字引文和SHA校验通过。
+共享账本未重置：approved=20、effective cap=19.84，保守累计9.465795，其中known
+7.771385、unknown upper 1.694410，余10.374205。P5期末材料统一为
+`demo/final/期末汇报_20261030最终版.pptx`，共10页；期中五页版只作历史材料。成员
+姓名、学号、职责确认与互评表格按用户当前要求留空，没有虚构或代填。
+
+PDF使用指定Codex primary runtime的`python3 reports/build_pdf.py`重新生成。结果为
+`output/pdf/historykg_technical_report.pdf`，14页、357531 bytes、PDF文本抽取21178字符、
+其中汉字11053字；SHA-256为
+`dd300be2dcc8d4a32b571a57a36f23248e78195e5d02dd70137508bb2dada2f1`。九类指定旧
+状态词的扫描计数均为0，覆盖过期全池分母、过期第二库缺口、过期核验状态、过期正式
+PPT页数、过期发布状态及过期阶段名称。最终指标、P3固定链、
+第二仓库/依赖查询、预算、10页期末PPT和人员字段留空的文本提取检查全部PASS。
+
+PDF共7个URI annotation，对应6个唯一外部URL；逐一实际请求均返回HTTP 200。pdfplumber
+检出6个表格，边界全部位于页面可打印区域，无裁切；第4、10、11、14页另行渲染目视复核，
+项目演化时间线表、展示材料说明、结论和参考文献显示正常，成员信息表未跨页拆行。
+
+实际检查命令与结果：
+
+~~~text
+指定runtime python3 reports/build_pdf.py
+  成功生成14页PDF
+
+PYTHONPATH=vendor/relore:. .venv/bin/python tools/check_planning.py
+  passed=true；70份Markdown、250个本地链接；P1-P6均为done；errors=[]
+
+PYTHONPATH=vendor/relore:. .venv/bin/python -m pytest tools/test_check_planning.py -q
+  7 passed, 8 subtests passed
+
+RELORE_TEST_POSTGRES_URL、P2_TEST_NEO4J_URI、P2_TEST_DATABASE_URL、
+P2_REAL_P3_DATASET_DIR配置真实服务后运行全量pytest
+  181 passed
+
+P2真实图查询专项
+  26 passed
+
+.venv/bin/ruff check historykg app tests tools/build_evolution_timeline.py
+  All checks passed!
+
+git diff --check
+  通过
+~~~
+
+PDF重建和规划检查使用指定runtime；Ruff使用项目`.venv/bin/ruff`。完整pytest连接真实
+PostgreSQL/Neo4j及P1+P3合并分片运行，未新增模型请求。
+
+最终集成分支已接收P5最终材料，`demo/final/期末汇报_20261030最终版.pptx`为
+251230 bytes、SHA-256 `2550a0a1e02e5382204c381704088d5b6e3c86c0354bb06a2251de69256d4453`，
+已由待打包提交跟踪，并通过Microsoft PowerPoint 16.113.4（macOS）原生打开、10页PDF导出、
+2倍渲染和总览复核。P2亦已在真实Neo4j/PostgreSQL上完成
+P1+P3合并分片四跳验收，临时namespace与schema均清理；生产图仍保持旧1.4.1口径。
+
+姓名、学号、职责确认和互评按用户当前要求留空，不能用Git作者名或AI结果代填。仍需
+人工完成的最终项是Windows字体替换检查与课堂彩排。上述人工项未完成前，成品保持
+`final_candidate`，不能把机器检查冒充正式课堂验收。

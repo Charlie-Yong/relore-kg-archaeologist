@@ -1,0 +1,77 @@
+{
+  "rubric": [
+    "原文支持的质疑理由",
+    "对应 PR #152",
+    "实际合并 SHA",
+    "准确的源码修改及出处"
+  ],
+  "model": "bailian/deepseek-v4.1-flash-1017",
+  "usage": {
+    "completion_tokens": 366,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 7588,
+    "prompt_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "total_tokens": 7954
+  },
+  "scores": {
+    "A": {
+      "points": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "note": "质疑理由有原文支持（无功能/兼容性理由、性能优势不成立、无编译器容器退化为纯Python），计1分；未答对应PR #152，0分；未给合并SHA，0分；未给源码修改，0分。"
+    },
+    "B": {
+      "points": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "note": "质疑理由完整且有issue原文引用；PR #152有描述原文及closes #146；合并SHA 981ade6e...由PR API merge_commit_sha支持；_json.py等源码文件改动由diff-tree文件列表支持，核心源码修改及出处可给满分。"
+    },
+    "C": {
+      "points": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "note": "理由含功能/兼容性、性能benchmark、无编译器footgun，引用充分；PR #152描述明确；合并SHA有API原文；源码文件修改有diff-tree逐文件name-status支持。"
+    },
+    "E": {
+      "points": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "note": "答案为空壳，仅有浏览器完成标记，未实际回答任何核查项。"
+    },
+    "O": {
+      "points": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "note": "质疑理由有issue原文支持，计1分；未给出处理该请求的PR编号，0分；未给合并SHA，0分；未给源码修改及出处，0分。"
+    },
+    "D": {
+      "points": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "note": "Issue正文原文支持质疑理由；PR #152含closes #146；合并提交SHA 981ade6e...与提交信息完整；_json.py具体diff展示simplejson导入改为import json并新增DeprecatedJSON，出处可核。"
+    }
+  }
+}

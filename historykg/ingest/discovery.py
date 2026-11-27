@@ -1,14 +1,15 @@
-"""Bounded URL discovery. Network/retries use the P4 collector's relore client."""
+"""Bounded URL discovery, using the same GitHub client as thread collection."""
 
 from __future__ import annotations
 
 import os
 import re
 from pathlib import Path
-from urllib.parse import parse_qsl, urlsplit
+from urllib.parse import parse_qsl, quote, urlsplit
 
 from historykg import collector
 from historykg.ids import canonical_json, normalize_repo, stable_id
+from historykg.ingest.github import FULL_HISTORY, FULL_MAX_REQUESTS
 from historykg.io import read_json, write_json
 
 PROFILE = {
@@ -23,6 +24,13 @@ PROFILE = {
     "max_file_snapshots": 24,
     "max_requests": 300,
     "selection": "merged PR first, explicit local issues, recent issues",
+}
+
+FULL_PROFILE = {
+    "profile_version": FULL_HISTORY,
+    "plan_version": "discovery_full_v1",
+    "max_requests": FULL_MAX_REQUESTS,
+    "selection": "all public issues, pull requests, releases, and tags",
 }
 
 _REF = re.compile(
@@ -88,9 +96,7 @@ class SnapshotClient:
             transport=transport,
             event_hooks={"request": [self.before], "response": [self.after]},
         )
-        self.client = collector.GitHubClient(
-            self.token, client=self.http, max_retries=2, sleep=collector._retry_wait
-        )
+        self.client = collector.GitHubClient(self.http, sleep=collector._retry_wait)
 
     def before(self, request):
         if self.state["github_requests"] >= self.limit:
@@ -144,13 +150,14 @@ def discover(
     token=None,
     transport=None,
 ) -> dict:
-    profile = {**PROFILE, **(profile or {})}
-    for key, upper in (
+    full = (profile or {}).get("profile_version") == FULL_HISTORY
+    profile = {**(FULL_PROFILE if full else PROFILE), **(profile or {})}
+    for key, upper in (() if full else (
         ("max_candidates_per_kind", 100),
         ("max_units", 40),
         ("max_prs", 40),
         ("max_requests", 300),
-    ):
+    )):
         if not isinstance(profile[key], int) or not 1 <= profile[key] <= upper:
             raise ValueError(f"profile {key}须在1到{upper}之间")
     repo = normalize_repo(repo_url, require_url=True)
@@ -174,10 +181,26 @@ def discover(
             "state": "all",
             "sort": "updated",
             "direction": "desc",
-            "per_page": profile["max_candidates_per_kind"],
+            "per_page": profile.get("max_candidates_per_kind", 100),
         }
-        prs = client.get(f"repos/{repo}/pulls", params)
-        issues = [x for x in client.get(f"repos/{repo}/issues", params) if "pull_request" not in x]
+        def listings(endpoint):
+            if full:
+                rows = client.client.pages(f"repos/{repo}/{endpoint}", params)
+                return list({row["number"]: row for row in rows}.values())
+            return client.get(f"repos/{repo}/{endpoint}", params)
+
+        prs = listings("pulls")
+        issues = [x for x in listings("issues") if "pull_request" not in x]
+        pinned = {}
+        if full:
+            branch = quote(metadata["default_branch"], safe="/")
+            head = client.get(f"repos/{repo}/git/ref/heads/{branch}")["object"]["sha"]
+            tags = list(client.client.pages(f"repos/{repo}/tags"))
+            releases = [r for r in client.client.pages(f"repos/{repo}/releases")
+                        if not r.get("draft")]
+            pinned = {"default_branch_sha": head, "tags": tags, "releases": releases}
+            profile["max_units"] = len(prs) + len(issues)
+            profile["max_prs"] = len(prs)
 
         def order(x):
             return x.get("updated_at") or "", x["number"]
@@ -203,7 +226,7 @@ def discover(
                 if ref["target_repo"] == repo:
                     if ref["number"] in seen:
                         ref["resolution"] = "selected"
-                    elif len(selected) < profile["max_units"]:
+                    elif not full and len(selected) < profile["max_units"]:
                         selected.append(
                             {
                                 "kind": "issue",
@@ -214,7 +237,7 @@ def discover(
                         seen.add(ref["number"])
                         ref["resolution"] = "selected"
                     else:
-                        ref["resolution"] = "over_limit"
+                        ref["resolution"] = "not_in_public_inventory" if full else "over_limit"
                 references.append(ref)
         for issue in issues:
             if len(selected) >= profile["max_units"]:
@@ -242,6 +265,7 @@ def discover(
             default_branch_sha=None,
             plan_id=stable_id("plan", repo, dataset_id, canonical_json(profile)),
         )
+        snapshot.update(pinned)
         write_json(directory / "snapshot.json", snapshot)
         write_json(directory / "plan.json", snapshot)
         return {

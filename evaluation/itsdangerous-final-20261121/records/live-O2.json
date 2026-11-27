@@ -1,0 +1,68 @@
+{
+  "arm": "O",
+  "question": "仓库 pallets/itsdangerous，截止时间 2026-11-16T06:31:18Z，冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd。2.0.0rc2 是正式版还是候选版？它在 GitHub 哪天发布？请附出处。",
+  "status": "empty",
+  "error": null,
+  "seconds": 10.646,
+  "method": "p2_query_v1.4.2_historykg_discussion_v1_full_focal_v1",
+  "max_output_tokens": 32768,
+  "timeout_seconds": 240,
+  "claims": [],
+  "evidence": [],
+  "gaps": [
+    "当前可见上下文仅包含 tests/test_itsdangerous/test_encoding.py、test_serializer.py、test_timed.py 的测试代码，没有任何关于 2.0.0rc2 的发布说明、版本标签、GitHub Release 或发布日期信息。",
+    "因此无法依据所给上下文判断 2.0.0rc2 是正式版还是候选版，也无法确定它在 GitHub 的发布日期。"
+  ],
+  "context_characters": 11943,
+  "context_sha256": "f6cd47688d594324fa1591788f107e260462b425e4c842c1a5b62b37cd0b8da5",
+  "visible": [
+    {
+      "source_id": "SourceDocument:ee47d6db623801fb69950a9b40df05969941a1099bb1bb22f2a0014046d59783",
+      "start": 0,
+      "end": 999,
+      "title": null,
+      "url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/tests/test_itsdangerous/test_encoding.py",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:38361e26236d17c4e80a39240a99d8726f6bcba9bd78f77975d93a661fcf4f96",
+      "start": 0,
+      "end": 6826,
+      "title": null,
+      "url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/tests/test_itsdangerous/test_serializer.py",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:80fd484ea2b107d7f6f28c884415e75089c8d0fb278da21f2fbbc5eed0422756",
+      "start": 0,
+      "end": 2767,
+      "title": null,
+      "url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/tests/test_itsdangerous/test_timed.py",
+      "author": null,
+      "time": null
+    }
+  ],
+  "graph_edges": [],
+  "responses": [
+    {
+      "status": 200,
+      "usage": {
+        "completion_tokens": 341,
+        "completion_tokens_details": {
+          "reasoning_tokens": 239
+        },
+        "prompt_tokens": 4061,
+        "prompt_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "total_tokens": 4402
+      },
+      "answer": "{\"claims\":[],\"gaps\":[\"当前可见上下文仅包含 tests/test_itsdangerous/test_encoding.py、test_serializer.py、test_timed.py 的测试代码，没有任何关于 2.0.0rc2 的发布说明、版本标签、GitHub Release 或发布日期信息。\",\"因此无法依据所给上下文判断 2.0.0rc2 是正式版还是候选版，也无法确定它在 GitHub 的发布日期。\"]}",
+      "reason": "stop",
+      "provider_error": null
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "rubric": [
+    "实际合并 SHA",
+    "最新正式版及出处",
+    "标签包含核对及有条件限制的结论"
+  ],
+  "model": "bailian/deepseek-v4.1-flash-1017",
+  "usage": {
+    "completion_tokens": 146,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 1616,
+    "prompt_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "total_tokens": 1762
+  },
+  "scores": {
+    "O": {
+      "points": [
+        0,
+        0,
+        0
+      ],
+      "note": "未给出合并 SHA；未提供最新正式版及出处；未做标签包含核对或给出限定结论，仅笼统称无法判断。"
+    },
+    "A": {
+      "points": [
+        0.5,
+        0,
+        0
+      ],
+      "note": "仅正确答案合并 SHA 及合并时间，但未提供最新正式版（2.2.0）及出处；未提供标签包含核对和限定结论。"
+    },
+    "B": {
+      "points": [
+        1,
+        0,
+        0
+      ],
+      "note": "合并 SHA 正确且有 API 出处；最新正式版与 release 列表缺失，未给版本号及出处；未给出标签包含核对或仅按冻结数据的结论。"
+    }
+  }
+}

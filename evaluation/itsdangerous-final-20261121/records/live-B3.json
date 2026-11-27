@@ -1,0 +1,409 @@
+{
+  "arm": "B",
+  "question": "仓库 pallets/itsdangerous，截止时间 2026-11-16T06:31:18Z，冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd。PR #408 为什么改发布流程？它实际改了哪个文件？请给出合并记录和出处。",
+  "status": "ok",
+  "error": null,
+  "seconds": 50.083,
+  "method": "p2_query_v1.4.2_historykg_discussion_v1_full_focal_v2",
+  "max_output_tokens": 32768,
+  "timeout_seconds": 240,
+  "claims": [
+    {
+      "text": "PR #408 的主题是移除 SLSA provenance；给出的原因是 PyPI 和 trusted publishing 现在已经内置 attestation 支持，因此不再需要单独的 SLSA provenance。",
+      "evidence_ids": [
+        "Evidence:9f1a6a5c168fee79e3b5b5dd5b3da33a204115912c74c6d9ccbdc45fd556ab03"
+      ]
+    },
+    {
+      "text": "PR #408 的实际合并记录为：merged=true，merged_at=2025-06-14T20:07:37Z，merge_commit_sha=b0410878b9e46bd4c008eeac8cf4ed3d345e69b4。",
+      "evidence_ids": [
+        "Evidence:c3260831eb4c8791f3cf6bdbddf03d0b9fdb2ad084029e0679f0ff898dbfbcc8"
+      ]
+    },
+    {
+      "text": "所给官方发布记录（draft=False、prerelease=False）覆盖 2.0.0（2021-05-12）至 2.2.0（2024-04-16），均早于 PR #408 的合并时间；2.0.0、2.0.1、2.1.0、2.1.1、2.1.2、2.2.0 的单标签 git rev-list 注记均写明冻结历史不包含 b0410878b9e46bd4c008eeac8cf4ed3d345e69b4，因此该合并提交被这些发布标签的历史排除，不能据此报告包含它的首个发布。",
+      "evidence_ids": [
+        "Evidence:c3260831eb4c8791f3cf6bdbddf03d0b9fdb2ad084029e0679f0ff898dbfbcc8",
+        "Evidence:4f307e971895d02c30df17b98c9e1d9453a0e46de7ab3264b792de36fef1254c",
+        "Evidence:6ffd6642d4312757774b41527a0423a5c4ac7a4d7b730bacf55015236691521b",
+        "Evidence:51a9fcbe97c1161e44c086e3752c62e9f1428dedee6b8e83cad0091df705ef06",
+        "Evidence:15cbc818271bdab42c2c72281be42c01a395a0c625d73f3438e1f0c1c1c3f724",
+        "Evidence:0d34c542d00653aee8fd4c2e81726f5bef6aaa677eed07bcb0fcf4acff90fa08",
+        "Evidence:3787f2c26929983c4bee3c3cf22838d898679b64f139333ad71ba29f201c06aa",
+        "Evidence:4cc17d5d30fc50f675ba1a79d678940bc89604c1ead50feaef84d9fe950075f1",
+        "Evidence:0a2032fba7c266a79386eac7831826d371b244a7e4dbf0df9338b295537ed66d",
+        "Evidence:5f8efedac7a763f7f50e2c4d39b5bd948b80a16ffa0211efb30f689736a44578",
+        "Evidence:7046c40dfa9f320f470409e179f36fdda6175401248962cccd54997748e0cb62",
+        "Evidence:a676d4c4960bd3d44ef7ff715df9b061b89b77d3493d8bf9b7dc7bb67a3dd64d",
+        "Evidence:4a2bab01bc2c6f7bb780038e2134f098ff87bc129ea36e222c8e69bd18d4d8b8"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "Evidence:9f1a6a5c168fee79e3b5b5dd5b3da33a204115912c74c6d9ccbdc45fd556ab03",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:0f084937465aa6e294fc85b558ba6f739b03de6dc2666fee7a3f17213f8784d1",
+      "start": 0,
+      "end": 65,
+      "quote": "PyPI and trusted publishing has built-in attestation support now.",
+      "url": "https://github.com/pallets/itsdangerous/pull/408",
+      "author": "davidism",
+      "time": "2025-06-14T19:56:59Z",
+      "text_sha256": "e0338fb943a0f7faa1e52ed6e64a7a9cff9f91dfd65d7b2794200529e9f54408"
+    },
+    {
+      "evidence_id": "Evidence:c3260831eb4c8791f3cf6bdbddf03d0b9fdb2ad084029e0679f0ff898dbfbcc8",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:a2f831c08b611b13daf658e1410473d1a9dd2b755e5fde55ed4fb74e8c23c147",
+      "start": 17092,
+      "end": 17267,
+      "quote": "  \"merge_commit_sha\": \"b0410878b9e46bd4c008eeac8cf4ed3d345e69b4\",\n  \"mergeable\": null,\n  \"mergeable_state\": \"unknown\",\n  \"merged\": true,\n  \"merged_at\": \"2025-06-14T20:07:37Z\",",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/408",
+      "author": null,
+      "time": null,
+      "text_sha256": "4f1a93b37981a34ba0805cb59ffa90fec813c69b7537390e775827bcbf075383"
+    },
+    {
+      "evidence_id": "Evidence:4f307e971895d02c30df17b98c9e1d9453a0e46de7ab3264b792de36fef1254c",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 20919,
+      "end": 20961,
+      "quote": "    \"published_at\": \"2021-05-12T00:13:07Z\"",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null,
+      "text_sha256": "373fe2b61c84992e215da55d9a470a5185bb181b001a98161fb928fe29a20895",
+      "detail_url": "https://github.com/pallets/itsdangerous/releases/tag/2.0.0",
+      "context_note": "2.0.0 · https://github.com/pallets/itsdangerous/releases/tag/2.0.0 · draft=False, prerelease=False"
+    },
+    {
+      "evidence_id": "Evidence:6ffd6642d4312757774b41527a0423a5c4ac7a4d7b730bacf55015236691521b",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 18193,
+      "end": 18235,
+      "quote": "    \"published_at\": \"2021-05-18T15:10:38Z\"",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null,
+      "text_sha256": "373fe2b61c84992e215da55d9a470a5185bb181b001a98161fb928fe29a20895",
+      "detail_url": "https://github.com/pallets/itsdangerous/releases/tag/2.0.1",
+      "context_note": "2.0.1 · https://github.com/pallets/itsdangerous/releases/tag/2.0.1 · draft=False, prerelease=False"
+    },
+    {
+      "evidence_id": "Evidence:51a9fcbe97c1161e44c086e3752c62e9f1428dedee6b8e83cad0091df705ef06",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 16090,
+      "end": 16132,
+      "quote": "    \"published_at\": \"2022-02-18T03:45:57Z\"",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null,
+      "text_sha256": "373fe2b61c84992e215da55d9a470a5185bb181b001a98161fb928fe29a20895",
+      "detail_url": "https://github.com/pallets/itsdangerous/releases/tag/2.1.0",
+      "context_note": "2.1.0 · https://github.com/pallets/itsdangerous/releases/tag/2.1.0 · draft=False, prerelease=False"
+    },
+    {
+      "evidence_id": "Evidence:15cbc818271bdab42c2c72281be42c01a395a0c625d73f3438e1f0c1c1c3f724",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 13924,
+      "end": 13966,
+      "quote": "    \"published_at\": \"2022-03-09T16:25:33Z\"",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null,
+      "text_sha256": "373fe2b61c84992e215da55d9a470a5185bb181b001a98161fb928fe29a20895",
+      "detail_url": "https://github.com/pallets/itsdangerous/releases/tag/2.1.1",
+      "context_note": "2.1.1 · https://github.com/pallets/itsdangerous/releases/tag/2.1.1 · draft=False, prerelease=False"
+    },
+    {
+      "evidence_id": "Evidence:0d34c542d00653aee8fd4c2e81726f5bef6aaa677eed07bcb0fcf4acff90fa08",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 11464,
+      "end": 11506,
+      "quote": "    \"published_at\": \"2022-03-24T15:14:38Z\"",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null,
+      "text_sha256": "373fe2b61c84992e215da55d9a470a5185bb181b001a98161fb928fe29a20895",
+      "detail_url": "https://github.com/pallets/itsdangerous/releases/tag/2.1.2",
+      "context_note": "2.1.2 · https://github.com/pallets/itsdangerous/releases/tag/2.1.2 · draft=False, prerelease=False"
+    },
+    {
+      "evidence_id": "Evidence:3787f2c26929983c4bee3c3cf22838d898679b64f139333ad71ba29f201c06aa",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 9001,
+      "end": 9043,
+      "quote": "    \"published_at\": \"2024-04-16T21:46:38Z\"",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null,
+      "text_sha256": "373fe2b61c84992e215da55d9a470a5185bb181b001a98161fb928fe29a20895",
+      "detail_url": "https://github.com/pallets/itsdangerous/releases/tag/2.2.0",
+      "context_note": "2.2.0 · https://github.com/pallets/itsdangerous/releases/tag/2.2.0 · draft=False, prerelease=False"
+    },
+    {
+      "evidence_id": "Evidence:4cc17d5d30fc50f675ba1a79d678940bc89604c1ead50feaef84d9fe950075f1",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:c02152e8d8296e0140e6138acdd72ca0740f41acb933385ceb75cd845eeb6e7c",
+      "start": 32,
+      "end": 94,
+      "quote": "\"rev-list\",\n    \"d101100c395958d67368b8c37d95a9c404598c2e\"\n  ]",
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null,
+      "text_sha256": "cd27bbbb78d6ffcaa9a6dfefb82957de2fa5e0deb866e0358bbf82b4c9ca2b5a",
+      "detail_url": "https://github.com/pallets/itsdangerous/compare/b0410878b9e46bd4c008eeac8cf4ed3d345e69b4...2.0.0",
+      "context_note": "2.0.0 → d101100c395958d67368b8c37d95a9c404598c2e，单标签 git rev-list 共 381 项；冻结历史不包含（已逐项核对所列提交的父记录） b0410878b9e46bd4c008eeac8cf4ed3d345e69b4"
+    },
+    {
+      "evidence_id": "Evidence:0a2032fba7c266a79386eac7831826d371b244a7e4dbf0df9338b295537ed66d",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:ddffd7717cb902c6e49518ba640fe940a8853ee0e24927e5b4938cf01f80d411",
+      "start": 32,
+      "end": 94,
+      "quote": "\"rev-list\",\n    \"8f39dd317914321fed26437c874637641bd598b6\"\n  ]",
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null,
+      "text_sha256": "0464a6c2fd9ef9d13ab38955461ea01d212a6c0089bc698ca579db1ad872b4e8",
+      "detail_url": "https://github.com/pallets/itsdangerous/compare/b0410878b9e46bd4c008eeac8cf4ed3d345e69b4...2.0.1",
+      "context_note": "2.0.1 → 8f39dd317914321fed26437c874637641bd598b6，单标签 git rev-list 共 390 项；冻结历史不包含（已逐项核对所列提交的父记录） b0410878b9e46bd4c008eeac8cf4ed3d345e69b4"
+    },
+    {
+      "evidence_id": "Evidence:5f8efedac7a763f7f50e2c4d39b5bd948b80a16ffa0211efb30f689736a44578",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:f12bd27d078a706916c67c23fa9d3c05f7e2cc14661fab8673103c44edebacea",
+      "start": 32,
+      "end": 94,
+      "quote": "\"rev-list\",\n    \"bfafa6541acd8c7573661d6b1545ff8e8133a43e\"\n  ]",
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null,
+      "text_sha256": "00e6e735e2db7034f142343a440c3e3a408335630094c642e7123e3b170a785a",
+      "detail_url": "https://github.com/pallets/itsdangerous/compare/b0410878b9e46bd4c008eeac8cf4ed3d345e69b4...2.1.0",
+      "context_note": "2.1.0 → bfafa6541acd8c7573661d6b1545ff8e8133a43e，单标签 git rev-list 共 458 项；冻结历史不包含（已逐项核对所列提交的父记录） b0410878b9e46bd4c008eeac8cf4ed3d345e69b4"
+    },
+    {
+      "evidence_id": "Evidence:7046c40dfa9f320f470409e179f36fdda6175401248962cccd54997748e0cb62",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:71cf06106bea5a0704be9f76106fb094a1dcb74ba76e222f5f913236504de04b",
+      "start": 32,
+      "end": 94,
+      "quote": "\"rev-list\",\n    \"38e9d8a417ac4e578ec422cb58e84c33b207b740\"\n  ]",
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null,
+      "text_sha256": "cbccf47e7379824ea7f259424ce48beae22caf07bd1a5217f698862b9a9c2e85",
+      "detail_url": "https://github.com/pallets/itsdangerous/compare/b0410878b9e46bd4c008eeac8cf4ed3d345e69b4...2.1.1",
+      "context_note": "2.1.1 → 38e9d8a417ac4e578ec422cb58e84c33b207b740，单标签 git rev-list 共 466 项；冻结历史不包含（已逐项核对所列提交的父记录） b0410878b9e46bd4c008eeac8cf4ed3d345e69b4"
+    },
+    {
+      "evidence_id": "Evidence:a676d4c4960bd3d44ef7ff715df9b061b89b77d3493d8bf9b7dc7bb67a3dd64d",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:100bbbbce14baa66c1a9b5872ea6cd3856e14e5fa910676eba98d6e961893c3a",
+      "start": 32,
+      "end": 94,
+      "quote": "\"rev-list\",\n    \"49d263f60b6f78df8924be51262eeb5216ab1468\"\n  ]",
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null,
+      "text_sha256": "a120a74712d250a7aa506213b170bda338c1530c0c12c1ca03265386b8d9ac9f",
+      "detail_url": "https://github.com/pallets/itsdangerous/compare/b0410878b9e46bd4c008eeac8cf4ed3d345e69b4...2.1.2",
+      "context_note": "2.1.2 → 49d263f60b6f78df8924be51262eeb5216ab1468，单标签 git rev-list 共 471 项；冻结历史不包含（已逐项核对所列提交的父记录） b0410878b9e46bd4c008eeac8cf4ed3d345e69b4"
+    },
+    {
+      "evidence_id": "Evidence:4a2bab01bc2c6f7bb780038e2134f098ff87bc129ea36e222c8e69bd18d4d8b8",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:93c46910b41dd3b41dec2d0d7257245e06f3824f03166459e9dbd2254d6e51f3",
+      "start": 32,
+      "end": 94,
+      "quote": "\"rev-list\",\n    \"096c8d42545d3b68ea21a4f890fb2b2d8979c0bd\"\n  ]",
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null,
+      "text_sha256": "56f8aa3d4ee01629834e13c023cdc7a2befe45c07a89a86815eb762744c9ec58",
+      "detail_url": "https://github.com/pallets/itsdangerous/compare/b0410878b9e46bd4c008eeac8cf4ed3d345e69b4...2.2.0",
+      "context_note": "2.2.0 → 096c8d42545d3b68ea21a4f890fb2b2d8979c0bd，单标签 git rev-list 共 607 项；冻结历史不包含（已逐项核对所列提交的父记录） b0410878b9e46bd4c008eeac8cf4ed3d345e69b4"
+    }
+  ],
+  "gaps": [
+    "PR #408 的文件清单或补丁未提供，无法确定它实际修改了哪个文件。",
+    "未提供 2.2.0 之后至截止时间 2026-11-16T06:31:18Z 的官方发布记录，无法确定 PR #408 的合并提交是否进入后续正式发布，或首次进入哪个后续发布。"
+  ],
+  "context_characters": 11863,
+  "context_sha256": "fc96d0690b9d49e76271c27530cc221e41dea668dbf9799e2cd6cc4b3d12bdd8",
+  "visible": [
+    {
+      "source_id": "SourceDocument:0f084937465aa6e294fc85b558ba6f739b03de6dc2666fee7a3f17213f8784d1",
+      "start": 0,
+      "end": 65,
+      "title": "remove slsa provenance",
+      "url": "https://github.com/pallets/itsdangerous/pull/408",
+      "author": "davidism",
+      "time": "2025-06-14T19:56:59Z"
+    },
+    {
+      "source_id": "SourceDocument:a2f831c08b611b13daf658e1410473d1a9dd2b755e5fde55ed4fb74e8c23c147",
+      "start": 17092,
+      "end": 17267,
+      "title": null,
+      "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/408",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 20919,
+      "end": 20961,
+      "title": "2.0.0 · https://github.com/pallets/itsdangerous/releases/tag/2.0.0 · draft=False, prerelease=False",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 18193,
+      "end": 18235,
+      "title": "2.0.1 · https://github.com/pallets/itsdangerous/releases/tag/2.0.1 · draft=False, prerelease=False",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 16090,
+      "end": 16132,
+      "title": "2.1.0 · https://github.com/pallets/itsdangerous/releases/tag/2.1.0 · draft=False, prerelease=False",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 13924,
+      "end": 13966,
+      "title": "2.1.1 · https://github.com/pallets/itsdangerous/releases/tag/2.1.1 · draft=False, prerelease=False",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 11464,
+      "end": 11506,
+      "title": "2.1.2 · https://github.com/pallets/itsdangerous/releases/tag/2.1.2 · draft=False, prerelease=False",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+      "start": 9001,
+      "end": 9043,
+      "title": "2.2.0 · https://github.com/pallets/itsdangerous/releases/tag/2.2.0 · draft=False, prerelease=False",
+      "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:c02152e8d8296e0140e6138acdd72ca0740f41acb933385ceb75cd845eeb6e7c",
+      "start": 32,
+      "end": 94,
+      "title": "2.0.0 → d101100c395958d67368b8c37d95a9c404598c2e，单标签 git rev-list 共 381 项；冻结历史不包含（已逐项核对所列提交的父记录） b0410878b9e46bd4c008eeac8cf4ed3d345e69b4",
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:ddffd7717cb902c6e49518ba640fe940a8853ee0e24927e5b4938cf01f80d411",
+      "start": 32,
+      "end": 94,
+      "title": "2.0.1 → 8f39dd317914321fed26437c874637641bd598b6，单标签 git rev-list 共 390 项；冻结历史不包含（已逐项核对所列提交的父记录） b0410878b9e46bd4c008eeac8cf4ed3d345e69b4",
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:f12bd27d078a706916c67c23fa9d3c05f7e2cc14661fab8673103c44edebacea",
+      "start": 32,
+      "end": 94,
+      "title": "2.1.0 → bfafa6541acd8c7573661d6b1545ff8e8133a43e，单标签 git rev-list 共 458 项；冻结历史不包含（已逐项核对所列提交的父记录） b0410878b9e46bd4c008eeac8cf4ed3d345e69b4",
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:71cf06106bea5a0704be9f76106fb094a1dcb74ba76e222f5f913236504de04b",
+      "start": 32,
+      "end": 94,
+      "title": "2.1.1 → 38e9d8a417ac4e578ec422cb58e84c33b207b740，单标签 git rev-list 共 466 项；冻结历史不包含（已逐项核对所列提交的父记录） b0410878b9e46bd4c008eeac8cf4ed3d345e69b4",
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:100bbbbce14baa66c1a9b5872ea6cd3856e14e5fa910676eba98d6e961893c3a",
+      "start": 32,
+      "end": 94,
+      "title": "2.1.2 → 49d263f60b6f78df8924be51262eeb5216ab1468，单标签 git rev-list 共 471 项；冻结历史不包含（已逐项核对所列提交的父记录） b0410878b9e46bd4c008eeac8cf4ed3d345e69b4",
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:93c46910b41dd3b41dec2d0d7257245e06f3824f03166459e9dbd2254d6e51f3",
+      "start": 32,
+      "end": 94,
+      "title": "2.2.0 → 096c8d42545d3b68ea21a4f890fb2b2d8979c0bd，单标签 git rev-list 共 607 项；冻结历史不包含（已逐项核对所列提交的父记录） b0410878b9e46bd4c008eeac8cf4ed3d345e69b4",
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:c3d0828fb5a383ef3dc3671463984255efbe9c868d349c6162ced23b733807d4",
+      "start": 0,
+      "end": 5495,
+      "title": "Bump actions/cache from 3.0.9 to 3.0.11",
+      "url": "https://github.com/pallets/itsdangerous/pull/319",
+      "author": "dependabot[bot]",
+      "time": "2022-11-01T16:08:55Z"
+    },
+    {
+      "source_id": "SourceDocument:2663754f7dcb11885eaaf34a3dd20436402666c16cbb527d8d08c79c87bacdf8",
+      "start": 0,
+      "end": 84,
+      "title": "Bump pre-commit from 2.16.0 to 2.17.0 in /requirements",
+      "url": "https://github.com/pallets/itsdangerous/pull/284",
+      "author": "dependabot[bot]",
+      "time": "2022-02-01T16:05:38Z"
+    }
+  ],
+  "graph_edges": [],
+  "responses": [
+    {
+      "status": 200,
+      "usage": {
+        "completion_tokens": 9582,
+        "completion_tokens_details": {
+          "reasoning_tokens": 9196
+        },
+        "prompt_tokens": 4087,
+        "prompt_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "total_tokens": 13669
+      },
+      "answer": "{\"claims\":[{\"text\":\"PR #408 的主题是移除 SLSA provenance；给出的原因是 PyPI 和 trusted publishing 现在已经内置 attestation 支持，因此不再需要单独的 SLSA provenance。\",\"passages\":[1]},{\"text\":\"PR #408 的实际合并记录为：merged=true，merged_at=2025-06-14T20:07:37Z，merge_commit_sha=b0410878b9e46bd4c008eeac8cf4ed3d345e69b4。\",\"passages\":[2]},{\"text\":\"所给官方发布记录（draft=False、prerelease=False）覆盖 2.0.0（2021-05-12）至 2.2.0（2024-04-16），均早于 PR #408 的合并时间；2.0.0、2.0.1、2.1.0、2.1.1、2.1.2、2.2.0 的单标签 git rev-list 注记均写明冻结历史不包含 b0410878b9e46bd4c008eeac8cf4ed3d345e69b4，因此该合并提交被这些发布标签的历史排除，不能据此报告包含它的首个发布。\",\"passages\":[2,3,4,5,6,7,8,9,10,11,12,13,14]}],\"gaps\":[\"PR #408 的文件清单或补丁未提供，无法确定它实际修改了哪个文件。\",\"未提供 2.2.0 之后至截止时间 2026-11-16T06:31:18Z 的官方发布记录，无法确定 PR #408 的合并提交是否进入后续正式发布，或首次进入哪个后续发布。\"]}",
+      "reason": "stop",
+      "provider_error": null
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "rubric": [
+    "实际 Base64 转换",
+    "压缩启用条件或标记",
+    "相关源码出处和适用范围"
+  ],
+  "model": "bailian/deepseek-v4.1-flash-1017",
+  "usage": {
+    "completion_tokens": 144,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 3648,
+    "prompt_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "total_tokens": 3792
+  },
+  "scores": {
+    "O": {
+      "points": [
+        1,
+        1,
+        1
+      ],
+      "note": "三项均明确给出且源码引用与冻结提交一致：base64_encode 载荷转换、zlib.compress(及仅在缩短时启用)、dump/load 两端的源码出处与范围。"
+    },
+    "A": {
+      "points": [
+        1,
+        1,
+        1
+      ],
+      "note": "三项完整：base64 转换、压缩启用条件与点标记、相关源码出处和 dump/load 适用范围均有引用。"
+    },
+    "B": {
+      "points": [
+        1,
+        1,
+        1
+      ],
+      "note": "三项完整覆盖：Base64 编解码、压缩条件(含 -1 阈值)与点标记、源码出处及适用范围；无扣分项。"
+    }
+  }
+}

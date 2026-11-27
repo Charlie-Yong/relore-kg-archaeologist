@@ -6,7 +6,7 @@ import pytest
 from pydantic import ValidationError
 
 from historykg.extract import run_extract_stage
-from historykg.extract.stage import Candidate
+from historykg.extract.stage import Candidate, Quote
 from historykg.ids import entity_id
 from historykg.io import make_source, read_jsonl, write_jsonl
 
@@ -115,6 +115,17 @@ def test_explicit_reason_cannot_be_null_and_no_reason_is_preserved(tmp_path):
     assert Candidate.model_validate(candidate).rationale is None
 
 
+@pytest.mark.parametrize("blank", ["", " ", "\n\t"])
+def test_extraction_rejects_blank_statement_rationale_and_evidence(tmp_path, blank):
+    _, candidate = extraction_input(tmp_path)
+    with pytest.raises(ValidationError, match="statement"):
+        Candidate.model_validate({**candidate, "statement": blank})
+    with pytest.raises(ValidationError, match="rationale"):
+        Candidate.model_validate({**candidate, "rationale": blank})
+    with pytest.raises(ValidationError, match="quote"):
+        Quote.model_validate({"source_id": "s", "quote": blank})
+
+
 def test_blocked_extraction_is_not_actual_llm_success(tmp_path, monkeypatch):
     extraction_input(tmp_path)
     import historykg.extract.stage as stage
@@ -128,3 +139,33 @@ def test_blocked_extraction_is_not_actual_llm_success(tmp_path, monkeypatch):
     assert result["status"] == "blocked"
     assert not result["usage"]["actual_llm_extraction"]
     assert read_jsonl(tmp_path / "p4/failures.jsonl")[0]["reason"] == "budget"
+
+
+def test_prompt_v2_and_unit_ids_filter(tmp_path, monkeypatch):
+    import historykg.extract.stage as stage
+
+    extraction_input(tmp_path)
+    units = read_jsonl(tmp_path / "source_units.jsonl")
+    write_jsonl(tmp_path / "source_units.jsonl", [units[0], {**units[0], "unit_id": "u_skip"}])
+    seen_versions = []
+    seen_units = []
+
+    def fake_run(request, **_):
+        seen_versions.append(request["prompt_version"])
+        seen_units.append(request["output_directory"])
+        return {
+            "run_id": request["run_id"],
+            "status": "ok",
+            "new_requests": 0,
+            "parsed": {"candidates": []},
+        }
+
+    monkeypatch.setattr(stage, "run_request", fake_run)
+    res = run_extract_stage(
+        tmp_path,
+        config={"prompt_version": "v2", "unit_ids": ["u"]},
+        budget={},
+    )
+    assert seen_versions == [stage.PROMPT_VERSION_V2]
+    cov = read_jsonl(res["artifacts"]["coverage"])
+    assert len(cov) == 1 and cov[0]["unit_id"] == "u"
