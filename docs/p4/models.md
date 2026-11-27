@@ -4,6 +4,12 @@ P4维护`historykg.llm`和`historykg.extract`。公共记录、ID和证据定位
 唯一构建编排仍为P1。生产凭据只读取`DEEPSEEK_API_KEY`；请求文件不保存密钥或认证头。
 模型配置见[样例](../../config/model.example.json)。评审由P6显式提供独立配置和提示。
 
+## 2026-11-26 v2 升级摘要
+
+- **百炼直答通道修复**：`historykg/llm/gateway.py` 为百炼 `thinking="disabled"` 显式下发 `reasoning_effort="none"`，实测 `reasoning_tokens=0`，公共 6 题问答实现 `17/17`（100%）、中位 **`3.40s`**。
+- **决定抽取去噪（`PROMPT_V2`）**：排除 Dependabot/Bot 依赖例行升级并强制区分「提议」与「维护者采纳」。在 `orig30` 上精确率从 `40.0%` 升至 `66.7%`（F1 `0.4651 → 0.6061`、Bot 误报 `8 → 0`）；在不相交盲测集 `heldout20`（含 1 条未决参考，按 `reference_complete=False` 严格留空总指标）上条件精确率从 `52.9%` 升至 `75.0%`、Bot 误报 `6 → 0`。
+- **实际费用记录**：2026-11-26 Phase 2 全部实验（435 次调用）实支 `7.261228 CNY`，加上 `v7` 冷启动 6 题实测 `0.055832 CNY`，合计 `7.317060 CNY`；详见 [v2 实验汇总索引](../../evaluation/itsdangerous-v2-20261126/README.md)。
+
 ## 调用
 
 ~~~python

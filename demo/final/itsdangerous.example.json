@@ -1,0 +1,19 @@
+{
+  "answer": {
+    "citation_style": "passage_numbers",
+    "max_output_tokens": 8192,
+    "max_retries": 2,
+    "model_id": "deepseek-flash",
+    "route": "bailian/deepseek-v4.1-flash-1017",
+    "thinking": "disabled",
+    "timeout_seconds": 120
+  },
+  "budget": {
+    "ledger_path": ".local/itsdangerous-final/answer-usage.sqlite3",
+    "mode": "provider_balance"
+  },
+  "database_url": "sqlite:///./.local/itsdangerous-final/collector.sqlite3",
+  "graph": {
+    "neo4j_uri": "bolt://127.0.0.1:7687"
+  }
+}

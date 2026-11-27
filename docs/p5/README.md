@@ -2,6 +2,12 @@
 
 P5页面仅调用P1构建和P2查询；资料采集、任务编排、图查询及统一回答器均沿用所属模块。
 
+## 2026-11-26 v2 升级摘要（便携实机工作台与离线回放）
+
+- **一键便携启动与 `full_history_v1` 对齐**：使用 `tools/serve_frozen.py` 配合 [便携示例配置](../../demo/final/itsdangerous.example.json) 与仓库根 `.streamlit/config.toml`（`toolbarMode = "minimal"` 隐藏 Deploy 栏）直接启动现场工作台；`app/backend.py` 已根据 `provider_balance` 自动选择 `FULL_HISTORY`。
+- **双模切换与实机可观测性**：支持 **「快速实证（推荐 · 秒级）」**（默认 `B_v2_fast_nothink`）与 **「深度思考」** 切换，新增 4 枚一键场景按钮、4 项毫秒级实时遥测（子图检索 ms / 有据问答 ms / 证据路径数 / 核验原文数）、五级证据强度徽章与默认展开的 Top-2 原文卡片。
+- **双防翻车兜底**：`materials/itsdangerous-replay.json`（及仓内 `.local/full-history-itsdangerous/itsdangerous-replay.json`）已升级为 `B_v2_fast_nothink` 的 6 题实测离线回放，断网时可通过 `HISTORYKG_REPLAY_FILE` 秒级切换；详细操作见 [操作与讲稿](../../demo/final/ItsDangerous-操作与讲稿.md) · [答辩追问小抄](../../demo/final/答辩追问应答小抄.md) · [v2 实验汇总索引](../../evaluation/itsdangerous-v2-20261126/README.md)。
+
 ## 启动
 
 在仓库根目录按锁文件安装依赖。一次配置由安装者完成，普通使用只输入仓库URL。
@@ -110,3 +116,10 @@ PR合并与Release可达是不同强度的证据，`class`不冒充Function。
 P2已在真实Neo4j完成扩展分片四跳验收；
 当前生产图仍为旧1.4.1，新增实体来自真实新数据版本重放。公开验收记录为提交
 `19602e6`，真实Neo4j/PostgreSQL回归26 passed，PR #6096两条方向路径均通过。
+
+### 回答与图谱
+
+答案逐条显示，证据编号可跳到同一响应内的原文卡片及 GitHub 链接。证据关系图默认展示
+与答案直接证据或原文重合最多的一条完整关系链，箭头指向原有关系终点，切换链不触发查询。
+时间线按事件时间分页，依赖与版本比较各有对应视图。窄屏可点击“跳到可视化”直接查看图表。
+真实在线响应和冻结回放使用同一展示入口。

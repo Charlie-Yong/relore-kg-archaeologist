@@ -1,5 +1,6 @@
 """Render the maintained report source; requires ReportLab and a CJK font."""
 
+import argparse
 import re
 from html import escape
 from pathlib import Path
@@ -10,7 +11,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import KeepTogether, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from reportlab.platypus import Image, KeepTogether, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 ROOT = Path(__file__).resolve().parents[1]
 pdfmetrics.registerFont(TTFont(
@@ -31,11 +32,12 @@ STYLES = {
                          textColor=HexColor("#376271"), spaceBefore=11, spaceAfter=5,
                          keepWithNext=True),
     "body": ParagraphStyle("body", fontName="BodyCN", fontSize=10.7, leading=18.1,
-                           wordWrap="CJK", firstLineIndent=21.4, spaceAfter=7),
+                           wordWrap="CJK", firstLineIndent=21.4, spaceAfter=7,
+                           allowWidows=0, allowOrphans=0),
     "note": ParagraphStyle("note", fontName="HeadCN", fontSize=9.1, leading=15,
                            wordWrap="CJK", textColor=HexColor("#546772"), spaceAfter=10),
-    "ref": ParagraphStyle("ref", fontName="BodyCN", fontSize=9.4, leading=15.5,
-                          wordWrap="CJK", spaceAfter=7),
+    "ref": ParagraphStyle("ref", fontName="BodyCN", fontSize=9.4, leading=14.5,
+                          wordWrap="CJK", spaceAfter=5),
     "small": ParagraphStyle("small", fontName="HeadCN", fontSize=9, leading=15,
                             alignment=TA_CENTER, textColor=HexColor("#163846")),
     "table": ParagraphStyle("table", fontName="BodyCN", fontSize=8.2, leading=12.6,
@@ -49,36 +51,47 @@ URL_RE = re.compile(r"https?://[^\s，。；]+")
 SEPARATOR_RE = re.compile(r"^\|(?:\s*:?-{3,}:?\s*\|)+$")
 
 
-def page(canvas, doc):
+def page(canvas, doc, *, project="Flask"):
     canvas.saveState()
     canvas.setStrokeColor(HexColor("#c8d4d7"))
     canvas.setLineWidth(.5)
     canvas.line(56, 791, 539, 791)
     canvas.setFont("HeadCN", 8)
     canvas.setFillColor(HexColor("#57717a"))
-    canvas.drawString(56, 802, "开源项目历史知识图谱 · Flask")
-    canvas.drawRightString(539, 802, "技术报告 / 期末报告候选 2026.10.30")
+    canvas.drawString(56, 802, f"开源项目历史知识图谱 · {project}")
+    canvas.drawRightString(539, 802, "知识图谱课程 · 技术报告")
     canvas.line(56, 45, 539, 45)
-    canvas.drawString(56, 31, "正式抽取与 A/B 结果；全池 92/92，正确弃答率 N/A（分母 0）")
+    canvas.drawString(56, 31, "HistoryKG · 课程小组")
     canvas.drawRightString(539, 31, str(doc.page))
     canvas.restoreState()
+
+
+def _bind_cjk_punctuation(html):
+    # Preserve native ReportLab wordWrap="CJK" kinsoku behavior without splitting fragments.
+    return html
 
 
 def inline_markup(text):
     html = escape(text).replace("`", "")
     html = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", html)
-    return URL_RE.sub(
+    html = URL_RE.sub(
         lambda match: f'<link href="{match.group(0)}" color="#1f5f75">{match.group(0)}</link>',
         html,
     )
+    return _bind_cjk_punctuation(html)
+
+
+def _cell_display_len(text):
+    clean = text.replace("**", "").replace("`", "")
+    return sum(2 if "\u4e00" <= ch <= "\u9fff" else 1 for ch in clean)
 
 
 def table_widths(rows, available=483):
     columns = len(rows[0])
     weights = []
     for index in range(columns):
-        longest = max(len(row[index]) for row in rows)
-        weights.append(max(6, min(longest, 32)))
+        longest = max(_cell_display_len(row[index]) for row in rows)
+        weights.append(max(14, min(longest + 2, 44)))
     total = sum(weights)
     return [available * weight / total for weight in weights]
 
@@ -108,36 +121,76 @@ def markdown_table(block):
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
         ("LEFTPADDING", (0, 0), (-1, -1), 4),
         ("RIGHTPADDING", (0, 0), (-1, -1), 4),
-        ("TOPPADDING", (0, 0), (-1, -1), 6),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
     ]))
-    return [KeepTogether([table, Spacer(1, 10)])]
+    return [KeepTogether([table, Spacer(1, 8)])]
 
 
-def main():
-    flow, references = [], False
-    for block in (ROOT / "reports/technical_report.md").read_text().strip().split("\n\n"):
+def render(source, output, project):
+    flow, pending_headings, references = [], [], False
+    title = "开源项目历史知识图谱自动构建与可追溯问答"
+
+    def emit(item):
+        if pending_headings:
+            if isinstance(item, KeepTogether):
+                flow.append(KeepTogether([*pending_headings, *item._content]))
+            else:
+                flow.append(KeepTogether([*pending_headings, item]))
+            pending_headings.clear()
+        else:
+            flow.append(item)
+
+    for block in source.read_text(encoding="utf-8").strip().split("\n\n"):
+        if block.strip() == "---":
+            flow.append(Spacer(1, 4))
+            continue
+        if match := re.fullmatch(r"!\[([^\]]+)\]\((figures/[^()]+)\)", block):
+            image_path = source.parent / match[2]
+            image = Image(str(image_path))
+            scale = min(483 / image.imageWidth, 330 / image.imageHeight)
+            image.drawWidth, image.drawHeight = image.imageWidth * scale, image.imageHeight * scale
+            emit(KeepTogether([
+                image, Spacer(1, 5), Paragraph(inline_markup(match[1]), STYLES["small"]), Spacer(1, 12)
+            ]))
+            continue
+        if all(re.match(r"(?:[-*]|\d+\.) ", line) for line in block.splitlines()):
+            lines = [Paragraph(inline_markup(line), STYLES["body"]) for line in block.splitlines()]
+            emit(lines[0])
+            flow.extend(lines[1:])
+            continue
         if block.startswith("| "):
-            flow.extend(markdown_table(block))
+            items = markdown_table(block)
+            if items:
+                emit(items[0])
+                flow.extend(items[1:])
             continue
         if block.startswith("# "):
             kind, text = "title", block[2:]
+            title = text
+        elif block.startswith("#### "):
+            kind, text = "h2", block[5:]
         elif block.startswith("### "):
             kind, text = "h2", block[4:]
         elif block.startswith("## "):
             text = block[3:]
-            kind = "subtitle" if text.startswith("以 Flask") else "h1"
-            if text == "参考文献":
+            kind = "subtitle" if text.startswith("以 ") else "h1"
+            if "参考文献" in text:
                 references = True
+        elif block.startswith("> "):
+            text = " ".join(line.lstrip("> ").strip() for line in block.splitlines())
+            kind = "note"
         else:
             text = block.replace("\n", " ")
             kind = "ref" if references else "note" if text.startswith(
-                ("2026年", "说明：", "关键词：")
+                ("2026年", "说明：", "关键词：", "隐私保护提示：", "口径透明度说明：", "全套 Phase 2")
             ) else "body"
         html = inline_markup(text)
-        if kind == "title":
-            html = "基于 relore 的开源项目历史知识图谱<br/>自动构建与可追溯问答"
-        flow.append(Paragraph(html, STYLES[kind]))
+        para = Paragraph(html, STYLES[kind])
+        if kind in ("h1", "h2"):
+            pending_headings.append(para)
+        else:
+            emit(para)
         if text.startswith("真实Flask运行"):
             rows = [("公开来源", "369"), ("完整讨论", "40"), ("代码快照", "24"),
                     ("实体 / 关系", "133 / 183"), ("Decision", "61")]
@@ -151,15 +204,28 @@ def main():
                 ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
             ]))
             flow.extend([Spacer(1, 3), table, Spacer(1, 10)])
-    output = ROOT / "output/pdf/historykg_technical_report.pdf"
+    if pending_headings:
+        flow.extend(pending_headings)
     output.parent.mkdir(parents=True, exist_ok=True)
     doc = SimpleDocTemplate(
         str(output), pagesize=A4, rightMargin=56, leftMargin=56, topMargin=66,
-        bottomMargin=60, title="开源项目历史知识图谱自动构建与可追溯问答",
-        author="课程小组 P1-P6", subject="期末报告候选", pageCompression=1,
+        bottomMargin=60, title=title, author="课程小组 P1-P6",
+        subject="知识图谱课程技术报告", pageCompression=1,
     )
-    doc.build(flow, onFirstPage=page, onLaterPages=page)
+    def draw_page(canvas, document):
+        page(canvas, document, project=project)
+    doc.build(flow, onFirstPage=draw_page, onLaterPages=draw_page)
     print(output)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--source", type=Path, default=ROOT / "reports/technical_report.md")
+    parser.add_argument("--output", type=Path,
+                        default=ROOT / "output/pdf/historykg_technical_report.pdf")
+    parser.add_argument("--project", default="Flask")
+    args = parser.parse_args()
+    render(args.source, args.output, args.project)
 
 
 if __name__ == "__main__":

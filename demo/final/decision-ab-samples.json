@@ -1,0 +1,1753 @@
+{
+  "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+  "context_limit": 12000,
+  "cases": [
+    {
+      "question": "为什么改用标准库 JSON？早期有没有拒绝过类似提议，最终由哪个 PR 合并落地并改了哪些文件？",
+      "evidence": [
+        {
+          "source_id": "SourceDocument:a594bd65ececfd50bf5a75f3d61ae2d2bc0d65a112ae409f5114947dfcc98f23",
+          "start": 0,
+          "end": 195,
+          "quote": "It won't result in an error if simplejson is installed.  The point of the linked issue is that the name `simplejson` is not exported, it's always aliased to `json`.  Nothing needs to change here.",
+          "url": "https://github.com/pallets/itsdangerous/pull/63#issuecomment-226116816",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                1
+              ],
+              "candidate_intervals": [
+                [
+                  1,
+                  0,
+                  196
+                ]
+              ],
+              "visible_ranks": [
+                1
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  196
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+          "start": 0,
+          "end": 99,
+          "quote": "itsdangerous and by extension flask, starlette, and others use simplejson if it's installed due to:",
+          "url": "https://github.com/pallets/itsdangerous/issues/146",
+          "shared_rank": 2,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [
+                2
+              ],
+              "candidate_intervals": [
+                [
+                  2,
+                  0,
+                  1016
+                ]
+              ],
+              "visible_ranks": [
+                2
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  1016
+                ]
+              ]
+            },
+            "B": {
+              "candidate_ranks": [
+                2
+              ],
+              "candidate_intervals": [
+                [
+                  2,
+                  0,
+                  1016
+                ]
+              ],
+              "visible_ranks": [
+                2
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  1016
+                ]
+              ]
+            }
+          },
+          "interpretation": "两组都可见"
+        },
+        {
+          "source_id": "SourceDocument:31446bec65e3f89a3b91d3af911e62869a6c1c924b8fd0cc9bf498e88c57233b",
+          "start": 0,
+          "end": 337,
+          "quote": "``json`` was added to Python 2.6, so the main reason to use ``simplejson`` is backwards compatibility with Python 2.4+ (although, as someone who occasionally has to maintain Python 2.4 code, the sooner it dies the better).\n\nConsidering the oldest test suite on this project runs on Python 2.7, it seems a good candidate to refactor this.",
+          "url": "https://github.com/pallets/itsdangerous/issues/146#issuecomment-590060970",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [
+                8
+              ],
+              "candidate_intervals": [
+                [
+                  8,
+                  0,
+                  337
+                ]
+              ],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                3
+              ],
+              "candidate_intervals": [
+                [
+                  3,
+                  0,
+                  337
+                ]
+              ],
+              "visible_ranks": [
+                3
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  337
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 有完整候选但预算用尽，片段排序影响可见性"
+        },
+        {
+          "source_id": "SourceDocument:9d8a50632efdcc4de0f14836e5acfc5608dad03667781520f9f2e0de88b2c8d1",
+          "start": 0,
+          "end": 52,
+          "quote": "Yeah, I'm fairly ok with this once we drop Python 2.",
+          "url": "https://github.com/pallets/itsdangerous/issues/146#issuecomment-592275222",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                4
+              ],
+              "candidate_intervals": [
+                [
+                  4,
+                  0,
+                  52
+                ]
+              ],
+              "visible_ranks": [
+                4
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  52
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:2e45ef24ed30d85a8f52a07705fd79ca7373b085a9db0695f5e9ef752d4d9524",
+          "start": 0,
+          "end": 214,
+          "quote": "Removes simplejson in favor of Python's built-in json module. Since `itsdangerous.json` would just be an alias for that module now, it's replaced with an proxy that raises a deprecation warning on use.\n\ncloses #146",
+          "url": "https://github.com/pallets/itsdangerous/pull/152",
+          "shared_rank": 1,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [
+                1
+              ],
+              "candidate_intervals": [
+                [
+                  1,
+                  0,
+                  215
+                ]
+              ],
+              "visible_ranks": [
+                1
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  215
+                ]
+              ]
+            },
+            "B": {
+              "candidate_ranks": [
+                5
+              ],
+              "candidate_intervals": [
+                [
+                  5,
+                  0,
+                  215
+                ]
+              ],
+              "visible_ranks": [
+                5
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  215
+                ]
+              ]
+            }
+          },
+          "interpretation": "两组都可见"
+        },
+        {
+          "source_id": "SourceDocument:0cb8f3dd94acf3d5ab350d53f3be098b3537f516f27d6f0916ac5ba46d83cfe5",
+          "start": 16971,
+          "end": 17126,
+          "quote": "\"merge_commit_sha\": \"105caae4a52c97c1b95d17a0ca956eb56cc7f31b\",\n  \"mergeable\": false,\n  \"mergeable_state\": \"dirty\",\n  \"merged\": false,\n  \"merged_at\": null,",
+          "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/63",
+          "shared_rank": null,
+          "acquisition_source": "pr_api_lookup",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                6
+              ],
+              "candidate_intervals": [
+                [
+                  6,
+                  16969,
+                  17126
+                ]
+              ],
+              "visible_ranks": [
+                6
+              ],
+              "visible_intervals": [
+                [
+                  16969,
+                  17126
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:bfc78f7ce3cac7258b166f47cb21ea19095bd76c1ba8ebe6eee1fb4f57b5daa3",
+          "start": 17262,
+          "end": 17434,
+          "quote": "\"merge_commit_sha\": \"981ade6e73ff9ce420aa29143039de0aaccb9770\",\n  \"mergeable\": false,\n  \"mergeable_state\": \"dirty\",\n  \"merged\": true,\n  \"merged_at\": \"2020-04-17T17:15:12Z\",",
+          "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/152",
+          "shared_rank": null,
+          "acquisition_source": "pr_api_lookup",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                7
+              ],
+              "candidate_intervals": [
+                [
+                  7,
+                  17260,
+                  17434
+                ]
+              ],
+              "visible_ranks": [
+                7
+              ],
+              "visible_intervals": [
+                [
+                  17260,
+                  17434
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:6fc95fbdc349931c87b741f457431b39d81f9a5c3b0b8186751e929a8f55c13a",
+          "start": 0,
+          "end": 467,
+          "quote": "{\n  \"command\": [\n    \"git\",\n    \"diff-tree\",\n    \"--no-commit-id\",\n    \"-r\",\n    \"-M\",\n    \"--name-status\",\n    \"-z\",\n    \"542fad1e9627a402620453610b3e6923f879fd84\",\n    \"981ade6e73ff9ce420aa29143039de0aaccb9770\"\n  ],\n  \"returncode\": 0,\n  \"stdout\": \"M\\u0000CHANGES.rst\\u0000M\\u0000docs/serializer.rst\\u0000M\\u0000src/itsdangerous/__init__.py\\u0000M\\u0000src/itsdangerous/_json.py\\u0000M\\u0000src/itsdangerous/jws.py\\u0000M\\u0000src/itsdangerous/serializer.py\\u0000\"\n}",
+          "url": "https://github.com/pallets/itsdangerous/commit/981ade6e73ff9ce420aa29143039de0aaccb9770",
+          "shared_rank": null,
+          "acquisition_source": "git_diff_lookup",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                8
+              ],
+              "candidate_intervals": [
+                [
+                  8,
+                  0,
+                  468
+                ]
+              ],
+              "visible_ranks": [
+                8
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  468
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        }
+      ]
+    },
+    {
+      "question": "项目历史上有哪些被拒绝的特性提案及理由？",
+      "evidence": [
+        {
+          "source_id": "SourceDocument:7d11a1eecc6464a7b42a63915746f33a52e3e61ea68a5817d7d8f3acc6fc0504",
+          "start": 0,
+          "end": 277,
+          "quote": "Howdy!\n\nI've added marrow.templating support; one simple function, an entry point, and no additional dependencies.\n\nAdditionally, dump[s] commands now accept additional keyword arguments which are then passed to json.dumps, allowing you to control the serialization formatting.",
+          "url": "https://github.com/pallets/itsdangerous/pull/1",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                1
+              ],
+              "candidate_intervals": [
+                [
+                  1,
+                  0,
+                  278
+                ]
+              ],
+              "visible_ranks": [
+                1
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  278
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:1f9c9b5fcde53e97d583d4f2613b5b92e60261bbbc2f38142b04a1de994fcd51",
+          "start": 0,
+          "end": 337,
+          "quote": "I don't want to step into that particular direction with the library for the time being. Instead why not have a second library that implements the entrypoints for marrow if that is necessary? I still remember the last attempt of an unified templating language API and it was horrible, I don't want to be involved with that a second time.",
+          "url": "https://github.com/pallets/itsdangerous/pull/1#issuecomment-1434107",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                2
+              ],
+              "candidate_intervals": [
+                [
+                  2,
+                  0,
+                  338
+                ]
+              ],
+              "visible_ranks": [
+                2
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  338
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:d0a35c98fae3b0c75c58a70ac5d0ea2ac0ba2312f1de2cfffd7a40466c02816b",
+          "start": 0,
+          "end": 280,
+          "quote": "Especially since this is based on Django's signing module.\n\nAlternatively, you could let us set a default secret key to use, which would be the more generally useful implementation.\n\nIt's just not very DRY to pass this information in everywhere that you use a signer in your code.",
+          "url": "https://github.com/pallets/itsdangerous/issues/25",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                3
+              ],
+              "candidate_intervals": [
+                [
+                  3,
+                  0,
+                  281
+                ]
+              ],
+              "visible_ranks": [
+                3
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  281
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:1b4494b3bff401d6aaa9db6c37ce625e3beffa84ae9f9e4d533431d8148afd34",
+          "start": 0,
+          "end": 167,
+          "quote": "Itsdangerous is a separate library and has nothing to do with django.  Definitely not going to add magic that kicks in if the library is used in a certain environment.",
+          "url": "https://github.com/pallets/itsdangerous/issues/25#issuecomment-21777893",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                4
+              ],
+              "candidate_intervals": [
+                [
+                  4,
+                  0,
+                  168
+                ]
+              ],
+              "visible_ranks": [
+                4
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  168
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:1d1877913c2654b494964a81a1da80012bb2a44f8681f1c9f0e69968ada332d5",
+          "start": 0,
+          "end": 283,
+          "quote": "I am familiar with the attack.  Itsdangerous signs, it does nothing else.  Whatever SSL does it out of the focus of this library.  Add a random salt to your data payload if you want to defeat that.  I believe that this issue should be solved on the SSL layer and not in itsdangerous.",
+          "url": "https://github.com/pallets/itsdangerous/issues/26#issuecomment-23160780",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                5
+              ],
+              "candidate_intervals": [
+                [
+                  5,
+                  0,
+                  284
+                ]
+              ],
+              "visible_ranks": [
+                5
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  284
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:fe66e68de27355298cd90d9579d12fa7917b9cad3e5b7d61f84c571984e5f7cb",
+          "start": 0,
+          "end": 118,
+          "quote": "Hmm. Wondering if that is a problem or not.  The only thing that you changed is the transport format, not the payload.",
+          "url": "https://github.com/pallets/itsdangerous/issues/28#issuecomment-23477269",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                6
+              ],
+              "candidate_intervals": [
+                [
+                  6,
+                  0,
+                  119
+                ]
+              ],
+              "visible_ranks": [
+                6
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  119
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:5e80769dc1cb96bd38d417221cafb92a8f4c8be160d6723f6177705507194320",
+          "start": 0,
+          "end": 365,
+          "quote": "I don't see this as a security issue as the whole point of itsdangerous is to verify a payload was not modified.  We do this by creating a signature that, theoretically, only a trusted user can produce.  In my mind, unless this makes it easier for an attacker to forge signatures or create new signatures based on existing ones, I don't see it as a security threat.",
+          "url": "https://github.com/pallets/itsdangerous/issues/28#issuecomment-41691783",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                7
+              ],
+              "candidate_intervals": [
+                [
+                  7,
+                  0,
+                  366
+                ]
+              ],
+              "visible_ranks": [
+                7
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  366
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:ff4e9aa9342987942d57c95948a4682fe4979cf2e8e73a23f2a2e9841485ff4d",
+          "start": 0,
+          "end": 48,
+          "quote": "OK, so probably this issue can be closed safely.",
+          "url": "https://github.com/pallets/itsdangerous/issues/28#issuecomment-41906622",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                8
+              ],
+              "candidate_intervals": [
+                [
+                  8,
+                  0,
+                  49
+                ]
+              ],
+              "visible_ranks": [
+                8
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  49
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:d776aafed9926691a2453cc8d115e04c3b1e46c1a0c61b6fc93059bf687e7106",
+          "start": 0,
+          "end": 22,
+          "quote": "ACK, should be closed.",
+          "url": "https://github.com/pallets/itsdangerous/issues/28#issuecomment-106736453",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                9
+              ],
+              "candidate_intervals": [
+                [
+                  9,
+                  0,
+                  23
+                ]
+              ],
+              "visible_ranks": [
+                9
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  23
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:515d5fab9dfd6956b36ffb789d14caa1f9d22386eb5e41f1bc5ee10485a73ed3",
+          "start": 0,
+          "end": 397,
+          "quote": "Well, it might be desirable to differentiate between expired signatures and completely invalid ones. Technically, a signature can't be invalidated by time, either it's valid or it's not. The timestamp is additional payload that is evaluated after the signature proved to be valid.\n\nNote that `TimestampSigner.validate` also raised `BadTimeSignature` which isn't caught either.\n\nI would close this.",
+          "url": "https://github.com/pallets/itsdangerous/issues/11#issuecomment-106739185",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                10
+              ],
+              "candidate_intervals": [
+                [
+                  10,
+                  0,
+                  398
+                ]
+              ],
+              "visible_ranks": [
+                10
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  398
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:7f831798464a60e31c96ab5fd102097c70416a1f3b97950fedb2375e927c3b97",
+          "start": 0,
+          "end": 220,
+          "quote": "if the token is about to expire, I want to call an interface (or any one can point me in correct way) to extend the expiry time of an already issued token. I am using TimedJSONWebSignatureSerializer to create the tokens.",
+          "url": "https://github.com/pallets/itsdangerous/issues/45",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                11
+              ],
+              "candidate_intervals": [
+                [
+                  11,
+                  0,
+                  221
+                ]
+              ],
+              "visible_ranks": [
+                11
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  221
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:bba30a7eb8a6bc975f85fa38f3dee0680568a23b6acfde11a09d44fa34238b65",
+          "start": 0,
+          "end": 301,
+          "quote": "It's impossible to provide a facility like that because the expiration time is in the token itself. When you change any value in the token, you get a completely different token. An alternative implementation would be to issue a refresh token that won't expire and use that to issue new primary tokens.",
+          "url": "https://github.com/pallets/itsdangerous/issues/45#issuecomment-148831232",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                12
+              ],
+              "candidate_intervals": [
+                [
+                  12,
+                  0,
+                  302
+                ]
+              ],
+              "visible_ranks": [
+                12
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  302
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:f97839150b8f2b891adcfc940a0c1ba7d011b93c0ab154420ecf247cf3febf17",
+          "start": 0,
+          "end": 226,
+          "quote": "I find JWT tricky to use securely which is why I avoid it like the plague whenever I can for my own stuff.  You cannot avoid JWT much for external interoperability obviously but I will not deprecate itsdangerous as a result :)",
+          "url": "https://github.com/pallets/itsdangerous/issues/54#issuecomment-161721273",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                13
+              ],
+              "candidate_intervals": [
+                [
+                  13,
+                  0,
+                  227
+                ]
+              ],
+              "visible_ranks": [
+                13
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  227
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:ce9db586cd966e40be1696265814fc39c7eeba890943256078ef70266501ce1b",
+          "start": 0,
+          "end": 81,
+          "quote": "Closing due to merge conflicts.  Also, rst uses double backticks for inline code.",
+          "url": "https://github.com/pallets/itsdangerous/pull/10#issuecomment-204765303",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                14
+              ],
+              "candidate_intervals": [
+                [
+                  14,
+                  0,
+                  82
+                ]
+              ],
+              "visible_ranks": [
+                14
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  82
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:bce1d731feff418ae1a73612961a493c193ca7ab806ca34c8373e267095a74a1",
+          "start": 0,
+          "end": 71,
+          "quote": "Command seems to work without this.  Thanks for pointing it out though.",
+          "url": "https://github.com/pallets/itsdangerous/pull/15#issuecomment-207998674",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                15
+              ],
+              "candidate_intervals": [
+                [
+                  15,
+                  0,
+                  72
+                ]
+              ],
+              "visible_ranks": [
+                15
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  72
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:a48d75ec6ecf8caffff443c6cac03fae61b0bbf0b2cd1add5d50e3bf3ab13882",
+          "start": 0,
+          "end": 106,
+          "quote": "I timed both versions and there was no significant change, so just going to close this and leave it as is.",
+          "url": "https://github.com/pallets/itsdangerous/pull/13#issuecomment-208001654",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                16
+              ],
+              "candidate_intervals": [
+                [
+                  16,
+                  0,
+                  107
+                ]
+              ],
+              "visible_ranks": [
+                16
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  107
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:b50900c8ac5ea2f18e4b84ca4b5f996a1c157575929e63725267bb3939c7a6a9",
+          "start": 0,
+          "end": 116,
+          "quote": "I'm on board with the exception fix, but why is there an unrelated change that makes invalid data into valid tokens?",
+          "url": "https://github.com/pallets/itsdangerous/pull/27#issuecomment-209080997",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                17
+              ],
+              "candidate_intervals": [
+                [
+                  17,
+                  0,
+                  117
+                ]
+              ],
+              "visible_ranks": [
+                17
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  117
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:503180ab3f3029f7befcd7e2fa4d8e654311557c2933205da7d7ded65f2eb7c9",
+          "start": 0,
+          "end": 61,
+          "quote": "This is a good case for writing your own Serializer subclass.",
+          "url": "https://github.com/pallets/itsdangerous/issues/40#issuecomment-209083922",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                18
+              ],
+              "candidate_intervals": [
+                [
+                  18,
+                  0,
+                  62
+                ]
+              ],
+              "visible_ranks": [
+                18
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  62
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:2531031467dd6536ebecbc8aa34eb2cc0d843e8072296d0a5b05d578233c7108",
+          "start": 0,
+          "end": 204,
+          "quote": "It's not unrelated, but I guess the PR's name implies a smaller scope.\n\nCharacters that are invalid base64 are first ignored, then decoding proceeds. Decoding could still fail because of bad data, though.",
+          "url": "https://github.com/pallets/itsdangerous/pull/27#issuecomment-209084591",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                19
+              ],
+              "candidate_intervals": [
+                [
+                  19,
+                  0,
+                  205
+                ]
+              ],
+              "visible_ranks": [
+                19
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  205
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:911c4863e54cc0217af2d2115c9e350bfd62506c8d722566259069d322d6843e",
+          "start": 0,
+          "end": 304,
+          "quote": "That's not something that should happen.  Invalid data is invalid, the fact that removing some characters might produce a valid signature doesn't matter.  If that's something you want to happen, write a custom Serializer subclass (although you should probably fix the thing sending you bad data instead).",
+          "url": "https://github.com/pallets/itsdangerous/pull/27#issuecomment-209085668",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                20
+              ],
+              "candidate_intervals": [
+                [
+                  20,
+                  0,
+                  305
+                ]
+              ],
+              "visible_ranks": [
+                20
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  305
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:25f54c54c4a876f424f3a3f64097e0b324f0c1fd7b556c7470034eb9e52b79d2",
+          "start": 10873,
+          "end": 11028,
+          "quote": "\"merge_commit_sha\": \"80b9b81f9109ffa64facca0e5d9a7ee0032d9505\",\n  \"mergeable\": false,\n  \"mergeable_state\": \"dirty\",\n  \"merged\": false,\n  \"merged_at\": null,",
+          "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/1",
+          "shared_rank": null,
+          "acquisition_source": "pr_api_lookup",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                21,
+                34
+              ],
+              "candidate_intervals": [
+                [
+                  21,
+                  10871,
+                  11028
+                ],
+                [
+                  34,
+                  0,
+                  12893
+                ]
+              ],
+              "visible_ranks": [
+                21
+              ],
+              "visible_intervals": [
+                [
+                  10871,
+                  11028
+                ],
+                [
+                  0,
+                  35
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:627ad46a0a181b882552f1e7f6be158d4405a4e850f7933b16588a3f418489ad",
+          "start": 10810,
+          "end": 10965,
+          "quote": "\"merge_commit_sha\": \"555d7926d61214cee9272a4eb618ce1bd030f4a5\",\n  \"mergeable\": false,\n  \"mergeable_state\": \"dirty\",\n  \"merged\": false,\n  \"merged_at\": null,",
+          "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/10",
+          "shared_rank": null,
+          "acquisition_source": "pr_api_lookup",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                22,
+                41
+              ],
+              "candidate_intervals": [
+                [
+                  22,
+                  10808,
+                  10965
+                ],
+                [
+                  41,
+                  0,
+                  12852
+                ]
+              ],
+              "visible_ranks": [
+                22
+              ],
+              "visible_intervals": [
+                [
+                  10808,
+                  10965
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:bc4d4c200fa2e85188cc3dc339dff7c4e837cd1c6befc63bc13935a27083df05",
+          "start": 10596,
+          "end": 10751,
+          "quote": "\"merge_commit_sha\": \"67794a21d1938e1512683ece6d3a04c72c562623\",\n  \"mergeable\": false,\n  \"mergeable_state\": \"dirty\",\n  \"merged\": false,\n  \"merged_at\": null,",
+          "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/13",
+          "shared_rank": null,
+          "acquisition_source": "pr_api_lookup",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                23,
+                43
+              ],
+              "candidate_intervals": [
+                [
+                  23,
+                  10594,
+                  10751
+                ],
+                [
+                  43,
+                  0,
+                  14279
+                ]
+              ],
+              "visible_ranks": [
+                23
+              ],
+              "visible_intervals": [
+                [
+                  10594,
+                  10751
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:d6d32f8522fb236155180f0b2102d71648df924860801604e99a57458f46a9c5",
+          "start": 10653,
+          "end": 10808,
+          "quote": "\"merge_commit_sha\": \"5de00ddf12eb7d5ae66bfd60d3ea1047349a6426\",\n  \"mergeable\": false,\n  \"mergeable_state\": \"dirty\",\n  \"merged\": false,\n  \"merged_at\": null,",
+          "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/27",
+          "shared_rank": null,
+          "acquisition_source": "pr_api_lookup",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                24,
+                44
+              ],
+              "candidate_intervals": [
+                [
+                  24,
+                  10651,
+                  10808
+                ],
+                [
+                  44,
+                  0,
+                  14347
+                ]
+              ],
+              "visible_ranks": [],
+              "visible_intervals": []
+            }
+          },
+          "interpretation": "按实际可见性记录"
+        },
+        {
+          "source_id": "SourceDocument:f9e2189913907f0ce9867ca2afa5e919e8909ec0b99e366acca15f8f2f54ca30",
+          "start": 10701,
+          "end": 10856,
+          "quote": "\"merge_commit_sha\": \"e4b300f35fb05f1eae1e205d17a007fb8af2a03f\",\n  \"mergeable\": false,\n  \"mergeable_state\": \"dirty\",\n  \"merged\": false,\n  \"merged_at\": null,",
+          "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/15",
+          "shared_rank": null,
+          "acquisition_source": "pr_api_lookup",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                25,
+                42
+              ],
+              "candidate_intervals": [
+                [
+                  25,
+                  10699,
+                  10856
+                ],
+                [
+                  42,
+                  0,
+                  12665
+                ]
+              ],
+              "visible_ranks": [],
+              "visible_intervals": []
+            }
+          },
+          "interpretation": "按实际可见性记录"
+        }
+      ]
+    },
+    {
+      "question": "为什么移除了 simplejson？",
+      "evidence": [
+        {
+          "source_id": "SourceDocument:a594bd65ececfd50bf5a75f3d61ae2d2bc0d65a112ae409f5114947dfcc98f23",
+          "start": 0,
+          "end": 195,
+          "quote": "It won't result in an error if simplejson is installed.  The point of the linked issue is that the name `simplejson` is not exported, it's always aliased to `json`.  Nothing needs to change here.",
+          "url": "https://github.com/pallets/itsdangerous/pull/63#issuecomment-226116816",
+          "shared_rank": 2,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [
+                2
+              ],
+              "candidate_intervals": [
+                [
+                  2,
+                  0,
+                  196
+                ]
+              ],
+              "visible_ranks": [
+                2
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  196
+                ]
+              ]
+            },
+            "B": {
+              "candidate_ranks": [
+                1
+              ],
+              "candidate_intervals": [
+                [
+                  1,
+                  0,
+                  196
+                ]
+              ],
+              "visible_ranks": [
+                1
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  196
+                ]
+              ]
+            }
+          },
+          "interpretation": "两组都可见"
+        },
+        {
+          "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+          "start": 0,
+          "end": 99,
+          "quote": "itsdangerous and by extension flask, starlette, and others use simplejson if it's installed due to:",
+          "url": "https://github.com/pallets/itsdangerous/issues/146",
+          "shared_rank": 1,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [
+                1
+              ],
+              "candidate_intervals": [
+                [
+                  1,
+                  0,
+                  1016
+                ]
+              ],
+              "visible_ranks": [
+                1
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  1016
+                ]
+              ]
+            },
+            "B": {
+              "candidate_ranks": [
+                2
+              ],
+              "candidate_intervals": [
+                [
+                  2,
+                  0,
+                  1016
+                ]
+              ],
+              "visible_ranks": [
+                2
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  1016
+                ]
+              ]
+            }
+          },
+          "interpretation": "两组都可见"
+        },
+        {
+          "source_id": "SourceDocument:31446bec65e3f89a3b91d3af911e62869a6c1c924b8fd0cc9bf498e88c57233b",
+          "start": 0,
+          "end": 337,
+          "quote": "``json`` was added to Python 2.6, so the main reason to use ``simplejson`` is backwards compatibility with Python 2.4+ (although, as someone who occasionally has to maintain Python 2.4 code, the sooner it dies the better).\n\nConsidering the oldest test suite on this project runs on Python 2.7, it seems a good candidate to refactor this.",
+          "url": "https://github.com/pallets/itsdangerous/issues/146#issuecomment-590060970",
+          "shared_rank": 5,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [
+                5
+              ],
+              "candidate_intervals": [
+                [
+                  5,
+                  0,
+                  337
+                ]
+              ],
+              "visible_ranks": [
+                5
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  337
+                ]
+              ]
+            },
+            "B": {
+              "candidate_ranks": [
+                3
+              ],
+              "candidate_intervals": [
+                [
+                  3,
+                  0,
+                  337
+                ]
+              ],
+              "visible_ranks": [
+                3
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  337
+                ]
+              ]
+            }
+          },
+          "interpretation": "两组都可见"
+        },
+        {
+          "source_id": "SourceDocument:9d8a50632efdcc4de0f14836e5acfc5608dad03667781520f9f2e0de88b2c8d1",
+          "start": 0,
+          "end": 52,
+          "quote": "Yeah, I'm fairly ok with this once we drop Python 2.",
+          "url": "https://github.com/pallets/itsdangerous/issues/146#issuecomment-592275222",
+          "shared_rank": null,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [
+                8
+              ],
+              "candidate_intervals": [
+                [
+                  8,
+                  0,
+                  52
+                ]
+              ],
+              "visible_ranks": [
+                8
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  52
+                ]
+              ]
+            },
+            "B": {
+              "candidate_ranks": [
+                4
+              ],
+              "candidate_intervals": [
+                [
+                  4,
+                  0,
+                  52
+                ]
+              ],
+              "visible_ranks": [
+                4
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  52
+                ]
+              ]
+            }
+          },
+          "interpretation": "两组都可见"
+        },
+        {
+          "source_id": "SourceDocument:2e45ef24ed30d85a8f52a07705fd79ca7373b085a9db0695f5e9ef752d4d9524",
+          "start": 0,
+          "end": 214,
+          "quote": "Removes simplejson in favor of Python's built-in json module. Since `itsdangerous.json` would just be an alias for that module now, it's replaced with an proxy that raises a deprecation warning on use.\n\ncloses #146",
+          "url": "https://github.com/pallets/itsdangerous/pull/152",
+          "shared_rank": 3,
+          "acquisition_source": "graph_relation",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [
+                3
+              ],
+              "candidate_intervals": [
+                [
+                  3,
+                  0,
+                  215
+                ]
+              ],
+              "visible_ranks": [
+                3
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  215
+                ]
+              ]
+            },
+            "B": {
+              "candidate_ranks": [
+                5
+              ],
+              "candidate_intervals": [
+                [
+                  5,
+                  0,
+                  215
+                ]
+              ],
+              "visible_ranks": [
+                5
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  215
+                ]
+              ]
+            }
+          },
+          "interpretation": "两组都可见"
+        },
+        {
+          "source_id": "SourceDocument:0cb8f3dd94acf3d5ab350d53f3be098b3537f516f27d6f0916ac5ba46d83cfe5",
+          "start": 16971,
+          "end": 17126,
+          "quote": "\"merge_commit_sha\": \"105caae4a52c97c1b95d17a0ca956eb56cc7f31b\",\n  \"mergeable\": false,\n  \"mergeable_state\": \"dirty\",\n  \"merged\": false,\n  \"merged_at\": null,",
+          "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/63",
+          "shared_rank": null,
+          "acquisition_source": "pr_api_lookup",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                6
+              ],
+              "candidate_intervals": [
+                [
+                  6,
+                  16969,
+                  17126
+                ]
+              ],
+              "visible_ranks": [
+                6
+              ],
+              "visible_intervals": [
+                [
+                  16969,
+                  17126
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:bfc78f7ce3cac7258b166f47cb21ea19095bd76c1ba8ebe6eee1fb4f57b5daa3",
+          "start": 17262,
+          "end": 17434,
+          "quote": "\"merge_commit_sha\": \"981ade6e73ff9ce420aa29143039de0aaccb9770\",\n  \"mergeable\": false,\n  \"mergeable_state\": \"dirty\",\n  \"merged\": true,\n  \"merged_at\": \"2020-04-17T17:15:12Z\",",
+          "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/152",
+          "shared_rank": null,
+          "acquisition_source": "pr_api_lookup",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                7
+              ],
+              "candidate_intervals": [
+                [
+                  7,
+                  17260,
+                  17434
+                ]
+              ],
+              "visible_ranks": [
+                7
+              ],
+              "visible_intervals": [
+                [
+                  17260,
+                  17434
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        },
+        {
+          "source_id": "SourceDocument:6fc95fbdc349931c87b741f457431b39d81f9a5c3b0b8186751e929a8f55c13a",
+          "start": 0,
+          "end": 467,
+          "quote": "{\n  \"command\": [\n    \"git\",\n    \"diff-tree\",\n    \"--no-commit-id\",\n    \"-r\",\n    \"-M\",\n    \"--name-status\",\n    \"-z\",\n    \"542fad1e9627a402620453610b3e6923f879fd84\",\n    \"981ade6e73ff9ce420aa29143039de0aaccb9770\"\n  ],\n  \"returncode\": 0,\n  \"stdout\": \"M\\u0000CHANGES.rst\\u0000M\\u0000docs/serializer.rst\\u0000M\\u0000src/itsdangerous/__init__.py\\u0000M\\u0000src/itsdangerous/_json.py\\u0000M\\u0000src/itsdangerous/jws.py\\u0000M\\u0000src/itsdangerous/serializer.py\\u0000\"\n}",
+          "url": "https://github.com/pallets/itsdangerous/commit/981ade6e73ff9ce420aa29143039de0aaccb9770",
+          "shared_rank": null,
+          "acquisition_source": "git_diff_lookup",
+          "evidence_visibility": {
+            "A": {
+              "candidate_ranks": [],
+              "candidate_intervals": [],
+              "visible_ranks": [],
+              "visible_intervals": []
+            },
+            "B": {
+              "candidate_ranks": [
+                8
+              ],
+              "candidate_intervals": [
+                [
+                  8,
+                  0,
+                  468
+                ]
+              ],
+              "visible_ranks": [
+                8
+              ],
+              "visible_intervals": [
+                [
+                  0,
+                  468
+                ]
+              ]
+            }
+          },
+          "interpretation": "A 没有覆盖该区间的候选"
+        }
+      ]
+    }
+  ]
+}

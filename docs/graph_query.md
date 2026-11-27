@@ -3,7 +3,13 @@
 接口契约1.4.2；兼容1.4.1冻结记录。讨论索引和图谱读取同一套冻结来源。
 Neo4j存储实体/关系与冻结来源、证据；本模块不采集、不推断新事实。
 
-```python
+## 2026-11-26 v2 升级摘要
+
+- **默认按需子图检索（`cypher_subgraph`）**：`historykg/graph/store.py` 新增分批事务写入（500 sources / 1000 实体与边分块，含 `HGEntity`/`HGSource` 复合范围索引）、`targeted_cypher_paths` 迭代加深局部子图查询（hop=1..3）、以及 `SQLite FTS5` trigram 原文检索；`snapshot` 全图模式保留作对照基准。
+- **时序增量演化（`apply_delta`）**：支持基于内容指纹校验的多阶段增量 upsert 与清理（`T3` 耗时 `1.68s` vs 全量重建 `2.66s`，提速 `1.59x`，`fingerprint_equal=true`）。
+- **扩展性实证**：在独立 Neo4j 5.26 上完成 `1x` / `5x` / `10x`（40,670 实体 / 116,740 关系 / 74,170 来源）对比，P50 提速由 `3.79x` 放大至 `7.80x`（`23.52s → 3.02s`）；详细基准见 [v2 实验汇总索引](../evaluation/itsdangerous-v2-20261126/README.md)。
+
+~~~python
 from historykg.graph import load_dataset
 from historykg.query import query, prepare_query
 

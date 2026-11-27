@@ -74,3 +74,30 @@ queued/running，2为unsupported/failed/error。未接入模块会明确blocked�
 `fixtures/toy_v1`全为合成来源，含3条Decision、声明与关闭事件、同commit不同原样tag、
 两份File、普通评论/review/inline回复及分页缺失。它只验证程序约定，不代表真实LLM或项目事实。
 macOS已实际运行；Windows CI的原生数据库冻结重建记录见repro/README.md，不等于成员电脑在线采集或字体检查。
+
+## 全量试跑
+
+`full_history_v1` 是显式选择的试跑档。它沿 GitHub 分页读取公开 Issue、PR 和讨论，
+并冻结公开发布、标签和默认分支提交。代码收集遍历默认分支与标签可达的提交，对比第一父提交，
+保存变更前后 Python 文件和默认分支／标签快照。对合并提交也使用第一父提交；其他分支、已删除
+对象和未合并 PR 的独立提交不在 Git 遍历范围内。原有 `course_small_v1` 默认档、冻结数据
+和模型账本保持原语义。
+
+```sh
+python -m historykg.cli --config /本机/全量试跑.json build https://github.com/pallets/itsdangerous --profile full_history_v1 --prepare-only
+python -m historykg.cli --config /本机/全量试跑.json build-status JOB_ID
+python -m historykg.cli --config /本机/全量试跑.json resume JOB_ID
+```
+
+全量试跑使用有权限的 GitHub 只读凭据。采集计入分页与重试；成功响应持久保存，限流可继续。
+`--prepare-only` 完成静态分析并返回 `extract_estimate_ready`，没有模型调用。
+`job.usage.estimate` 给出首轮请求数、估算费用与按峰价无缓存的单次尝试保守上界；
+两种费用都不作为付费额度。准备阶段遇到中断时，`resume` 会先继续准备并停在估价；
+估价就绪后再调用 `resume` 才进入模型抽取。实际覆盖可从 `snapshot/plan.json`、
+`collection/capture.json` 和代码阶段 `plan.json` 对账。
+
+已获运营者授权以 API 账户余额为边界时，在专用试跑配置的 `budget` 中设
+`{"mode":"provider_balance","ledger_path":"/本机/全量试跑用量.sqlite3"}`，
+只供本轮抽取和验收问答共用。用量照常记录。余额不足时构建返回
+`provider_balance_exhausted` 并停在当前阶段；充值后用同一任务号续跑。
+已完成抽取直接复用，401 认证失败和 402 余额不足分别诊断。原有有额度的账本不能切换到该模式。
