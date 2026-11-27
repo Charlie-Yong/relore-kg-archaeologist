@@ -1,0 +1,63 @@
+{
+  "rubric": [
+    "关闭、未合并和权威来源",
+    "正确限制发布结论"
+  ],
+  "model": "bailian/deepseek-v4.1-flash-1017",
+  "usage": {
+    "completion_tokens": 383,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 7582,
+    "prompt_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "total_tokens": 7965
+  },
+  "scores": {
+    "E": {
+      "points": [
+        1,
+        1
+      ],
+      "note": "答出关闭未合并，引PR页Closed与关闭事件，并给出API merged:false结论；同时以2.2.0正式版时间早于PR创建、2.3.0未发布来限制发布结论。发布限制成立。"
+    },
+    "B": {
+      "points": [
+        1,
+        1
+      ],
+      "note": "以API merged:false、merged_at:null说明未合并，并正确指出merge_commit_sha不能当作合并证据；发布结论限定为所给正式发布清单，未把PR算作已发布合并改动。缺失证只影响扩展核查，不扣本题。"
+    },
+    "D": {
+      "points": [
+        1,
+        1
+      ],
+      "note": "给出PR API state=closed、merged=false、merged_at=null、merged_by=null，并解释merge_commit_sha非空≠已合并；核对release/tags后限定2.2.0为最新正式版，PR创建更晚，结论正确。"
+    },
+    "C": {
+      "points": [
+        1,
+        1
+      ],
+      "note": "依API快照说明merged=false、merged_at=null，且merge_commit_sha不能作为实际合并提交；正式发布清单限于2.0.0至2.2.0并明确不能把PR算作随任一正式版发布。"
+    },
+    "O": {
+      "points": [
+        0,
+        0
+      ],
+      "note": "claims为空；只说上下文未显示合并事件、无版本证据，属于未实际核查/需要核对，未给出关闭未合并事实，也未给出可验证的发布限制结论。"
+    },
+    "A": {
+      "points": [
+        1,
+        1
+      ],
+      "note": "以API merged=false、merged_at=null确认未合并；列出2.0.0至2.2.0正式发布后，因PR未合并而正确拒绝算作已发布合并改动。缺失标签包含核查不影响本题核心。"
+    }
+  }
+}

@@ -1,0 +1,593 @@
+{
+  "official_comparison_unchanged": true,
+  "questions": [
+    {
+      "claims": [
+        "在提交 672971d66a2ef9f85151e53283113f33d642dabd 的 src/itsdangerous/serializer.py 中，Serializer.dumps 先对 obj 调用 dump_payload，并用 want_bytes 将结果转为字节 payload，然后调用 make_signer(salt).sign(payload) 对 payload 签名。",
+        "在 672971d66a2ef9f85151e53283113f33d642dabd 的 Serializer.dumps 中，签名后如果 is_text_serializer 为真，就返回 UTF-8 解码后的字符串；否则返回签名字节 rv。",
+        "在 672971d66a2ef9f85151e53283113f33d642dabd 的 Serializer.loads 中，代码先用 want_bytes 把输入 s 转为字节，并将 last_exception 初始化为 None；随后遍历 iter_unsigners(salt)，对每个 signer 调用 unsign 后再调用 load_payload。",
+        "在 672971d66a2ef9f85151e53283113f33d642dabd 的 Serializer.loads 中，如果某个 signer 的验证过程抛出 BadSignature，代码会把它记录到 last_exception，并继续尝试后续 signer；如果全部尝试失败，就抛出最后记录的 BadSignature。"
+      ],
+      "question": "在冻结版本里的 src/itsdangerous/serializer.py 中，Serializer.dumps 和 Serializer.loads 分别先做什么、后做什么？请附源码出处。",
+      "seconds": 33.71,
+      "status": "ok",
+      "urls": [
+        "https://github.com/pallets/itsdangerous/blob/0e255fc2ad4726af5062fb0527688eaf96f2edab/src/itsdangerous/serializer.py",
+        "https://github.com/pallets/itsdangerous/blob/4dffa1963f896a0a311dec3c14f003a5f382c446/src/itsdangerous/serializer.py",
+        "https://github.com/pallets/itsdangerous/blob/4dffa1963f896a0a311dec3c14f003a5f382c446/tests/test_itsdangerous/test_serializer.py",
+        "https://github.com/pallets/itsdangerous/blob/66c931920251540130e512cb04c1c0a9e57a31a7/src/itsdangerous/serializer.py",
+        "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/src/itsdangerous/serializer.py#L309-L320",
+        "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/src/itsdangerous/serializer.py#L328-L343",
+        "https://github.com/pallets/itsdangerous/blob/8f39dd317914321fed26437c874637641bd598b6/src/itsdangerous/serializer.py",
+        "https://github.com/pallets/itsdangerous/blob/8f39dd317914321fed26437c874637641bd598b6/tests/test_itsdangerous/test_serializer.py",
+        "https://github.com/pallets/itsdangerous/blob/bfafa6541acd8c7573661d6b1545ff8e8133a43e/src/itsdangerous/serializer.py",
+        "https://github.com/pallets/itsdangerous/blob/bfafa6541acd8c7573661d6b1545ff8e8133a43e/tests/test_itsdangerous/test_serializer.py",
+        "https://github.com/pallets/itsdangerous/blob/ccc67a137fb912eb65c6959107d0d5bc69db3890/src/itsdangerous/serializer.py",
+        "https://github.com/pallets/itsdangerous/blob/d101100c395958d67368b8c37d95a9c404598c2e/src/itsdangerous/serializer.py",
+        "https://github.com/pallets/itsdangerous/blob/d101100c395958d67368b8c37d95a9c404598c2e/tests/test_itsdangerous/test_serializer.py",
+        "https://github.com/pallets/itsdangerous/blob/e22b352151d767137aa6ee894d135a55d5b3bd14/src/itsdangerous/serializer.py"
+      ]
+    },
+    {
+      "claims": [
+        "冻结的 GitHub Releases 正式记录共 6 条：2.2.0、2.1.2、2.1.1、2.1.0、2.0.1、2.0.0；其中没有 2.1.3，因此无法确认其正式发布日期。",
+        "核对范围为 2.0.0 至 2.2.0 的这些正式发布记录；相邻的 2.1.2 发布于 2022-03-24，2.2.0 发布于 2024-04-16，二者之间没有 2.1.3 的发布记录。",
+        "因此，在已冻结的官方发布范围内，只能确认 2.1.3 未被收录，不能给出其发布日期。"
+      ],
+      "question": "2.1.3 是哪天正式发布的？如果截至冻结日期找不到，请说明能确认什么，给出核对范围。",
+      "seconds": 12.94,
+      "status": "ok",
+      "urls": [
+        "https://github.com/pallets/itsdangerous/releases/tag/2.1.2",
+        "https://github.com/pallets/itsdangerous/releases/tag/2.2.0"
+      ]
+    }
+  ],
+  "stage": "post_experiment_application_verification",
+  "post_experiment_application_verification": {
+    "stage": "post_experiment_application_verification",
+    "official_comparison_unchanged": true,
+    "questions": [
+      {
+        "question": "2.0.0rc2 是正式版还是候选版？它在 GitHub 哪天发布？请附出处。",
+        "seconds": 10.12,
+        "status": "ok",
+        "answer": [
+          {
+            "text": "2.0.0rc2 是候选版（预发布版），不是正式版：该 release 的 prerelease 字段为 true，标签为 2.0.0rc2。",
+            "evidence_ids": [
+              "Evidence:32e01fc5f88900cef23dbf02598eb46362d0e55ee11a9b448ed8699fe4a36776"
+            ]
+          },
+          {
+            "text": "它在 GitHub 的发布时间为 2021-04-16（published_at 为 2021-04-16T14:54:13Z）。",
+            "evidence_ids": [
+              "Evidence:32e01fc5f88900cef23dbf02598eb46362d0e55ee11a9b448ed8699fe4a36776"
+            ]
+          }
+        ],
+        "links": [
+          "https://github.com/pallets/itsdangerous/releases/tag/2.0.0rc2"
+        ],
+        "paths": 50,
+        "error": null,
+        "cited_evidence": [
+          {
+            "evidence_id": "Evidence:32e01fc5f88900cef23dbf02598eb46362d0e55ee11a9b448ed8699fe4a36776",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:43b44c78b0f3c0962c9caf08208ba5a6694411365aa32c18fe0c53df1572ac5d",
+            "start": 22801,
+            "end": 23095,
+            "quote": "\"draft\": false,\n    \"html_url\": \"https://github.com/pallets/itsdangerous/releases/tag/2.0.0rc2\",\n    \"id\": 41548614,\n    \"immutable\": false,\n    \"name\": \"\",\n    \"node_id\": \"MDc6UmVsZWFzZTQxNTQ4NjE0\",\n    \"prerelease\": true,\n    \"published_at\": \"2021-04-16T14:54:13Z\",\n    \"tag_name\": \"2.0.0rc2\"",
+            "url": "https://api.github.com/repos/pallets/itsdangerous/releases",
+            "author": null,
+            "time": null,
+            "text_sha256": "373fe2b61c84992e215da55d9a470a5185bb181b001a98161fb928fe29a20895",
+            "detail_url": "https://github.com/pallets/itsdangerous/releases/tag/2.0.0rc2",
+            "context_note": "2.0.0rc2 · https://github.com/pallets/itsdangerous/releases/tag/2.0.0rc2 · draft=False, prerelease=True"
+          }
+        ]
+      },
+      {
+        "question": "为什么改用标准库 JSON？早期有没有拒绝过类似提议，最终由哪个 PR 合并落地并改了哪些文件？",
+        "seconds": 93.21,
+        "status": "ok",
+        "answer": [
+          {
+            "text": "在 itsdangerous（以及 Flask、Starlette 等）中，simplejson 会在安装时通过 `try: import simplejson as json` / `except ImportError: import json` 被用作 `json` 的替代。",
+            "evidence_ids": [
+              "Evidence:b595a7b45cf118ee45d537acb870c7eb86f789ee3a4c2b9e1f341812953e21e1"
+            ]
+          },
+          {
+            "text": "提出改用标准库 json 的评论质疑是否还有理由使用 simplejson，并表示不知道有功能或兼容性理由。",
+            "evidence_ids": [
+              "Evidence:29ea361de9f7fff4dc4160531bcf40c82106a4d84202fd2b6fbcb6a5bf895f47"
+            ]
+          },
+          {
+            "text": "提议改用标准库 JSON 时，理由之一是 simplejson 常被提到的性能优势在至少 Python 3.6+ 和现代发行版上并不成立。",
+            "evidence_ids": [
+              "Evidence:4ec4469175ecb49a95c9add9b5488ec174882cb49abb36ca34ba05a435530833"
+            ]
+          },
+          {
+            "text": "另一个理由是：若容器安装了 simplejson 但没有编译器，它会退回纯 Python 实现；给出的基准中 `json.dumps` 为 17.4 ms，而 `simplejson.dumps` 为 89.4 ms。",
+            "evidence_ids": [
+              "Evidence:6ebb42bb37f8913613b67c1e9c244f17a77b00b9ed0586fdfc846398cf8bca60"
+            ]
+          },
+          {
+            "text": "提议者因此认为直接使用 json 更可取。",
+            "evidence_ids": [
+              "Evidence:eca0299c196545b0d30d2b8558ae6cb60d7666e32a78087ad9bb4e1e7f0a4df4"
+            ]
+          },
+          {
+            "text": "兼容性讨论指出，`json` 在 Python 2.6 已加入，使用 simplejson 的主要理由是向后兼容 Python 2.4+。",
+            "evidence_ids": [
+              "Evidence:475cae1432e70aec369ae3063e6ac39a36a87d5334abd9bb6c1d0fbac5898204"
+            ]
+          },
+          {
+            "text": "同一讨论认为，项目最老的测试套件运行在 Python 2.7，因此这是重构的好候选。",
+            "evidence_ids": [
+              "Evidence:d58d0ac831918f90053d28fe44f8d5c52a25efe3099b79eb769dccd24cfe406c"
+            ]
+          },
+          {
+            "text": "维护者 davidism 表示，一旦放弃 Python 2，他相当可以接受这项改动。",
+            "evidence_ids": [
+              "Evidence:992a7d3d3b828cbe282a5ea60d823bcdb5d6d78cc967a61e948eedb06cbc6fc0"
+            ]
+          },
+          {
+            "text": "PR #152 的说明称其移除 simplejson，改用 Python 内置的 json 模块。",
+            "evidence_ids": [
+              "Evidence:eb41177eac0f05bcd2b41670bfb6cb3fa0cd7b40a4f84a8e447454f4deed791a"
+            ]
+          },
+          {
+            "text": "PR #152 说明解释：既然 `itsdangerous.json` 将只是内置 json 模块的别名，就用一个在使用时发出弃用警告的代理替换它。",
+            "evidence_ids": [
+              "Evidence:5eaf5b2ec80166de3eeb0563a271e8c0ee335aa725011deef908be67020f855b"
+            ]
+          },
+          {
+            "text": "PR #152 的描述包含 `closes #146`。",
+            "evidence_ids": [
+              "Evidence:5ab2b7cf355822deafa149180eab5440f86aed883ca15201244a6a717a0a99d9"
+            ]
+          },
+          {
+            "text": "GitHub API 数据显示 PR #152 的 `merged` 为 true，`merged_at` 为 2020-04-17T17:15:12Z，`merge_commit_sha` 为 `981ade6e73ff9ce420aa29143039de0aaccb9770`。",
+            "evidence_ids": [
+              "Evidence:e12623bb31e48e68a6461708fb5ea44fa1a0db75e574c1640a9ed87e57e17e4f"
+            ]
+          },
+          {
+            "text": "提供的 PR #63 API 数据显示其 `merged` 为 false、`merged_at` 为 null，即该早期 PR 未合并。",
+            "evidence_ids": [
+              "Evidence:7f9f519d31f24e9ecf22b1b44cd464a6dc80d2194b351c8c5b1d9d9d1db750a2"
+            ]
+          },
+          {
+            "text": "在该早期 PR 的讨论中，维护者 davidism 表示安装 simplejson 不会导致错误，名称 `simplejson` 并未导出而始终别名为 `json`，并称这里无需改动。",
+            "evidence_ids": [
+              "Evidence:d0683e38664930bf93b5f59b313fccabb3732cd50aa677c29ce6cb9ac6723a2f"
+            ]
+          },
+          {
+            "text": "提供的 diff-tree 输出比较 `542fad1e9627a402620453610b3e6923f879fd84` 到 `981ade6e73ff9ce420aa29143039de0aaccb9770`，列出的修改文件为 `CHANGES.rst`、`docs/serializer.rst`、`src/itsdangerous/__init__.py`、`src/itsdangerous/_json.py`、`src/itsdangerous/jws.py`、`src/itsdangerous/serializer.py`。",
+            "evidence_ids": [
+              "Evidence:470dc1e2c8afd37a9c8f6ad653e22f61cfaa9c64b807ea5e40887ae3350d4c10"
+            ]
+          }
+        ],
+        "links": [
+          "https://api.github.com/repos/pallets/itsdangerous/pulls/152",
+          "https://api.github.com/repos/pallets/itsdangerous/pulls/63",
+          "https://github.com/pallets/itsdangerous/commit/981ade6e73ff9ce420aa29143039de0aaccb9770",
+          "https://github.com/pallets/itsdangerous/issues/146",
+          "https://github.com/pallets/itsdangerous/issues/146#issuecomment-590060970",
+          "https://github.com/pallets/itsdangerous/issues/146#issuecomment-592275222",
+          "https://github.com/pallets/itsdangerous/pull/152",
+          "https://github.com/pallets/itsdangerous/pull/63#issuecomment-226116816"
+        ],
+        "paths": 45,
+        "error": null,
+        "cited_evidence": [
+          {
+            "evidence_id": "Evidence:470dc1e2c8afd37a9c8f6ad653e22f61cfaa9c64b807ea5e40887ae3350d4c10",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:6fc95fbdc349931c87b741f457431b39d81f9a5c3b0b8186751e929a8f55c13a",
+            "start": 0,
+            "end": 468,
+            "quote": "{\n  \"command\": [\n    \"git\",\n    \"diff-tree\",\n    \"--no-commit-id\",\n    \"-r\",\n    \"-M\",\n    \"--name-status\",\n    \"-z\",\n    \"542fad1e9627a402620453610b3e6923f879fd84\",\n    \"981ade6e73ff9ce420aa29143039de0aaccb9770\"\n  ],\n  \"returncode\": 0,\n  \"stdout\": \"M\\u0000CHANGES.rst\\u0000M\\u0000docs/serializer.rst\\u0000M\\u0000src/itsdangerous/__init__.py\\u0000M\\u0000src/itsdangerous/_json.py\\u0000M\\u0000src/itsdangerous/jws.py\\u0000M\\u0000src/itsdangerous/serializer.py\\u0000\"\n}\n",
+            "url": "https://github.com/pallets/itsdangerous",
+            "author": null,
+            "time": null,
+            "text_sha256": "b556d943100d609b4c39168abbc2143b9d7fd5c93b7609d0f7aa9e3607b46086",
+            "detail_url": "https://github.com/pallets/itsdangerous/commit/981ade6e73ff9ce420aa29143039de0aaccb9770",
+            "context_note": "文件变更 A 新增 / M 修改 / D 删除 / R 重命名 · https://github.com/pallets/itsdangerous/commit/981ade6e73ff9ce420aa29143039de0aaccb9770"
+          },
+          {
+            "evidence_id": "Evidence:5eaf5b2ec80166de3eeb0563a271e8c0ee335aa725011deef908be67020f855b",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:2e45ef24ed30d85a8f52a07705fd79ca7373b085a9db0695f5e9ef752d4d9524",
+            "start": 62,
+            "end": 201,
+            "quote": "Since `itsdangerous.json` would just be an alias for that module now, it's replaced with an proxy that raises a deprecation warning on use.",
+            "url": "https://github.com/pallets/itsdangerous/pull/152",
+            "author": "davidism",
+            "time": "2020-04-17T17:13:19Z",
+            "text_sha256": "6f6f326437fb1cc027c88de7196276841e12420cc9ab9be28c3518314b09973b"
+          },
+          {
+            "evidence_id": "Evidence:992a7d3d3b828cbe282a5ea60d823bcdb5d6d78cc967a61e948eedb06cbc6fc0",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:9d8a50632efdcc4de0f14836e5acfc5608dad03667781520f9f2e0de88b2c8d1",
+            "start": 0,
+            "end": 52,
+            "quote": "Yeah, I'm fairly ok with this once we drop Python 2.",
+            "url": "https://github.com/pallets/itsdangerous/issues/146#issuecomment-592275222",
+            "author": "davidism",
+            "time": "2020-02-28T02:09:14Z",
+            "text_sha256": "8d63f6631711e80036810715f7440c4947f77fba71aadc5d6bfbdce812ee7e6e"
+          },
+          {
+            "evidence_id": "Evidence:d0683e38664930bf93b5f59b313fccabb3732cd50aa677c29ce6cb9ac6723a2f",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:a594bd65ececfd50bf5a75f3d61ae2d2bc0d65a112ae409f5114947dfcc98f23",
+            "start": 0,
+            "end": 195,
+            "quote": "It won't result in an error if simplejson is installed.  The point of the linked issue is that the name `simplejson` is not exported, it's always aliased to `json`.  Nothing needs to change here.",
+            "url": "https://github.com/pallets/itsdangerous/pull/63#issuecomment-226116816",
+            "author": "davidism",
+            "time": "2016-06-15T08:05:10Z",
+            "text_sha256": "aca73f318e5def4bc945c1644a6003e482a42481e0209aa5596a42491b6aa6f5"
+          },
+          {
+            "evidence_id": "Evidence:d58d0ac831918f90053d28fe44f8d5c52a25efe3099b79eb769dccd24cfe406c",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:31446bec65e3f89a3b91d3af911e62869a6c1c924b8fd0cc9bf498e88c57233b",
+            "start": 224,
+            "end": 337,
+            "quote": "Considering the oldest test suite on this project runs on Python 2.7, it seems a good candidate to refactor this.",
+            "url": "https://github.com/pallets/itsdangerous/issues/146#issuecomment-590060970",
+            "author": "CoburnJoe",
+            "time": "2020-02-23T11:56:06Z",
+            "text_sha256": "2665c315d54416c91121abfd093feab41167edf3223a1b5fd6cd9a6cc45d5e20"
+          },
+          {
+            "evidence_id": "Evidence:eb41177eac0f05bcd2b41670bfb6cb3fa0cd7b40a4f84a8e447454f4deed791a",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:2e45ef24ed30d85a8f52a07705fd79ca7373b085a9db0695f5e9ef752d4d9524",
+            "start": 0,
+            "end": 61,
+            "quote": "Removes simplejson in favor of Python's built-in json module.",
+            "url": "https://github.com/pallets/itsdangerous/pull/152",
+            "author": "davidism",
+            "time": "2020-04-17T17:13:19Z",
+            "text_sha256": "6f6f326437fb1cc027c88de7196276841e12420cc9ab9be28c3518314b09973b"
+          },
+          {
+            "evidence_id": "Evidence:eca0299c196545b0d30d2b8558ae6cb60d7666e32a78087ad9bb4e1e7f0a4df4",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+            "start": 979,
+            "end": 1016,
+            "quote": "It seems preferable to just use json.",
+            "url": "https://github.com/pallets/itsdangerous/issues/146",
+            "author": "ijl",
+            "time": "2020-02-20T16:55:49Z",
+            "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+          },
+          {
+            "evidence_id": "Evidence:b595a7b45cf118ee45d537acb870c7eb86f789ee3a4c2b9e1f341812953e21e1",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+            "start": 0,
+            "end": 185,
+            "quote": "itsdangerous and by extension flask, starlette, and others use simplejson if it's installed due to:\n\n```python\ntry:\n    import simplejson as json\nexcept ImportError:\n    import json\n```",
+            "url": "https://github.com/pallets/itsdangerous/issues/146",
+            "author": "ijl",
+            "time": "2020-02-20T16:55:49Z",
+            "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+          },
+          {
+            "evidence_id": "Evidence:29ea361de9f7fff4dc4160531bcf40c82106a4d84202fd2b6fbcb6a5bf895f47",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+            "start": 187,
+            "end": 280,
+            "quote": "Is there still a reason to use simplejson? I don't know of a feature or compatibility reason.",
+            "url": "https://github.com/pallets/itsdangerous/issues/146",
+            "author": "ijl",
+            "time": "2020-02-20T16:55:49Z",
+            "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+          },
+          {
+            "evidence_id": "Evidence:4ec4469175ecb49a95c9add9b5488ec174882cb49abb36ca34ba05a435530833",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+            "start": 282,
+            "end": 551,
+            "quote": "The reason I have seen mentioned is better performance. That is not the case with at least python3.6+ and a modern distribution (that probably compiled python with PGO and LTO) with simplejson compiled. See [these benchmarks](https://github.com/ijl/orjson#performance).",
+            "url": "https://github.com/pallets/itsdangerous/issues/146",
+            "author": "ijl",
+            "time": "2020-02-20T16:55:49Z",
+            "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+          },
+          {
+            "evidence_id": "Evidence:6ebb42bb37f8913613b67c1e9c244f17a77b00b9ed0586fdfc846398cf8bca60",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+            "start": 553,
+            "end": 977,
+            "quote": "If simplejson is installed in a container without a compiler, it falls back to running in pure Python. This is a footgun:\n\n```python\nIn [1]: import json, simplejson\n\nIn [2]: data = list(range(0, 100000))\n\nIn [3]: %timeit json.dumps(data)\n17.4 ms ± 1.14 ms per loop (mean ± std. dev. of 7 runs, 100 loops each)\n\nIn [4]: %timeit simplejson.dumps(data)\n89.4 ms ± 7.21 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)\n```",
+            "url": "https://github.com/pallets/itsdangerous/issues/146",
+            "author": "ijl",
+            "time": "2020-02-20T16:55:49Z",
+            "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+          },
+          {
+            "evidence_id": "Evidence:475cae1432e70aec369ae3063e6ac39a36a87d5334abd9bb6c1d0fbac5898204",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:31446bec65e3f89a3b91d3af911e62869a6c1c924b8fd0cc9bf498e88c57233b",
+            "start": 0,
+            "end": 222,
+            "quote": "``json`` was added to Python 2.6, so the main reason to use ``simplejson`` is backwards compatibility with Python 2.4+ (although, as someone who occasionally has to maintain Python 2.4 code, the sooner it dies the better).",
+            "url": "https://github.com/pallets/itsdangerous/issues/146#issuecomment-590060970",
+            "author": "CoburnJoe",
+            "time": "2020-02-23T11:56:06Z",
+            "text_sha256": "2665c315d54416c91121abfd093feab41167edf3223a1b5fd6cd9a6cc45d5e20"
+          },
+          {
+            "evidence_id": "Evidence:5ab2b7cf355822deafa149180eab5440f86aed883ca15201244a6a717a0a99d9",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:2e45ef24ed30d85a8f52a07705fd79ca7373b085a9db0695f5e9ef752d4d9524",
+            "start": 203,
+            "end": 214,
+            "quote": "closes #146",
+            "url": "https://github.com/pallets/itsdangerous/pull/152",
+            "author": "davidism",
+            "time": "2020-04-17T17:13:19Z",
+            "text_sha256": "6f6f326437fb1cc027c88de7196276841e12420cc9ab9be28c3518314b09973b"
+          },
+          {
+            "evidence_id": "Evidence:e12623bb31e48e68a6461708fb5ea44fa1a0db75e574c1640a9ed87e57e17e4f",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:bfc78f7ce3cac7258b166f47cb21ea19095bd76c1ba8ebe6eee1fb4f57b5daa3",
+            "start": 17260,
+            "end": 17434,
+            "quote": "  \"merge_commit_sha\": \"981ade6e73ff9ce420aa29143039de0aaccb9770\",\n  \"mergeable\": false,\n  \"mergeable_state\": \"dirty\",\n  \"merged\": true,\n  \"merged_at\": \"2020-04-17T17:15:12Z\",",
+            "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/152",
+            "author": null,
+            "time": null,
+            "text_sha256": "f78fff233eaa0297a02d780af097fa5bf65abd89e4f682a697e041a525e4861f"
+          },
+          {
+            "evidence_id": "Evidence:7f9f519d31f24e9ecf22b1b44cd464a6dc80d2194b351c8c5b1d9d9d1db750a2",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:0cb8f3dd94acf3d5ab350d53f3be098b3537f516f27d6f0916ac5ba46d83cfe5",
+            "start": 16969,
+            "end": 17126,
+            "quote": "  \"merge_commit_sha\": \"105caae4a52c97c1b95d17a0ca956eb56cc7f31b\",\n  \"mergeable\": false,\n  \"mergeable_state\": \"dirty\",\n  \"merged\": false,\n  \"merged_at\": null,",
+            "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/63",
+            "author": null,
+            "time": null,
+            "text_sha256": "dbc45c4b4327ec641579d15336fadb6b88d54c27fd4521e097c4607e0424e124"
+          }
+        ]
+      },
+      {
+        "question": "项目历史上有哪些被拒绝的特性提案及理由？",
+        "seconds": 125.68,
+        "status": "ok",
+        "answer": [
+          {
+            "text": "PR #1 提议为 itsdangerous 增加 marrow.templating 支持；GitHub API 显示该 PR 的 `merged` 为 `false`，即未被合并。",
+            "evidence_ids": [
+              "Evidence:2043dc72d6dca083cee42f7f05d45385aefd62a97d070198343b511f217accb2",
+              "Evidence:b1defd9e812e3434a208b0f54989e71f7d53268fae0ef0e49109ae66f28285ab"
+            ]
+          },
+          {
+            "text": "维护者 mitsuhiko 拒绝 marrow.templating 方向，理由是他仍记得上一次统一模板语言 API 尝试很糟糕、不想再次参与；他建议由另一个库为 marrow 实现 entrypoints。",
+            "evidence_ids": [
+              "Evidence:6f44b66263e6e29a2126d09077df306d9e4b2b2f3ce12429614ad4b9eb3e302f"
+            ]
+          },
+          {
+            "text": "Issue #25 提议允许设置默认 secret key，理由是每次使用 signer 都传这些信息不 DRY；提案还提到其基于 Django 的签名模块。",
+            "evidence_ids": [
+              "Evidence:b2749213f418e67b08f40df1e128c86270aa23b10da6247f0a851d4c50316509"
+            ]
+          },
+          {
+            "text": "维护者 mitsuhiko 拒绝该 secret key 方向，理由是 itsdangerous 是独立库、与 Django 无关，不会加入在特定环境中自动生效的 magic。",
+            "evidence_ids": [
+              "Evidence:dd147f2b912e3f63f0deb251b4ba4dc681e5c4e21cf1071cda9c7f4d6af6468f"
+            ]
+          },
+          {
+            "text": "对于 CRIME/BREACH 式攻击的担忧，mitsuhiko 拒绝在 itsdangerous 内处理，理由是其dangerous 只负责签名，相关问题应在 SSL 层解决，并建议在数据负载中加入随机 salt。",
+            "evidence_ids": [
+              "Evidence:37e060690a9fa6a86603e18c7ee5f0002e64c11ff4cf9a3adc33b7dfca3fd1fb"
+            ]
+          },
+          {
+            "text": "Issue #40 的过期日期需求被指向自定义 Serializer 子类；维护者称这是编写自己的 Serializer 子类的好案例。",
+            "evidence_ids": [
+              "Evidence:afdb4b825c27470a3bcb1e10d813b159190e9854a9d4f987c01492872feba1e1"
+            ]
+          },
+          {
+            "text": "Issue #45 请求提供接口来延长已签发 token 的过期时间；回答称不可行，因为过期时间在 token 本身，修改任何值都会得到完全不同的 token，替代方案是使用不过期的 refresh token 来签发新 token。",
+            "evidence_ids": [
+              "Evidence:20ae22e9e06f70a984ed11b646634627f051ff5ebfd7f3cb3da9359e9ac0f6df",
+              "Evidence:459c638eb22288db2affb0cf214008dbf8aad8d9affa4300c8b66adac242e798"
+            ]
+          },
+          {
+            "text": "对于废弃 itsdangerous 的提议，mitsuhiko 表示 JWT 难以安全使用，且不会因此废弃 itsdangerous。",
+            "evidence_ids": [
+              "Evidence:f57657ab6264aa9811c4f2a449fd02cbd6277f623f0a32ce23a2674506fdd82c"
+            ]
+          }
+        ],
+        "links": [
+          "https://api.github.com/repos/pallets/itsdangerous/pulls/1",
+          "https://github.com/pallets/itsdangerous/issues/25",
+          "https://github.com/pallets/itsdangerous/issues/25#issuecomment-21777893",
+          "https://github.com/pallets/itsdangerous/issues/26#issuecomment-23160780",
+          "https://github.com/pallets/itsdangerous/issues/40#issuecomment-209083922",
+          "https://github.com/pallets/itsdangerous/issues/45",
+          "https://github.com/pallets/itsdangerous/issues/45#issuecomment-148831232",
+          "https://github.com/pallets/itsdangerous/issues/54#issuecomment-161721273",
+          "https://github.com/pallets/itsdangerous/pull/1",
+          "https://github.com/pallets/itsdangerous/pull/1#issuecomment-1434107"
+        ],
+        "paths": 32,
+        "error": null,
+        "cited_evidence": [
+          {
+            "evidence_id": "Evidence:2043dc72d6dca083cee42f7f05d45385aefd62a97d070198343b511f217accb2",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:7d11a1eecc6464a7b42a63915746f33a52e3e61ea68a5817d7d8f3acc6fc0504",
+            "start": 8,
+            "end": 114,
+            "quote": "I've added marrow.templating support; one simple function, an entry point, and no additional dependencies.",
+            "url": "https://github.com/pallets/itsdangerous/pull/1",
+            "author": "amcgregor",
+            "time": "2011-06-24T17:58:21Z",
+            "text_sha256": "2318ad848402e39388bc815b82df6134d7a9d23f9bbd2fe601cca1be7e1a4d93"
+          },
+          {
+            "evidence_id": "Evidence:afdb4b825c27470a3bcb1e10d813b159190e9854a9d4f987c01492872feba1e1",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:503180ab3f3029f7befcd7e2fa4d8e654311557c2933205da7d7ded65f2eb7c9",
+            "start": 0,
+            "end": 61,
+            "quote": "This is a good case for writing your own Serializer subclass.",
+            "url": "https://github.com/pallets/itsdangerous/issues/40#issuecomment-209083922",
+            "author": "davidism",
+            "time": "2016-04-12T20:11:04Z",
+            "text_sha256": "16d8c8c5664b92c521f8acc85231014c2da87ec6213dea6c097ffd86f551514d"
+          },
+          {
+            "evidence_id": "Evidence:dd147f2b912e3f63f0deb251b4ba4dc681e5c4e21cf1071cda9c7f4d6af6468f",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:1b4494b3bff401d6aaa9db6c37ce625e3beffa84ae9f9e4d533431d8148afd34",
+            "start": 0,
+            "end": 167,
+            "quote": "Itsdangerous is a separate library and has nothing to do with django.  Definitely not going to add magic that kicks in if the library is used in a certain environment.",
+            "url": "https://github.com/pallets/itsdangerous/issues/25#issuecomment-21777893",
+            "author": "mitsuhiko",
+            "time": "2013-07-30T08:59:55Z",
+            "text_sha256": "fa79c2644f8b31048341760e9742a8dae9bcaf55eadef233356b449f5095c136"
+          },
+          {
+            "evidence_id": "Evidence:b1defd9e812e3434a208b0f54989e71f7d53268fae0ef0e49109ae66f28285ab",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:25f54c54c4a876f424f3a3f64097e0b324f0c1fd7b556c7470034eb9e52b79d2",
+            "start": 10871,
+            "end": 11028,
+            "quote": "  \"merge_commit_sha\": \"80b9b81f9109ffa64facca0e5d9a7ee0032d9505\",\n  \"mergeable\": false,\n  \"mergeable_state\": \"dirty\",\n  \"merged\": false,\n  \"merged_at\": null,",
+            "url": "https://api.github.com/repos/pallets/itsdangerous/pulls/1",
+            "author": null,
+            "time": null,
+            "text_sha256": "0553ea4afdcc27720b47c974a3002f46e22d334fc7a708cf9430ee8a5839e855"
+          },
+          {
+            "evidence_id": "Evidence:6f44b66263e6e29a2126d09077df306d9e4b2b2f3ce12429614ad4b9eb3e302f",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:1f9c9b5fcde53e97d583d4f2613b5b92e60261bbbc2f38142b04a1de994fcd51",
+            "start": 0,
+            "end": 337,
+            "quote": "I don't want to step into that particular direction with the library for the time being. Instead why not have a second library that implements the entrypoints for marrow if that is necessary? I still remember the last attempt of an unified templating language API and it was horrible, I don't want to be involved with that a second time.",
+            "url": "https://github.com/pallets/itsdangerous/pull/1#issuecomment-1434107",
+            "author": "mitsuhiko",
+            "time": "2011-06-24T18:09:09Z",
+            "text_sha256": "440226c92d6c6bd8173e4e29bc2213c559f6ff84eee51fa00c2ddc5febe52044"
+          },
+          {
+            "evidence_id": "Evidence:b2749213f418e67b08f40df1e128c86270aa23b10da6247f0a851d4c50316509",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:d0a35c98fae3b0c75c58a70ac5d0ea2ac0ba2312f1de2cfffd7a40466c02816b",
+            "start": 0,
+            "end": 280,
+            "quote": "Especially since this is based on Django's signing module.\n\nAlternatively, you could let us set a default secret key to use, which would be the more generally useful implementation.\n\nIt's just not very DRY to pass this information in everywhere that you use a signer in your code.",
+            "url": "https://github.com/pallets/itsdangerous/issues/25",
+            "author": "fletom",
+            "time": "2013-07-30T03:30:12Z",
+            "text_sha256": "51c2824fe9ba43528857c688d45bef4518496ffd0d9b0f65baede27c234cfcd0"
+          },
+          {
+            "evidence_id": "Evidence:37e060690a9fa6a86603e18c7ee5f0002e64c11ff4cf9a3adc33b7dfca3fd1fb",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:1d1877913c2654b494964a81a1da80012bb2a44f8681f1c9f0e69968ada332d5",
+            "start": 0,
+            "end": 283,
+            "quote": "I am familiar with the attack.  Itsdangerous signs, it does nothing else.  Whatever SSL does it out of the focus of this library.  Add a random salt to your data payload if you want to defeat that.  I believe that this issue should be solved on the SSL layer and not in itsdangerous.",
+            "url": "https://github.com/pallets/itsdangerous/issues/26#issuecomment-23160780",
+            "author": "mitsuhiko",
+            "time": "2013-08-23T12:36:22Z",
+            "text_sha256": "1a2aa43f0826a917e9cea80f2f152c03088805c9534e00df45464bf347396da9"
+          },
+          {
+            "evidence_id": "Evidence:20ae22e9e06f70a984ed11b646634627f051ff5ebfd7f3cb3da9359e9ac0f6df",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:7f831798464a60e31c96ab5fd102097c70416a1f3b97950fedb2375e927c3b97",
+            "start": 0,
+            "end": 220,
+            "quote": "if the token is about to expire, I want to call an interface (or any one can point me in correct way) to extend the expiry time of an already issued token. I am using TimedJSONWebSignatureSerializer to create the tokens.",
+            "url": "https://github.com/pallets/itsdangerous/issues/45",
+            "author": "ghost",
+            "time": "2015-06-19T16:44:20Z",
+            "text_sha256": "3a874c48eca693a9c9ffdd2b265f0c51ab4dc33158c77b1acf6d4d3ce9f8c3aa"
+          },
+          {
+            "evidence_id": "Evidence:459c638eb22288db2affb0cf214008dbf8aad8d9affa4300c8b66adac242e798",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:bba30a7eb8a6bc975f85fa38f3dee0680568a23b6acfde11a09d44fa34238b65",
+            "start": 0,
+            "end": 301,
+            "quote": "It's impossible to provide a facility like that because the expiration time is in the token itself. When you change any value in the token, you get a completely different token. An alternative implementation would be to issue a refresh token that won't expire and use that to issue new primary tokens.",
+            "url": "https://github.com/pallets/itsdangerous/issues/45#issuecomment-148831232",
+            "author": "metalgrid",
+            "time": "2015-10-16T20:47:42Z",
+            "text_sha256": "82e1806e4b98b60503154da7d1801ff798ac8077ac15375b0b0f937f856067d6"
+          },
+          {
+            "evidence_id": "Evidence:f57657ab6264aa9811c4f2a449fd02cbd6277f623f0a32ce23a2674506fdd82c",
+            "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+            "source_id": "SourceDocument:f97839150b8f2b891adcfc940a0c1ba7d011b93c0ab154420ecf247cf3febf17",
+            "start": 0,
+            "end": 226,
+            "quote": "I find JWT tricky to use securely which is why I avoid it like the plague whenever I can for my own stuff.  You cannot avoid JWT much for external interoperability obviously but I will not deprecate itsdangerous as a result :)",
+            "url": "https://github.com/pallets/itsdangerous/issues/54#issuecomment-161721273",
+            "author": "mitsuhiko",
+            "time": "2015-12-03T17:19:39Z",
+            "text_sha256": "93d0e7303e4c63673753f485b7f7d241c9d54d3c10eca8906fed039149c5b90e"
+          }
+        ]
+      },
+      {
+        "question": "为什么移除了 OAuth token 认证？",
+        "seconds": 7.88,
+        "status": "empty",
+        "answer": [],
+        "links": [],
+        "paths": 0,
+        "error": null,
+        "cited_evidence": []
+      }
+    ],
+    "requests_for_rehearsal": 6,
+    "retries_for_rehearsal": 0,
+    "model": "bailian/deepseek-v4.1-flash-1017",
+    "validation_receipt": "portable-rehearsal-v2.json"
+  }
+}

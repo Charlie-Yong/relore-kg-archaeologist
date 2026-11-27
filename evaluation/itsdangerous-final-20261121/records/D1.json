@@ -1,0 +1,27 @@
+{
+  "arm": "D",
+  "q": 1,
+  "start_utc": "2026-11-21T11:00:23.923619+00:00",
+  "elapsed_seconds": 100.664,
+  "status": "ok",
+  "answer": "**结论：2.1.0 正式 GitHub Release 的 UTC 日期是 2022-02-18（发布时刻 03:45:57Z）。**\n\n可核对字段：\n\n- `sources.jsonl` 第 1928 行的 GitHub Releases API 响应中：\n  - `\"tag_name\": \"2.1.0\"`\n  - `\"published_at\": \"2022-02-18T03:45:57Z\"`\n  - `\"draft\": false`\n  - `\"prerelease\": false`\n- 同文件第 4055 行 `release_note` 的 `occurred_at` 同为 `2022-02-18T03:45:57Z`，且 `origin_key` 为 `release_note:2.1.0`。\n\n官方出处：https://github.com/pallets/itsdangerous/releases/tag/2.1.0",
+  "exit": 0,
+  "tools": [],
+  "usage": [
+    {
+      "input_tokens": 970904,
+      "cached_input_tokens": 860416,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 12980,
+      "reasoning_output_tokens": 6170
+    }
+  ],
+  "event_types": [
+    "item.completed",
+    "item.started",
+    "thread.started",
+    "turn.completed",
+    "turn.started"
+  ],
+  "prompt": "仓库 pallets/itsdangerous，截止时间 2026-11-16T06:31:18Z，冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd。2.1.0 是哪天出的？请给出正式 GitHub Release 的 UTC 日期和出处。 用中文直接给出回答、可核对的原文或字段与官方出处链接。独立以当前目录 sources.jsonl 中冻结的原始材料作答。每行是 JSON，含 kind/url/text。只用 shell 在当前目录查阅，不访问网络、其他目录或历史答案。"
+}

@@ -1,0 +1,69 @@
+{
+  "arm": "O",
+  "question": "仓库 pallets/itsdangerous，截止时间 2026-11-16T06:31:18Z，冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd。PR #153 最早进了哪个正式版？请说明合并提交、正式发布范围和版本标签是否包含它，给出出处。",
+  "status": "empty",
+  "error": null,
+  "seconds": 9.6,
+  "method": "p2_query_v1.4.2_historykg_discussion_v1_full_focal_v1",
+  "max_output_tokens": 32768,
+  "timeout_seconds": 240,
+  "claims": [],
+  "evidence": [],
+  "gaps": [
+    "当前可见上下文没有 PR #153 的合并提交 SHA、合并事件记录或合并时间，无法确认它是否已被合并。",
+    "当前可见上下文没有发布说明、变更日志或版本标签列表，无法确定 PR #153 最早进入哪个正式版本，也无法确认任何版本标签是否包含它。",
+    "唯一相关的片段是 PR #153 的描述“closes #129 ”，这只能说明该 PR 描述声称关闭了 issue #129；它既不能证明 PR 已合并，也不能证明它已随某个正式版本发布。"
+  ],
+  "context_characters": 11960,
+  "context_sha256": "740164076819adfe6b153b065641ede6b81fdfa00601ee3f8652b5fc77190de1",
+  "visible": [
+    {
+      "source_id": "SourceDocument:c31e26f74fafb43fc42bd6eef6c5d9fa92a360f0375bd72f8887f609166171d7",
+      "start": 0,
+      "end": 12,
+      "title": "Deprecate JWS support",
+      "url": "https://github.com/pallets/itsdangerous/pull/153",
+      "author": "davidism",
+      "time": "2020-04-17T19:18:41Z"
+    },
+    {
+      "source_id": "SourceDocument:db5d9ca8c005d09cfef6588717411918a95e3e84f718ddda2c25a2bcba4825d3",
+      "start": 0,
+      "end": 9647,
+      "title": null,
+      "url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/src/itsdangerous/signer.py",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:ee47d6db623801fb69950a9b40df05969941a1099bb1bb22f2a0014046d59783",
+      "start": 0,
+      "end": 999,
+      "title": null,
+      "url": "https://github.com/pallets/itsdangerous/blob/672971d66a2ef9f85151e53283113f33d642dabd/tests/test_itsdangerous/test_encoding.py",
+      "author": null,
+      "time": null
+    }
+  ],
+  "graph_edges": [],
+  "responses": [
+    {
+      "status": 200,
+      "usage": {
+        "completion_tokens": 641,
+        "completion_tokens_details": {
+          "reasoning_tokens": 515
+        },
+        "prompt_tokens": 3829,
+        "prompt_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "total_tokens": 4470
+      },
+      "answer": "{\"claims\":[],\"gaps\":[\"当前可见上下文没有 PR #153 的合并提交 SHA、合并事件记录或合并时间，无法确认它是否已被合并。\",\"当前可见上下文没有发布说明、变更日志或版本标签列表，无法确定 PR #153 最早进入哪个正式版本，也无法确认任何版本标签是否包含它。\",\"唯一相关的片段是 PR #153 的描述“closes #129 ”，这只能说明该 PR 描述声称关闭了 issue #129；它既不能证明 PR 已合并，也不能证明它已随某个正式版本发布。\"]}",
+      "reason": "stop",
+      "provider_error": null
+    }
+  ]
+}

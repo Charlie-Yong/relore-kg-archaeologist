@@ -1,0 +1,285 @@
+diff --git a/historykg/query/retrieval.py b/historykg/query/retrieval.py
+index 4d45fb4..276b928 100644
+--- a/historykg/query/retrieval.py
++++ b/historykg/query/retrieval.py
+@@ -2,6 +2,7 @@
+ 
+ from __future__ import annotations
+ 
++import json
+ import re
+ from collections import defaultdict
+ 
+@@ -308,6 +309,109 @@ def context_candidates(package: dict, retrieval: dict, expansion: list[str], *,
+     return candidates
+ 
+ 
++def history_scope_seeds(question: str, kind: str, package: dict) -> list[str]:
++    """Resolve named release tags and exact file revisions in the full history."""
++    entities = package["entities"]
++    if kind == "timeline":
++        hits = []
++        for entity in entities:
++            if entity["type"] != "Release":
++                continue
++            tag = entity["properties"].get("tag")
++            if tag and re.search(r"\d", tag) and ("." in tag or tag.lower().startswith("v")):
++                match = re.search(
++                    rf"(?<![a-z0-9_.]){re.escape(tag)}(?![a-z0-9_.])", question, re.I,
++                )
++                if match:
++                    hits.append((match.start(), entity["id"]))
++        return [identity for _, identity in sorted(hits)]
++    if kind not in {"dependencies", "compare"}:
++        return []
++    paths = {path.lower() for path in PATH_PATTERN.findall(question)}
++    shas = {sha.lower() for sha in SHA_PATTERN.findall(question)}
++    if not paths or not shas:
++        return []
++    scoped = sorted(
++        e["id"] for e in entities if e["type"] == "File"
++        and e["properties"].get("path", "").lower() in paths
++        and any(e["properties"].get("commit_sha", "").lower().startswith(sha) for sha in shas)
++    )
++    if kind == "compare" and len(scoped) != 2:
++        return []
++    return scoped
++
++
++def focused_history_context(package, *, kind, seeds, paths, timeline, question):
++    """Lead large-repo queries with short, exact spans tied to the queried subjects."""
++    if kind not in {"search", "trace", "timeline"}:
++        return []
++    entities = {e["id"]: e for e in package["entities"]}
++    sources = {s["source_id"]: s for s in package["sources"]}
++    evidence = {e["evidence_id"]: e for e in package["evidence"]}
++    fragments, seen = [], set()
++
++    def add(source, start, end):
++        identity = (source["source_id"], start, end)
++        if start >= end or identity in seen:
++            return
++        seen.add(identity)
++        fragments.append({
++            **{k: source.get(k) for k in ("source_id", "url", "author", "title")},
++            "start": start, "end": end, "quote": source["text"][start:end],
++            "time": source["occurred_at"],
++        })
++
++    # The original relationship binds these excerpts to the exact merge/Release.
++    def add_relation(relation):
++        for eid in relation["evidence_ids"]:
++            e = evidence[eid]
++            source = sources[e["source_id"]]
++            start, end = e["start"], e["end"]
++            if relation["type"] == "MergedAs" and source["kind"] == "api_response":
++                needle = '\n  "merge_commit_sha":'
++                hit = source["text"].find(needle, start, end)
++                if hit != -1:
++                    start, end = hit + 1, min(end, hit + 450)
++            elif relation["type"] == "HasRelease" and source["kind"] == "api_response":
++                tag = entities.get(relation["to_id"], {}).get("properties", {}).get("tag")
++                if tag is not None:
++                    needle = '"tag_name": ' + json.dumps(tag, ensure_ascii=False)
++                    hit = source["text"].find(needle, start, end)
++                    if hit != -1:
++                        start = max(start, hit - 430)
++                        end = min(end, hit + len(needle) + 1)
++            add(source, start, min(end, start + 1150))
++
++    if kind == "timeline":
++        for relation in timeline[:6]:
++            add_relation(relation)
++        return fragments
++
++    selected = {identity: entities[identity] for identity in seeds if identity in entities}
++    if kind == "trace":
++        wanted = {rid for path in paths for rid in path["relation_ids"]}
++        relations = {r["id"]: r for r in package["relations"] if r["id"] in wanted}
++        merges = [r for r in relations.values()
++                  if r["type"] == "MergedAs" and r["from_id"] in selected]
++        commits = {r["to_id"] for r in merges}
++        changes = [r for r in relations.values()
++                   if r["type"] == "Touches" and r["from_id"] in commits]
++        for relation in (merges + changes)[:6]:
++            add_relation(relation)
++
++    threads = {e["properties"].get("number", e["key"]) for e in selected.values()
++               if e["type"] in {"Issue", "PullRequest"}}
++    if len(threads) == 1:
++        pool = [s for s in sources.values() if s["kind"] in DISCUSSION_KINDS and s["text"]
++                and (discussion_mapping(s) or {}).get("number") in threads]
++        ranked = sorted(pool, key=lambda s: (
++            s["trust_tier"] != "authoritative", -lexical_score(question, s), s["source_id"],
++        ))
++        for source in ranked[:4]:
++            add(source, 0, min(len(source["text"]), 1800))
++    return fragments
++
++
+ def enrich_evidence(item: dict, source: dict) -> dict:
+     return {**item, "url": source["url"], "author": source["author"],
+             "time": source["occurred_at"], "text_sha256": source["text_sha256"]}
+diff --git a/historykg/query/service.py b/historykg/query/service.py
+index ccab29b..dfbb24c 100644
+--- a/historykg/query/service.py
++++ b/historykg/query/service.py
+@@ -11,6 +11,7 @@ from pydantic import ValidationError
+ 
+ from historykg.contracts import QueryRequest_v1, QueryResult_v1
+ from historykg.graph.store import GraphStore, read_package, settings
++from historykg.ingest.github import FULL_HISTORY
+ from historykg.io import write_json
+ 
+ from .frozen_index import verify_index
+@@ -19,7 +20,9 @@ from .retrieval import (
+     context_candidates,
+     enrich_evidence,
+     external_github_references,
++    focused_history_context,
+     graph_sources,
++    history_scope_seeds,
+     resolve_seeds,
+     retrieve,
+     seed_from_sources,
+@@ -101,11 +104,17 @@ def prepare_query(request, *, config: dict | None = None) -> dict:
+         package = store.snapshot(req.dataset_id)
+         if package is None:
+             raise ValueError("数据集尚未就绪或不存在")
++        full = package["manifest"].get("profile_version") == FULL_HISTORY
+         if cfg.get("dataset_dir"):
+             current = read_package(cfg["dataset_dir"])
+             if current["fingerprint"] != package["fingerprint"]:
+                 raise ValueError("输入目录与已冻结图库版本不一致")
+-        seeds, gaps = resolve_seeds(req.question, package, req.seed_ids)
++        scope_seeds = history_scope_seeds(req.question, req.kind, package) if (
++            full and not req.seed_ids
++        ) else []
++        seeds, gaps = (
++            (scope_seeds, []) if scope_seeds else resolve_seeds(req.question, package, req.seed_ids)
++        )
+         resolved_seeds = seeds[:]
+         external_references = external_github_references(
+             req.question, package["manifest"]["repo"]
+@@ -145,17 +154,37 @@ def prepare_query(request, *, config: dict | None = None) -> dict:
+             kinds = {"dependencies": ["Imports"], "compare": ["ChangesTo"]}.get(
+                 req.kind, sorted({r["type"] for r in package["relations"]})
+             )
++            if full and req.kind == "timeline":
++                kinds = sorted({r["type"] for r in package["relations"] if r.get("occurred_at")})
++            path_limit = int(cfg.get("graph_path_limit", 50))
++            graph_depth = int(cfg.get("graph_depth", 3))
++            if req.kind == "timeline" and scope_seeds:
++                graph_depth = 1
+             paths = (
+                 store.paths(
+                     req.dataset_id,
+                     timeline_subject_ids if req.kind == "timeline" else seeds,
+-                    depth=int(cfg.get("graph_depth", 3)),
+-                    limit=int(cfg.get("graph_path_limit", 50)),
++                    depth=graph_depth,
++                    limit=path_limit,
+                     kinds=kinds,
+                 )
+                 if system == "B"
+                 else []
+             )
++            if full and system == "B" and req.kind == "trace" and resolved_seeds:
++                pr_ids = {e["id"] for e in package["entities"] if e["type"] == "PullRequest"}
++                chosen_prs = sorted(pr_ids.intersection(resolved_seeds))
++                if chosen_prs:
++                    direct = store.paths(
++                        req.dataset_id, chosen_prs, depth=min(2, graph_depth),
++                        limit=min(15, path_limit),
++                        kinds=["MergedAs", "Touches", "Closes", "ClaimsToClose"],
++                    )
++                    distinct = {}
++                    for path in [*direct, *paths]:
++                        key = tuple(sorted(path["relation_ids"]))
++                        distinct.setdefault(key, path)
++                    paths = list(distinct.values())[:path_limit]
+             supported = True
+             if req.kind in {"dependencies", "compare"}:
+                 supporting = [r for r in package["relations"] if r["type"] in kinds]
+@@ -202,6 +231,13 @@ def prepare_query(request, *, config: dict | None = None) -> dict:
+             candidates = context_candidates(
+                 package, retrieved, expansion, question=req.question
+             )
++            if full and system == "B":
++                focal = focused_history_context(
++                    package, kind=req.kind, seeds=resolved_seeds, paths=paths, timeline=timeline,
++                    question=req.question,
++                )
++                prioritized = {item["source_id"] for item in focal}
++                candidates = [*focal, *(c for c in candidates if c["source_id"] not in prioritized)]
+     relation_by_id = {r["id"]: r for r in package["relations"]}
+     evidence_by_id = {e["evidence_id"]: e for e in package["evidence"]}
+     source_by_id = {s["source_id"]: s for s in package["sources"]}
+@@ -213,23 +249,33 @@ def prepare_query(request, *, config: dict | None = None) -> dict:
+     event_evidence = [enrich_evidence(evidence_by_id[eid],
+                                      source_by_id[evidence_by_id[eid]["source_id"]])
+                       for eid in sorted(path_evidence_ids | timeline_evidence_ids)]
++    entity_by_id = {e["id"]: e for e in package["entities"]}
+     for p in paths:
+         p["evidence_ids"] = sorted({eid for rid in p["relation_ids"]
+                                     for eid in relation_by_id[rid]["evidence_ids"]})
+         p["relations"] = [relation_by_id[r] for r in p["relation_ids"]]
+-        entity_by_id = {e["id"]: e for e in package["entities"]}
+         p["entities"] = [entity_by_id[identity] if identity in entity_by_id else {
+             "id": identity, "dataset_id": req.dataset_id, "type": "SourceDocument",
+             "properties": {"title": source_by_id[identity].get("title")
+                            or source_by_id[identity]["kind"],
+                            "url": source_by_id[identity]["url"]},
+         } for identity in p["entity_ids"]]
+-    return dict(request=req.model_dump(), system=system, method_version=METHOD_VERSION,
++    timeline_entities = [
++        {"id": identity, "type": entity_by_id[identity]["type"],
++         "properties": {k: v for k, v in entity_by_id[identity]["properties"].items()
++                        if k in {"display_name", "title", "path", "tag", "sha", "number",
++                                 "login", "qualified_name"}}}
++        for identity in sorted({r[k] for r in timeline for k in ("from_id", "to_id")})
++        if identity in entity_by_id
++    ]
++    method_version = METHOD_VERSION + "_full_focal_v1" if full else METHOD_VERSION
++    return dict(request=req.model_dump(), system=system, method_version=method_version,
+                 dataset_fingerprint=package["fingerprint"], seed_ids=seeds,
+                 status="ok" if supported else "unsupported", candidates=candidates,
+                 paths=paths, path_evidence=event_evidence, retrieval=retrieved,
+                 gaps=[*package["manifest"].get("gaps", []), *gaps], timeline=timeline,
+                 timeline_scope=timeline_scope, timeline_subject_ids=timeline_subject_ids,
++                timeline_entities=timeline_entities,
+                 source_by_id=source_by_id, dataset_dir=package["dataset_dir"],
+                 timings_ms={"retrieve_graph": round((time.perf_counter() - started) * 1000, 3)})
+ 
+@@ -284,7 +330,12 @@ def query(request, *, config: dict | None = None) -> QueryResult_v1:
+             base["usage"] = answer.get("usage", {})
+             base["model_run_id"] = answer.get("run_id")
+             if answer["status"] not in {"ok", "empty"}:
+-                base.update(status="error", error={"code": "answer_failed",
++                reason = answer.get("error")
++                code = reason if reason in {
++                    "provider_balance_exhausted", "provider_auth_failed",
++                    "missing_deepseek_api_key",
++                } else "answer_failed"
++                base.update(status="error", error={"code": code,
+                                                   "run_id": answer.get("run_id")})
+             else:
+                 evidence = {e["evidence_id"]: e for e in base["evidence"]}
+@@ -309,7 +360,8 @@ def query(request, *, config: dict | None = None) -> QueryResult_v1:
+                     ):
+                         raise ValueError("回答断言缺少可见证据")
+                 evidence.update(answer_evidence)
+-                base.update(status="ok" if answer.get("claims") else "empty",
++                displayed = answer.get("claims") or prepared.get("timeline")
++                base.update(status="ok" if displayed else "empty",
+                             claims=answer.get("claims", []), evidence=list(evidence.values()),
+                             gaps=[*base["gaps"], *answer.get("gaps", [])])
+                 if not base["claims"] and not base["gaps"]:
+@@ -320,6 +372,7 @@ def query(request, *, config: dict | None = None) -> QueryResult_v1:
+         base["timeline"] = prepared["timeline"]
+         base["timeline_scope"] = prepared["timeline_scope"]
+         base["timeline_subject_ids"] = prepared["timeline_subject_ids"]
++        base["timeline_entities"] = prepared.get("timeline_entities", [])
+         write_json(output / "retrieval.json", audit)
+         write_json(output / "result.json", base)
+         base["artifacts"] = {"query_run": str(output)}

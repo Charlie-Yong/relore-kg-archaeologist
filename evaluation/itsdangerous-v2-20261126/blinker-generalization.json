@@ -1,0 +1,244 @@
+{
+  "claims_to_close_edges": 5,
+  "closes_edges": 5,
+  "dataset_id": "dataset:ea5bc3a05942f191c9fb23f8eb268e15b50b5e70946202b8d2052c1b6170f4d4",
+  "entity_counts": {
+    "Commit": 317,
+    "Decision": 151,
+    "Developer": 44,
+    "File": 578,
+    "Function": 2097,
+    "Issue": 54,
+    "Project": 1,
+    "PullRequest": 137,
+    "Release": 17
+  },
+  "qa_results": {
+    "A_v2": {
+      "accuracy": 0.6923,
+      "max": 13,
+      "median_seconds": 3.06,
+      "per_question": [
+        {
+          "category": "release_date",
+          "citations": 1,
+          "id": "BL1",
+          "max": 2,
+          "note": "时间与出处均准确，引用官方Release API数据，完整得分。",
+          "paths": 0,
+          "points": [
+            1,
+            1
+          ],
+          "score": 2,
+          "seconds": 1.304,
+          "status": "ok"
+        },
+        {
+          "category": "closes_merge_change",
+          "citations": 3,
+          "id": "BL2",
+          "max": 3,
+          "note": "答案未指明PR #141、SHA 8a6693cf7c98及修改文件，仅讨论无关依赖升级PR。",
+          "paths": 0,
+          "points": [
+            0,
+            0,
+            0
+          ],
+          "score": 0,
+          "seconds": 2.792,
+          "status": "ok"
+        },
+        {
+          "category": "pr_release_membership",
+          "citations": 2,
+          "id": "BL3",
+          "max": 2,
+          "note": "第一项有PR标题与合并SHA出处支持；第二项未核对1.9.0包含关系，仅称无法确认，未给出标签可达性核对。",
+          "paths": 0,
+          "points": [
+            1,
+            0
+          ],
+          "score": 1,
+          "seconds": 3.337,
+          "status": "ok"
+        },
+        {
+          "category": "code_behavior",
+          "citations": 3,
+          "id": "BL4",
+          "max": 2,
+          "note": "两项均准确描述connect弱引用注册与send触发并返回(receiver,返回值)列表，且附有源码引文支持。",
+          "paths": 0,
+          "points": [
+            1,
+            1
+          ],
+          "score": 2,
+          "seconds": 3.717,
+          "status": "ok"
+        },
+        {
+          "category": "decision_or_pr_rationale",
+          "citations": 10,
+          "id": "BL5",
+          "max": 2,
+          "note": "答案准确陈述了PR处于待合并状态及维护者理由，并附原文引用与出处链接。",
+          "paths": 0,
+          "points": [
+            1,
+            1
+          ],
+          "score": 2,
+          "seconds": 3.47,
+          "status": "ok"
+        },
+        {
+          "category": "false_premise_abstention",
+          "citations": 0,
+          "id": "BL6",
+          "max": 2,
+          "note": "正确识别假前提，如实说明冻结记录中无相关PR/提交，未编造。",
+          "paths": 0,
+          "points": [
+            1,
+            1
+          ],
+          "score": 2,
+          "seconds": 1.637,
+          "status": "empty"
+        }
+      ],
+      "score": 9,
+      "total_citations": 19
+    },
+    "B_v2_fast": {
+      "accuracy": 0.9231,
+      "max": 13,
+      "median_seconds": 1.48,
+      "per_question": [
+        {
+          "category": "release_date",
+          "citations": 51,
+          "id": "BL1",
+          "max": 2,
+          "note": "时间与出处均准确，引用官方Release API数据，完整得分。",
+          "paths": 50,
+          "points": [
+            1,
+            1
+          ],
+          "score": 2,
+          "seconds": 0.37,
+          "status": "ok"
+        },
+        {
+          "category": "closes_merge_change",
+          "citations": 49,
+          "id": "BL2",
+          "max": 3,
+          "note": "三项均准确：PR#141关闭、SHA完整、文件含__init__.py且附出处。",
+          "paths": 50,
+          "points": [
+            1,
+            1,
+            1
+          ],
+          "score": 3,
+          "seconds": 2.555,
+          "status": "ok"
+        },
+        {
+          "category": "pr_release_membership",
+          "citations": 50,
+          "id": "BL3",
+          "max": 2,
+          "note": "PR改动与合并提交说明完整有出处；但未核对1.9.0包含关系，仅称无法确认。",
+          "paths": 50,
+          "points": [
+            1,
+            0
+          ],
+          "score": 1,
+          "seconds": 3.332,
+          "status": "ok"
+        },
+        {
+          "category": "code_behavior",
+          "citations": 41,
+          "id": "BL4",
+          "max": 2,
+          "note": "两项均附完整源码引文且描述准确，connect与send行为均与引文一致。",
+          "paths": 50,
+          "points": [
+            1,
+            1
+          ],
+          "score": 2,
+          "seconds": 0.408,
+          "status": "ok"
+        },
+        {
+          "category": "decision_or_pr_rationale",
+          "citations": 47,
+          "id": "BL5",
+          "max": 2,
+          "note": "准确陈述了send_async的合并状态及维护者回退PR#18的决定与理由，并附原文出处。",
+          "paths": 50,
+          "points": [
+            1,
+            1
+          ],
+          "score": 2,
+          "seconds": 4.149,
+          "status": "ok"
+        },
+        {
+          "category": "false_premise_abstention",
+          "citations": 39,
+          "id": "BL6",
+          "max": 2,
+          "note": "正确识别假前提，如实说明冻结记录中无相关提交或PR，未编造。",
+          "paths": 50,
+          "points": [
+            1,
+            1
+          ],
+          "score": 2,
+          "seconds": 0.372,
+          "status": "empty"
+        }
+      ],
+      "score": 12,
+      "total_citations": 277
+    }
+  },
+  "relation_counts": {
+    "ABOUT": 151,
+    "Authored": 137,
+    "ChangesTo": 252,
+    "ClaimsToClose": 5,
+    "Closes": 5,
+    "Defines": 2097,
+    "EVIDENCED_BY": 189,
+    "HasRelease": 17,
+    "Imports": 267,
+    "MentionsPR": 10,
+    "Merged": 92,
+    "MergedAs": 87,
+    "ReachableIn": 2368,
+    "Touches": 281
+  },
+  "repo": "pallets-eco/blinker",
+  "spend": {
+    "approaching_cap": false,
+    "calls": 435,
+    "cap_cny": 15.0,
+    "recorded_at": "2026-11-26T09:08:26Z",
+    "remaining_cny": 7.7388,
+    "spent_cny": 7.2612
+  },
+  "validation_status": "ok"
+}

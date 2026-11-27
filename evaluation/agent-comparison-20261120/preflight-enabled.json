@@ -1,0 +1,20 @@
+{
+  "mode": "enabled",
+  "status": 200,
+  "model": "bailian/deepseek-v4.1-flash-1017",
+  "usage": {
+    "completion_tokens": 98,
+    "completion_tokens_details": {
+      "reasoning_tokens": 93
+    },
+    "prompt_tokens": 45,
+    "prompt_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "total_tokens": 143
+  },
+  "has_reasoning": true,
+  "finish": "stop",
+  "answer": "4100625"
+}

@@ -1,0 +1,82 @@
+{
+  "question": "PR #372 的修改首次随哪个正式版发布？可以用标签历史和合并记录说明吗？",
+  "model_run_id": "cbd125801e9830f94709c8eadd3354ce7b1adc747ab5bef184cea0cde32fb675",
+  "max_output_tokens": 32768,
+  "reasoning_effort": "max",
+  "mode": "正常 Streamlit 提问表单，AppTest 实际提交，百炼答题",
+  "elapsed_seconds": 25.67,
+  "status": "ok",
+  "claims": [
+    {
+      "text": "PR #372 的合并提交是 53efacdf1136edb9462aeca221023a8f9bbd79a9，状态为已合并，合并时间为 2024-04-13T17:54:20Z。",
+      "evidence_ids": [
+        "Evidence:6edbb9faa6f7e14bca75ababe79f2732b943a96a0f038127fc2f21847bd599db"
+      ]
+    },
+    {
+      "text": "在提供的正式发布记录（draft=False、prerelease=False）中，合并前的最近正式版是 2022-03-24 发布的 2.1.2，合并后的首个正式版是 2024-04-16 发布的 2.2.0；这些记录中没有位于两者之间的其他正式版。",
+      "evidence_ids": [
+        "Evidence:4f307e971895d02c30df17b98c9e1d9453a0e46de7ab3264b792de36fef1254c",
+        "Evidence:6ffd6642d4312757774b41527a0423a5c4ac7a4d7b730bacf55015236691521b",
+        "Evidence:51a9fcbe97c1161e44c086e3752c62e9f1428dedee6b8e83cad0091df705ef06",
+        "Evidence:15cbc818271bdab42c2c72281be42c01a395a0c625d73f3438e1f0c1c1c3f724",
+        "Evidence:0d34c542d00653aee8fd4c2e81726f5bef6aaa677eed07bcb0fcf4acff90fa08",
+        "Evidence:3787f2c26929983c4bee3c3cf22838d898679b64f139333ad71ba29f201c06aa"
+      ]
+    },
+    {
+      "text": "单标签标签历史核对显示，2.0.0、2.0.1、2.1.0、2.1.1、2.1.2 的冻结历史均不包含 53efacdf1136edb9462aeca221023a8f9bbd79a9。",
+      "evidence_ids": [
+        "Evidence:4cc17d5d30fc50f675ba1a79d678940bc89604c1ead50feaef84d9fe950075f1",
+        "Evidence:0a2032fba7c266a79386eac7831826d371b244a7e4dbf0df9338b295537ed66d",
+        "Evidence:5f8efedac7a763f7f50e2c4d39b5bd948b80a16ffa0211efb30f689736a44578",
+        "Evidence:7046c40dfa9f320f470409e179f36fdda6175401248962cccd54997748e0cb62",
+        "Evidence:a676d4c4960bd3d44ef7ff715df9b061b89b77d3493d8bf9b7dc7bb67a3dd64d"
+      ]
+    },
+    {
+      "text": "2.2.0 的单标签 rev-list 共 607 项，并明确包含 53efacdf1136edb9462aeca221023a8f9bbd79a9，因此该合并提交随 2.2.0 标签进入发布历史。",
+      "evidence_ids": [
+        "Evidence:3e50f988ed025ebec468ce9146ddad27a385ab0badeb4eb23ab52719b21a9f5b"
+      ]
+    },
+    {
+      "text": "因此，PR #372 的修改首次随正式版 2.2.0 发布。",
+      "evidence_ids": [
+        "Evidence:6edbb9faa6f7e14bca75ababe79f2732b943a96a0f038127fc2f21847bd599db",
+        "Evidence:3787f2c26929983c4bee3c3cf22838d898679b64f139333ad71ba29f201c06aa",
+        "Evidence:3e50f988ed025ebec468ce9146ddad27a385ab0badeb4eb23ab52719b21a9f5b"
+      ]
+    }
+  ],
+  "links": [
+    "https://github.com/pallets/itsdangerous",
+    "https://github.com/pallets/itsdangerous/compare/53efacdf1136edb9462aeca221023a8f9bbd79a9...2.2.0",
+    "https://api.github.com/repos/pallets/itsdangerous/pulls/372",
+    "https://api.github.com/repos/pallets/itsdangerous/pulls/372",
+    "https://api.github.com/repos/pallets/itsdangerous/releases",
+    "https://github.com/pallets/itsdangerous/releases/tag/2.0.0",
+    "https://api.github.com/repos/pallets/itsdangerous/releases",
+    "https://github.com/pallets/itsdangerous/releases/tag/2.0.1",
+    "https://api.github.com/repos/pallets/itsdangerous/releases",
+    "https://github.com/pallets/itsdangerous/releases/tag/2.1.0",
+    "https://api.github.com/repos/pallets/itsdangerous/releases",
+    "https://github.com/pallets/itsdangerous/releases/tag/2.1.1",
+    "https://api.github.com/repos/pallets/itsdangerous/releases",
+    "https://github.com/pallets/itsdangerous/releases/tag/2.1.2",
+    "https://api.github.com/repos/pallets/itsdangerous/releases",
+    "https://github.com/pallets/itsdangerous/releases/tag/2.2.0",
+    "https://github.com/pallets/itsdangerous",
+    "https://github.com/pallets/itsdangerous/compare/53efacdf1136edb9462aeca221023a8f9bbd79a9...2.0.0",
+    "https://github.com/pallets/itsdangerous",
+    "https://github.com/pallets/itsdangerous/compare/53efacdf1136edb9462aeca221023a8f9bbd79a9...2.0.1",
+    "https://github.com/pallets/itsdangerous",
+    "https://github.com/pallets/itsdangerous/compare/53efacdf1136edb9462aeca221023a8f9bbd79a9...2.1.0",
+    "https://github.com/pallets/itsdangerous",
+    "https://github.com/pallets/itsdangerous/compare/53efacdf1136edb9462aeca221023a8f9bbd79a9...2.1.1",
+    "https://github.com/pallets/itsdangerous",
+    "https://github.com/pallets/itsdangerous/compare/53efacdf1136edb9462aeca221023a8f9bbd79a9...2.1.2"
+  ],
+  "paths_count": 49,
+  "errors": []
+}

@@ -1,0 +1,87 @@
+{
+  "arm": "A",
+  "question": "仓库 pallets/itsdangerous，截止时间 2026-11-16T06:31:18Z，冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd。2.1.3 是哪天正式发布的？如果截至冻结日期找不到，请说明能确认什么，给出核对范围。",
+  "status": "empty",
+  "error": null,
+  "seconds": 18.102,
+  "method": "p2_query_v1.4.2_historykg_discussion_v1_full_focal_v2",
+  "max_output_tokens": 32768,
+  "timeout_seconds": 240,
+  "claims": [],
+  "evidence": [],
+  "gaps": [
+    "未找到 pallets/itsdangerous 2.1.3 的正式发布日期：提供的最终可见上下文中没有 itsdangerous 2.1.3 的 release、tag、changelog 或发布公告。",
+    "核对范围为提供的 5 个依赖升级 PR/发布说明片段：actions/cache 3.0.11→3.2.2、sphinx 3.1.2→3.2.0、pallets-sphinx-themes 2.0.1→2.0.2、sphinx 3.2.0→3.2.1、sphinx 3.1.1→3.1.2；这些内容均未显示 itsdangerous 2.1.3 的发布日期。",
+    "因此只能确认在给定冻结条件下的可见上下文范围内无法确定 2.1.3 的正式发布日期，不能据此推断具体日期。"
+  ],
+  "context_characters": 11822,
+  "context_sha256": "7fb124857d4d79003c5fad39b0262cf8fffcefd1c4c9e589afb9d9cabbbffd25",
+  "visible": [
+    {
+      "source_id": "SourceDocument:88b413c1a84b7123b540bd5be2876fdabeffa3407b70c7d77cc31fb13c7328f3",
+      "start": 0,
+      "end": 9789,
+      "title": "Bump actions/cache from 3.0.11 to 3.2.2",
+      "url": "https://github.com/pallets/itsdangerous/pull/323",
+      "author": "dependabot[bot]",
+      "time": "2023-01-01T16:01:03Z"
+    },
+    {
+      "source_id": "SourceDocument:687b695b02e678f33558aff452e3e31e3b86759edff709dd6f2aed26bc780854",
+      "start": 0,
+      "end": 74,
+      "title": "Bump sphinx from 3.1.2 to 3.2.0",
+      "url": "https://github.com/pallets/itsdangerous/pull/182",
+      "author": "dependabot-preview[bot]",
+      "time": "2020-08-10T08:06:45Z"
+    },
+    {
+      "source_id": "SourceDocument:33bc4abab91543b6cdbb1e6e99b1d86960b456f3e159285bcfdc4368e82409d1",
+      "start": 0,
+      "end": 101,
+      "title": "Bump pallets-sphinx-themes from 2.0.1 to 2.0.2",
+      "url": "https://github.com/pallets/itsdangerous/pull/276",
+      "author": "dependabot[bot]",
+      "time": "2021-12-01T08:05:12Z"
+    },
+    {
+      "source_id": "SourceDocument:2707f985c825a724b1f9f332192a80470b9bb4c76cb32b7dbf93c6409ad42acd",
+      "start": 0,
+      "end": 74,
+      "title": "Bump sphinx from 3.2.0 to 3.2.1",
+      "url": "https://github.com/pallets/itsdangerous/pull/183",
+      "author": "dependabot-preview[bot]",
+      "time": "2020-08-17T08:21:35Z"
+    },
+    {
+      "source_id": "SourceDocument:fc354dfd2b3fd6724918e5cab6f176cb151b07a2d199c861f2956e5c41fc5b31",
+      "start": 0,
+      "end": 74,
+      "title": "Bump sphinx from 3.1.1 to 3.1.2",
+      "url": "https://github.com/pallets/itsdangerous/pull/174",
+      "author": "dependabot-preview[bot]",
+      "time": "2020-07-06T08:29:25Z"
+    }
+  ],
+  "graph_edges": [],
+  "responses": [
+    {
+      "status": 200,
+      "usage": {
+        "completion_tokens": 2951,
+        "completion_tokens_details": {
+          "reasoning_tokens": 2746
+        },
+        "prompt_tokens": 4775,
+        "prompt_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 256
+        },
+        "total_tokens": 7726
+      },
+      "answer": "{\"claims\":[],\"gaps\":[\"未找到 pallets/itsdangerous 2.1.3 的正式发布日期：提供的最终可见上下文中没有 itsdangerous 2.1.3 的 release、tag、changelog 或发布公告。\",\"核对范围为提供的 5 个依赖升级 PR/发布说明片段：actions/cache 3.0.11→3.2.2、sphinx 3.1.2→3.2.0、pallets-sphinx-themes 2.0.1→2.0.2、sphinx 3.2.0→3.2.1、sphinx 3.1.1→3.1.2；这些内容均未显示 itsdangerous 2.1.3 的发布日期。\",\"因此只能确认在给定冻结条件下的可见上下文范围内无法确定 2.1.3 的正式发布日期，不能据此推断具体日期。\"]}",
+      "reason": "stop",
+      "provider_error": null
+    }
+  ]
+}

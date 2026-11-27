@@ -1,0 +1,27 @@
+{
+  "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+  "draft_model": "bailian/deepseek-v4.1-flash-1017",
+  "f1": 0.46511627906976744,
+  "fn": 8,
+  "fp": 15,
+  "issue_units": 15,
+  "judgment_complete": true,
+  "judgment_coverage": 1.0,
+  "precision": 0.4,
+  "predictions": 25,
+  "protocol_sha256": "c95b4ab1f4f88d8c703de784f326f05204bd76d70998db29dc2d2d9af3e3d5d9",
+  "pull_request_units": 15,
+  "rationale": {
+    "coverage": 0.29411764705882354,
+    "covered": 5,
+    "eligible": 17
+  },
+  "recall": 0.5555555555555556,
+  "references": 18,
+  "review_model": "bailian/glm-5.3",
+  "seed": "itsdangerous-final-extraction-20261121",
+  "source_hash": "85388a98aa286466e48cd03316456b3356135fa0a1284828987fc3dd089adb2c",
+  "tp": 10,
+  "units": 30,
+  "unresolved_references": 0
+}

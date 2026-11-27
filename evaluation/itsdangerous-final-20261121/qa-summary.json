@@ -1,0 +1,568 @@
+{
+  "api_citations": 197,
+  "comparison_cells": 54,
+  "matched_BC_inputs": [
+    {
+      "explicit_edges": 2,
+      "question": 1
+    },
+    {
+      "explicit_edges": 9,
+      "question": 3
+    },
+    {
+      "explicit_edges": 9,
+      "question": 5
+    },
+    {
+      "explicit_edges": 10,
+      "question": 7
+    },
+    {
+      "explicit_edges": 0,
+      "question": 9
+    },
+    {
+      "explicit_edges": 8,
+      "question": 11
+    }
+  ],
+  "per_question": [
+    {
+      "A": {
+        "max": 2,
+        "record": "records/live-A1.json",
+        "score": 2,
+        "seconds": 12.897,
+        "status": "ok"
+      },
+      "B": {
+        "max": 2,
+        "record": "records/live-B1.json",
+        "score": 2,
+        "seconds": 20.906,
+        "status": "ok"
+      },
+      "C": {
+        "max": 2,
+        "record": "records/live-C1.json",
+        "score": 2,
+        "seconds": 26.185,
+        "status": "ok"
+      },
+      "D": {
+        "max": 2,
+        "record": "records/D1.json",
+        "score": 2,
+        "seconds": 100.664,
+        "status": "ok"
+      },
+      "E": {
+        "max": 2,
+        "record": "records/E1.json",
+        "score": 0,
+        "seconds": 122.454,
+        "status": "empty"
+      },
+      "O": {
+        "max": 2,
+        "record": "records/live-O1.json",
+        "score": 0,
+        "seconds": 10.126,
+        "status": "empty"
+      }
+    },
+    {
+      "A": {
+        "max": 2,
+        "record": "records/live-A2.json",
+        "score": 2,
+        "seconds": 45.867,
+        "status": "ok"
+      },
+      "B": {
+        "max": 2,
+        "record": "records/live-B2.json",
+        "score": 0,
+        "seconds": 47.415,
+        "status": "error"
+      },
+      "O": {
+        "max": 2,
+        "record": "records/live-O2.json",
+        "score": 0,
+        "seconds": 10.646,
+        "status": "empty"
+      }
+    },
+    {
+      "A": {
+        "max": 3,
+        "record": "records/live-A3.json",
+        "score": 2,
+        "seconds": 21.171,
+        "status": "ok"
+      },
+      "B": {
+        "max": 3,
+        "record": "records/live-B3.json",
+        "score": 2,
+        "seconds": 50.083,
+        "status": "ok"
+      },
+      "C": {
+        "max": 3,
+        "record": "records/live-C3.json",
+        "score": 2,
+        "seconds": 24.164,
+        "status": "ok"
+      },
+      "D": {
+        "max": 3,
+        "record": "records/D3.json",
+        "score": 3,
+        "seconds": 131.575,
+        "status": "ok"
+      },
+      "E": {
+        "max": 3,
+        "record": "records/E3.json",
+        "score": 3,
+        "seconds": 266.677,
+        "status": "ok"
+      },
+      "O": {
+        "max": 3,
+        "record": "records/live-O3.json",
+        "score": 1,
+        "seconds": 32.104,
+        "status": "ok"
+      }
+    },
+    {
+      "A": {
+        "max": 3,
+        "record": "records/live-A4.json",
+        "score": 1,
+        "seconds": 78.619,
+        "status": "ok"
+      },
+      "B": {
+        "max": 3,
+        "record": "records/live-B4.json",
+        "score": 2,
+        "seconds": 31.22,
+        "status": "ok"
+      },
+      "O": {
+        "max": 3,
+        "record": "records/live-O4.json",
+        "score": 1,
+        "seconds": 18.396,
+        "status": "ok"
+      }
+    },
+    {
+      "A": {
+        "max": 4,
+        "record": "records/live-A5.json",
+        "score": 1,
+        "seconds": 45.322,
+        "status": "ok"
+      },
+      "B": {
+        "max": 4,
+        "record": "records/live-B5.json",
+        "score": 4,
+        "seconds": 72.073,
+        "status": "ok"
+      },
+      "C": {
+        "max": 4,
+        "record": "records/live-C5.json",
+        "score": 4,
+        "seconds": 183.286,
+        "status": "ok"
+      },
+      "D": {
+        "max": 4,
+        "record": "records/D5.json",
+        "score": 4,
+        "seconds": 177.706,
+        "status": "ok"
+      },
+      "E": {
+        "max": 4,
+        "record": "records/E5.json",
+        "score": 0,
+        "seconds": 129.778,
+        "status": "empty"
+      },
+      "O": {
+        "max": 4,
+        "record": "records/live-O5.json",
+        "score": 1,
+        "seconds": 34.837,
+        "status": "ok"
+      }
+    },
+    {
+      "A": {
+        "max": 4,
+        "record": "records/live-A6.json",
+        "score": 1,
+        "seconds": 15.287,
+        "status": "ok"
+      },
+      "B": {
+        "max": 4,
+        "record": "records/live-B6.json",
+        "score": 4,
+        "seconds": 73.659,
+        "status": "ok"
+      },
+      "O": {
+        "max": 4,
+        "record": "records/live-O6.json",
+        "score": 1.5,
+        "seconds": 46.903,
+        "status": "ok"
+      }
+    },
+    {
+      "A": {
+        "max": 4,
+        "record": "records/live-A7.json",
+        "score": 2.5,
+        "seconds": 29.151,
+        "status": "ok"
+      },
+      "B": {
+        "max": 4,
+        "record": "records/live-B7.json",
+        "score": 4,
+        "seconds": 43.855,
+        "status": "ok"
+      },
+      "C": {
+        "max": 4,
+        "record": "records/live-C7.json",
+        "score": 4,
+        "seconds": 26.19,
+        "status": "ok"
+      },
+      "D": {
+        "max": 4,
+        "record": "records/D7.json",
+        "score": 4,
+        "seconds": 196.912,
+        "status": "ok"
+      },
+      "E": {
+        "max": 4,
+        "record": "records/E7.json",
+        "score": 3.5,
+        "seconds": 368.646,
+        "status": "ok"
+      },
+      "O": {
+        "max": 4,
+        "record": "records/live-O7.json",
+        "score": 0,
+        "seconds": 9.6,
+        "status": "empty"
+      }
+    },
+    {
+      "A": {
+        "max": 3,
+        "record": "records/live-A8.json",
+        "score": 0.5,
+        "seconds": 26.536,
+        "status": "ok"
+      },
+      "B": {
+        "max": 3,
+        "record": "records/live-B8.json",
+        "score": 1,
+        "seconds": 24.289,
+        "status": "ok"
+      },
+      "O": {
+        "max": 3,
+        "record": "records/live-O8.json",
+        "score": 0,
+        "seconds": 15.394,
+        "status": "empty"
+      }
+    },
+    {
+      "A": {
+        "max": 2,
+        "record": "records/live-A9.json",
+        "score": 0,
+        "seconds": 6.146,
+        "status": "empty"
+      },
+      "B": {
+        "max": 2,
+        "record": "records/live-B9.json",
+        "score": 0,
+        "seconds": 6.269,
+        "status": "empty"
+      },
+      "C": {
+        "max": 2,
+        "record": "records/live-C9.json",
+        "score": 0,
+        "seconds": 6.272,
+        "status": "empty"
+      },
+      "D": {
+        "max": 2,
+        "record": "records/D9.json",
+        "score": 2,
+        "seconds": 92.22,
+        "status": "ok"
+      },
+      "E": {
+        "max": 2,
+        "record": "records/E9.json",
+        "score": 2,
+        "seconds": 258.531,
+        "status": "ok"
+      },
+      "O": {
+        "max": 2,
+        "record": "records/live-O9.json",
+        "score": 0,
+        "seconds": 6.939,
+        "status": "empty"
+      }
+    },
+    {
+      "A": {
+        "max": 3,
+        "record": "records/live-A10.json",
+        "score": 3,
+        "seconds": 25.625,
+        "status": "ok"
+      },
+      "B": {
+        "max": 3,
+        "record": "records/live-B10.json",
+        "score": 3,
+        "seconds": 33.255,
+        "status": "ok"
+      },
+      "O": {
+        "max": 3,
+        "record": "records/live-O10.json",
+        "score": 3,
+        "seconds": 48.53,
+        "status": "ok"
+      }
+    },
+    {
+      "A": {
+        "max": 2,
+        "record": "records/live-A11.json",
+        "score": 2,
+        "seconds": 34.534,
+        "status": "ok"
+      },
+      "B": {
+        "max": 2,
+        "record": "records/live-B11.json",
+        "score": 2,
+        "seconds": 39.513,
+        "status": "ok"
+      },
+      "C": {
+        "max": 2,
+        "record": "records/live-C11.json",
+        "score": 2,
+        "seconds": 33.376,
+        "status": "ok"
+      },
+      "D": {
+        "max": 2,
+        "record": "records/D11.json",
+        "score": 2,
+        "seconds": 205.579,
+        "status": "ok"
+      },
+      "E": {
+        "max": 2,
+        "record": "records/E11.json",
+        "score": 2,
+        "seconds": 201.602,
+        "status": "ok"
+      },
+      "O": {
+        "max": 2,
+        "record": "records/live-O11.json",
+        "score": 0,
+        "seconds": 16.453,
+        "status": "empty"
+      }
+    },
+    {
+      "A": {
+        "max": 2,
+        "record": "records/live-A12.json",
+        "score": 0.5,
+        "seconds": 18.102,
+        "status": "empty"
+      },
+      "B": {
+        "max": 2,
+        "record": "records/live-B12.json",
+        "score": 0.5,
+        "seconds": 9.908,
+        "status": "empty"
+      },
+      "O": {
+        "max": 2,
+        "record": "records/live-O12.json",
+        "score": 0.5,
+        "seconds": 11.937,
+        "status": "empty"
+      }
+    }
+  ],
+  "questions": 12,
+  "totals": {
+    "A": {
+      "all": {
+        "max": 34,
+        "median_seconds": 26.1,
+        "score": 17.5,
+        "score_300s": 17.5,
+        "statuses": {
+          "empty": 2,
+          "ok": 10
+        }
+      },
+      "common": {
+        "max": 17,
+        "median_seconds": 25.2,
+        "score": 9.5,
+        "score_300s": 9.5,
+        "statuses": {
+          "empty": 1,
+          "ok": 5
+        }
+      }
+    },
+    "B": {
+      "all": {
+        "max": 34,
+        "median_seconds": 36.4,
+        "score": 24.5,
+        "score_300s": 24.5,
+        "statuses": {
+          "empty": 2,
+          "error": 1,
+          "ok": 9
+        }
+      },
+      "common": {
+        "max": 17,
+        "median_seconds": 41.7,
+        "score": 14,
+        "score_300s": 14,
+        "statuses": {
+          "empty": 1,
+          "ok": 5
+        }
+      }
+    },
+    "C": {
+      "all": {
+        "max": 17,
+        "median_seconds": 26.2,
+        "score": 14,
+        "score_300s": 14,
+        "statuses": {
+          "empty": 1,
+          "ok": 5
+        }
+      },
+      "common": {
+        "max": 17,
+        "median_seconds": 26.2,
+        "score": 14,
+        "score_300s": 14,
+        "statuses": {
+          "empty": 1,
+          "ok": 5
+        }
+      }
+    },
+    "D": {
+      "all": {
+        "max": 17,
+        "median_seconds": 154.6,
+        "score": 17,
+        "score_300s": 17,
+        "statuses": {
+          "ok": 6
+        }
+      },
+      "common": {
+        "max": 17,
+        "median_seconds": 154.6,
+        "score": 17,
+        "score_300s": 17,
+        "statuses": {
+          "ok": 6
+        }
+      }
+    },
+    "E": {
+      "all": {
+        "max": 17,
+        "median_seconds": 230.1,
+        "score": 10.5,
+        "score_300s": 7,
+        "statuses": {
+          "empty": 2,
+          "ok": 4
+        }
+      },
+      "common": {
+        "max": 17,
+        "median_seconds": 230.1,
+        "score": 10.5,
+        "score_300s": 7,
+        "statuses": {
+          "empty": 2,
+          "ok": 4
+        }
+      }
+    },
+    "O": {
+      "all": {
+        "max": 34,
+        "median_seconds": 15.9,
+        "score": 8.0,
+        "score_300s": 8.0,
+        "statuses": {
+          "empty": 7,
+          "ok": 5
+        }
+      },
+      "common": {
+        "max": 17,
+        "median_seconds": 13.3,
+        "score": 2,
+        "score_300s": 2,
+        "statuses": {
+          "empty": 4,
+          "ok": 2
+        }
+      }
+    }
+  }
+}

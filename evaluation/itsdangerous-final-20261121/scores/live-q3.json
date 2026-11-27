@@ -1,0 +1,70 @@
+{
+  "rubric": [
+    "原文支持的改动理由",
+    "合并记录与正确提交",
+    "实际修改文件和差异出处"
+  ],
+  "model": "bailian/deepseek-v4.1-flash-1017",
+  "usage": {
+    "completion_tokens": 235,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 8717,
+    "prompt_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "total_tokens": 8952
+  },
+  "scores": {
+    "B": {
+      "points": [
+        1,
+        1,
+        0
+      ],
+      "note": "改动理由和合并记录均有原文支持，各得1分；未给出实际修改文件，扣1分。"
+    },
+    "E": {
+      "points": [
+        1,
+        1,
+        1
+      ],
+      "note": "理由有PR正文原文，合并记录含合并提交并区分stable合入，文件明确为.github/workflows/publish.yaml并附差异/补丁出处，三项均满足。"
+    },
+    "O": {
+      "points": [
+        1,
+        0,
+        0
+      ],
+      "note": "理由有原文支持得1分；未给合并记录、未确认修改文件，各扣1分。"
+    },
+    "A": {
+      "points": [
+        1,
+        1,
+        0
+      ],
+      "note": "理由和合并记录均有出处，各得1分；未确认实际修改文件，扣1分。"
+    },
+    "C": {
+      "points": [
+        1,
+        1,
+        0
+      ],
+      "note": "理由和合并记录有出处，各得1分；未给出实际修改文件，扣1分。"
+    },
+    "D": {
+      "points": [
+        1,
+        1,
+        1
+      ],
+      "note": "理由、合并提交与提交信息、实际修改文件及diff-tree出处均完整，三项满分。"
+    }
+  }
+}

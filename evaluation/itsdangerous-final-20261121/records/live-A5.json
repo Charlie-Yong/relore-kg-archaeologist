@@ -1,0 +1,222 @@
+{
+  "arm": "A",
+  "question": "仓库 pallets/itsdangerous，截止时间 2026-11-16T06:31:18Z，冻结默认分支 672971d66a2ef9f85151e53283113f33d642dabd。Issue #146 为什么质疑保留 simplejson？后来哪个 PR 处理了这个请求，合并提交是什么，改了哪个源码文件？请附原文出处。",
+  "status": "ok",
+  "error": null,
+  "seconds": 45.322,
+  "method": "p2_query_v1.4.2_historykg_discussion_v1_full_focal_v2",
+  "max_output_tokens": 32768,
+  "timeout_seconds": 240,
+  "claims": [
+    {
+      "text": "Issue #146 质疑保留 simplejson 的原因是：itsdangerous 及 flask、starlette 等会在 simplejson 已安装时优先导入 simplejson，而作者不知道还存在功能或兼容性上的理由。",
+      "evidence_ids": [
+        "Evidence:0848948cf56fe985ce0d2cce0f1203fcff4b501c647c424e21636c7de9dcd1fc",
+        "Evidence:29ea361de9f7fff4dc4160531bcf40c82106a4d84202fd2b6fbcb6a5bf895f47"
+      ]
+    },
+    {
+      "text": "Issue #146 提到“性能更好”这一理由，但认为在 Python 3.6+、使用现代发行版（可能以 PGO 和 LTO 编译 Python）且 simplejson 已编译时并不成立。",
+      "evidence_ids": [
+        "Evidence:3bbf78142d0e68556cc3425cba147f24c15183e761992240772a2c12494dcecc"
+      ]
+    },
+    {
+      "text": "Issue #146 还指出，在没有编译器的容器中 simplejson 会退化为纯 Python 实现，构成性能陷阱，因此更倾向于直接使用 json。",
+      "evidence_ids": [
+        "Evidence:a0939dc0ee121066174ae28f55fe5bd972e77eb0c972ae8f509f817c459e5e77",
+        "Evidence:eca0299c196545b0d30d2b8558ae6cb60d7666e32a78087ad9bb4e1e7f0a4df4"
+      ]
+    },
+    {
+      "text": "上下文中可见的 PR #201 涉及 pre-commit 从 2.8.2 到 2.9.2 的升级；PR #319 和 PR #323 分别涉及 actions/cache 从 3.0.9 到 3.0.11、从 3.0.11 到 3.2.2 的升级。",
+      "evidence_ids": [
+        "Evidence:b912e37359e2cd0eb519ffd993bfd6e91afd2f63a53eaf22cd61a651ced29c05",
+        "Evidence:61228b4c4a2baf6bf9bf9ec02d23350c6f9183b4bbb2afac44fb1f1a8fc49517",
+        "Evidence:a2e84fb1de604ca2eface7036dd3daaf20de88cc58ad6f123ca47c399f75479c"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "Evidence:0848948cf56fe985ce0d2cce0f1203fcff4b501c647c424e21636c7de9dcd1fc",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+      "start": 0,
+      "end": 99,
+      "quote": "itsdangerous and by extension flask, starlette, and others use simplejson if it's installed due to:",
+      "url": "https://github.com/pallets/itsdangerous/issues/146",
+      "author": "ijl",
+      "time": "2020-02-20T16:55:49Z",
+      "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+    },
+    {
+      "evidence_id": "Evidence:29ea361de9f7fff4dc4160531bcf40c82106a4d84202fd2b6fbcb6a5bf895f47",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+      "start": 187,
+      "end": 280,
+      "quote": "Is there still a reason to use simplejson? I don't know of a feature or compatibility reason.",
+      "url": "https://github.com/pallets/itsdangerous/issues/146",
+      "author": "ijl",
+      "time": "2020-02-20T16:55:49Z",
+      "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+    },
+    {
+      "evidence_id": "Evidence:3bbf78142d0e68556cc3425cba147f24c15183e761992240772a2c12494dcecc",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+      "start": 282,
+      "end": 484,
+      "quote": "The reason I have seen mentioned is better performance. That is not the case with at least python3.6+ and a modern distribution (that probably compiled python with PGO and LTO) with simplejson compiled.",
+      "url": "https://github.com/pallets/itsdangerous/issues/146",
+      "author": "ijl",
+      "time": "2020-02-20T16:55:49Z",
+      "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+    },
+    {
+      "evidence_id": "Evidence:a0939dc0ee121066174ae28f55fe5bd972e77eb0c972ae8f509f817c459e5e77",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+      "start": 553,
+      "end": 674,
+      "quote": "If simplejson is installed in a container without a compiler, it falls back to running in pure Python. This is a footgun:",
+      "url": "https://github.com/pallets/itsdangerous/issues/146",
+      "author": "ijl",
+      "time": "2020-02-20T16:55:49Z",
+      "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+    },
+    {
+      "evidence_id": "Evidence:eca0299c196545b0d30d2b8558ae6cb60d7666e32a78087ad9bb4e1e7f0a4df4",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+      "start": 979,
+      "end": 1016,
+      "quote": "It seems preferable to just use json.",
+      "url": "https://github.com/pallets/itsdangerous/issues/146",
+      "author": "ijl",
+      "time": "2020-02-20T16:55:49Z",
+      "text_sha256": "9ee4ac95c7b48d463e5d2b664dbbf075c52fe47a3f2d597020c714165341bca9"
+    },
+    {
+      "evidence_id": "Evidence:b912e37359e2cd0eb519ffd993bfd6e91afd2f63a53eaf22cd61a651ced29c05",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:b7f607d08da84956922adfd39afcd8b9648123aaafab70d3b565189849e7642e",
+      "start": 0,
+      "end": 81,
+      "quote": "Bumps [pre-commit](https://github.com/pre-commit/pre-commit) from 2.8.2 to 2.9.2.",
+      "url": "https://github.com/pallets/itsdangerous/pull/201",
+      "author": "dependabot-preview[bot]",
+      "time": "2020-12-01T08:56:47Z",
+      "text_sha256": "d58fc9aad26581740d2c4387373810f7e0913bc28926de600c66bd666b130672"
+    },
+    {
+      "evidence_id": "Evidence:61228b4c4a2baf6bf9bf9ec02d23350c6f9183b4bbb2afac44fb1f1a8fc49517",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:c3d0828fb5a383ef3dc3671463984255efbe9c868d349c6162ced23b733807d4",
+      "start": 0,
+      "end": 77,
+      "quote": "Bumps [actions/cache](https://github.com/actions/cache) from 3.0.9 to 3.0.11.",
+      "url": "https://github.com/pallets/itsdangerous/pull/319",
+      "author": "dependabot[bot]",
+      "time": "2022-11-01T16:08:55Z",
+      "text_sha256": "a1a87e00cd835e815cb0e13936dfaf39e910aee0ae991ad67172dd8372736a2d"
+    },
+    {
+      "evidence_id": "Evidence:a2e84fb1de604ca2eface7036dd3daaf20de88cc58ad6f123ca47c399f75479c",
+      "dataset_id": "dataset:0c94c5af1f7f64c628c4a7fe05b496647ad8ef760e18eee01287fd43f1ea3ef2",
+      "source_id": "SourceDocument:88b413c1a84b7123b540bd5be2876fdabeffa3407b70c7d77cc31fb13c7328f3",
+      "start": 0,
+      "end": 77,
+      "quote": "Bumps [actions/cache](https://github.com/actions/cache) from 3.0.11 to 3.2.2.",
+      "url": "https://github.com/pallets/itsdangerous/pull/323",
+      "author": "dependabot[bot]",
+      "time": "2023-01-01T16:01:03Z",
+      "text_sha256": "a272f82b96254afdeac92be311b4c151d53dec782bce96b9bbe18a5676bd4426"
+    }
+  ],
+  "gaps": [
+    "提供的上下文没有包含处理 Issue #146 的 PR 编号、合并提交哈希或合并事件，因此无法确定后来哪个 PR 处理了该请求，也无法给出合并提交。",
+    "没有提供 Issue #146 对应的源码差异或代码/文档证据；提交 005d16a946eb1fa18aaba36f516ce776fb93e0e1 的文件列表虽列出 src/itsdangerous/_json.py，但仅凭文件名不能证明该文件因 Issue #146 被修改或负责该修复。",
+    "可见的 PR #201、#319、#323 只是依赖升级条目，未显示与 Issue #146 或 simplejson 相关，也未提供其合并状态。"
+  ],
+  "context_characters": 11708,
+  "context_sha256": "9c058d4c9a0ca91b24ef34e56d209b8a4d4a2c56f715f20d26251abac62fbec3",
+  "visible": [
+    {
+      "source_id": "SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9",
+      "start": 0,
+      "end": 1016,
+      "title": "Use json instead of simplejson",
+      "url": "https://github.com/pallets/itsdangerous/issues/146",
+      "author": "ijl",
+      "time": "2020-02-20T16:55:49Z"
+    },
+    {
+      "source_id": "SourceDocument:1149330e288ae29c97f0ad0ad5d13c3a70281bb189d34deb315c4fb339d434ce",
+      "start": 0,
+      "end": 1881,
+      "title": null,
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:91d93fd2a391b02a96306580d62edd9c48da196fb277f4855521c8f6f7020f2d",
+      "start": 0,
+      "end": 688,
+      "title": null,
+      "url": "https://github.com/pallets/itsdangerous",
+      "author": null,
+      "time": null
+    },
+    {
+      "source_id": "SourceDocument:88b413c1a84b7123b540bd5be2876fdabeffa3407b70c7d77cc31fb13c7328f3",
+      "start": 0,
+      "end": 78,
+      "title": "Bump actions/cache from 3.0.11 to 3.2.2",
+      "url": "https://github.com/pallets/itsdangerous/pull/323",
+      "author": "dependabot[bot]",
+      "time": "2023-01-01T16:01:03Z"
+    },
+    {
+      "source_id": "SourceDocument:c3d0828fb5a383ef3dc3671463984255efbe9c868d349c6162ced23b733807d4",
+      "start": 0,
+      "end": 6081,
+      "title": "Bump actions/cache from 3.0.9 to 3.0.11",
+      "url": "https://github.com/pallets/itsdangerous/pull/319",
+      "author": "dependabot[bot]",
+      "time": "2022-11-01T16:08:55Z"
+    },
+    {
+      "source_id": "SourceDocument:b7f607d08da84956922adfd39afcd8b9648123aaafab70d3b565189849e7642e",
+      "start": 0,
+      "end": 82,
+      "title": "Bump pre-commit from 2.8.2 to 2.9.2",
+      "url": "https://github.com/pallets/itsdangerous/pull/201",
+      "author": "dependabot-preview[bot]",
+      "time": "2020-12-01T08:56:47Z"
+    }
+  ],
+  "graph_edges": [],
+  "responses": [
+    {
+      "status": 200,
+      "usage": {
+        "completion_tokens": 7918,
+        "completion_tokens_details": {
+          "reasoning_tokens": 6906
+        },
+        "prompt_tokens": 4661,
+        "prompt_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 256
+        },
+        "total_tokens": 12579
+      },
+      "answer": "{\"claims\":[{\"text\":\"Issue #146 质疑保留 simplejson 的原因是：itsdangerous 及 flask、starlette 等会在 simplejson 已安装时优先导入 simplejson，而作者不知道还存在功能或兼容性上的理由。\",\"evidence\":[{\"source_id\":\"SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9\",\"quote\":\"itsdangerous and by extension flask, starlette, and others use simplejson if it's installed due to:\"},{\"source_id\":\"SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9\",\"quote\":\"Is there still a reason to use simplejson? I don't know of a feature or compatibility reason.\"}]},{\"text\":\"Issue #146 提到“性能更好”这一理由，但认为在 Python 3.6+、使用现代发行版（可能以 PGO 和 LTO 编译 Python）且 simplejson 已编译时并不成立。\",\"evidence\":[{\"source_id\":\"SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9\",\"quote\":\"The reason I have seen mentioned is better performance. That is not the case with at least python3.6+ and a modern distribution (that probably compiled python with PGO and LTO) with simplejson compiled.\"}]},{\"text\":\"Issue #146 还指出，在没有编译器的容器中 simplejson 会退化为纯 Python 实现，构成性能陷阱，因此更倾向于直接使用 json。\",\"evidence\":[{\"source_id\":\"SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9\",\"quote\":\"If simplejson is installed in a container without a compiler, it falls back to running in pure Python. This is a footgun:\"},{\"source_id\":\"SourceDocument:9ce3b3cf9a606f0a573a39dfa143e2dac20fdfb6ecada2be65b05e6446e6cfd9\",\"quote\":\"It seems preferable to just use json.\"}]},{\"text\":\"上下文中可见的 PR #201 涉及 pre-commit 从 2.8.2 到 2.9.2 的升级；PR #319 和 PR #323 分别涉及 actions/cache 从 3.0.9 到 3.0.11、从 3.0.11 到 3.2.2 的升级。\",\"evidence\":[{\"source_id\":\"SourceDocument:b7f607d08da84956922adfd39afcd8b9648123aaafab70d3b565189849e7642e\",\"quote\":\"Bumps [pre-commit](https://github.com/pre-commit/pre-commit) from 2.8.2 to 2.9.2.\"},{\"source_id\":\"SourceDocument:c3d0828fb5a383ef3dc3671463984255efbe9c868d349c6162ced23b733807d4\",\"quote\":\"Bumps [actions/cache](https://github.com/actions/cache) from 3.0.9 to 3.0.11.\"},{\"source_id\":\"SourceDocument:88b413c1a84b7123b540bd5be2876fdabeffa3407b70c7d77cc31fb13c7328f3\",\"quote\":\"Bumps [actions/cache](https://github.com/actions/cache) from 3.0.11 to 3.2.2.\"}]}],\"gaps\":[\"提供的上下文没有包含处理 Issue #146 的 PR 编号、合并提交哈希或合并事件，因此无法确定后来哪个 PR 处理了该请求，也无法给出合并提交。\",\"没有提供 Issue #146 对应的源码差异或代码/文档证据；提交 005d16a946eb1fa18aaba36f516ce776fb93e0e1 的文件列表虽列出 src/itsdangerous/_json.py，但仅凭文件名不能证明该文件因 Issue #146 被修改或负责该修复。\",\"可见的 PR #201、#319、#323 只是依赖升级条目，未显示与 Issue #146 或 simplejson 相关，也未提供其合并状态。\"]}",
+      "reason": "stop",
+      "provider_error": null
+    }
+  ]
+}
