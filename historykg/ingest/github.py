@@ -9,6 +9,8 @@ from dataclasses import dataclass, field
 import httpx
 
 API = "https://api.github.com/"
+FULL_HISTORY = "full_history_v1"
+FULL_MAX_REQUESTS = 5000
 
 
 class CollectionBlocked(RuntimeError):
@@ -69,8 +71,8 @@ class GitHubClient:
     def get_json(self, path: str, params: dict | None = None):
         return self._get(path, params).json()
 
-    def pages(self, path: str) -> Iterator[dict]:
-        url, params = path, {"per_page": 100}
+    def pages(self, path: str, params: dict | None = None) -> Iterator[dict]:
+        url, params = path, {"per_page": 100, **(params or {})}
         while url:
             response = self._get(url, params)
             rows = response.json()
@@ -185,3 +187,37 @@ def fetch_thread(client: GitHubClient, repo: str, number: int) -> ThreadPayload:
         review_comments=comments("review_comment", pr_path + "/comments") if is_pr else [],
         unread=unread,
     )
+
+
+def fetch_closing_prs(
+    client: GitHubClient, repo: str, issue_numbers: list[int], *, batch_size: int = 25
+) -> list[dict]:
+    """Read official GitHub GraphQL closedByPullRequestsReferences for closed issues."""
+    if not issue_numbers or "Authorization" not in client.http.headers:
+        return []
+    owner, name = repo.split("/", 1)
+    rows: list[dict] = []
+    ordered = sorted({int(n) for n in issue_numbers})
+    for idx in range(0, len(ordered), batch_size):
+        chunk = ordered[idx : idx + batch_size]
+        aliases = "\n".join(
+            f"i{i}: issue(number: {n}) {{ __typename number closed closedAt "
+            "repository { nameWithOwner } "
+            "closedByPullRequestsReferences(first: 10) { "
+            "nodes { __typename number merged mergedAt url repository { nameWithOwner } } } }"
+            for i, n in enumerate(chunk)
+        )
+        query = (
+            f'query {{ repository(owner: "{owner}", name: "{name}") {{ {aliases} }} }}'
+        )
+        response = client.http.post(API + "graphql", json={"query": query})
+        if response.status_code != 200:
+            raise GitHubError(
+                f"GitHub GraphQL 返回 HTTP {response.status_code}。",
+                status=response.status_code,
+            )
+        body = response.json()
+        repo_node = ((body.get("data") or {}).get("repository")) or {}
+        nodes = [v for v in repo_node.values() if isinstance(v, dict)]
+        rows.append({"query": query, "batch": idx // batch_size, "nodes": nodes})
+    return rows

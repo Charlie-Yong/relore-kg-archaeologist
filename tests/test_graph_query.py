@@ -979,3 +979,45 @@ def test_real_answerer_default_root_and_final_context_budget(sample, graph_confi
     assert fragment["end"] < len(source["text"])
     assert source["text"][fragment["start"]:fragment["end"]] == fragment["quote"]
     assert final["gaps"] and result.model_extra["usage"]["actual_requests"] == 0
+
+
+def test_cypher_subgraph_parity_and_apply_delta(sample, graph_config):
+    from historykg.graph.store import read_package
+
+    root, dataset = loaded(sample, graph_config)
+    prev_pkg = read_package(root)
+    cyp = prepare_query(
+        {"dataset_id": dataset, "question": "cache", "kind": "search"},
+        config={**graph_config, "query_mode": "cypher_subgraph"},
+    )
+    snap = prepare_query(
+        {"dataset_id": dataset, "question": "cache", "kind": "search"},
+        config={**graph_config, "query_mode": "snapshot"},
+    )
+    assert cyp["query_mode"] == "cypher_subgraph" and snap["query_mode"] == "snapshot"
+    assert [c["source_id"] for c in cyp["candidates"]] == [
+        c["source_id"] for c in snap["candidates"]
+    ]
+    assert cyp["paths"] == snap["paths"]
+
+    # Simulate temporal evolution: add an entity + relation + source and apply_delta
+    entities = read_jsonl(root / "p1/entities.jsonl")
+    pr_template = next(e for e in entities if e["type"] == "PullRequest")
+    new_pr_id = entity_id("PullRequest", pr_template["repo"], 888)
+    new_pr = {
+        **pr_template,
+        "id": new_pr_id,
+        "key": 888,
+        "properties": {**pr_template["properties"], "number": 888, "title": "Incremental delta PR"},
+    }
+    write_jsonl(root / "p1/entities.jsonl", [*entities, new_pr])
+    refresh(root)
+    next_pkg = read_package(root)
+    with GraphStore(graph_config) as store:
+        next_pkg["retrieval_index"] = store.dataset_meta(dataset)["retrieval_index"]
+        delta = store.apply_delta(dataset, prev_pkg, next_pkg)
+        assert delta["entities_upserted"] == 1
+        snap_after = store.snapshot(dataset)
+        assert snap_after is not None and snap_after["fingerprint"] == next_pkg["fingerprint"]
+        fetched = store.fetch_entities(dataset, ids=[new_pr_id])
+        assert len(fetched) == 1 and fetched[0]["properties"]["number"] == 888

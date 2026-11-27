@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 from collections import defaultdict
 
@@ -9,6 +10,11 @@ from historykg import collector
 from historykg.ids import evidence_id
 from historykg.ingest.github import discussion_mapping
 from historykg.ingest.index import SEARCH_BACKEND, SEARCH_METHOD
+from historykg.query.frozen_index import (
+    fetch_frozen_sources,
+    frozen_source_ids,
+    lexical_candidate_sources,
+)
 
 METHOD_VERSION = "p2_query_v1.4.2_historykg_discussion_v1"
 STOPWORDS = set("a an the is are was were to of for in on and or with what why how does did "
@@ -24,7 +30,7 @@ PATH_PATTERN = re.compile(
 )
 SHA_PATTERN = re.compile(r"\b[0-9a-f]{7,40}\b", re.IGNORECASE)
 NUMBER_PATTERN = re.compile(
-    r"(?:#\s*(\d+)\b|\b(?:issue|pull\s+request|pr)\s*#?\s*(\d+)\b)",
+    r"(?:#\s*(\d+)|\b(?:issue|pull\s+request|pr)\s*#?\s*(\d+))(?![a-z0-9_])",
     re.IGNORECASE,
 )
 GITHUB_OBJECT_PATTERN = re.compile(
@@ -41,6 +47,36 @@ def tokens(text: str) -> set[str]:
     for run in re.findall(r"[\u3400-\u9fff]+", text):
         words.update(run[i:i + 2] for i in range(max(1, len(run) - 1)))
     return words
+
+
+DECISION_TOPIC_STOPWORDS = set(
+    "project history decision decisions why remove removed removal rejected reject change "
+    "changed proposal proposals feature features was did has have authentication auth token "
+    "library standard module repository give find what some which reason reasons how pr "
+    "issue".split()
+)
+
+
+def decision_terms(question: str) -> set[str]:
+    """Normalize concrete topic words uniformly for all repositories without hardcoding."""
+    raw = re.findall(r"[a-z_][a-z_0-9.-]*", question.lower())
+    blocked = STOPWORDS | DECISION_TOPIC_STOPWORDS
+    terms = set()
+    for token in raw:
+        cleaned = token.strip(".-")
+        if len(cleaned) <= 1 or cleaned in blocked:
+            continue
+        terms.add(cleaned)
+        stripped = cleaned.strip("_")
+        if len(stripped) > 2 and stripped not in blocked:
+            terms.add(stripped)
+        if "." in cleaned or "-" in cleaned:
+            for part in re.split(r"[.-]+", cleaned):
+                part_stripped = part.strip("_")
+                if len(part_stripped) > 1 and part_stripped not in blocked:
+                    terms.add(part_stripped)
+    return terms
+
 
 
 def github_object_references(text: str) -> list[dict]:
@@ -175,7 +211,7 @@ def resolve_seeds(question: str, package: dict, supplied: list[str]) -> tuple[li
         return sorted(set(supplied)), []
     repo = package["manifest"]["repo"]
     gaps, seeds = [], set()
-    local_numbers = {int(n) for n in re.findall(r"(?<![\w/])#(\d+)\b", question)}
+    local_numbers = {int(a or b) for a, b in NUMBER_PATTERN.findall(question)}
     for reference in github_object_references(question):
         if reference["repo"] == repo.casefold():
             local_numbers.add(reference["number"])
@@ -214,12 +250,32 @@ def resolve_seeds(question: str, package: dict, supplied: list[str]) -> tuple[li
 
 
 def retrieve(question: str, package: dict, *, database_url: str | None,
-             limit: int = 20) -> dict:
-    sources = {s["source_id"]: s for s in package["sources"]}
+             limit: int = 20, scoped_url: str | None = None) -> dict:
     raw = collector.search_history(package["manifest"]["repo"], question,
                                    database_url=database_url, limit=10)
     if raw["status"] not in {"ok", "empty"}:
         raise RuntimeError("讨论检索失败，不能当作成功空结果")
+    if package.get("sources") is not None:
+        sources = {s["source_id"]: s for s in package["sources"]}
+        visible_source_ids = sorted(sources)
+        candidate_sources = list(sources.values())
+    elif scoped_url is not None:
+        visible_source_ids = frozen_source_ids(scoped_url)
+        candidate_list = lexical_candidate_sources(scoped_url, tokens(question))
+        sources = {s["source_id"]: s for s in candidate_list}
+        if raw.get("hits"):
+            hit_origins = sorted({
+                f"{package['manifest']['repo']}:{h['source_type']}:{h['source_id']}"
+                for h in raw["hits"]
+            })
+            for s in fetch_frozen_sources(scoped_url, origin_keys=hit_origins):
+                sources[s["source_id"]] = s
+        candidate_sources = list(sources.values())
+    else:
+        sources = {}
+        visible_source_ids = []
+        candidate_sources = []
+
     mapping = defaultdict(list)
     for source in sources.values():
         m = discussion_mapping(source)
@@ -238,7 +294,7 @@ def retrieve(question: str, package: dict, *, database_url: str | None,
             origins[sid].add("discussion_keywords")
             mapped_hits.append({"rank": rank, "source_id": sid, "hit": hit})
     lexical = sorted(
-        ((lexical_score(question, s), sid) for sid, s in sources.items()),
+        ((lexical_score(question, s), s["source_id"]) for s in candidate_sources),
         key=lambda item: (-item[0], item[1]),
     )
     for rank, (_score, sid) in enumerate((item for item in lexical if item[0] > 0), 1):
@@ -248,20 +304,27 @@ def retrieve(question: str, package: dict, *, database_url: str | None,
     return {"source_ids": ordered, "scores": dict(ranks),
             "origins": {k: sorted(v) for k, v in origins.items()},
             "raw_discussion": raw, "mapped_hits": mapped_hits,
+            "matched_sources": {sid: sources[sid] for sid in ordered if sid in sources},
             "backend": {"discussion": SEARCH_BACKEND, "discussion_method": SEARCH_METHOD,
                         "adapter": "fixed_lexical_rrf_v1",
-                        "visible_source_ids": sorted(sources)}}
+                        "visible_source_ids": visible_source_ids}}
 
 
 def seed_from_sources(package: dict, source_ids: list[str], *, limit: int = 8) -> list[str]:
-    evidence = {e["evidence_id"]: e for e in package["evidence"]}
     order = {sid: i for i, sid in enumerate(source_ids)}
     ranked = []
-    for entity in package["entities"]:
-        source_ranks = [order[evidence[e]["source_id"]] for e in entity["evidence_ids"]
-                        if e in evidence and evidence[e]["source_id"] in order]
+    if package.get("entities") and package.get("evidence"):
+        evidence = {e["evidence_id"]: e for e in package["evidence"]}
+        for entity in package["entities"]:
+            source_ranks = [order[evidence[e]["source_id"]] for e in entity["evidence_ids"]
+                            if e in evidence and evidence[e]["source_id"] in order]
+            if source_ranks:
+                ranked.append((min(source_ranks), entity["id"]))
+        return [identity for _, identity in sorted(ranked)[:limit]]
+    for subject in package.get("subjects", []):
+        source_ranks = [order[sid] for sid in subject.get("source_ids", []) if sid in order]
         if source_ranks:
-            ranked.append((min(source_ranks), entity["id"]))
+            ranked.append((min(source_ranks), subject["subject_id"]))
     return [identity for _, identity in sorted(ranked)[:limit]]
 
 
@@ -269,12 +332,17 @@ def graph_sources(package: dict, paths: list[dict]) -> list[str]:
     entities = {e["id"]: e for e in package["entities"]}
     relations = {r["id"]: r for r in package["relations"]}
     evidence = {e["evidence_id"]: e for e in package["evidence"]}
-    sources = {s["source_id"] for s in package["sources"]}
+    if package.get("sources") is not None:
+        sources = {s["source_id"] for s in package["sources"]}
+    else:
+        sources = set(package.get("visible_source_ids") or [])
     ordered = []
     for path in paths:
-        for record in [*(relations[r] for r in path["relation_ids"]),
+        for record in [*(relations[r] for r in path["relation_ids"] if r in relations),
                        *(entities[e] for e in path["entity_ids"] if e in entities)]:
-            ordered.extend(evidence[e]["source_id"] for e in record["evidence_ids"])
+            ordered.extend(
+                evidence[e]["source_id"] for e in record["evidence_ids"] if e in evidence
+            )
         ordered.extend(s for s in path["entity_ids"] if s in sources)
     return list(dict.fromkeys(ordered))
 
@@ -289,7 +357,7 @@ def context_candidates(package: dict, retrieval: dict, expansion: list[str], *,
     # A/B share this direct relevance ordering; graph expansion changes only the
     # second key and can add a source, rather than promote generic API/code noise.
     ordered = sorted(
-        scores,
+        (sid for sid in scores if sid in sources),
         key=lambda sid: (
             -direct_affinity(question, sources[sid]),
             -scores[sid],
@@ -306,6 +374,109 @@ def context_candidates(package: dict, retrieval: dict, expansion: list[str], *,
                          time=source["occurred_at"])
         candidates.append(candidate)
     return candidates
+
+
+def history_scope_seeds(question: str, kind: str, package: dict) -> list[str]:
+    """Resolve named release tags and exact file revisions in the full history."""
+    entities = package["entities"]
+    if kind == "timeline":
+        hits = []
+        for entity in entities:
+            if entity["type"] != "Release":
+                continue
+            tag = entity["properties"].get("tag")
+            if tag and re.search(r"\d", tag) and ("." in tag or tag.lower().startswith("v")):
+                match = re.search(
+                    rf"(?<![a-z0-9_.]){re.escape(tag)}(?![a-z0-9_.])", question, re.I,
+                )
+                if match:
+                    hits.append((match.start(), entity["id"]))
+        return [identity for _, identity in sorted(hits)]
+    if kind not in {"dependencies", "compare"}:
+        return []
+    paths = {path.lower() for path in PATH_PATTERN.findall(question)}
+    shas = {sha.lower() for sha in SHA_PATTERN.findall(question)}
+    if not paths or not shas:
+        return []
+    scoped = sorted(
+        e["id"] for e in entities if e["type"] == "File"
+        and e["properties"].get("path", "").lower() in paths
+        and any(e["properties"].get("commit_sha", "").lower().startswith(sha) for sha in shas)
+    )
+    if kind == "compare" and len(scoped) != 2:
+        return []
+    return scoped
+
+
+def focused_history_context(package, *, kind, seeds, paths, timeline, question):
+    """Lead large-repo queries with short, exact spans tied to the queried subjects."""
+    if kind not in {"search", "trace", "timeline"}:
+        return []
+    entities = {e["id"]: e for e in package["entities"]}
+    sources = {s["source_id"]: s for s in package["sources"]}
+    evidence = {e["evidence_id"]: e for e in package["evidence"]}
+    fragments, seen = [], set()
+
+    def add(source, start, end):
+        identity = (source["source_id"], start, end)
+        if start >= end or identity in seen:
+            return
+        seen.add(identity)
+        fragments.append({
+            **{k: source.get(k) for k in ("source_id", "url", "author", "title")},
+            "start": start, "end": end, "quote": source["text"][start:end],
+            "time": source["occurred_at"],
+        })
+
+    # The original relationship binds these excerpts to the exact merge/Release.
+    def add_relation(relation):
+        for eid in relation["evidence_ids"]:
+            e = evidence[eid]
+            source = sources[e["source_id"]]
+            start, end = e["start"], e["end"]
+            if relation["type"] == "MergedAs" and source["kind"] == "api_response":
+                needle = '\n  "merge_commit_sha":'
+                hit = source["text"].find(needle, start, end)
+                if hit != -1:
+                    start, end = hit + 1, min(end, hit + 450)
+            elif relation["type"] == "HasRelease" and source["kind"] == "api_response":
+                tag = entities.get(relation["to_id"], {}).get("properties", {}).get("tag")
+                if tag is not None:
+                    needle = '"tag_name": ' + json.dumps(tag, ensure_ascii=False)
+                    hit = source["text"].find(needle, start, end)
+                    if hit != -1:
+                        start = max(start, hit - 430)
+                        end = min(end, hit + len(needle) + 1)
+            add(source, start, min(end, start + 1150))
+
+    if kind == "timeline":
+        for relation in timeline[:6]:
+            add_relation(relation)
+        return fragments
+
+    selected = {identity: entities[identity] for identity in seeds if identity in entities}
+    if kind == "trace":
+        wanted = {rid for path in paths for rid in path["relation_ids"]}
+        relations = {r["id"]: r for r in package["relations"] if r["id"] in wanted}
+        merges = [r for r in relations.values()
+                  if r["type"] == "MergedAs" and r["from_id"] in selected]
+        commits = {r["to_id"] for r in merges}
+        changes = [r for r in relations.values()
+                   if r["type"] == "Touches" and r["from_id"] in commits]
+        for relation in (merges + changes)[:6]:
+            add_relation(relation)
+
+    threads = {e["properties"].get("number", e["key"]) for e in selected.values()
+               if e["type"] in {"Issue", "PullRequest"}}
+    if len(threads) == 1:
+        pool = [s for s in sources.values() if s["kind"] in DISCUSSION_KINDS and s["text"]
+                and (discussion_mapping(s) or {}).get("number") in threads]
+        ranked = sorted(pool, key=lambda s: (
+            s["trust_tier"] != "authoritative", -lexical_score(question, s), s["source_id"],
+        ))
+        for source in ranked[:4]:
+            add(source, 0, min(len(source["text"]), 1800))
+    return fragments
 
 
 def enrich_evidence(item: dict, source: dict) -> dict:

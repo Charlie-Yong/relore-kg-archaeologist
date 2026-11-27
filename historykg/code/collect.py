@@ -15,6 +15,7 @@ from urllib.parse import quote
 import httpx
 
 from historykg.ids import entity_id, relation_id
+from historykg.ingest.github import FULL_HISTORY, FULL_MAX_REQUESTS
 from historykg.io import (
     freeze_api_source,
     make_evidence,
@@ -69,11 +70,15 @@ class CodeStage:
         self.directory = Path(dataset_dir) / "p3"
         self.directory.mkdir(parents=True, exist_ok=True)
         self.profile = profile or snapshot.get("profile", {})
+        self.full = self.profile.get("profile_version") == FULL_HISTORY
+        maximum_requests = FULL_MAX_REQUESTS if self.full else 300
         self.budget = budget if budget is not None else {}
-        self.budget.setdefault("max_requests", 300)
+        self.budget.setdefault("max_requests", maximum_requests)
         self.budget.setdefault("github_requests", 0)
-        if not 0 <= self.budget["github_requests"] <= self.budget["max_requests"] <= 300:
-            raise ValueError("GitHub request budget must be within 0..300")
+        if not 0 <= (
+            self.budget["github_requests"]
+        ) <= self.budget["max_requests"] <= maximum_requests:
+            raise ValueError(f"GitHub request budget must be within 0..{maximum_requests}")
         self.started_requests = self.budget["github_requests"]
         self.git_network = 0
         self.api_requests = 0
@@ -89,6 +94,9 @@ class CodeStage:
         self.max_commits = min(40, max(0, int(self.profile.get("max_commits", 40))))
         self.max_releases = min(3, max(0, int(self.profile.get("max_releases", 3))))
         self.reserve = min(8, self.max_files // 3)
+        if self.full:
+            self.max_files = self.max_commits = self.max_releases = None
+            self.reserve = 0
         self.sources: dict[str, dict] = {}
         self.upstream_sources = {
             s["source_id"]: s for s in snapshot.get("sources", []) if isinstance(s, dict)
@@ -119,7 +127,10 @@ class CodeStage:
         clone_root = Path(os.environ.get("HISTORYKG_CODE_CLONE_ROOT", ".local/code-git"))
         self.git = GitReader(
             self.repo,
-            Path(git_repo) if git_repo else clone_root / (self.repo.replace("/", "__") + ".git"),
+            Path(git_repo) if git_repo else (
+                self.directory / "history.git" if self.full
+                else clone_root / (self.repo.replace("/", "__") + ".git")
+            ),
             self.git_source,
             self.before_network,
             local=git_repo is not None,
@@ -465,7 +476,7 @@ class CodeStage:
         key = (sha, path)
         if key in self.files:
             return self.files[key]
-        if len(self.files) >= self.max_files:
+        if self.max_files is not None and len(self.files) >= self.max_files:
             self.plan["excluded"].append(
                 {"sha": sha, "path": path, "reason": "file_snapshot_limit"}
             )
@@ -647,6 +658,160 @@ class CodeStage:
                     after_path=new,
                     change_type=status,
                 )
+
+    def full_history(self):
+        head = self.snapshot["default_branch_sha"]
+        tags = {item["name"]: item["commit"]["sha"] for item in self.snapshot["tags"]}
+        if not all(re.fullmatch(r"[0-9a-f]{40}", sha) for sha in [head, *tags.values()]):
+            raise ValueError("invalid pinned commit")
+        for tag in tags:
+            self.git.run(["check-ref-format", "refs/tags/" + tag])
+        resolved, _ = self.git.run(["rev-parse", "--verify", head + "^{commit}"],
+                                   allow_failure=True)
+        missing = []
+        for name, sha in sorted(tags.items()):
+            for_ref = "refs/tags/" + name
+            tag_sha, _ = self.git.run(["rev-parse", "--verify", for_ref + "^{commit}"],
+                                       allow_failure=True)
+            if tag_sha.strip() != sha:
+                missing.append("+" + for_ref + ":" + for_ref)
+        if not self.git.local and (resolved.strip() != head or missing):
+            self.before_network("git_fetch")
+            self.git.run(["fetch", "--no-tags", "https://github.com/" + self.repo + ".git",
+                          head, *missing])
+        if self.git.run(["rev-parse", "--is-shallow-repository"])[0].strip() != "false":
+            raise GitReadError("full history requires an unshallowed object store")
+        self.git.resolve(head)
+        frozen_tags = {}
+        for name, sha in sorted(tags.items()):
+            try:
+                actual, source = self.git.resolve("refs/tags/" + name)
+                if actual != sha:
+                    raise GitReadError("tag_changed_since_discovery")
+                frozen_tags[name] = (actual, source)
+            except GitReadError as exc:
+                self.gap("release_tag_unresolved", tag=name, sha=sha, error=str(exc))
+        revisions = sorted({head, *(sha for sha, _ in frozen_tags.values())})
+        traversal, _ = self.git.run(["rev-list", "--topo-order", "--reverse", *revisions])
+        expected_commits = traversal.splitlines()
+        self.plan["inventory"] = {
+            "commits": len(expected_commits), "tags": len(tags),
+            "releases": len(self.snapshot["releases"]),
+            "default_branch_sha": head,
+        }
+        self.plan["architecture_sha"] = head
+        for sha in expected_commits:
+            try:
+                commit, source = self.git.commit(sha)
+                message = self.source(
+                    "commit_message", commit["message"], "commit:" + sha,
+                    f"https://github.com/{self.repo}/commit/{sha}",
+                    occurred_at=commit["date"],
+                )
+                commit_id = self.entity(
+                    "Commit", [sha], {"sha": sha, "parents": commit["parents"],
+                                      "message": commit["message"], "committed_at": commit["date"]},
+                    [self.ev(source), self.ev(message)],
+                )
+                self.plan["commits"].append({"sha": sha, "parents": commit["parents"]})
+                parent = next(iter(commit["parents"]), None)
+                changes, diff = self.git.changes(parent, sha)
+                citation = None
+                for change in changes:
+                    old, new = change["old_path"], change["new_path"]
+                    status = change["status"][0]
+                    if not (old.endswith(".py") or new.endswith(".py")):
+                        continue
+                    self.plan.setdefault("python_changes", []).append(
+                        {"sha": sha, "parent_sha": parent, **change}
+                    )
+                    before = self.read_file(parent, old, "changed_parent") if (
+                        parent and status != "A" and old.endswith(".py")
+                    ) else None
+                    after = self.read_file(sha, new, "changed_commit") if (
+                        status != "D" and new.endswith(".py")
+                    ) else None
+                    citation = citation or self.ev(diff)
+                    touched = after or before
+                    if touched:
+                        self.relation(
+                            "Touches", commit_id, touched["id"], [citation],
+                            change_type={"A": "added", "D": "deleted", "M": "modified",
+                                         "R": "renamed", "C": "copied"}.get(status, status),
+                            parent_sha=parent, commit_sha=sha, old_path=old, path=new,
+                        )
+                    if before and after and (old == new or status == "R"):
+                        self.relation(
+                            "ChangesTo", before["id"], after["id"], [citation],
+                            before_sha=parent, after_sha=sha, before_path=old, after_path=new,
+                            change_type=change["status"],
+                        )
+            except (GitReadError, UnicodeDecodeError) as exc:
+                self.gap("commit_read_failed", sha=sha, error=str(exc))
+
+        for sha in revisions:
+            for path in self.tree(sha):
+                self.read_file(sha, path, "default_or_tag_snapshot")
+        self.full_versions(frozen_tags)
+
+    def full_versions(self, tags):
+        repo_url = "https://github.com/" + self.repo
+        releases = {r["tag_name"]: r for r in self.snapshot["releases"]}
+        listed = {}
+        api_paths = [f"repos/{self.repo}"]
+        if repo_id := self.snapshot.get("repo_metadata", {}).get("id"):
+            api_paths.append(f"repositories/{repo_id}")
+        for source in self.upstream_sources.values():
+            endpoint = source.get("api_metadata", {}).get("endpoint", "")
+            for suffix, key in (("/tags", "name"), ("/releases", "tag_name")):
+                if endpoint in {f"https://api.github.com/{path}{suffix}" for path in api_paths}:
+                    for row in json.loads(source["text"]):
+                        listed[suffix, row[key]] = source
+        for tag in sorted(releases.keys() - tags.keys()):
+            # Keep available release metadata even if the underlying tag is absent.
+            self.gap("release_tag_unresolved", tag=tag)
+        commit_ids = {row["sha"]: entity_id("Commit", self.repo, row["sha"])
+                      for row in self.plan["commits"]}
+        pr_numbers = {p["number"] for p in self.snapshot["selected_prs"]}
+        for tag in sorted(tags.keys() | releases.keys()):
+            sha, git_source = tags.get(tag, (None, None))
+            release = releases.get(tag, {})
+            api = listed.get(("/releases" if release else "/tags", tag))
+            url = release.get("html_url") or repo_url + "/releases/tag/" + quote(tag, safe="")
+            note = self.source(
+                "release_note", release.get("body") or "", "release_note:" + tag, url,
+                               occurred_at=release.get("published_at"),
+                               author=(release.get("author") or {}).get("login"))
+            origin = "release" if release else "tag"
+            ev = self.ev(self.reuse_source(api)) if api else None
+            evidence = [ev, self.ev(git_source) if git_source else None]
+            rid = self.entity("Release", [tag], {
+                "tag": tag, "commit_sha": sha, "published_at": release.get("published_at"),
+                "release_url": url, "origin": origin,
+            }, evidence)
+            self.relation("HasRelease", entity_id("Project", self.repo), rid,
+                          [ev] if ev else evidence, method="github_api" if ev else "git",
+                          occurred_at=release.get("published_at"), origin=origin)
+            self.plan["releases"].append({"tag": tag, "commit_sha": sha, "origin": origin})
+            for ref in re.finditer(
+                r"(?<![\w/])#(\d+)\b|https://github\.com/"
+                + re.escape(self.repo) + r"/pull/(\d+)\b", note["text"],
+            ):
+                number = int(ref.group(1) or ref.group(2))
+                if number in pr_numbers:
+                    self.relation("MentionsPR", rid, entity_id("PullRequest", self.repo, number),
+                                  [self.ev(note, ref.group(), start=ref.start())],
+                                  method="text_rule", meaning="release_notes_mention_only")
+            if not sha:
+                continue
+            reachable, source = self.git.run(["rev-list", sha])
+            for ancestor in reachable.splitlines():
+                if ancestor not in commit_ids:
+                    continue
+                start = source["text"].index(ancestor, source["text"].index('"stdout":'))
+                self.relation("ReachableIn", commit_ids[ancestor], rid,
+                              [self.ev(source, ancestor, start=start)],
+                              commit_sha=ancestor, release_sha=sha, tag=tag)
 
     def architecture(self):
         try:
@@ -884,6 +1049,7 @@ class CodeStage:
         }
         warnings = any(g["severity"] == "warning" for g in self.gaps)
         status = (
+            "blocked" if self.full and stopped and stopped["code"] == "blocked" else
             (
                 "partial"
                 if self.files or self.entities
@@ -982,9 +1148,12 @@ def collect_code(
         stopped = None
         try:
             stage.developers()
-            stage.commits()
-            stage.architecture()
-            stage.releases()
+            if stage.full:
+                stage.full_history()
+            else:
+                stage.commits()
+                stage.architecture()
+                stage.releases()
         except BudgetStopped as exc:
             stopped = {"code": "blocked", "message": str(exc)}
             stage.gap("request_budget_or_rate_limit", message=str(exc))

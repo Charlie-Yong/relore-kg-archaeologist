@@ -1,5 +1,6 @@
 """UI contract tests use explicit synthetic backend responses, never project answers."""
 
+import json
 from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
@@ -79,6 +80,37 @@ def test_resume_is_explicit_and_does_not_start():
         next(b for b in test.button if b.label == "继续构建").click().run()
         resume.assert_called_once_with(job["job_id"])
         start.assert_not_called()
+
+
+def test_frozen_classroom_can_ask_without_a_local_job(tmp_path, monkeypatch):
+    manifest = {
+        "dataset_id": JOB["dataset_id"], "repo": JOB["repo"],
+        "profile_version": "full_history_v1", "sources": ["one"],
+        "retrieved_at": "2026-11-16T06:31:18Z",
+    }
+    (tmp_path / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    monkeypatch.setenv("HISTORYKG_DEMO_DATASET_DIR", str(tmp_path))
+    monkeypatch.delenv("HISTORYKG_REPLAY_FILE", raising=False)
+    with patch("app.backend.get") as get, patch("app.backend.start") as start, \
+         patch("app.backend.ask", return_value=result()) as ask:
+        test = AppTest.from_file(APP).run()
+        assert not test.exception
+        test.text_input[0].set_value("2.0.1 是哪天出的？")
+        test.button[0].click().run()
+        assert not test.exception
+        ask.assert_called_once_with(JOB["dataset_id"], "2.0.1 是哪天出的？", "search")
+        get.assert_not_called()
+        start.assert_not_called()
+
+
+def test_build_form_uses_full_history_profile_with_provider_balance():
+    from app import backend
+
+    with patch.object(backend.pipeline, "load_config",
+                      return_value={"budget": {"mode": "provider_balance"}}), \
+         patch.object(backend.pipeline, "start_build") as start:
+        backend.start("https://github.com/example/toy")
+    assert start.call_args.args[0].profile == "full_history_v1"
 
 
 def test_task_link_switches_existing_session_and_clears_answer():
@@ -186,3 +218,20 @@ def test_replay_citations_target_their_own_response(tmp_path, monkeypatch):
     anchors = re.findall(r'<a id="([^"]+)">', rendered)
     assert len(anchors) == len(set(anchors)) == 2
     assert all(f"](#{anchor})" in rendered for anchor in anchors)
+
+
+def test_chain_edge_direction_comes_from_fact_not_traversal():
+    from app.visuals import chain_chart, chain_rows, ordered_paths
+
+    path = {
+        "entity_ids": ["target", "source"], "relation_ids": ["edge"],
+        "relations": [{
+            "id": "edge", "type": "Imports", "from_id": "source", "to_id": "target",
+            "evidence_ids": ["cited"],
+        }],
+    }
+    assert ordered_paths([{"relation_ids": []}, path], [{"evidence_ids": ["cited"]}])[0] == path
+    _, edges = chain_rows(path)
+    assert edges[0]["direction"] == "triangle-up"
+    assert edges[0]["from"] == "source" and edges[0]["to"] == "target"
+    assert chain_chart(path).to_dict()["layer"]

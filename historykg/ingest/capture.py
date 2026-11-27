@@ -54,6 +54,30 @@ def map_capture(
             continue
         parts = urlsplit(response["url"])
         endpoint = parts.scheme + "://" + parts.netloc + parts.path
+        if endpoint == "https://api.github.com/graphql" and isinstance(payload, dict):
+            repo_node = ((payload.get("data") or {}).get("repository")) or {}
+            nodes = sorted(
+                (v for v in repo_node.values() if isinstance(v, dict)),
+                key=lambda item: item.get("number", 0),
+            )
+            if not nodes:
+                continue
+            item = freeze_api_source(
+                dataset_id=dataset_id,
+                repo=repo,
+                endpoint=endpoint,
+                payload=nodes,
+                params={
+                    "repo": repo,
+                    "batch": response.get("batch", len(sources)),
+                    "query": response.get("query", "closedByPullRequestsReferences"),
+                },
+                response_status=response["status"],
+                retrieved_at=response.get("retrieved_at", now),
+                method="POST",
+            )
+            sources.append(item)
+            continue
         item = freeze_api_source(
             dataset_id=dataset_id,
             repo=repo,
@@ -96,6 +120,7 @@ def map_capture(
     repo_api = api_sources.get(f"https://api.github.com/repos/{repo}")
     add_entity("Project", [], {"display_name": repo}, cite(repo_api) if repo_api else [])
     selected_numbers = {p["number"] for p in capture.get("payloads", [])}
+    full = snapshot.get("profile", {}).get("profile_version") == "full_history_v1"
     for payload in capture.get("payloads", []):
         number, thread = payload["number"], payload["thread"]
         kind = "PullRequest" if payload["thread_type"] == "pr" else "Issue"
@@ -146,7 +171,7 @@ def map_capture(
                     if ref["target_repo"] != repo
                     else "collected"
                     if ref["number"] in selected_numbers
-                    else "over_limit"
+                    else "unavailable" if full else "over_limit"
                     if len(selected_numbers) >= snapshot.get("profile", {}).get("max_units", 40)
                     else "not_collected",
                 )
@@ -349,6 +374,36 @@ def finalize_relations(dataset_dir: str | Path) -> dict:
             if left in entities and right in entities:
                 add("MergedAs", left, right, source, "github_api", payload.get("merged_at"))
         endpoint = source.get("api_metadata", {}).get("endpoint", "")
+        if endpoint == "https://api.github.com/graphql" and isinstance(payload, list):
+            for obj in payload:
+                if (
+                    isinstance(obj, dict)
+                    and obj.get("__typename") == "Issue"
+                    and obj.get("closed") is True
+                    and isinstance(obj.get("number"), int)
+                ):
+                    issue_id = entity_id("Issue", repo, obj["number"])
+                    if issue_id not in entities:
+                        continue
+                    for closer in (obj.get("closedByPullRequestsReferences") or {}).get(
+                        "nodes", []
+                    ):
+                        if not isinstance(closer, dict) or not isinstance(
+                            closer.get("number"), int
+                        ):
+                            continue
+                        if api_closer_matches(closer, repo, closer["number"]):
+                            pr_id = entity_id("PullRequest", repo, closer["number"])
+                            if pr_id in entities:
+                                add(
+                                    "Closes",
+                                    pr_id,
+                                    issue_id,
+                                    source,
+                                    "github_api",
+                                    obj.get("closedAt") or closer.get("mergedAt"),
+                                )
+            continue
         match = re.search(r"/issues/(\d+)/(?:timeline|events)$", endpoint)
         if not match:
             continue

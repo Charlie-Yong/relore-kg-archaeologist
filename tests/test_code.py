@@ -525,3 +525,39 @@ def test_input_changes_do_not_overwrite_frozen_output(toy_git, tmp_path):
             dataset_dir=tmp_path / "dataset",
             git_repo=root,
         )
+
+
+def test_full_history_discovers_tag_only_commit_and_all_python_changes(toy_git, tmp_path):
+    root, snapshot, before, after = toy_git
+    git(root, "checkout", "--detach", before)
+    (root / "tag_only.py").write_text("TAG_ONLY = True\n", encoding="utf-8")
+    git(root, "add", "tag_only.py")
+    git(root, "commit", "-m", "tag-only parallel history")
+    tag_only = git(root, "rev-parse", "HEAD")
+    git(root, "tag", "tag-only")
+    tags = [{"name": name, "commit": {"sha": sha}}
+            for name, sha in [("v1", after), ("1", after), ("tag-only", tag_only)]]
+    snapshot["tags"] = tags
+    snapshot["sources"] += [freeze_api_source(
+        dataset_id=snapshot["dataset_id"], repo=snapshot["repo"],
+        endpoint=f"repos/example/toy/{endpoint}", payload=items,
+        retrieved_at="2026-01-01T00:00:00Z",
+    ) for endpoint, items in [("tags", tags), ("releases", snapshot["releases"])]]
+    result = collect_code(
+        snapshot, dataset_dir=tmp_path / "full", profile={"profile_version": "full_history_v1"},
+        budget={"max_requests": 5000}, git_repo=root,
+    )
+    assert result["status"] == "partial"  # fixture includes a deliberately invalid .py
+    entities, relations = read_result(result, "entities"), read_result(result, "relations")
+    assert {e["key"] for e in entities if e["type"] == "Commit"} == {before, after, tag_only}
+    assert {e["key"] for e in entities if e["type"] == "Release"} == {"1", "v1", "tag-only"}
+    files = {tuple(e["key"]) for e in entities if e["type"] == "File"}
+    assert (before, "src/toy/gone.py") in files
+    assert (after, "src/toy/gone.py") not in files
+    assert (tag_only, "tag_only.py") in files
+    assert any(r["type"] == "Touches" and r["properties"]["parent_sha"] is None
+               and r["properties"]["commit_sha"] == before for r in relations)
+    assert any(r["type"] == "ReachableIn" and r["properties"]["tag"] == "tag-only"
+               and r["properties"]["commit_sha"] == before for r in relations)
+    assert not any(r["type"] == "ReachableIn" and r["properties"]["tag"] == "tag-only"
+                   and r["properties"]["commit_sha"] == after for r in relations)

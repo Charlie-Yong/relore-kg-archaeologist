@@ -3,7 +3,9 @@
 -e .
     # via -r requirements.in
 altair==6.3.0
-    # via streamlit
+    # via
+    #   historykg-archaeologist
+    #   streamlit
 annotated-types==0.8.0
     # via pydantic
 anyio==4.15.1

@@ -24,6 +24,8 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from historykg.ingest import index
 from historykg.ingest.github import (
+    FULL_HISTORY,
+    FULL_MAX_REQUESTS,
     CollectionBlocked,
     GitHubClient,
     GitHubError,
@@ -249,23 +251,27 @@ def collect_repo(
     ``transport`` is injectable for offline consumers/tests. A failed collection keeps
     already indexed threads; gaps and status distinguish it from a complete sample.
     """
+    full = profile_version == FULL_HISTORY
     try:
         repo = normalize_repo(repo_url, require_url=True)
         if min(max_issues, max_prs) < 0 or not 1 <= max_issues + max_prs <= 40:
             raise ValueError("讨论单元总上限须在1到40之间。")
-        if not 1 <= max_requests <= 300:
-            raise ValueError("GitHub请求上限须在1到300之间。")
+        request_limit = FULL_MAX_REQUESTS if full else 300
+        if not 1 <= max_requests <= request_limit:
+            raise ValueError(f"GitHub请求上限须在1到{request_limit}之间。")
         if not 0 <= initial_requests <= max_requests:
             raise ValueError("已用请求数必须位于请求上限内。")
         if selected is not None:
             selected = list({(x["kind"], x["number"]): dict(x) for x in selected}.values())
-            if len(selected) > 40 or any(
+            if (not full and len(selected) > 40) or any(
                 x["kind"] not in {"issue", "pr"}
                 or not isinstance(x["number"], int)
                 or x["number"] <= 0
                 for x in selected
             ):
-                raise ValueError("selected只允许至多40条合法线程。")
+                raise ValueError("selected含非法线程或超过当前档位的上限。")
+        elif full:
+            raise ValueError("全量采集需要冻结的公开讨论清单。")
     except ValueError as exc:
         return _result("unsupported", error={"code": "input", "message": str(exc)})
 
@@ -288,7 +294,6 @@ def collect_repo(
         initial_requests = previous["result"]["github_requests"]
         if initial_requests > max_requests:
             raise ValueError("续作请求上限不能小于已有耗用。")
-    budget = _RequestBudget(max_requests, initial_requests, captured)
     token = (
         token
         if token is not None
@@ -313,6 +318,15 @@ def collect_repo(
         / (dt.datetime.now(dt.UTC).strftime("%Y%m%dT%H%M%SZ-") + uuid.uuid4().hex[:6])
     )
     capture_path = directory / "capture.json"
+    journal = directory / "requests.jsonl"
+    if full and journal.exists():
+        with journal.open(encoding="utf-8") as stream:
+            for line in stream:
+                item = json.loads(line)
+                initial_requests = item["used"]
+                if item.get("response"):
+                    captured.append(item["response"])
+    budget = _RequestBudget(max_requests, initial_requests, captured)
 
     def checkpoint():
         _write_json(
@@ -341,7 +355,22 @@ def collect_repo(
             },
         )
 
-    budget.checkpoint = checkpoint
+    last_saved = len(budget.responses)
+    last_count = budget.used
+
+    def journal_request():
+        nonlocal last_saved, last_count
+        if len(budget.responses) == last_saved and budget.used == last_count:
+            return
+        row = {"used": budget.used}
+        if len(budget.responses) != last_saved:
+            row["response"] = budget.responses[-1]
+        directory.mkdir(parents=True, exist_ok=True)
+        with journal.open("a", encoding="utf-8") as stream:
+            stream.write(json.dumps(row, ensure_ascii=False) + "\n")
+        last_saved, last_count = len(budget.responses), budget.used
+
+    budget.checkpoint = journal_request if full else checkpoint
     try:
         engine = _engine(database_url)
         index.metadata.create_all(engine)
@@ -370,7 +399,8 @@ def collect_repo(
                     raise UnsupportedRepository("当前项目范围为包含Python源码的公开仓库。")
             if selected is None and not selected_threads:
                 selected_threads = _select_threads(client, repo, max_issues, max_prs)
-            checkpoint()
+            if not full:
+                checkpoint()
             complete_numbers = {p.number for p in payloads}
             for item in selected_threads:
                 if item["number"] in complete_numbers:
@@ -380,24 +410,29 @@ def collect_repo(
                     with engine.begin() as conn:
                         index.write_thread(conn, payload)
                     payloads.append(payload)
-                    counts = index.counts(engine, repo)
+                    if not full:
+                        counts = index.counts(engine, repo)
                     if payload.unread:
                         gaps.append({**item, "reason": "unread", "parts": sorted(payload.unread)})
-                    checkpoint()
+                    if not full:
+                        checkpoint()
                 except GitHubError as exc:
+                    if full and exc.status not in {404, 410, 422}:
+                        raise
                     gaps.append({**item, "reason": "fetch_failed", "http_status": exc.status})
             counts = index.counts(engine, repo)
         status = "partial" if gaps else ("ok" if payloads else "empty")
         if gaps and not payloads:
             status = "error"
     except CollectionBlocked as exc:
-        status = "partial" if payloads else "blocked"
+        status = "blocked" if full or not payloads else "partial"
         gaps.append({"reason": "request_limit_or_rate_limit", "message": str(exc)})
     except GitHubError as exc:
-        status = "partial" if payloads else ("unsupported" if exc.status == 404 else "error")
+        status = ("blocked" if full and payloads else
+                  "partial" if payloads else "unsupported" if exc.status == 404 else "error")
         gaps.append({"reason": "github_error", "http_status": exc.status})
     except httpx.TransportError as exc:
-        status = "partial" if payloads else "error"
+        status = "blocked" if full else "partial" if payloads else "error"
         gaps.append({"reason": "network_error", "type": type(exc).__name__})
     except UnsupportedRepository as exc:
         status = "unsupported"
@@ -412,6 +447,10 @@ def collect_repo(
         if engine is not None:
             engine.dispose()
 
+    if full:
+        # Repo-wide index counts may include earlier jobs. The capture is this job’s inventory.
+        counts = {"threads": len(payloads),
+                  "documents": sum(sum(1 for _ in p.objects()) for p in payloads)}
     result = _result(
         status,
         repo=repo,
@@ -437,6 +476,8 @@ def collect_repo(
             "http_responses": budget.responses,
         },
     )
+    if full:
+        journal.unlink(missing_ok=True)
     return result
 
 

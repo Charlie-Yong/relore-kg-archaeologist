@@ -20,11 +20,19 @@ class BudgetBlocked(RuntimeError):
 
 
 class BudgetLedger:
-    def __init__(self, path: str | Path, approved_cny: str | float):
+    def __init__(
+        self, path: str | Path, approved_cny: str | float | None, *, provider_balance=False,
+    ):
         self.path = Path(path).resolve()
-        limit = Decimal(str(approved_cny)) * 1_000_000
-        if limit <= 0 or limit != limit.to_integral_value():
-            raise ValueError("预算必须为正数，最多六位小数。")
+        if provider_balance:
+            if approved_cny is not None:
+                raise ValueError("余额模式不能同时设定本地额度")
+            cap = None
+        else:
+            limit = Decimal(str(approved_cny)) * 1_000_000
+            if limit <= 0 or limit != limit.to_integral_value():
+                raise ValueError("预算必须为正数，最多六位小数。")
+            cap = int(limit)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self._connect() as db:
             db.execute("BEGIN IMMEDIATE")
@@ -40,9 +48,9 @@ class BudgetLedger:
             if "settlement_json" not in {r[1] for r in db.execute("PRAGMA table_info(attempts)")}:
                 db.execute("ALTER TABLE attempts ADD COLUMN settlement_json TEXT")
             row = db.execute("SELECT cap FROM budget WHERE id=1").fetchone()
-            if row and row[0] != int(limit):
+            if row and row[0] != cap:
                 raise ValueError("共享账本预算已固定，禁止通过新配置重置或增加额度。")
-            db.execute("INSERT OR IGNORE INTO budget VALUES (1, ?, ?)", (int(limit), int(limit)))
+            db.execute("INSERT OR IGNORE INTO budget VALUES (1, ?, ?)", (cap, cap))
 
     def _connect(self):
         return sqlite3.connect(self.path, timeout=30)
@@ -56,7 +64,7 @@ class BudgetLedger:
                 raise BudgetBlocked("本次尝试已有账目；请读取缓存或核对未完成请求，禁止重复发送。")
             cap = db.execute("SELECT MIN(cap,ceiling) FROM budget WHERE id=1").fetchone()[0]
             used = db.execute("SELECT COALESCE(SUM(charged),0) FROM attempts").fetchone()[0]
-            if used + upper_micro > cap:
+            if cap is not None and used + upper_micro > cap:
                 raise BudgetBlocked("共享DeepSeek费用上限不足以保留本次请求，已停止发送。")
             db.execute(
                 """INSERT INTO attempts
@@ -72,6 +80,7 @@ class BudgetLedger:
         usage_json: str,
         *,
         settlement: dict | None = None,
+        rejected: bool = False,
     ) -> None:
         with self._connect() as db:
             db.execute("BEGIN IMMEDIATE")
@@ -88,7 +97,8 @@ class BudgetLedger:
                    WHERE attempt_id=?""",
                 (
                     charge,
-                    "uncertain" if actual_micro is None else "settled",
+                    "rejected" if rejected
+                    else ("uncertain" if actual_micro is None else "settled"),
                     usage_json,
                     json.dumps(settlement, ensure_ascii=False) if settlement else None,
                     attempt_id,
@@ -119,8 +129,8 @@ class BudgetLedger:
             charged = sum(x["charged_micro_cny"] for x in states.values())
         return {
             "ledger_path": str(self.path),
-            "approved_cny": approved / 1_000_000,
-            "effective_cap_cny": cap / 1_000_000,
+            "approved_cny": approved / 1_000_000 if approved is not None else None,
+            "effective_cap_cny": cap / 1_000_000 if cap is not None else None,
             "charged_upper_cny": charged / 1_000_000,
             "accounted_cny": charged / 1_000_000,
             "known_usage_cny": states.get("settled", {}).get("charged_micro_cny", 0) / 1_000_000,
@@ -128,7 +138,7 @@ class BudgetLedger:
                 item["charged_micro_cny"] for state, item in states.items() if state != "settled"
             )
             / 1_000_000,
-            "remaining_cny": max(0, cap - charged) / 1_000_000,
+            "remaining_cny": max(0, cap - charged) / 1_000_000 if cap is not None else None,
             "states": states,
         }
 

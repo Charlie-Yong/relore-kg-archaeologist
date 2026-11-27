@@ -91,8 +91,16 @@ class SourceDocument(VersionedRecord):
             metadata = self.api_metadata or {}
             if not {"method", "endpoint", "params", "response_status"} <= metadata.keys():
                 raise ValueError("api_response缺少api_metadata")
-            if metadata["method"] != "GET":
-                raise ValueError("api_response只能保存官方只读GET元数据")
+            endpoint = str(metadata.get("endpoint", ""))
+            query_text = str((metadata.get("params") or {}).get("query", ""))
+            is_readonly_graphql = (
+                metadata["method"] == "POST"
+                and endpoint == "https://api.github.com/graphql"
+                and bool(query_text.strip())
+                and not query_text.lstrip().lower().startswith("mutation")
+            )
+            if metadata["method"] != "GET" and not is_readonly_graphql:
+                raise ValueError("api_response只能保存官方只读GET或只读GraphQL元数据")
         return self
 
 

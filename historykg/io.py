@@ -126,6 +126,7 @@ def freeze_api_source(
     params: dict | None = None,
     response_status: int = 200,
     origin_key: str | None = None,
+    method: str = "GET",
 ) -> dict:
     """Canonical JSON representation, explicitly not the original HTTP bytes."""
     url = endpoint if endpoint.startswith("https://") else "https://api.github.com/" + endpoint
@@ -139,7 +140,7 @@ def freeze_api_source(
         retrieved_at=retrieved_at,
         trust_tier="authoritative",
         api_metadata={
-            "method": "GET",
+            "method": method,
             "endpoint": url,
             "params": params or {},
             "response_status": response_status,
@@ -416,6 +417,22 @@ def _api_relation_supported(kind, left, right, refs, sources):
                 )
                 if obj.get("event") == "closed" and issue_match and (closer_match or commit_match):
                     return True
+                if (
+                    endpoint == "https://api.github.com/graphql"
+                    and obj.get("__typename") == "Issue"
+                    and obj.get("number") == issue
+                    and obj.get("closed") is True
+                    and str((obj.get("repository") or {}).get("nameWithOwner", "")).lower()
+                    == left["repo"]
+                ):
+                    closing_nodes = (obj.get("closedByPullRequestsReferences") or {}).get(
+                        "nodes", []
+                    )
+                    if any(
+                        api_closer_matches(node, left["repo"], pr_number)
+                        for node in closing_nodes
+                    ):
+                        return True
     return False
 
 

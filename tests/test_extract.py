@@ -139,3 +139,33 @@ def test_blocked_extraction_is_not_actual_llm_success(tmp_path, monkeypatch):
     assert result["status"] == "blocked"
     assert not result["usage"]["actual_llm_extraction"]
     assert read_jsonl(tmp_path / "p4/failures.jsonl")[0]["reason"] == "budget"
+
+
+def test_prompt_v2_and_unit_ids_filter(tmp_path, monkeypatch):
+    import historykg.extract.stage as stage
+
+    extraction_input(tmp_path)
+    units = read_jsonl(tmp_path / "source_units.jsonl")
+    write_jsonl(tmp_path / "source_units.jsonl", [units[0], {**units[0], "unit_id": "u_skip"}])
+    seen_versions = []
+    seen_units = []
+
+    def fake_run(request, **_):
+        seen_versions.append(request["prompt_version"])
+        seen_units.append(request["output_directory"])
+        return {
+            "run_id": request["run_id"],
+            "status": "ok",
+            "new_requests": 0,
+            "parsed": {"candidates": []},
+        }
+
+    monkeypatch.setattr(stage, "run_request", fake_run)
+    res = run_extract_stage(
+        tmp_path,
+        config={"prompt_version": "v2", "unit_ids": ["u"]},
+        budget={},
+    )
+    assert seen_versions == [stage.PROMPT_VERSION_V2]
+    cov = read_jsonl(res["artifacts"]["coverage"])
+    assert len(cov) == 1 and cov[0]["unit_id"] == "u"

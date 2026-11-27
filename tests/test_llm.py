@@ -291,3 +291,62 @@ def test_answer_does_not_publish_blank_model_claims(tmp_path, monkeypatch):
     assert result["status"] == "error"
     assert result["claims"] == []
     assert result["usage"]["actual_requests"] == 3
+
+
+def test_provider_balance_pauses_and_can_resume_even_with_no_retry_slots(tmp_path, monkeypatch):
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-secret")
+    settings = {"ledger_path": str(tmp_path / "trial.sqlite3"), "mode": "provider_balance"}
+    req = prepared(tmp_path, config={"max_output_tokens": 30, "max_retries": 0})
+    calls = []
+
+    def handler(_):
+        calls.append(1)
+        if len(calls) <= 2:
+            return httpx.Response(402, json={"error": {"message": "Insufficient Balance"}})
+        return response({"ok": True})
+
+    transport = httpx.MockTransport(handler)
+    for count in (1, 2):
+        result = run_request(req, budget=settings, transport=transport)
+        assert result["status"] == "blocked"
+        assert result["error"] == "provider_balance_exhausted"
+        assert len(calls) == count
+        assert result["budget"]["states"]["rejected"]["attempts"] == count
+        assert result["budget"]["charged_upper_cny"] == 0
+        assert not (Path(req["output_directory"]) / "result.json").exists()
+    result = run_request(req, budget=settings, transport=transport)
+    assert result["status"] == "ok" and result["new_requests"] == 1
+    assert result["budget"]["effective_cap_cny"] is None
+    assert result["budget"]["charged_upper_cny"] > 0
+    assert run_request(req, budget=settings, transport=transport)["cache_hit"]
+    assert len(calls) == 3
+    with pytest.raises(ValueError, match="已固定"):
+        BudgetLedger(settings["ledger_path"], 20)
+
+
+def test_bailian_answer_sends_configured_cap_and_uses_local_credentials(tmp_path, monkeypatch):
+    from historykg.llm.gateway import BAILIAN_FLASH
+
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    monkeypatch.setenv("CODEX_HOME", str(tmp_path))
+    (tmp_path / "config.toml").write_text(
+        '[model_providers.magpie]\nbase_url="http://127.0.0.1:1234/v1"\n'
+        'experimental_bearer_token="test-only-local-token"\n'
+    )
+    req = prepared(tmp_path, task="answer", config={"route": BAILIAN_FLASH,
+                   "thinking": "enabled", "reasoning_effort": "max", "max_output_tokens": 32768,
+                   "timeout_seconds": 240, "max_retries": 0})
+
+    def relay(request):
+        assert str(request.url) == "http://127.0.0.1:1234/v1/chat/completions"
+        assert request.headers["Authorization"] == "Bearer test-only-local-token"
+        payload = json.loads(request.content)
+        assert payload["max_tokens"] == 32768 and payload["model"] == BAILIAN_FLASH
+        assert payload["enable_thinking"] and payload["reasoning_effort"] == "max"
+        assert request.extensions["timeout"]["read"] == 240
+        return response({"ok": True})
+
+    result = run_request(req, budget=budget(tmp_path), transport=httpx.MockTransport(relay))
+    assert result["status"] == "ok"
+    assert not any("test-only-local-token" in p.read_text()
+                   for p in Path(req["output_directory"]).rglob("*.json"))

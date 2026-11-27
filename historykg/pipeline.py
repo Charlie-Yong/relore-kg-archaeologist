@@ -21,7 +21,8 @@ from historykg import collector
 from historykg.contracts import CONTRACT_VERSION, STAGES, BuildJob, BuildRequest
 from historykg.ids import canonical_json, dataset_id, normalize_repo, text_hash
 from historykg.ingest.capture import finalize_relations, map_capture
-from historykg.ingest.discovery import PROFILE, SnapshotClient, discover
+from historykg.ingest.discovery import FULL_PROFILE, PROFILE, SnapshotClient, discover
+from historykg.ingest.github import FULL_HISTORY, fetch_closing_prs
 from historykg.io import (
     build_subjects,
     collect_records,
@@ -120,14 +121,18 @@ def _enqueue(directory, config):
 
 
 def start_build(
-    request: BuildRequest | dict, *, config: dict | None = None, background: bool = True
+    request: BuildRequest | dict, *, config: dict | None = None, background: bool = True,
+    prepare_only: bool = False,
 ) -> dict:
     config = load_config(config)
     request = request if isinstance(request, BuildRequest) else BuildRequest.model_validate(request)
     repo = normalize_repo(request.repo_url, require_url=True)
-    if request.profile != "course_small_v1":
-        raise ValueError("未知构建profile；当前仅支持course_small_v1")
-    profile = {**PROFILE, **config.get("profile", {})}
+    if request.profile not in (PROFILE["profile_version"], FULL_HISTORY):
+        raise ValueError("未知构建档位")
+    full = request.profile == FULL_HISTORY
+    if not full and (prepare_only or config.get("budget", {}).get("mode") == "provider_balance"):
+        raise ValueError("全量试跑选项仅适用于 full_history_v1")
+    profile = dict(FULL_PROFILE) if full else {**PROFILE, **config.get("profile", {})}
     frozen_config = {**config, "profile": profile}
 
     # Secrets belong in the environment, never persisted in a job snapshot.
@@ -158,8 +163,10 @@ def start_build(
             directory = Path(active[0])
             existing = read_json(directory / "job.json")
             # A refresh observes the same task; blocked jobs require explicit resume.
-            if existing["status"] in {"queued", "running"}:
-                _enqueue(directory, config)
+            if prepare_only and not existing.get("prepare_only"):
+                raise ValueError("该配置已有非预估构建，请查看现有任务")
+            if not prepare_only and existing["status"] in {"queued", "running"}:
+                _enqueue(directory, frozen_config)
             return existing
         job_id = uuid.uuid4().hex
         directory = Path(config["jobs_root"]) / job_id
@@ -182,15 +189,18 @@ def start_build(
             error=None,
             resume_from="discover",
             completed_stages=[],
+            **({"prepare_only": True} if prepare_only else {}),
         )
         write_json(directory / "job.json", job)
         write_json(directory / "request.json", request.model_dump())
         write_json(directory / "config.json", frozen_config)
         conn.execute("INSERT INTO jobs VALUES (?,?,?,?)", (job_id, key, "queued", str(directory)))
-    if background:
-        _enqueue(directory, config)
+    if prepare_only:
+        _run(directory, frozen_config, stop_after="code", estimate=True)
+    elif background:
+        _enqueue(directory, frozen_config)
     else:
-        _run(directory, config)
+        _run(directory, frozen_config)
     return read_json(directory / "job.json")
 
 
@@ -206,6 +216,8 @@ def resume_build(job_id: str, *, config: dict | None = None, background: bool = 
         if config.get("database_url"):
             frozen["database_url"] = config["database_url"]
         frozen["graph"] = {**frozen.get("graph", {}), **config.get("graph", {})}
+    if job.get("error", {}) and job["error"].get("code") == "extract_estimate_ready":
+        job.pop("prepare_only", None)
     job.update(status="queued", error=None)
     _save(job, directory, config)
     if background:
@@ -274,7 +286,10 @@ def _stage(job, directory, config):
         snapshot = read_json(snapshot_dir / "snapshot.json")
         initial = read_json(snapshot_dir / "discovery_http.json")
         capture_path = directory / "collection/capture.json"
-        result = collector.collect_repo(
+        full = profile["profile_version"] == FULL_HISTORY
+        saved_capture = read_json(capture_path)["result"] if full and capture_path.exists() else {}
+        result = saved_capture if saved_capture.get("status") in {"ok", "partial"} else (
+            collector.collect_repo(
             "https://github.com/" + job["repo"],
             database_url=config.get("database_url"),
             selected=snapshot["selected"],
@@ -284,6 +299,7 @@ def _stage(job, directory, config):
             max_requests=profile["max_requests"],
             output_dir=capture_path.parent,
             profile_version=profile["profile_version"],
+            )
         )
         job["usage"]["github_requests"] = result.get("github_requests", initial["github_requests"])
         if result["status"] in {"blocked", "unsupported", "error"}:
@@ -297,13 +313,18 @@ def _stage(job, directory, config):
         metadata_gaps = []
         try:
             capture = read_json(capture_path)
+            closed_issues = []
             for payload in capture.get("payloads", []):
                 if payload["thread_type"] == "issue":
+                    if payload.get("thread", {}).get("state") == "closed":
+                        closed_issues.append(payload["number"])
                     endpoint = f"repos/{job['repo']}/issues/{payload['number']}/timeline"
                     try:
                         # All event pages, with the same GET retry/request boundary.
                         list(metadata.client.pages(endpoint))
                     except (collector.CollectionBlocked, collector.GitHubError) as exc:
+                        if full and isinstance(exc, collector.CollectionBlocked):
+                            raise
                         metadata_gaps.append(
                             {
                                 "reason": "issue_timeline_unread",
@@ -311,7 +332,32 @@ def _stage(job, directory, config):
                                 "type": type(exc).__name__,
                             }
                         )
-                        break
+                        if not full:
+                            break
+            if closed_issues and metadata.token:
+                existing_graphql = any(
+                    r.get("url") == "https://api.github.com/graphql" and r.get("status") == 200
+                    for r in metadata.state.get("http_responses", [])
+                )
+                if not existing_graphql:
+                    try:
+                        batches = fetch_closing_prs(metadata.client, job["repo"], closed_issues)
+                        gql_rows = [
+                            r for r in metadata.state["http_responses"]
+                            if r.get("url") == "https://api.github.com/graphql"
+                        ]
+                        for row, batch in zip(gql_rows, batches, strict=False):
+                            row["query"] = batch["query"]
+                            row["batch"] = batch["batch"]
+                        write_json(metadata.path, metadata.state)
+                    except (collector.CollectionBlocked, collector.GitHubError, ValueError) as exc:
+                        metadata_gaps.append(
+                            {
+                                "reason": "closing_prs_graphql_unread",
+                                "severity": "coverage",
+                                "type": type(exc).__name__,
+                            }
+                        )
         finally:
             job["usage"]["github_requests"] = metadata.state["github_requests"]
             metadata.close()
@@ -356,7 +402,7 @@ def _stage(job, directory, config):
         return result
     if stage == "extract":
         budget = {**config.get("budget", {}), **job["usage"]}
-        if not any(
+        if budget.get("mode") != "provider_balance" and not any(
             budget.get(key)
             for key in (
                 "max_requests",
@@ -372,7 +418,8 @@ def _stage(job, directory, config):
             config["extract_module"],
             "run_extract_stage",
             root,
-            config=config.get("model", {}),
+            config={**config.get("model", {}),
+                    "full_history": profile["profile_version"] == FULL_HISTORY},
             budget=budget,
         )
         return result
@@ -405,8 +452,16 @@ def _dataset_coverage(root, profile, counts):
     timestamps = sorted(s["occurred_at"] for s in sources if s.get("occurred_at"))
     completeness = Counter(unit["completeness"] for unit in units)
     manifest = read_json(Path(root) / "manifest.json")
+    full = {}
+    if profile["profile_version"] == FULL_HISTORY:
+        plan = read_json(Path(root) / "p3/plan.json")
+        inventory = plan.get("inventory", {})
+        full = {"history_inventory": {**inventory,
+                "python_file_changes": len(plan.get("python_changes", []))},
+                "commits_collected": sum(e["type"] == "Commit" for e in entities),
+                "versions_collected": sum(e["type"] == "Release" for e in entities)}
     return {
-        **counts,
+        **counts, **full,
         "discussion_units": len(units),
         "complete_units": completeness["complete"],
         "partial_units": completeness["partial"],
@@ -477,12 +532,14 @@ def _completion_status(stage, result):
     return status
 
 
-def _run(directory, config, stop_after=None):
+def _run(directory, config, stop_after=None, *, estimate=False):
     worker_lock = _claim_worker(directory)
     if worker_lock is None:
         return  # Another process owns the sole worker; persisted queued work remains resumable.
     job = read_json(directory / "job.json")
     _restore_usage(job, directory)
+    if job.get("prepare_only") and stop_after is None:
+        stop_after, estimate = "code", True
     try:
         if job["dataset_id"] is None:
             job["dataset_id"] = dataset_id(job["repo"], job["profile_version"], job["job_id"])
@@ -525,7 +582,15 @@ def _run(directory, config, stop_after=None):
             ):
                 if key in job["coverage"]:
                     job["counts"][key] = job["coverage"][key]
-            job["gaps"].extend(g for g in result.get("gaps", []) if g not in job["gaps"])
+            job["gaps"].extend(
+                g for g in result.get("gaps", [])
+                if g not in job["gaps"] and not (
+                    isinstance(g, dict) and g.get("reason") in {
+                        "provider_balance_exhausted", "provider_auth_failed",
+                        "missing_deepseek_api_key",
+                    }
+                )
+            )
             usage = result.get("usage", {})
             merge_stage_usage(
                 job, stage, result,
@@ -560,6 +625,15 @@ def _run(directory, config, stop_after=None):
                 if not job["counts"].get("sources"):
                     raise ValueError("空来源不能发布可查询数据集")
                 job["coverage"].update(graph_ready=True, retrieval_ready=True)
+            if estimate and stage == "code":
+                from historykg.extract.stage import estimate_extract
+
+                estimate_path = directory / "extract-estimate.json"
+                dataset_root = Path(job["artifacts"]["dataset_dir"])
+                usage_estimate = estimate_extract(dataset_root, config=config.get("model", {}))
+                write_json(estimate_path, usage_estimate)
+                job["artifacts"]["extract_estimate"] = str(estimate_path)
+                job["usage"]["estimate"] = usage_estimate
             job.setdefault("completed_stages", []).append(stage)
             job.setdefault("stage_statuses", {})[stage] = _completion_status(stage, result)
             checkpoint_files = []
@@ -600,7 +674,6 @@ def _run(directory, config, stop_after=None):
                     ),
                 },
             )
-            _save(job, directory, config)
             if stop_after == stage and stage != "index_graph":
                 next_stage = STAGES[STAGES.index(stage) + 1]
                 job.update(
@@ -608,12 +681,14 @@ def _run(directory, config, stop_after=None):
                     stage=next_stage,
                     resume_from=next_stage,
                     error={
-                        "code": "developer_checkpoint",
-                        "message": "已完成指定开发阶段，可resume继续",
+                        "code": "extract_estimate_ready" if estimate else "developer_checkpoint",
+                        "message": "已完成费用预估，可继续抽取" if estimate
+                        else "已完成指定开发阶段，可resume继续",
                     },
                 )
                 _save(job, directory, config)
                 return
+            _save(job, directory, config)
         stage_statuses = dict(job.get("stage_statuses", {}))
         for stage in job["completed_stages"]:
             if stage not in stage_statuses:
